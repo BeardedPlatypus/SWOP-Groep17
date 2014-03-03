@@ -1,21 +1,45 @@
+package domain;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProductionSchedule {
-	public Manufacturer manufacturer;
-	public ArrayList<AssemblyProcedure> pendingAssemblies = new ArrayList<AssemblyProcedure>();
-	public AssemblyLine assemblyLine;
+	public ProductionSchedule(Manufacturer manufacturer, AssemblyLine assemblyLine) {
+		this.manufacturer = manufacturer;
+		this.assemblyLine = assemblyLine;
+	}
+	
+	private Manufacturer manufacturer;
+	private List<AssemblyProcedure> pendingAssemblies = new ArrayList<AssemblyProcedure>();
+	private AssemblyLine assemblyLine;
 
-	public OrderContainer[] getPendingOrderContainers() {
+	public List<OrderContainer> getPendingOrderContainers() {
 		throw new UnsupportedOperationException();
 	}
 
-	public void addNewOrder(Object order) {
-		throw new UnsupportedOperationException();
+	/**
+	 * create from the specified model and specs and internal time a new
+	 * order object and add this to the pendingOrders of this ProductionSchedule.
+	 * 
+	 * @param model
+	 * 		The model of this new Order
+	 * @param specs
+	 * 		The specification of this new Order. 
+	 * 
+	 * @throws NullPointerException 
+	 * 		| model == null || specs == null
+	 * @throws IllegalArgumentException
+	 * 		| !model.isValidSpecifications(specs)
+	 */
+	public void addNewOrder(Model model, Specifications specs) throws NullPointerException, IllegalArgumentException{
+		
 	}
 
+	/*
 	public DateTime getEstimatedCompletionTime(Object order) {
 		throw new UnsupportedOperationException();
 	}
+	*/
 
 	public AssemblyProcedure getNextScheduledAssembly() {
 		throw new UnsupportedOperationException();
