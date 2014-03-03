@@ -70,3 +70,4 @@ local.properties
 
 # PDT-specific
 .buildpath
+*.vpp~*
