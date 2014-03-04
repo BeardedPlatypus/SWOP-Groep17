@@ -1,35 +1,45 @@
+package domain;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class AssemblyLine {
-	public Production_Schedule unnamed_Production_Schedule_;
-	public AssemblyProcedure unnamed_AssemblyProcedure_;
 	public ProductionSchedule productionSchedule;
-	public PerformAssemblyTaskController unnamed_PerformAssemblyTaskController_;
-	public AdvanceAssemblyLineController unnamed_AdvanceAssemblyLineController_;
-	public Workstation unnamed_Workstation_;
-	public ArrayList<WorkPost> workposts = new ArrayList<WorkPost>();
+	public ArrayList<WorkPost> workPosts = new ArrayList<WorkPost>();
 
-	public AssemblyProcedure[] getActiveAssemblies() {
-		throw new UnsupportedOperationException();
+	public List<AssemblyProcedure> getActiveAssemblies() {
+		List<AssemblyProcedure> toReturn = new ArrayList<AssemblyProcedure>();
+		for (WorkPost workPost : this.workPosts) {
+			AssemblyProcedure activeAssembly = workPost.getAssemblyProcedure();
+			if (activeAssembly != null) {
+				toReturn.add(activeAssembly);
+			}
+		}
+		return toReturn;
 	}
 
 	public AssemblyProcedure getCompleteAssembly() {
 		throw new UnsupportedOperationException();
 	}
 
-	public WorkPostInfo[] getWorkPosts() {
-		throw new UnsupportedOperationException();
+	public List<WorkPostInfo> getWorkPosts() {
+		List<WorkPostInfo> toReturn = new ArrayList<WorkPostInfo>();
+		int counter = 1;
+		for (WorkPost workPost : this.workPosts) {
+			toReturn.add(new WorkPostInfo(counter++, workPost.getName(), workPost.getTaskType()));
+		}
+		return toReturn;
 	}
 
-	public AssemblyTaskInfo[] getAssemblyTasksAtPost(Object int_1) {
-		throw new UnsupportedOperationException();
+	public List<AssemblyTaskInfo> getAssemblyTasksAtPost(int workPostNumber) throws IllegalArgumentException {
+		return this.workPosts.get(workPostNumber).getAssemblyTasks();
 	}
 
-	public void completeWorkpostTask(Object intPost, Object intTask) {
-		throw new UnsupportedOperationException();
+	public void completeWorkpostTask(int workPostNumber, int taskNumber) throws IllegalArgumentException {
+		this.workPosts.get(workPostNumber).completeTask(taskNumber);
 	}
 
-	public OrderContainer[] getActiveOrderContainers() {
+	public List<OrderContainer> getActiveOrderContainers() {
 		throw new UnsupportedOperationException();
 	}
 }

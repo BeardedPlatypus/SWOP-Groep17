@@ -17,6 +17,7 @@ public class Order implements OrderContainer{
 		this.completed = isCompleted;
 	}
 
+	@Override
 	public String toString() {
 		throw new UnsupportedOperationException();
 	}
