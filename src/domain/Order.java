@@ -1,4 +1,4 @@
-public class Order {
+public class Order implements OrderContainer{
 	private boolean completed;
 	private Model model;
 	private Specifications specifications;
@@ -8,6 +8,7 @@ public class Order {
 	public AssemblyProcedure unnamed_AssemblyProcedure_;
 	public Model orderModel;
 
+	@Override
 	public boolean isCompleted() {
 		return this.completed;
 	}
@@ -16,7 +17,7 @@ public class Order {
 		this.completed = isCompleted;
 	}
 
-	public void toString() {
+	public String toString() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -24,7 +25,15 @@ public class Order {
 		throw new UnsupportedOperationException();
 	}
 
-	public OrderContainer getOrderContainer() {
-		throw new UnsupportedOperationException();
+	@Override
+	public Model getModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Specifications getSpecifications() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
