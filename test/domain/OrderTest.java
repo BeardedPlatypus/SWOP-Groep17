@@ -17,10 +17,10 @@ public class OrderTest {
 	@Mock DateTime dt1;
 	@Mock DateTime dt2;
 	@Mock DateTime dt3;
-	@Mock Specifications spectacles;
+	@Mock Specification spectacles;
 	@Mock Model mockSuperModel;
 
-	@Mock Specifications spectacles2;
+	@Mock Specification spectacles2;
 	@Mock Model mockSuperModel2;
 	
 	Order order1;

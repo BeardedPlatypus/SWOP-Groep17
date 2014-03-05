@@ -61,8 +61,6 @@ public class Model {
 	public int getAmountOfOptions() {
 		return options.size();
 	}
-	
-	private final String modelName;
 
 	/**
 	 * Requests a certain Option object.

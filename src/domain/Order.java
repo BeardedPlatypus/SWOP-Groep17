@@ -45,7 +45,7 @@ public class Order implements OrderContainer{
 	 * @throws IllegalArgumentException
 	 * 		| !model.isValidSpecifications(specifications)
 	 */
-	public Order(Model model, Specifications specifications,
+	public Order(Model model, Specification specifications,
 			     DateTime initTime,
 				 DateTime estimatedCompletionDateTime) throws NullPointerException,
 				 											  IllegalArgumentException{
@@ -178,12 +178,12 @@ public class Order implements OrderContainer{
 	 * @return The Specifications of this Order. 
 	 */
 	@Override
-	public Specifications getSpecifications() {
+	public Specification getSpecifications() {
 		return this.specifications;
 	}
 	
 	/** The specifications of this Order. */
-	public final Specifications specifications;
+	public final Specification specifications;
 
 	//--------------------------------------------------------------------------
 	//class methods
