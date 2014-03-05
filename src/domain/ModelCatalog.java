@@ -1,12 +1,20 @@
+package domain;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class ModelCatalog {
-	public Manufacturer unnamed_Manufacturer_;
-	public ArrayList<Model> models = new ArrayList<Model>();
-
-	public Model[] getModels() {
+	
+	/**
+	 * Get 
+	 * @return
+	 */
+	public List<Model> getModels() {
 		throw new UnsupportedOperationException();
 	}
+
+	/** A list of all models of this ModelCatalog */
+	private List<Model> models = new ArrayList<Model>();
 
 	public void getModelOptions(Object string) {
 		throw new UnsupportedOperationException();

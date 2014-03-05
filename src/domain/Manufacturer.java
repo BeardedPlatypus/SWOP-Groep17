@@ -1,17 +1,25 @@
+package domain;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class Manufacturer {
-	public NewOrderSessionController unnamed_NewOrderSessionController_;
-	public ProductionSchedule productionSchedule;
-	public ArrayList<Order> completedOrders = new ArrayList<Order>();
-	public ModelCatalog unnamed_ModelCatalog_;
+	public Manufacturer(ProductionSchedule productionSchedule, 
+			            ModelCatalog modelCatalog) {
+		this.productionSchedule = productionSchedule;
+		this.modelCatalog = modelCatalog;
+	}
+	
+	private ProductionSchedule productionSchedule;
+	private List<Order> completedOrders = new ArrayList<Order>();
+	private ModelCatalog modelCatalog;
 
 	public OrderContainer[] getCompletedOrderContainers() {
 		throw new UnsupportedOperationException();
 	}
 
-	public OrderContainer[] getPendingOrderContainers() {
-		throw new UnsupportedOperationException();
+	public List<OrderContainer> getPendingOrderContainers() {
+		return this.productionSchedule.getPendingOrderContainers();
 	}
 
 	public Model[] getModels() {
