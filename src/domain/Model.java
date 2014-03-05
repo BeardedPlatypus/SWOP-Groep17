@@ -13,4 +13,9 @@ public class Model {
 	public void getModelOptions() {
 		throw new UnsupportedOperationException();
 	}
+
+	// TODO 
+	public Object isValidSpecification() {
+		return false;
+	}
 }

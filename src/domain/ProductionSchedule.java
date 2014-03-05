@@ -26,6 +26,9 @@ public class ProductionSchedule {
 	 * @param specs
 	 * 		The specification of this new Order. 
 	 * 
+	 * @postcondition
+	 * 		| Eo o == order(model, specs) && o in (new this).getPendingOrderContainers().   
+	 * 
 	 * @throws NullPointerException 
 	 * 		| model == null || specs == null
 	 * @throws IllegalArgumentException
