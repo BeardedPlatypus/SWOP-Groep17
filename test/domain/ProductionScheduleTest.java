@@ -24,6 +24,10 @@ public class ProductionScheduleTest {
 	@Mock Order mockOrder2;
 	@Mock Order mockOrder3;
 	
+
+	@Mock Specifications mockSpecs;
+	@Mock Model mockModel;
+
 	ProductionSchedule prodSched;
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -39,14 +43,30 @@ public class ProductionScheduleTest {
 	@Test
 	public void test_addNewOrder_nullpointer1() {
 		exception.expect(NullPointerException.class);
+
+		this.prodSched.addNewOrder(null, mockSpecs);		
+	}
+	
+	@Test
+	public void test_addNewOrder_nullpointer2() {
+		exception.expect(NullPointerException.class);
+		this.prodSched.addNewOrder(mockModel, null);
+	}
+	
+	@Test
+	public void test_addNewOrder_IllegalArgument1() {
+		exception.expect(IllegalArgumentException.class);
+				
+		Mockito.when(this.mockModel.isValidSpecification()).thenReturn(false);
+		this.prodSched.addNewOrder(mockModel, mockSpecs);
 		
-		
+		Mockito.verify(this.mockModel, Mockito.times(1));
 	}
 	
 	@Test
 	public void test_getPendingOrderContainers() {
 		List<OrderContainer> array = new ArrayList<OrderContainer>();
-		array.add(this.orderContainer);
+		array.add(this.mockOrder1);
 		Mockito.when(this.mockProdSched.getPendingOrderContainers()).thenReturn(array);
 
 	}
