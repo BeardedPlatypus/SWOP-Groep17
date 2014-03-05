@@ -1,5 +1,6 @@
 package domain;
 
+// TODO write hash and equals method. 
 /**
  * The DateTime class is an immutable data object that contains the number of
  * days, hours, and minutes.
