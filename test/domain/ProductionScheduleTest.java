@@ -43,10 +43,8 @@ public class ProductionScheduleTest {
 	}
 
 	@Test
-	public void test_addNewOrder_nullpointer1() {
-		exception.expect(NullPointerException.class);
+	public void test_addNewOrder_ {
 
-		this.prodSched.addNewOrder(null, mockSpecs);		
 	}
 	
 	@Test
