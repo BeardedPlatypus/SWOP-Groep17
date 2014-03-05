@@ -45,7 +45,7 @@ public class Order implements OrderContainer{
 	 * @throws IllegalArgumentException
 	 * 		| !model.isValidSpecifications(specifications)
 	 */
-	public Order(Model model, Specifications specifications,
+	public Order(Model model, Specifications specifications, int orderNumber,
 			     DateTime initTime,
 				 DateTime estimatedCompletionDateTime) throws NullPointerException,
 				 											  IllegalArgumentException{
@@ -64,6 +64,7 @@ public class Order implements OrderContainer{
 		this.model = model; 
 		this.initTime = initTime;		
 		this.specifications = specifications;
+		this.orderNumber = orderNumber;
 		
 		this.setIsComplete(false);
 		this.setEstimatedCompletionTime(estimatedCompletionDateTime);
@@ -185,6 +186,13 @@ public class Order implements OrderContainer{
 	/** The specifications of this Order. */
 	public final Specifications specifications;
 
+	@Override
+	public int getOrderNumber() {
+		return this.orderNumber;
+	}
+
+	public final int orderNumber;
+	
 	//--------------------------------------------------------------------------
 	//class methods
 	/**
