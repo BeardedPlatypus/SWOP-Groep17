@@ -42,4 +42,19 @@ public class AssemblyLine {
 	public List<OrderContainer> getActiveOrderContainers() {
 		throw new UnsupportedOperationException();
 	}
+
+	public ArrayList<AssemblyStatus> getCurrentAssembly() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ArrayList<AssemblyStatus> getFutureAssembly() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void tryAdvance(int time) {
+		// TODO Auto-generated method stub
+		
+	}
 }
