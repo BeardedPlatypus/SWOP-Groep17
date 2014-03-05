@@ -21,4 +21,18 @@ public interface OrderContainer {
 	 * @return The specification of this OrderContainer. 
 	 */
 	public Specifications getSpecifications();
+	
+	/**
+	 * Get the initialisation time of this OrderContainer
+	 * 
+	 * @return The initialisation time of this OrderContainer
+	 */
+	public DateTime getInitialisationTime();
+
+	/**
+	 * Get the initialisation time of this OrderContainer
+	 * 
+	 * @return The initialisation time of this OrderContainer
+	 */
+	public DateTime getEstimatedCompletionTime();
 }
