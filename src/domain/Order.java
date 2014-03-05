@@ -1,7 +1,7 @@
 public class Order implements OrderContainer{
 	private boolean completed;
 	private Model model;
-	private Specifications specifications;
+	private Specification specification;
 	private DateTime estimatedCompletionTime;
 	public Production_System unnamed_Production_System_;
 	public Manufacturer unnamed_Manufacturer_;
@@ -33,7 +33,7 @@ public class Order implements OrderContainer{
 	}
 
 	@Override
-	public Specifications getSpecifications() {
+	public Specification getSpecifications() {
 		// TODO Auto-generated method stub
 		return null;
 	}

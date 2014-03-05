@@ -20,5 +20,5 @@ public interface OrderContainer {
 	 * 
 	 * @return The specification of this OrderContainer. 
 	 */
-	public Specifications getSpecifications();
+	public Specification getSpecifications();
 }

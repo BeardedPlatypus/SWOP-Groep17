@@ -12,7 +12,7 @@ import org.mockito.MockitoAnnotations;
 
 public class OrderTest {
 	@Mock DateTime dt;
-	@Mock Specifications spectacles;
+	@Mock Specification spectacles;
 	@Mock Model mockSuperModel;
 	
 	Order order1;
