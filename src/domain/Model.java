@@ -88,7 +88,10 @@ public class Model {
 	public Specification makeSpecification(int[] choices){
 		if(choices.length != getAmountOfOptions())
 			throw new IllegalArgumentException("Not the right amount of specification choices for this model have been submitted.");
-		return new Specification(choices);
+		Specification newSpecs = new Specification(choices);
+		if(!isValidSpecification(newSpecs))
+			throw new IllegalArgumentException("Not a valid set of specifications for this model.");
+		return newSpecs;
 	}
 
 	/**
