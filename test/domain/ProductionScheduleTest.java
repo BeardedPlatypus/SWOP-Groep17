@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.SpecialAction;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -57,7 +59,7 @@ public class ProductionScheduleTest {
 	public void test_addNewOrder_IllegalArgument1() {
 		exception.expect(IllegalArgumentException.class);
 				
-		Mockito.when(this.mockModel.isValidSpecification()).thenReturn(false);
+		Mockito.when(this.mockModel.isValidSpecification(mockSpecs)).thenReturn(false);
 		this.prodSched.addNewOrder(mockModel, mockSpecs);
 		
 		Mockito.verify(this.mockModel, Mockito.times(1));

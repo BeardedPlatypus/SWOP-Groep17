@@ -1,21 +1,23 @@
+package domain;
+
+
 import java.util.ArrayList;
 
 public class Model {
-	private final String modelName;
-	public ModelCatalog unnamed_ModelCatalog_;
-	public Order unnamed_Order_;
 	public ArrayList<Option> options = new ArrayList<Option>();
 
-	public void getModelName() {
-		throw new UnsupportedOperationException();
+	public String getModelName() {
+		return this.modelName;
 	}
+	
+	private final String modelName;
 
 	public void getModelOptions() {
 		throw new UnsupportedOperationException();
 	}
 
 	// TODO 
-	public Object isValidSpecification() {
+	public Boolean isValidSpecification(Specifications specs) {
 		return false;
 	}
 }
