@@ -118,7 +118,10 @@ public class ProductionScheduleTest {
 
 	@Test
 	public void test_getEstimatedCompletionTimeOrderInvalid() {
-		fail();
+		exception.expect(IllegalArgumentException.class);
+		Mockito.when(mockOrder1.isCompleted()).thenReturn(false);
+		
+		prodSched.getEstimatedCompletionTime(mockOrder1);
 	}
 
 	@Test
@@ -131,6 +134,22 @@ public class ProductionScheduleTest {
 		exception.expect(IllegalArgumentException.class);
 
 		prodSched.getEstimatedCompletionTime(-1);
+	}
+	
+	@Test
+	public void test_removeNextOrderToScheduleIndexOutOfBoundsException() {
+		exception.expect(IllegalArgumentException.class);
+		
+		prodSched.removeNextOrderToSchedule();
+	}
+	
+	@Test
+	public void test_removeNextOrderToScheduleValid() {
+		// TODO find way to remove dependency on addOrderMethod. 
+		// Setup all the mocked objects
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		Mockito.when(spiedProdSched.getCurrentTime()).then;
+
 	}
 	
 //	@Test

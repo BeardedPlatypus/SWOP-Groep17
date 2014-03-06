@@ -157,6 +157,7 @@ public class ProductionSchedule {
 		this.incrementOrderIdentifier();
 	}
 	
+	/** Isolated Order Constructor, mostly for testing purposes. */
 	protected Order makeNewOrder(Model model, Specifications specs, int orderNumber,
 			                  DateTime initTime, DateTime estimatedTime) {
 		return new Order(model, specs, orderNumber, initTime, estimatedTime);
@@ -275,8 +276,10 @@ public class ProductionSchedule {
 	 * This ProductionSchedule. 
 	 * 
 	 * @postcondition !(new this).getPendingOrders().contains(this.getNextOrderToSchedule())
+	 * 
+	 * @throws IndexOutofBoundsException | this.getPendingOrderContainers().size() == 0;
 	 */
 	public void removeNextOrderToSchedule() {
-		
+		this.pendingOrders.remove(0);
 	}
 }
