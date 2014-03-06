@@ -10,8 +10,12 @@ import org.junit.runners.Suite.SuiteClasses;
 				DateTimeTest.class, 
 				ManufacturerTest.class,
 				ModelCatalogTest.class,
-				NewOrderSessionHandlerTest.class,				
+				ModelTest.class,
+				NewOrderSessionHandlerTest.class,
+				OptionTest.class,
 	            OrderTest.class,
+	            ProductionScheduleTest.class,
+	            SpecificationTest.class,
 	            WorkPostTest.class })
 public class DomainTestSuite {
 
