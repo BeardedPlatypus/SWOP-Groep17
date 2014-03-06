@@ -9,11 +9,11 @@ public class AdvanceAssemblyLineHandler {
 		this.assemblyLine = assemblyLine;
 	}
 	
-	public ArrayList<AssemblyStatus> getCurrentAssemblyLineStatus() {
+	public ArrayList<AssemblyProcedureContainer> getCurrentAssemblyLineStatus() {
 		return assemblyLine.getCurrentAssembly();
 	}
 	
-	public ArrayList<AssemblyStatus> getFutureAssemblyLineStatus() {
+	public ArrayList<AssemblyProcedureContainer> getFutureAssemblyLineStatus() {
 		return assemblyLine.getFutureAssembly();
 	}
 	

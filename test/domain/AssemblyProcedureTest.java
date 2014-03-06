@@ -21,9 +21,9 @@ public class AssemblyProcedureTest {
 	@Mock Order order;
 	@Mock AssemblyProcedure procedure;
 	
-	AssemblyTask color = new AssemblyTask("blue", "Paint the car blue", TaskType.BODY);
-	AssemblyTask engine = new AssemblyTask("4 cilinders", "Install standard 2l 4 cilinders", TaskType.DRIVETRAIN);
-	AssemblyTask body = new AssemblyTask("sedan", "Assemble a sedan body", TaskType.BODY);
+	AssemblyTask color = new AssemblyTask("blue", "Paint the car blue", TaskType.BODY, 0);
+	AssemblyTask engine = new AssemblyTask("4 cilinders", "Install standard 2l 4 cilinders", TaskType.DRIVETRAIN, 0);
+	AssemblyTask body = new AssemblyTask("sedan", "Assemble a sedan body", TaskType.BODY, 0);
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -33,17 +33,16 @@ public class AssemblyProcedureTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		
-		List<AssemblyTaskInfo> bodyTasks = new ArrayList<AssemblyTaskInfo>();
-		bodyTasks.add(color.getTaskInfo(1));
-		bodyTasks.add(body.getTaskInfo(2));
+		List<AssemblyTask> bodyTasks = new ArrayList<AssemblyTask>();
+		bodyTasks.add(color);
+		bodyTasks.add(body);
 		
-		List<AssemblyTaskInfo> drivetrainTasks = new ArrayList<AssemblyTaskInfo>();
-		bodyTasks.add(engine.getTaskInfo(1));
+		List<AssemblyTask> drivetrainTasks = new ArrayList<AssemblyTask>();
+		bodyTasks.add(engine);
 		
 		Mockito.when(procedure.getAssemblyTasks(TaskType.BODY)).thenReturn(bodyTasks);
 		Mockito.when(procedure.getAssemblyTasks(TaskType.DRIVETRAIN)).thenReturn(drivetrainTasks);
 		
-		Mockito.
 	}
 	
 	@Test

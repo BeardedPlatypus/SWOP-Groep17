@@ -12,11 +12,11 @@ public class PerformAssemblyTaskHandler {
 		this.assemblyLine = assemblyLine;
 	}
 	
-	public List<WorkPostInfo> getWorkPosts() {
+	public List<WorkPostContainer> getWorkPosts() {
 		return this.assemblyLine.getWorkPosts();
 	}
 
-	public List<AssemblyTaskInfo> getAssemblyTasksAtPost(int workPostNumber) {
+	public List<AssemblyTaskContainer> getAssemblyTasksAtPost(int workPostNumber) {
 		return this.assemblyLine.getAssemblyTasksAtPost(workPostNumber);
 	}
 

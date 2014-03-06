@@ -5,8 +5,8 @@ import java.util.List;
 
 public class AssemblyProcedure {
 	
-	public ArrayList<AssemblyTask> tasks = new ArrayList<AssemblyTask>();
-	public Order assemblyOrder;
+	private ArrayList<AssemblyTask> tasks = new ArrayList<AssemblyTask>();
+	private Order assemblyOrder;
 	
 	public AssemblyProcedure(Order order) throws IllegalArgumentException {
 		if (order == null) {
@@ -17,43 +17,39 @@ public class AssemblyProcedure {
 	}
 
 	private void generateTasks() {
-		throw new UnsupportedOperationException();
+		Specification orderSpecs = assemblyOrder.getSpecifications();
+		Model orderModel = assemblyOrder.getModel();
+		if(!orderModel.isValidSpecification(orderSpecs))
+			throw new IllegalStateException("This order does not have matching specifications and model.");
+		for(int i=0; i<orderSpecs.getAmountofSpecs();i++){
+			Option currentOption = orderModel.getModelOption(i);
+			String choiceName = currentOption.getChoiceName(orderSpecs.getSpec(i));
+			String taskName = currentOption.getOptionName() + " - " + choiceName;
+			tasks.add(new AssemblyTask( taskName, currentOption.getOptionActionDescription(),
+					currentOption.getType(), i));
+		}
 	}
 
 	public Order getOrder() {
 		return this.assemblyOrder;
 	}
 
-	public List<AssemblyTaskInfo> getAssemblyTasks(TaskType taskType) {
-		List<AssemblyTaskInfo> toReturn = new ArrayList<AssemblyTaskInfo>();
-		int counter = 0;
-		for (AssemblyTask task : this.tasks) {
-			if (task.getTaskType() == taskType) {
-				toReturn.add(task.getTaskInfo(counter++));
-			}
+	public List<AssemblyTaskContainer> getAssemblyTasks(TaskType taskType) {
+		ArrayList<AssemblyTaskContainer> typeTasks = new ArrayList<AssemblyTaskContainer>();
+		for(AssemblyTaskContainer task : tasks){
+			if(task.getTaskType().equals(taskType))
+				typeTasks.add(task);
 		}
-		return toReturn;
+		return typeTasks;
 	}
 
 	public void completeTask(int intTask, TaskType taskType) throws IllegalArgumentException {
-		if (intTask < 0) {
-			throw new IllegalArgumentException("Task number must be positive.");
+		if (intTask < 0 || intTask >= tasks.size()) {
+			throw new IllegalArgumentException("Task number is not a correct value for this procedure.");
 		}
-		List<AssemblyTask> correctTasks = this.getAllTasksOfType(taskType);
-		if (intTask >= correctTasks.size()) {
-			throw new IllegalArgumentException("Task number went outside the range of possible tasks.");
-		}
-		correctTasks.get(intTask).setCompleted(true);
-	}
-	
-	private List<AssemblyTask> getAllTasksOfType(TaskType taskType) {
-		List<AssemblyTask> toReturn = new ArrayList<AssemblyTask>();
-		for (AssemblyTask task : this.tasks) {
-			if (task.getTaskType() == taskType) {
-				toReturn.add(task);
-			}
-		}
-		return toReturn;
+		if(tasks.get(intTask).getTaskType()!=taskType)
+			throw new IllegalArgumentException("Chosen task is not a task of the correct type.");
+		tasks.get(intTask).setCompleted(true);
 	}
 
 	public OrderContainer getOrderContainer() {

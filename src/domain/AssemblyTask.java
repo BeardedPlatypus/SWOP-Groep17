@@ -5,7 +5,7 @@ package domain;
  * of an assembly task.
  */
 
-public class AssemblyTask {
+public class AssemblyTask implements AssemblyTaskContainer{
 	
 	/**
 	 * Whether this task is held completed.
@@ -23,9 +23,14 @@ public class AssemblyTask {
 	private String actionInfo;
 	
 	/**
-	 * The task's type. A task should only be assigned to a work post with the same type.
+	 * The task's type. A task should only be completed at a work post with the same type.
 	 */
 	private TaskType type;
+	
+	/**
+	 * The task's number in the assembly procedure. Show's the tasks place in the order the tasks should be completed.
+	 */
+	private int taskNumber;
 	
 	/**
 	 * Initialises a new assembly task with the given name, action info and type.
@@ -43,7 +48,7 @@ public class AssemblyTask {
 	 * @throws IllegalArgumentException
 	 * 		A non-existent task type was supplied.
 	 */
-	public AssemblyTask(String name, String actionInfo, TaskType type) throws IllegalArgumentException {
+	public AssemblyTask(String name, String actionInfo, TaskType type, int taskNumber) throws IllegalArgumentException {
 		if (name == null) {
 			throw new IllegalArgumentException("Cannot initialise task with non-existent name.");
 		}
@@ -57,18 +62,8 @@ public class AssemblyTask {
 		this.actionInfo = actionInfo;
 		this.type = type;
 		this.isCompleted = false;
+		this.taskNumber = taskNumber;
 		
-	}
-
-	/**
-	 * Returns a view of this task. Use this method to expose this task to the outside world.
-	 * @param taskNumber
-	 * 		A number, determined by the order of tasks of the assembly procedure that contains this task.
-	 * @return A view of this task with the same completion state, name, action info and task type.
-	 * 		The view's number will be as specified in the 'param' entry.
-	 */
-	public AssemblyTaskInfo getTaskInfo(int taskNumber) {
-		return new AssemblyTaskInfo(this.isCompleted(), this.getName(), this.getActionInfo(), taskNumber, this.getTaskType());
 	}
 	
 	/**
@@ -108,5 +103,10 @@ public class AssemblyTask {
 	 */
 	public void setCompleted(boolean completed) {
 		this.isCompleted = completed;
+	}
+
+	@Override
+	public int getTaskNumber() {
+		return this.taskNumber;
 	}
 }

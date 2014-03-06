@@ -22,16 +22,11 @@ public class AssemblyLine {
 		throw new UnsupportedOperationException();
 	}
 
-	public List<WorkPostInfo> getWorkPosts() {
-		List<WorkPostInfo> toReturn = new ArrayList<WorkPostInfo>();
-		int counter = 1;
-		for (WorkPost workPost : this.workPosts) {
-			toReturn.add(new WorkPostInfo(counter++, workPost.getName(), workPost.getTaskType()));
-		}
-		return toReturn;
+	public List<WorkPostContainer> getWorkPosts() {
+		return new ArrayList<WorkPostContainer>(workPosts);
 	}
 
-	public List<AssemblyTaskInfo> getAssemblyTasksAtPost(int workPostNumber) throws IllegalArgumentException {
+	public List<AssemblyTaskContainer> getAssemblyTasksAtPost(int workPostNumber) throws IllegalArgumentException {
 		return this.workPosts.get(workPostNumber).getAssemblyTasks();
 	}
 
@@ -43,12 +38,12 @@ public class AssemblyLine {
 		throw new UnsupportedOperationException();
 	}
 
-	public ArrayList<AssemblyStatus> getCurrentAssembly() {
+	public ArrayList<AssemblyProcedureContainer> getCurrentAssembly() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public ArrayList<AssemblyStatus> getFutureAssembly() {
+	public ArrayList<AssemblyProcedureContainer> getFutureAssembly() {
 		// TODO Auto-generated method stub
 		return null;
 	}

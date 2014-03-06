@@ -23,30 +23,30 @@ public class AssemblyTaskInfoTest {
 	@Test
 	public void constructor_NullNameTest() {
 		exception.expect(IllegalArgumentException.class);
-		new AssemblyTaskInfo(false, null, "dummy", 0, TaskType.BODY);
+		new AssemblyTaskContainer(false, null, "dummy", 0, TaskType.BODY);
 	}
 	
 	@Test
 	public void constructor_NegativeTaskNumberTest() {
 		exception.expect(IllegalArgumentException.class);
-		new AssemblyTaskInfo(false, "dummy", "dummy", -1, TaskType.BODY);
+		new AssemblyTaskContainer(false, "dummy", "dummy", -1, TaskType.BODY);
 	}
 	
 	@Test
 	public void constructor_NullActionInfoTest() {
 		exception.expect(IllegalArgumentException.class);
-		new AssemblyTaskInfo(false, "dummy", null, 0, TaskType.BODY);
+		new AssemblyTaskContainer(false, "dummy", null, 0, TaskType.BODY);
 	}
 	
 	@Test
 	public void constructor_NullTaskTypeTest() {
 		exception.expect(IllegalArgumentException.class);
-		new AssemblyTaskInfo(false, "dummy", "dummy", 0, null);
+		new AssemblyTaskContainer(false, "dummy", "dummy", 0, null);
 	}
 	
 	@Test
 	public void constructor_ValidArgumentsTest() {
-		AssemblyTaskInfo task = new AssemblyTaskInfo(false, "john", "doe", 0, TaskType.BODY);
+		AssemblyTaskContainer task = new AssemblyTaskContainer(false, "john", "doe", 0, TaskType.BODY);
 		assertEquals(task.isCompleted(), false);
 		assertEquals(task.getName(), "john");
 		assertEquals(task.getActionInfo(), "doe");
