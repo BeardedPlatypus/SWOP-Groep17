@@ -36,4 +36,11 @@ public interface OrderContainer {
 	 * @return The initialisation time of this OrderContainer
 	 */
 	public DateTime getEstimatedCompletionTime();
+	
+	/**
+	 * Get the (unique) order number of this OrderContainer.
+	 * 
+	 * @return The order number of this OrderContainer.
+	 */
+	public int getOrderNumber();
 }

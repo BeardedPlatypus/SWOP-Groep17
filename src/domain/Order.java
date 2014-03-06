@@ -28,7 +28,9 @@ public class Order implements OrderContainer{
 	 * @param model 
 	 * 		The model of this new Order.
 	 * @param specifications
-	 * 		The specifications of this new Order. 
+	 * 		The specifications of this new Order.
+	 * @param orderNumber
+	 * 		The orderNumber of this new Order.  
 	 * @param initTime
 	 * 		The time at which this order was created.
 	 * @param estimatedCompletionDateTime
@@ -39,31 +41,33 @@ public class Order implements OrderContainer{
 	 * 			      | (new this).order.getInitTime() == initTime
 	 * 			      | (new this).order.getEstimatedCompletionDateTime() == estimatedCompletionDateTime
 	 * 				  | (new this).order.isCompleted() == False
+	 * 				  | (new this).order.getOrderNumber() == orderNumber
 	 * 
 	 * @throws NullPointerException
 	 * 		| model == null || specifications == null || initTime == null || estimatedCompletionDateTime == null 
 	 * @throws IllegalArgumentException
 	 * 		| !model.isValidSpecifications(specifications)
 	 */
-	public Order(Model model, Specification specifications,
+	public Order(Model model, Specification specification, int orderNumber,
 			     DateTime initTime,
 				 DateTime estimatedCompletionDateTime) throws NullPointerException,
 				 											  IllegalArgumentException{
 		if (model == null )
 			throw new NullPointerException("Model is null.");
-		if (specifications == null)
-			throw new NullPointerException("Specifications is null.");
+		if (specification == null)
+			throw new NullPointerException("Specification is null.");
 		if (initTime == null)
 			throw new NullPointerException("initTime is null.");
 		if (estimatedCompletionDateTime == null)
 			throw new NullPointerException("estimatedCompletionDateTime is null.");
 		
-		if (!model.isValidSpecification(specifications))
+		if (!model.isValidSpecification(specification))
 			throw new IllegalArgumentException();
 		
 		this.model = model; 
 		this.initTime = initTime;		
-		this.specifications = specifications;
+		this.specifications = specification;
+		this.orderNumber = orderNumber;
 		
 		this.setIsComplete(false);
 		this.setEstimatedCompletionTime(estimatedCompletionDateTime);
@@ -185,6 +189,14 @@ public class Order implements OrderContainer{
 	/** The specifications of this Order. */
 	public final Specification specifications;
 
+	@Override
+	public int getOrderNumber() {
+		return this.orderNumber;
+	}
+
+	/** The order number of this Order. */
+	public final int orderNumber;
+	
 	//--------------------------------------------------------------------------
 	//class methods
 	/**

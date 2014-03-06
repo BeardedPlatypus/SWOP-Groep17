@@ -3,6 +3,8 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.SpecialAction;
+
 public class Manufacturer {
 	public Manufacturer(ProductionSchedule productionSchedule, 
 			            ModelCatalog modelCatalog) {
@@ -29,11 +31,11 @@ public class Manufacturer {
 		throw new UnsupportedOperationException();
 	}
 
-	public void createOrder(Object model, Object specifications) {
+	public void createOrder(Model model, SpecialAction specifications) {
 		throw new UnsupportedOperationException();
 	}
 
-	public void completeOrder(Object order) {
+	public void completeOrder(Order order) {
 		throw new UnsupportedOperationException();
 	}
 }
