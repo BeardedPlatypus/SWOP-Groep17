@@ -151,16 +151,15 @@ public void addNewOrder(Model model, Specification specs) throws NullPointerExce
 		
 		Order newOrder = makeNewOrder(model, specs, 
 				                      this.getCurrentOrderIdentifier(),
-				                      this.getCurrentTime(),
 				                      this.getEstimatedCompletionTime(curPos));		
 		this.addToPendingOrders(newOrder);
 		this.incrementOrderIdentifier();
 	}
 	
 	/** Isolated Order Constructor, mostly for testing purposes. */
-	protected Order makeNewOrder(Model model, Specification specs, int orderNumber,
-			                  DateTime initTime, DateTime estimatedTime) {
-		return new Order(model, specs, orderNumber, initTime, estimatedTime);
+	protected Order makeNewOrder(Model model, Specification specs, int orderNumber, 
+			                     DateTime estimatedTime) {
+		return new Order(model, specs, orderNumber, estimatedTime);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -256,6 +255,12 @@ public void addNewOrder(Model model, Specification specs) throws NullPointerExce
 	 * @throws IndexOutOfBoundsException | this.getPendingOrderContainers().size() == 0;
 	 */
 	public Order getNextOrderToSchedule() throws IndexOutOfBoundsException{
+		List<OrderContainer> pendingOrders = this.getPendingOrderContainers();
+		
+		if (pendingOrders.size() == 0)
+			return null;
+		// if get time exceeds time for day return null
+		
 		return this.getPendingOrders().get(0);
 	}
 	

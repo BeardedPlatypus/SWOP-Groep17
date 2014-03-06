@@ -49,15 +49,12 @@ public class Order implements OrderContainer{
 	 * 		| !model.isValidSpecifications(specifications)
 	 */
 	public Order(Model model, Specification specification, int orderNumber,
-			     DateTime initTime,
 				 DateTime estimatedCompletionDateTime) throws NullPointerException,
 				 											  IllegalArgumentException{
 		if (model == null )
 			throw new NullPointerException("Model is null.");
 		if (specification == null)
 			throw new NullPointerException("Specification is null.");
-		if (initTime == null)
-			throw new NullPointerException("initTime is null.");
 		if (estimatedCompletionDateTime == null)
 			throw new NullPointerException("estimatedCompletionDateTime is null.");
 		
@@ -65,7 +62,6 @@ public class Order implements OrderContainer{
 			throw new IllegalArgumentException();
 		
 		this.model = model; 
-		this.initTime = initTime;		
 		this.specifications = specification;
 		this.orderNumber = orderNumber;
 		
@@ -149,20 +145,6 @@ public class Order implements OrderContainer{
 	
 	//--------------------------------------------------------------------------
 	/**
-	 * Get the initialisation time of this Order.
-	 * 
-	 * @return The initialisation time of this Order.
-	 */
-	@Override
-	public DateTime getInitialisationTime() {
-		return this.initTime;
-	}
-	
-	/** The initialisation time of this Order. */
-	public final DateTime initTime;
-
-	//--------------------------------------------------------------------------
-	/**
 	 * Get the model of this Order.
 	 * 
 	 * @return The Model of this Order. 
@@ -210,7 +192,6 @@ public class Order implements OrderContainer{
 			   "-----------------------\n" +
 			   "Model:" + this.getModel().getModelName() + "\n" +
 			   "Specifications: " + this.getSpecifications().toString() + "\n" +
-			   "Initialisation time: " + this.getInitialisationTime().toString() + "\n" +
 			   "Estimated Completion time: " + this.getEstimatedCompletionTime().toString() + "\n";
 	}
 }

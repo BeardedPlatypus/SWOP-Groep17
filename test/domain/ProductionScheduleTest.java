@@ -77,10 +77,10 @@ public class ProductionScheduleTest {
 		Mockito.when(mockOrder3.getOrderNumber()).thenReturn(2);
 		Mockito.when(mockOrder4.getOrderNumber()).thenReturn(3);
 		
-		Mockito.doReturn(mockOrder1).when(spiedProdSched).makeNewOrder(mockModel1, mockSpec1, 0, dt0, dt1);
-		Mockito.doReturn(mockOrder2).when(spiedProdSched).makeNewOrder(mockModel2, mockSpec2, 1, dt0, dt2);
-		Mockito.doReturn(mockOrder3).when(spiedProdSched).makeNewOrder(mockModel3, mockSpec3, 2, dt0, dt3);
-		Mockito.doReturn(mockOrder4).when(spiedProdSched).makeNewOrder(mockModel4, mockSpec4, 3, dt0, dt4);
+		Mockito.doReturn(mockOrder1).when(spiedProdSched).makeNewOrder(mockModel1, mockSpec1, 0, dt1);
+		Mockito.doReturn(mockOrder2).when(spiedProdSched).makeNewOrder(mockModel2, mockSpec2, 1, dt2);
+		Mockito.doReturn(mockOrder3).when(spiedProdSched).makeNewOrder(mockModel3, mockSpec3, 2, dt3);
+		Mockito.doReturn(mockOrder4).when(spiedProdSched).makeNewOrder(mockModel4, mockSpec4, 3, dt4);
 		
 		// Do the actual Code
 		spiedProdSched.addNewOrder(mockModel1, mockSpec1);
@@ -88,8 +88,6 @@ public class ProductionScheduleTest {
 		spiedProdSched.addNewOrder(mockModel3, mockSpec3);
 		spiedProdSched.addNewOrder(mockModel4, mockSpec4);
 		
-		// Verify code calls
-		Mockito.verify(spiedProdSched, Mockito.times(4)).getCurrentTime();
 		// Verify Results
 		List<OrderContainer> result = spiedProdSched.getPendingOrderContainers();
 		assertEquals(4, result.size());

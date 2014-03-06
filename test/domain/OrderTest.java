@@ -34,7 +34,7 @@ public class OrderTest {
 		MockitoAnnotations.initMocks(this);
 	
 		Mockito.when(this.mockSuperModel2.isValidSpecification(spectacles2)).thenReturn(true);
-		order1 = new Order(mockSuperModel2, spectacles2, 0, dt1, dt2);
+		order1 = new Order(mockSuperModel2, spectacles2, 0, dt2);
 	}
 
 	@Test 
@@ -42,7 +42,7 @@ public class OrderTest {
 		exception.expect(IllegalArgumentException.class);
 		
 		Mockito.when(this.mockSuperModel.isValidSpecification(spectacles)).thenReturn(false);
-		Order test = new Order(mockSuperModel, spectacles, 0, dt1, dt2);
+		Order test = new Order(mockSuperModel, spectacles, 0, dt2);
 		
 		Mockito.verify(this.mockSuperModel, Mockito.times(1));
 	}
@@ -50,37 +50,30 @@ public class OrderTest {
 	@Test 
 	public void test_constructorNullPointerExceptionModel() {
 		exception.expect(NullPointerException.class);
-		Order test = new Order(null, spectacles, 0, dt1, dt2);
+		Order test = new Order(null, spectacles, 0, dt2);
 	}
 	
 	@Test
 	public void test_constructorNullPointerExceptionSpecs() {
 		exception.expect(NullPointerException.class);
-		Order test = new Order(mockSuperModel, null, 0, dt1, dt2);
-	}
-
-	@Test
-	public void test_constructorNullPointerExceptionInitDateTime() {
-		exception.expect(NullPointerException.class);
-		Order test = new Order(mockSuperModel, spectacles, 0, null, dt2);		
+		Order test = new Order(mockSuperModel, null, 0, dt2);
 	}
 
 	@Test
 	public void test_constructorNullPointerExceptionCompletionDateTime() {
 		exception.expect(NullPointerException.class);
-		Order test = new Order(mockSuperModel, spectacles, 0, dt1, null);		
+		Order test = new Order(mockSuperModel, spectacles, 0, null);		
 	}
 
 	@Test
 	public void test_constructorValidInput() {
 		Mockito.when(this.mockSuperModel.isValidSpecification(spectacles)).thenReturn(true);
 		
-		Order test = new Order(mockSuperModel, spectacles, 0, dt1, dt2);
+		Order test = new Order(mockSuperModel, spectacles, 0, dt2);
 		
 		assertEquals(false, test.isCompleted());
 		assertEquals(mockSuperModel, test.getModel());
 		assertEquals(spectacles, test.getSpecifications());
-		assertEquals(dt1, test.getInitialisationTime());
 		assertEquals(dt2, test.getEstimatedCompletionTime());
 		assertEquals(0, test.getOrderNumber());
 	}
