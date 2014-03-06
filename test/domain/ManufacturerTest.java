@@ -38,7 +38,7 @@ public class ManufacturerTest {
 		Mockito.when(this.mockProdSched.getPendingOrderContainers()).thenReturn(array);
 		
 		assertEquals(array, this.man.getPendingOrderContainers());
-		Mockito.verify(this.mockProdSched, Mockito.times(1));
+		Mockito.verify(this.mockProdSched).getPendingOrderContainers();
 	}
 
 }
