@@ -27,7 +27,7 @@ public class ProductionScheduleTest {
 	@Mock Order mockOrder3;
 	
 
-	@Mock Specifications mockSpecs;
+	@Mock Specification mockSpecs;
 	@Mock Model mockModel;
 
 	ProductionSchedule prodSched;

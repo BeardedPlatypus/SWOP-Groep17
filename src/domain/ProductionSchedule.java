@@ -34,7 +34,7 @@ public class ProductionSchedule {
 	 * @throws IllegalArgumentException
 	 * 		| !model.isValidSpecifications(specs)
 	 */
-	public void addNewOrder(Model model, Specifications specs) throws NullPointerException, IllegalArgumentException{
+	public void addNewOrder(Model model, Specification specs) throws NullPointerException, IllegalArgumentException{
 		
 	}
 
