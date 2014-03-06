@@ -50,11 +50,18 @@ public class ProductionSchedule {
 	 * 
 	 * @precondition | order != null
 	 * 
+	 * @return | order.isCompleted() -> order.getEstimatedCompletionTime
 	 * @return a DateTime of the estimated completion time of the Order. 
+	 * 
+	 * @throws IllegalArgumentException | ! order.isComplete || 
+	 * 									| order in this.getPendingOrderContainers()
 	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order) {
-		// TODO evaluate the parameters of this function.
-		throw new UnsupportedOperationException();
+	public DateTime getEstimatedCompletionTime(OrderContainer order) throws IllegalArgumentException {
+		if (order.isCompleted())
+			return order.getEstimatedCompletionTime();
+		
+		// TODO add logic to find order in assembly line.
+		return null;
 	}
 	
 	/**
@@ -66,11 +73,13 @@ public class ProductionSchedule {
 	 * @param positionOrder
 	 * 		The position of the order in the assembly process. 
 	 * 
-	 * @precondition | positionOrder >= 0
-	 * 
 	 * @return a DateTime of the estimated completion time of the Order. 
+	 * 
+	 * @throws IllegalArgumentException | positionOrder < 0
 	 */
 	public DateTime getEstimatedCompletionTime(int positionOrder) {
+		if (positionOrder < 0)
+			throw new IllegalArgumentException("position smaller than 0");
 		// TODO 
 		return null;
 	}
@@ -222,20 +231,6 @@ public class ProductionSchedule {
 	/** The next unused order identifier issued by this ProductionSchedule. */
 	private int currentIdentifier;
 	
-	//--------------------------------------------------------------------------	
-	// FIXME: not sure if this is correct?
-	/** 
-	 * Get (a copy of) the pending assemblies of this ProductionSchedule. 
-	 * 
-	 * @return a copy of the pending assemblies of this ProductionSchedule.
-	 */
-	private List<AssemblyProcedure> getPendingAssemblies() {
-		return new ArrayList<AssemblyProcedure>(this.pendingAssemblies);
-	}
-	
-	/** List of pending assemblies in this ProductionSchedule. */
-	private final List<AssemblyProcedure> pendingAssemblies = new ArrayList<AssemblyProcedure>();
-
 	//--------------------------------------------------------------------------
 	/**
 	 * Get the manufacturer associated with this ProductionSchedule.
@@ -252,8 +247,15 @@ public class ProductionSchedule {
 	//--------------------------------------------------------------------------
 	// AssemblyLine Related Methods and properties. 
 	//--------------------------------------------------------------------------
-	public AssemblyProcedure getNextScheduledAssembly() {
-		throw new UnsupportedOperationException();
+	/**
+	 * Get the next order of this ProductionSchedule that is to be scheduled
+	 * on the AssemblyLine that is associated with this ProductionSchedule. 
+	 * 
+	 * @return The next order of this ProductionSchedule that is to be scheduled.
+	 * @throws IndexOutOfBoundsException | this.getPendingOrderContainers().size() == 0;
+	 */
+	public Order getNextOrderToSchedule() throws IndexOutOfBoundsException{
+		return this.getPendingOrders().get(0);
 	}
 	
 	/**
@@ -267,4 +269,14 @@ public class ProductionSchedule {
 	
 	/** The AssemblyLine that is associated with this ProcedureSchedule. */
 	private final AssemblyLine assemblyLine;
+	
+	/**
+	 * Remove the Order that is next in line to be scheduled from 
+	 * This ProductionSchedule. 
+	 * 
+	 * @postcondition !(new this).getPendingOrders().contains(this.getNextOrderToSchedule())
+	 */
+	public void removeNextOrderToSchedule() {
+		
+	}
 }

@@ -99,6 +99,40 @@ public class ProductionScheduleTest {
 		assertEquals(3, result.get(3).getOrderNumber());
 	}
 		
+	@Test
+	public void test_getEstimatedCompletionTimeOrderIncomplete() {
+		fail();
+	}
+
+	@Test
+	public void test_getEstimatedCompletionTimeOrderComplete() {
+		Mockito.when(mockOrder1.isCompleted()).thenReturn(true);
+		Mockito.when(mockOrder1.getEstimatedCompletionTime()).thenReturn(dt0);
+		
+		DateTime test = prodSched.getEstimatedCompletionTime(mockOrder1);
+		assertEquals(dt0, test);
+		
+		Mockito.verify(mockOrder1).isCompleted();
+		Mockito.verify(mockOrder1).getEstimatedCompletionTime();
+	}
+
+	@Test
+	public void test_getEstimatedCompletionTimeOrderInvalid() {
+		fail();
+	}
+
+	@Test
+	public void test_getEstimatedCompletionTimePosValid() {
+		fail();
+	}
+	
+	@Test
+	public void test_getEstimatedCompletionTimePosInvalid() {
+		exception.expect(IllegalArgumentException.class);
+
+		prodSched.getEstimatedCompletionTime(-1);
+	}
+	
 //	@Test
 //	public void test_getPendingOrderContainers() {
 //		List<OrderContainer> array = new ArrayList<OrderContainer>();
