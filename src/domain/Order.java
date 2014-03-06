@@ -28,7 +28,9 @@ public class Order implements OrderContainer{
 	 * @param model 
 	 * 		The model of this new Order.
 	 * @param specifications
-	 * 		The specifications of this new Order. 
+	 * 		The specifications of this new Order.
+	 * @param orderNumber
+	 * 		The orderNumber of this new Order.  
 	 * @param initTime
 	 * 		The time at which this order was created.
 	 * @param estimatedCompletionDateTime
@@ -39,6 +41,7 @@ public class Order implements OrderContainer{
 	 * 			      | (new this).order.getInitTime() == initTime
 	 * 			      | (new this).order.getEstimatedCompletionDateTime() == estimatedCompletionDateTime
 	 * 				  | (new this).order.isCompleted() == False
+	 * 				  | (new this).order.getOrderNumber() == orderNumber
 	 * 
 	 * @throws NullPointerException
 	 * 		| model == null || specifications == null || initTime == null || estimatedCompletionDateTime == null 

@@ -1,6 +1,7 @@
 package domain;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -34,6 +35,7 @@ public class ProductionSchedule {
 		this.assemblyLine = assemblyLine;
 		
 		this.currentTime = new DateTime(0, 0, 0);
+		this.setOrderIdentifier(0);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -69,7 +71,8 @@ public class ProductionSchedule {
 	 * @return a DateTime of the estimated completion time of the Order. 
 	 */
 	public DateTime getEstimatedCompletionTime(int positionOrder) {
-		throw new UnsupportedOperationException();
+		// TODO 
+		return null;
 	}
 	
 	//--------------------------------------------------------------------------
@@ -135,12 +138,55 @@ public class ProductionSchedule {
 	 * 		| !model.isValidSpecifications(specs)
 	 */
 	public void addNewOrder(Model model, Specifications specs) throws NullPointerException, IllegalArgumentException{
+		int curPos = this.getPendingOrderContainers().size() + this.getAssemblyLine().getSize();
 		
+		Order newOrder = makeNewOrder(model, specs, 
+				                      this.getCurrentOrderIdentifier(),
+				                      this.getCurrentTime(),
+				                      this.getEstimatedCompletionTime(curPos));		
+		this.addToPendingOrders(newOrder);
+		this.incrementOrderIdentifier();
 	}
 	
-	public List<OrderContainer> getPendingOrderContainers() {
-		throw new UnsupportedOperationException();
+	protected Order makeNewOrder(Model model, Specifications specs, int orderNumber,
+			                  DateTime initTime, DateTime estimatedTime) {
+		return new Order(model, specs, orderNumber, initTime, estimatedTime);
 	}
+	
+	//--------------------------------------------------------------------------
+	/**
+	 * Get a list of pending order containers in this ProductionSchedule. 
+	 * 
+	 * @return List of pending order containers in this ProductionSchedule.
+	 */
+	public List<OrderContainer> getPendingOrderContainers() {
+		// FIXME make sure this is the best way to do this ('cause you're creating a lot of additional fluff.
+		return new ArrayList<OrderContainer>(this.getPendingOrders());
+	}
+	
+	/**
+	 * Get (a copy of the) list of pending orders in this ProductionSchedule.
+	 * 
+	 * @return List of pending orders in this ProductionSchedule.
+	 */
+	private List<Order> getPendingOrders() {
+		return new ArrayList<Order>(this.pendingOrders);
+	}
+	
+	/**
+	 * Add the specified order to the pending orders of this ProductionSchedule.
+	 * 
+	 * @param order
+	 * 		The order to be added to the pending orders of this ProductionSchedule.
+	 * 
+	 * @postcondition (new this).getPendingOrders.getLast() == order
+	 */
+	private void addToPendingOrders(Order order) {
+		this.pendingOrders.add(order);
+	}
+	
+	/** The pending orders of this ProductionSchedule. */
+	private final List<Order> pendingOrders = new LinkedList<Order>();
 
 	//--------------------------------------------------------------------------
 	/** 
@@ -176,7 +222,7 @@ public class ProductionSchedule {
 	/** The next unused order identifier issued by this ProductionSchedule. */
 	private int currentIdentifier;
 	
-	//--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------	
 	// FIXME: not sure if this is correct?
 	/** 
 	 * Get (a copy of) the pending assemblies of this ProductionSchedule. 
@@ -191,6 +237,15 @@ public class ProductionSchedule {
 	private final List<AssemblyProcedure> pendingAssemblies = new ArrayList<AssemblyProcedure>();
 
 	//--------------------------------------------------------------------------
+	/**
+	 * Get the manufacturer associated with this ProductionSchedule.
+	 * 
+	 * @return The manufacturer associated with ProductionSchedule.
+	 */
+	private Manufacturer getManufacturer() {
+		return this.manufacturer;
+	}
+	
 	/** The Manufacturer of this ProcedureSchedule. */
 	private final Manufacturer manufacturer;
 
@@ -199,6 +254,15 @@ public class ProductionSchedule {
 	//--------------------------------------------------------------------------
 	public AssemblyProcedure getNextScheduledAssembly() {
 		throw new UnsupportedOperationException();
+	}
+	
+	/**
+	 * Get the AssemblyLine associated with this ProductionSchedule.
+	 * 
+	 * @return The AssemblyLine associated with thisProductionSchedule.
+	 */
+	private AssemblyLine getAssemblyLine() {
+		return this.assemblyLine;
 	}
 	
 	/** The AssemblyLine that is associated with this ProcedureSchedule. */
