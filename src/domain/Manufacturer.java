@@ -10,7 +10,10 @@ public class Manufacturer {
 		this.modelCatalog = modelCatalog;
 	}
 	
-	private ProductionSchedule productionSchedule;
+	private ProductionSchedule getProductionSchedule() {
+		return this.productionSchedule;
+	}
+	private final ProductionSchedule productionSchedule;
 	private List<Order> completedOrders = new ArrayList<Order>();
 	private ModelCatalog modelCatalog;
 
@@ -19,7 +22,7 @@ public class Manufacturer {
 	}
 
 	public List<OrderContainer> getPendingOrderContainers() {
-		return this.productionSchedule.getPendingOrderContainers();
+		return this.getProductionSchedule().getPendingOrderContainers();
 	}
 
 	public Model[] getModels() {
