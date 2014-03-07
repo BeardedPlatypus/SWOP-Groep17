@@ -147,7 +147,7 @@ public class ProductionSchedule {
 	 * 		| !model.isValidSpecifications(specs)
 	 */
 public void addNewOrder(Model model, Specification specs) throws NullPointerException, IllegalArgumentException{
-		int curPos = this.getPendingOrderContainers().size() + this.getAssemblyLine().getSize();
+		int curPos = this.getPendingOrderContainers().size() + this.getAssemblyLine().getAmountOfWorkPosts();
 		
 		Order newOrder = makeNewOrder(model, specs, 
 				                      this.getCurrentOrderIdentifier(),
