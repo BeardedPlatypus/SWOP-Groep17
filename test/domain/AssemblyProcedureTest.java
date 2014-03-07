@@ -10,16 +10,23 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@RunWith(PowerMockRunner.class)
 public class AssemblyProcedureTest {
 	
 	@Rule public ExpectedException exception = ExpectedException.none();
 	
 	@Mock Order order;
-	@Mock AssemblyProcedure procedure;
+	@Mock Model model;
+	@Mock Specification specs;
+	@Mock Option option;
+	
+	AssemblyProcedure procedure;
 	
 	AssemblyTask color = new AssemblyTask("blue", "Paint the car blue", TaskType.BODY, 0);
 	AssemblyTask engine = new AssemblyTask("4 cilinders", "Install standard 2l 4 cilinders", TaskType.DRIVETRAIN, 0);
@@ -33,6 +40,8 @@ public class AssemblyProcedureTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		
+		procedure = Mockito.spy(new AssemblyProcedure(order));
+		
 		List<AssemblyTaskContainer> bodyTasks = new ArrayList<AssemblyTaskContainer>();
 		bodyTasks.add(color);
 		bodyTasks.add(body);
@@ -45,10 +54,23 @@ public class AssemblyProcedureTest {
 		
 	}
 	
+//	@Test
+//	public void constructor_NullOrderTest() {
+//		exception.expect(IllegalArgumentException.class);
+//		new AssemblyProcedure(null);
+//	}
+	
 	@Test
-	public void constructor_NullOrderTest() {
+	public void completeTask_negativeIntTask() {
+		
 		exception.expect(IllegalArgumentException.class);
-		new AssemblyProcedure(null);
+		procedure.completeTask(-1, TaskType.BODY);
+		
 	}
+	
+//	@Test
+//	public void completeTask_TooBigIntTask() {
+//		
+//	}
 
 }
