@@ -21,26 +21,56 @@ public class NewOrderSessionHandler {
 		this.manufacturer = manufacturer;
 	}
 	
-	/** The manufacturer of this NewOrderSessionHandler */
+	/**
+	 * The manufacturer of this NewOrderSessionHandler
+	 */
 	private Manufacturer manufacturer;
 	
+	/**
+	 * A getter for the manufacturer for internal use
+	 * 
+	 * @return
+	 * 		the manufacturer in this class
+	 */
 	private Manufacturer getManufacturer() {
 		return manufacturer;
 	}
 
+	/**
+	 * Gets a list of completed orders in the system from the manufacturer
+	 * 
+	 * @return
+	 * 		a list of completed orders in the system
+	 * 		
+	 */
 	public List<OrderContainer> getCompletedOrders() {
 		return getManufacturer().getCompletedOrderContainers();
 	}
 
+	/**
+	 * Gets a list of pending orders in the system from the manufacturer
+	 * 
+	 * @return
+	 * 		a list of pending orders in the system
+	 * 		
+	 */
 	public List<OrderContainer> getPendingOrders() {
 		return getManufacturer().getPendingOrderContainers();
 	}
 
 	public void startNewOrder() {
-		throw new UnsupportedOperationException();
+		// TODO
 	}
 
-	public void chooseModelAndOptions(Object model, Object specifications) {
-		throw new UnsupportedOperationException();
+	/**
+	 * Sends the chosen model and specifications from the UI to the manufacturer for registering a new order in the system
+	 * 
+	 * @param model
+	 * 		The chosen model for the new order
+	 * @param specifications
+	 * 		The chosen model specifications for the new order
+	 */
+	public void chooseModelAndSpecifications(Model model, Specification specifications) {
+		this.getManufacturer().createOrder(model, specifications);
 	}
 }
