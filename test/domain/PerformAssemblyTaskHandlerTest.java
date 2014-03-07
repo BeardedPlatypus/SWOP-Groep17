@@ -42,11 +42,11 @@ public class PerformAssemblyTaskHandlerTest {
 	
 	@Test
 	public void getWorkPostsTest() {
-		List<WorkPost> array = new ArrayList<WorkPost>();
+		List<WorkPostContainer> array = new ArrayList<WorkPostContainer>();
 		array.add(this.workPost1);
 		Mockito.when(this.assemblyLine.getWorkPosts()).thenReturn(array);
 		
-		List<WorkPost> returnVal = handler.getWorkPosts();
+		List<WorkPostContainer> returnVal = handler.getWorkPosts();
 		assertTrue(returnVal.contains(workPost1));
 		assertFalse(returnVal.contains(workPost2));
 	}

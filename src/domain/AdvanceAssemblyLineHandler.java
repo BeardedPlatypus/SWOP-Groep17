@@ -1,6 +1,7 @@
 package domain;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AdvanceAssemblyLineHandler {
 	private AssemblyLine assemblyLine;
@@ -9,12 +10,16 @@ public class AdvanceAssemblyLineHandler {
 		this.assemblyLine = assemblyLine;
 	}
 	
-	public ArrayList<AssemblyProcedureContainer> getCurrentAssemblyLineStatus() {
-		return assemblyLine.getCurrentAssembly();
+	public List<WorkPostContainer> getWorkPostLayout(){
+		return assemblyLine.getWorkPosts();
 	}
 	
-	public ArrayList<AssemblyProcedureContainer> getFutureAssemblyLineStatus() {
-		return assemblyLine.getFutureAssembly();
+	public List<AssemblyProcedureContainer> getCurrentActiveAssemblies() {
+		return assemblyLine.getCurrentActiveAssemblies();
+	}
+	
+	public List<AssemblyProcedureContainer> getFutureActiveAssemblies() {
+		return assemblyLine.getFutureActiveAssemblies();
 	}
 	
 	public void tryAdvance(int Time) {

@@ -7,8 +7,8 @@ public class WorkPost implements WorkPostContainer {
 	
 	private String name;
 	private int workPostNum;
-	public TaskType workPostType;
-	public AssemblyProcedure activeAssembly;
+	private TaskType workPostType;
+	private AssemblyProcedure activeAssembly;
 	
 	/**
 	 * Initialises a new work post with the given work post type.
@@ -34,14 +34,18 @@ public class WorkPost implements WorkPostContainer {
 		return this.workPostType;
 	}
 
-	public List<AssemblyTaskContainer> getAssemblyTasks() {
+	public List<AssemblyTaskContainer> getMatchingAssemblyTasks() {
 		if (this.getAssemblyProcedure() == null) {
 			return new ArrayList<AssemblyTaskContainer>();
 		}
 		return this.activeAssembly.getAssemblyTasks(this.getTaskType());
 	}
 	
-	public AssemblyProcedure getAssemblyProcedure() {
+	protected AssemblyProcedure getAssemblyProcedure(){
+		return activeAssembly;
+	}
+	
+	public AssemblyProcedureContainer getAssemblyProcedureContainer() {
 		return this.activeAssembly;
 	}
 	

@@ -45,24 +45,23 @@ public class WorkPostTest {
 		Mockito.when(assemblyTaskInfo2.getTaskType()).thenReturn(workPostType);
 		Mockito.when(assemblyTaskInfo3.getTaskType()).thenReturn(wrongWorkPostType);
 		
-		this.workPost = new WorkPost(this.workPostType);
+		this.workPost = new WorkPost(this.workPostType, 0);
 	}
 
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void constructor_NullTaskTypeTest() {
-		exception.expect(IllegalArgumentException.class);
-		new WorkPost(null);
+		new WorkPost(null, 0);
 	}
 	
 	@Test
 	public void constructor_ValidTaskTypeTest() {
-		WorkPost workPost = new WorkPost(TaskType.BODY);
+		WorkPost workPost = new WorkPost(TaskType.BODY, 0);
 		assertEquals(workPost.getTaskType(), TaskType.BODY);
 	}
 	
 	@Test
 	public void getAssemblyTaskInfosTest_noAssemblyAssigned() {
-		List<AssemblyTaskContainer> infos = workPost.getAssemblyTasks();
+		List<AssemblyTaskContainer> infos = workPost.getMatchingAssemblyTasks();
 		assertTrue(infos.isEmpty());
 	}
 	
@@ -70,7 +69,7 @@ public class WorkPostTest {
 	public void getAssemblyTaskInfosTest_assemblyAssigned() {
 		workPost.setAssemblyProcedure(assemblyProcedure);
 		
-		List<AssemblyTaskContainer> infos = workPost.getAssemblyTasks();
+		List<AssemblyTaskContainer> infos = workPost.getMatchingAssemblyTasks();
 		assertTrue(infos.contains(assemblyTaskInfo1));
 		assertTrue(infos.contains(assemblyTaskInfo2));
 		assertFalse(infos.contains(assemblyTaskInfo3));

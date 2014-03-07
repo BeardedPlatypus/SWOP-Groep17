@@ -33,11 +33,11 @@ public class AssemblyProcedureTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		
-		List<AssemblyTask> bodyTasks = new ArrayList<AssemblyTask>();
+		List<AssemblyTaskContainer> bodyTasks = new ArrayList<AssemblyTaskContainer>();
 		bodyTasks.add(color);
 		bodyTasks.add(body);
 		
-		List<AssemblyTask> drivetrainTasks = new ArrayList<AssemblyTask>();
+		List<AssemblyTaskContainer> drivetrainTasks = new ArrayList<AssemblyTaskContainer>();
 		bodyTasks.add(engine);
 		
 		Mockito.when(procedure.getAssemblyTasks(TaskType.BODY)).thenReturn(bodyTasks);
@@ -49,11 +49,6 @@ public class AssemblyProcedureTest {
 	public void constructor_NullOrderTest() {
 		exception.expect(IllegalArgumentException.class);
 		new AssemblyProcedure(null);
-	}
-
-	@Test
-	public void test() {
-		fail("Not yet implemented");
 	}
 
 }

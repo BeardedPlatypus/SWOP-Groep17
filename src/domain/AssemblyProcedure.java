@@ -3,7 +3,7 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AssemblyProcedure {
+public class AssemblyProcedure implements AssemblyProcedureContainer {
 	
 	private ArrayList<AssemblyTask> tasks = new ArrayList<AssemblyTask>();
 	private Order assemblyOrder;
@@ -34,6 +34,10 @@ public class AssemblyProcedure {
 		return this.assemblyOrder;
 	}
 
+	public List<AssemblyTaskContainer> getAssemblyTasks(){
+		return new ArrayList<AssemblyTaskContainer>(tasks);
+	}
+	
 	public List<AssemblyTaskContainer> getAssemblyTasks(TaskType taskType) {
 		ArrayList<AssemblyTaskContainer> typeTasks = new ArrayList<AssemblyTaskContainer>();
 		for(AssemblyTaskContainer task : tasks){
