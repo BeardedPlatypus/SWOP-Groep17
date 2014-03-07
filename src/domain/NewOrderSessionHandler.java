@@ -24,12 +24,16 @@ public class NewOrderSessionHandler {
 	/** The manufacturer of this NewOrderSessionHandler */
 	private Manufacturer manufacturer;
 	
+	private Manufacturer getManufacturer() {
+		return manufacturer;
+	}
+
 	public List<OrderContainer> getCompletedOrders() {
-		throw new UnsupportedOperationException();
+		return getManufacturer().getCompletedOrderContainers();
 	}
 
 	public List<OrderContainer> getPendingOrders() {
-		return this.manufacturer.getPendingOrderContainers();
+		return getManufacturer().getPendingOrderContainers();
 	}
 
 	public void startNewOrder() {
