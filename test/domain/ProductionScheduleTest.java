@@ -65,7 +65,7 @@ public class ProductionScheduleTest {
 		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
 		Mockito.when(spiedProdSched.getCurrentTime()).thenReturn(dt0);
 
-		Mockito.when(assemblyCokeLine.getSize()).thenReturn(3);
+		Mockito.when(assemblyCokeLine.getAmountOfWorkPosts()).thenReturn(3);
 		
 		Mockito.when(spiedProdSched.getEstimatedCompletionTime(3)).thenReturn(dt1);
 		Mockito.when(spiedProdSched.getEstimatedCompletionTime(4)).thenReturn(dt2);
