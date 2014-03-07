@@ -91,7 +91,7 @@ public class AssemblyLine {
 
 	public void tryAdvance(int time) throws IllegalStateException{
 		ArrayList<AssemblyTaskContainer> tasks = new ArrayList<>();
-		for(WorkPost post : workPosts){
+		for(WorkPostContainer post : getWorkPosts()){
 			tasks.addAll(post.getMatchingAssemblyTasks());
 		}
 		for(AssemblyTaskContainer task : tasks){
