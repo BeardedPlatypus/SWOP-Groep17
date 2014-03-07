@@ -5,15 +5,15 @@ import java.util.List;
 
 public class AssemblyProcedure implements AssemblyProcedureContainer {
 	
-	private ArrayList<AssemblyTask> tasks = new ArrayList<AssemblyTask>();
+	private List<AssemblyTask> tasks;
 	private Order assemblyOrder;
 	
-	public AssemblyProcedure(Order order) throws IllegalArgumentException {
+	public AssemblyProcedure(Order order, List<AssemblyTask> tasks) throws IllegalArgumentException {
 		if (order == null) {
 			throw new IllegalArgumentException("Cannot initialise an assembly procedure with non-existent order.");
 		}
 		this.assemblyOrder = order;
-		this.generateTasks();
+		this.tasks = tasks;
 	}
 
 	private void generateTasks() {
