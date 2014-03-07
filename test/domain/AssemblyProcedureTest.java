@@ -54,6 +54,12 @@ public class AssemblyProcedureTest {
 		
 	}
 	
+	@Test
+	public void generateTasks_invalidSpecs() {
+		Mockito.when(model.isValidSpecification(specs)).thenReturn(false);
+		
+	}
+	
 //	@Test
 //	public void constructor_NullOrderTest() {
 //		exception.expect(IllegalArgumentException.class);
