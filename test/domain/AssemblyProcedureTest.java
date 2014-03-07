@@ -22,16 +22,14 @@ public class AssemblyProcedureTest {
 	@Rule public ExpectedException exception = ExpectedException.none();
 	
 	@Mock Order order;
-	@Mock Model model;
-	@Mock Specification specs;
-	@Mock Option option;
 	
 	AssemblyProcedure procedure;
 	
-	AssemblyTask color = new AssemblyTask("blue", "Paint the car blue", TaskType.BODY, 0);
-	AssemblyTask engine = new AssemblyTask("4 cilinders", "Install standard 2l 4 cilinders", TaskType.DRIVETRAIN, 0);
-	AssemblyTask body = new AssemblyTask("sedan", "Assemble a sedan body", TaskType.BODY, 0);
-
+	AssemblyTask color;
+	AssemblyTask body;
+	AssemblyTask engine;
+	
+	List<AssemblyTask> tasks;
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
@@ -40,43 +38,57 @@ public class AssemblyProcedureTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		
-		procedure = Mockito.spy(new AssemblyProcedure(order));
+		color = new AssemblyTask("blue", "Paint the car blue", TaskType.BODY, 0);
+		body = new AssemblyTask("sedan", "Assemble a sedan body", TaskType.BODY, 1);
+		engine = new AssemblyTask("4 cilinders", "Install standard 2l 4 cilinders", TaskType.DRIVETRAIN, 2);
 		
-		List<AssemblyTaskContainer> bodyTasks = new ArrayList<AssemblyTaskContainer>();
-		bodyTasks.add(color);
-		bodyTasks.add(body);
+		tasks = new ArrayList<AssemblyTask>();
+		tasks.add(color);
+		tasks.add(body);
+		tasks.add(engine);
 		
-		List<AssemblyTaskContainer> drivetrainTasks = new ArrayList<AssemblyTaskContainer>();
-		bodyTasks.add(engine);
-		
-		Mockito.when(procedure.getAssemblyTasks(TaskType.BODY)).thenReturn(bodyTasks);
-		Mockito.when(procedure.getAssemblyTasks(TaskType.DRIVETRAIN)).thenReturn(drivetrainTasks);
-		
+		procedure = Mockito.spy(new AssemblyProcedure(order, tasks));
 	}
 	
 	@Test
-	public void generateTasks_invalidSpecs() {
-		Mockito.when(model.isValidSpecification(specs)).thenReturn(false);
-		
+	public void constructor_NullOrderTest() {
+		exception.expect(IllegalArgumentException.class);
+		new AssemblyProcedure(null, tasks);
 	}
-	
-//	@Test
-//	public void constructor_NullOrderTest() {
-//		exception.expect(IllegalArgumentException.class);
-//		new AssemblyProcedure(null);
-//	}
 	
 	@Test
 	public void completeTask_negativeIntTask() {
-		
 		exception.expect(IllegalArgumentException.class);
 		procedure.completeTask(-1, TaskType.BODY);
 		
 	}
 	
-//	@Test
-//	public void completeTask_TooBigIntTask() {
-//		
-//	}
+	@Test
+	public void completeTask_TooBigIntTask() {
+		exception.expect(IllegalArgumentException.class);
+		procedure.completeTask(3, TaskType.BODY);
+	}
+	
+	@Test
+	public void completeTask_WrongTaskType() {
+		exception.expect(IllegalArgumentException.class);
+		procedure.completeTask(2, TaskType.BODY);
+	}
+	
+	@Test
+	public void completeTask_valid() {
+		assertFalse(body.isCompleted());
+		procedure.completeTask(1, TaskType.BODY);
+		assertTrue(body.isCompleted());
+	}
+	
+	@Test
+	public void getTasksOfType_test() {
+		List<AssemblyTaskContainer> containers = procedure.getAssemblyTasks(TaskType.BODY);
+		assertEquals(containers.size(), 2);
+		assertSame(containers.get(0), color);
+		assertSame(containers.get(1), body);
+		assertFalse(containers.contains(engine));
+	}
 
 }

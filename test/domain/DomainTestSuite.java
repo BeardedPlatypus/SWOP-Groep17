@@ -5,7 +5,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ AssemblyTaskTest.class,
+@SuiteClasses({ AssemblyProcedureTest.class,
+				AssemblyTaskTest.class,
 				DateTimeTest.class, 
 				ManufacturerTest.class,
 				ModelCatalogTest.class,

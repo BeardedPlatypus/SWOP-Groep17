@@ -3,65 +3,65 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An assembly procedure specifies a sequence of tasks that must be completed in order to fulfill an order.
+ * 
+ * @invariant getAssemblyTasks() != null
+ * @invariant getOrder() != null && getOrderContainer != null
+ *
+ */
 public class AssemblyProcedure implements AssemblyProcedureContainer {
 	
+	/**
+	 * The tasks that this procedure contains
+	 */
 	private final List<AssemblyTask> tasks;
+	
+	/**
+	 * The order that this procedure fulfills.
+	 */
 	private final Order assemblyOrder;
 	
-	public AssemblyProcedure(Order order) throws IllegalArgumentException {
+	/**
+	 * Initialises the new procedure with the given order and the given tasks.
+	 * @param order
+	 * 		The order that this procedure fulfills.
+	 * @param tasks
+	 * 		The sequence of tasks that must be performed in order to fulfill the given order.
+	 * @throws IllegalArgumentException
+	 */
+	public AssemblyProcedure(Order order, List<AssemblyTask> tasks) throws IllegalArgumentException {
 		if (order == null) {
 			throw new IllegalArgumentException("Cannot initialise an assembly procedure with non-existent order.");
 		}
-		this.assemblyOrder = order;
-		this.tasks = this.generateTasksFrom(order);
-	}
-
-	/**
-	 * Generate a list of AssemblyTasks from the specified order.
-	 * 
-	 * @param order
-	 * 		The order from which the list of AssemblyTasks is created.
-	 * 
-	 * @precondition
-	 * 		order != null  
-	 * @return A list of assembly tasks based on the specified order.
-	 * @throws IllegalStateException
-	 * 		! order.getModel().isValidSpecification(order.getSpecifications())
-	 */
-	protected List<AssemblyTask> generateTasksFrom(OrderContainer order) throws IllegalStateException {
-		Specification orderSpecs = order.getSpecifications();
-		Model orderModel = order.getModel();
-		
-		if(!orderModel.isValidSpecification(orderSpecs))
-			throw new IllegalStateException("This order does not have matching specifications and model.");
-		
-		List<AssemblyTask> toReturn = new ArrayList<AssemblyTask>();
-		
-		for(int i = 0; i < orderSpecs.getAmountofSpecs(); i++){
-			Option currentOption = orderModel.getModelOption(i);
-			String choiceName = currentOption.getChoiceName(orderSpecs.getSpec(i));
-			String taskName = currentOption.getOptionName() + " - " + choiceName;
-			
-			toReturn.add(makeAssemblyTask(taskName,
-										  currentOption.getOptionActionDescription(),
-										  currentOption.getType(), i));
+		if (tasks == null) {
+			throw new IllegalArgumentException("Cannot initialise an assembly procedure with non-existent tasks.");
 		}
-		return toReturn;
+		this.assemblyOrder = order;
+		this.tasks = tasks;
 	}
 	
-	protected AssemblyTask makeAssemblyTask(String taskName, String actionDescription,
-											TaskType taskType, int index) {
-		return new AssemblyTask(taskName, actionDescription, taskType, index);
-	}
-	
+	/**
+	 * Get the order fulfilled by this assembly procedure.
+	 */
 	public Order getOrder() {
 		return this.assemblyOrder;
 	}
 
+	/**
+	 * Gets the views of the tasks specified by this procedure.
+	 */
 	public List<AssemblyTaskContainer> getAssemblyTasks(){
 		return new ArrayList<AssemblyTaskContainer>(tasks);
 	}
 	
+	/**
+	 * Gets the views of the tasks specified by this procedure that are of the given type.
+	 * @param taskType
+	 * 		The type of task to include in the result.
+	 * @return
+	 * 		A list of task views that are of the given type.
+	 */
 	public List<AssemblyTaskContainer> getAssemblyTasks(TaskType taskType) {
 		ArrayList<AssemblyTaskContainer> typeTasks = new ArrayList<AssemblyTaskContainer>();
 		for(AssemblyTaskContainer task : this.getAssemblyTasks()){
@@ -94,6 +94,9 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 		tasks.get(intTask).setCompleted(true);
 	}
 
+	/**
+	 * Gets a view of the order fulfilled by this assembly procedure.
+	 */
 	public OrderContainer getOrderContainer() {
 		return this.getOrder();
 	}

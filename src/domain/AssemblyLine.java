@@ -96,4 +96,42 @@ public class AssemblyLine {
 	private AssemblyProcedure makeProcedure(Order order){
 		return new AssemblyProcedure(order);
 	}
+	
+	/**
+	 * Generate a list of AssemblyTasks from the specified order.
+	 * 
+	 * @param order
+	 * 		The order from which the list of AssemblyTasks is created.
+	 * 
+	 * @precondition
+	 * 		order != null  
+	 * @return A list of assembly tasks based on the specified order.
+	 * @throws IllegalStateException
+	 * 		! order.getModel().isValidSpecification(order.getSpecifications())
+	 */
+	protected List<AssemblyTask> generateTasksFrom(OrderContainer order) throws IllegalStateException {
+		Specification orderSpecs = order.getSpecifications();
+		Model orderModel = order.getModel();
+		
+		if(!orderModel.isValidSpecification(orderSpecs))
+			throw new IllegalStateException("This order does not have matching specifications and model.");
+		
+		List<AssemblyTask> toReturn = new ArrayList<AssemblyTask>();
+		
+		for(int i = 0; i < orderSpecs.getAmountofSpecs(); i++){
+			Option currentOption = orderModel.getModelOption(i);
+			String choiceName = currentOption.getChoiceName(orderSpecs.getSpec(i));
+			String taskName = currentOption.getOptionName() + " - " + choiceName;
+			
+			toReturn.add(makeAssemblyTask(taskName,
+										  currentOption.getOptionActionDescription(),
+										  currentOption.getType(), i));
+		}
+		return toReturn;
+	}
+	
+	protected AssemblyTask makeAssemblyTask(String taskName, String actionDescription,
+			TaskType taskType, int index) {
+			return new AssemblyTask(taskName, actionDescription, taskType, index);
+	}
 }
