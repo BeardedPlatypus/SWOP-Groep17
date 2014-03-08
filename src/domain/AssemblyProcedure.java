@@ -44,6 +44,7 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 	/**
 	 * Get the order fulfilled by this assembly procedure.
 	 */
+	@Override
 	public Order getOrder() {
 		return this.assemblyOrder;
 	}
@@ -51,6 +52,7 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 	/**
 	 * Gets the views of the tasks specified by this procedure.
 	 */
+	@Override
 	public List<AssemblyTaskContainer> getAssemblyTasks(){
 		return new ArrayList<AssemblyTaskContainer>(tasks);
 	}
@@ -81,7 +83,7 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 	 * @post let task = this.getAssemblyTasks(taskType).get(intTask) in
 	 * 			! task.isCompleted() => (new task).isCompleted() == true
 	 * @throws IllegalArgumentException
-	 * 		An invalid task number is supplied | 0 > intTask || intTask > getAssemblyTasks.size()
+	 * 		An invalid task number is supplied | 0 > intTask || intTask >= getAssemblyTasks.size()
 	 * @throws IllegalArgumentException
 	 * 		A task of a type different from taskType was selected
 	 */
