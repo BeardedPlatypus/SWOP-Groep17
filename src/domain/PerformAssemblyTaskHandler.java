@@ -3,7 +3,8 @@ package domain;
 import java.util.List;
 
 /**
- * Coordinates with the outside world in order to complete tasks at a single work post.
+ * Coordinates with the outside world in order to complete assembly tasks of a single workpost.
+ * 
  *
  */
 public class PerformAssemblyTaskHandler {
@@ -11,7 +12,7 @@ public class PerformAssemblyTaskHandler {
 	/**
 	 * The assembly line this handler operates on.
 	 */
-	public AssemblyLine assemblyLine;
+	private AssemblyLine assemblyLine;
 
 	/**
 	 * Instantiates a new handler with the given assembly line.
@@ -28,18 +29,20 @@ public class PerformAssemblyTaskHandler {
 	}
 	
 	/**
-	 * Gets views of the work posts part of this handler's assembly line.
+	 * 
+	 * Gets views of the contained assembly line's work posts.
 	 */
 	public List<WorkPostContainer> getWorkPosts() {
 		return this.assemblyLine.getWorkPosts();
 	}
-
+	
 	/**
-	 * Gets views of the tasks that are relevant to the specified work post.
+	 * Gets views of the tasks at the specified work post.
 	 * @param workPostNumber
-	 * 		The number of the work post.
-	 * @throws IllegalArgumentException
-	 * 		workPostNumber refers to a work post that does not exist.
+	 * 		Specifies the work post of interest.
+	 * @return
+	 * 		A list of tasks at the specified work post.
+	 * @throws workPostNumber refers to a work post that does not exist.
 	 */
 	public List<AssemblyTaskContainer> getAssemblyTasksAtPost(int workPostNumber) throws IllegalArgumentException {
 		return this.assemblyLine.getAssemblyTasksAtPost(workPostNumber);
@@ -59,7 +62,7 @@ public class PerformAssemblyTaskHandler {
 	 * 		taskNumber refers to a task with a type incompatible with the given
 	 * 		work post.
 	 */
-	public void completeWorkpostTask(int workPostNumber, int taskNumber) {
+	public void completeWorkpostTask(int workPostNumber, int taskNumber) throws IllegalArgumentException {
 		this.assemblyLine.completeWorkpostTask(workPostNumber, taskNumber);
 	}
 }

@@ -14,6 +14,7 @@ import org.junit.runners.Suite.SuiteClasses;
 				NewOrderSessionHandlerTest.class,
 				OptionTest.class,
 	            OrderTest.class,
+	            PerformAssemblyTaskHandlerTest.class,
 	            ProductionScheduleTest.class,
 	            SpecificationTest.class,
 	            WorkPostTest.class })

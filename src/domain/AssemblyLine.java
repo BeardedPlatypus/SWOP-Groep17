@@ -17,6 +17,30 @@ import com.sun.corba.se.spi.ior.MakeImmutable;
  *
  */
 public class AssemblyLine {
+	
+	/**
+	 * Instantiates a new assembly line with the given production schedule
+	 * @param productionSchedule
+	 * 		Production schedule from which the new assembly line will accept orders.
+	 * @throws IllegalArgumentException
+	 * 		productionSchedule == null
+	 */
+	public AssemblyLine(ProductionSchedule productionSchedule) throws IllegalArgumentException {
+		if (productionSchedule == null) {
+			throw new IllegalArgumentException();
+		}
+		this.productionSchedule = productionSchedule;
+		
+		this.workPosts = new ArrayList<WorkPost>();
+		int workPostNum = 0;
+		
+		for (TaskType type : TaskType.values()) {
+			WorkPost newPost = new WorkPost(type, workPostNum);
+			workPostNum++;
+			this.workPosts.add(newPost);
+		}
+	}
+	
 	/**
 	 * The production schedule this assembly line works for
 	 */
@@ -24,7 +48,7 @@ public class AssemblyLine {
 	/**
 	 * The workposts which compose this assembly line, in their respective orders in the list as they are ordered in the assembly line's layout
 	 */
-	private ArrayList<WorkPost> workPosts = new ArrayList<WorkPost>();
+	private List<WorkPost> workPosts;
 	/**
 	 * An extra location at the end of the assembly line where a finished assembly that just came from the last workpost resides until it is collected 
 	 */
@@ -197,7 +221,7 @@ public class AssemblyLine {
 	 * @return
 	 * 		The wanted workpost
 	 */
-	private WorkPost getWorkPost(int workPostNumber){
+	protected WorkPost getWorkPost(int workPostNumber){
 		if(workPostNumber < 0 || workPostNumber >= workPosts.size())
 			throw new IllegalArgumentException("Argument is not an existing workpost.");
 		return workPosts.get(workPostNumber);
