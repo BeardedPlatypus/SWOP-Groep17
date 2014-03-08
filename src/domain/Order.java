@@ -126,6 +126,7 @@ public class Order implements OrderContainer{
 	 * @return the (estimated) completion time of this Order.
 	 */
 	//@Basic
+	@Override
 	public DateTime getEstimatedCompletionTime() {
 		return this.estimatedCompletionTime;
 	}
