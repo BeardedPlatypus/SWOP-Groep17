@@ -3,6 +3,7 @@ package domain;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A model class is a class representing a car model. Has a set of possible options chosen when a car
@@ -24,7 +25,7 @@ public class Model {
 	/**
 	 * A list of all options that have to be decided when ordering a new car.
 	 */
-	private ArrayList<Option> options = new ArrayList<Option>();
+	private List<Option> options = new ArrayList<Option>();
 	
 	/**
 	 * 
@@ -40,7 +41,7 @@ public class Model {
 	 * @param options
 	 * 		Arraylist containing all the options this model should offer
 	 */
-	public Model(String modelName, ArrayList<Option> options){
+	public Model(String modelName, List<Option> options){
 		this.modelName = modelName;
 		this.options = new ArrayList<Option>(options);
 	}
