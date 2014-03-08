@@ -156,7 +156,8 @@ public class AssemblyLine {
 	 * 		An assembly procedure based on the given order
 	 */
 	private AssemblyProcedure createNewAssemblyProcedure(Order nextOrder) {
-		return new AssemblyProcedure(nextOrder);
+		List<AssemblyTask> tasks = this.generateTasksFrom(nextOrder);
+		return new AssemblyProcedure(nextOrder, tasks);
 	}
 
 	/**
