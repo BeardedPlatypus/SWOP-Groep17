@@ -13,7 +13,7 @@ public class PerformAssemblyTaskHandler {
 	/**
 	 * Contains the workposts.
 	 */
-	public AssemblyLine assemblyLine;
+	private AssemblyLine assemblyLine;
 
 	/**
 	 * Initialises this handler with the given assembly line.
@@ -31,17 +31,37 @@ public class PerformAssemblyTaskHandler {
 	}
 	
 	/**
-	 * Returns views of the contained assembly line's work posts.
+	 * Gets views of the contained assembly line's work posts.
 	 */
 	public List<WorkPostContainer> getWorkPosts() {
 		return this.assemblyLine.getWorkPosts();
 	}
-
-	public List<AssemblyTaskContainer> getAssemblyTasksAtPost(int workPostNumber) {
+	
+	/**
+	 * Gets views of the tasks at the specified work post.
+	 * @param workPostNumber
+	 * 		Specifies the work post of interest.
+	 * @return
+	 * 		A list of tasks at the specified work post.
+	 * @throws workPostNumber refers to a work post that does not exist.
+	 */
+	public List<AssemblyTaskContainer> getAssemblyTasksAtPost(int workPostNumber) throws IllegalArgumentException {
 		return this.assemblyLine.getAssemblyTasksAtPost(workPostNumber);
 	}
 
-	public void completeWorkpostTask(int workPostNumber, int taskNumber) {
+	/**
+	 * Completes the specified task at the specified work post. Has no effect
+	 * if the specified task has already been completed.
+	 * @param workPostNumber
+	 * 		The number of the work post of which a task is to be completed.
+	 * @param taskNumber
+	 * 		The number of the task to be completed.
+	 * @throws IllegalArgumentException
+	 * 		workPostNumber refers to a work post that does not exist.
+	 * @throws IllegalArgumentException
+	 * 		taskNumber refers to a task that does not exist.
+	 */
+	public void completeWorkpostTask(int workPostNumber, int taskNumber) throws IllegalArgumentException {
 		this.assemblyLine.completeWorkpostTask(workPostNumber, taskNumber);
 	}
 }

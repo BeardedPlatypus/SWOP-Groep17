@@ -221,7 +221,7 @@ public class AssemblyLine {
 	 * @return
 	 * 		The wanted workpost
 	 */
-	private WorkPost getWorkPost(int workPostNumber){
+	protected WorkPost getWorkPost(int workPostNumber){
 		if(workPostNumber < 0 || workPostNumber >= workPosts.size())
 			throw new IllegalArgumentException("Argument is not an existing workpost.");
 		return workPosts.get(workPostNumber);
