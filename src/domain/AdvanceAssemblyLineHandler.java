@@ -6,6 +6,8 @@ public class AdvanceAssemblyLineHandler {
 	private AssemblyLine assemblyLine;
 
 	public AdvanceAssemblyLineHandler(AssemblyLine assemblyLine){
+		if(assemblyLine == null)
+			throw new IllegalArgumentException("AssemblyLine should not be null.");
 		this.assemblyLine = assemblyLine;
 	}
 	
