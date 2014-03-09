@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A class for work posts that are part of an assembly line.
+ * A class for workposts that are part of an assembly line.
+ * A workpost has a type, and a name, derived from its type.
+ * It also has a number, which depicts it's relative order in the assemblyline.
  */
 
 public class WorkPost implements WorkPostContainer {
@@ -12,7 +14,7 @@ public class WorkPost implements WorkPostContainer {
 	/**
 	 * The work post's name.
 	 */
-	private String name;
+	private final String name;
 	
 	/**
 	 * The work post's number.
@@ -22,7 +24,7 @@ public class WorkPost implements WorkPostContainer {
 	/**
 	 * The work post's type.
 	 */
-	private TaskType workPostType;
+	private final TaskType workPostType;
 	
 	/**
 	 * The assembly procedure the work post is currently working on.
@@ -48,11 +50,20 @@ public class WorkPost implements WorkPostContainer {
 	
 	/**
 	 * Getter for the work post type.
+	 * 
+	 * @return
+	 * 		The type of this workpost
 	 */
 	public TaskType getTaskType() {
 		return this.workPostType;
 	}
 
+	/**
+	 * Queries the Assembly task of this workpost for tasks matching the workpost's type.
+	 * 
+	 * @return
+	 * 		A list of assembly tasks from the assembly procedure with the same type as this workpost
+	 */
 	@Override
 	public List<AssemblyTaskContainer> getMatchingAssemblyTasks() {
 		if (this.getAssemblyProcedure() == null) {
@@ -72,6 +83,9 @@ public class WorkPost implements WorkPostContainer {
 	/**
 	 * Gets a view of the assembly procedure that this work post
 	 * is currently working on.
+	 * 
+	 * @return
+	 * 		the active assembly procedure as a container
 	 */
 	public AssemblyProcedureContainer getAssemblyProcedureContainer() {
 		return this.activeAssembly;
@@ -80,6 +94,7 @@ public class WorkPost implements WorkPostContainer {
 	/**
 	 * Sets the assembly procedure for this work post to work on
 	 * to the given assembly procedure.
+	 * 
 	 * @param assemblyProcedure
 	 * 		The assembly procedure for this work post to work on.
 	 */
@@ -99,26 +114,47 @@ public class WorkPost implements WorkPostContainer {
 	 * 		work post's type.
 	 */
 	public void completeTask(int intTask) throws IllegalArgumentException {
-		this.activeAssembly.completeTask(intTask, this.getTaskType());
+		this.getAssemblyProcedure().completeTask(intTask, this.getTaskType());
 	}
 
 	/**
 	 * Gets a view of the order encapsulated in this work post's assembly procedure.
+	 * 
+	 * @return
+	 * 		The order in the active assembly as a container
 	 */
 	public OrderContainer getOrderContainer() {
 		return this.getAssemblyProcedure().getOrderContainer();
 	}
 	
+	/**
+	 * Returns the name string of the workpost
+	 * 
+	 * @return
+	 * 		The name of the workpost
+	 */
 	@Override
 	public String getName() {
 		return this.name;
 	}
 	
+	/**
+	 * Returns the number of the workpost
+	 * 
+	 * @return
+	 * 		The number of the workpost
+	 */
 	@Override
 	public int getWorkPostNumber() {
 		return this.workPostNum;
 	}
 
+	/**
+	 * Returns the type of the workpost
+	 * 
+	 * @return
+	 * 		The type of the workpost
+	 */
 	@Override
 	public TaskType getWorkPostType() {
 		return this.workPostType;
