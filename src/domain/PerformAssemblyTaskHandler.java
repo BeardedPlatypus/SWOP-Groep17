@@ -33,7 +33,7 @@ public class PerformAssemblyTaskHandler {
 	 * Gets views of the contained assembly line's work posts.
 	 */
 	public List<WorkPostContainer> getWorkPosts() {
-		return this.assemblyLine.getWorkPosts();
+		return this.assemblyLine.getWorkPostContainers();
 	}
 	
 	/**

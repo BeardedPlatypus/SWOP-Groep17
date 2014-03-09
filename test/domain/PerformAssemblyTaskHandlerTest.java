@@ -84,7 +84,7 @@ public class PerformAssemblyTaskHandlerTest {
 	public void getWorkPostsTest() {
 		List<WorkPostContainer> array = new ArrayList<WorkPostContainer>();
 		array.add(this.workPost1);
-		Mockito.when(this.assemblyLine.getWorkPosts()).thenReturn(array);
+		Mockito.when(this.assemblyLine.getWorkPostContainers()).thenReturn(array);
 		
 		List<WorkPostContainer> returnVal = handler.getWorkPosts();
 		assertTrue(returnVal.contains(workPost1));
