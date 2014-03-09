@@ -3,8 +3,6 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.corba.se.spi.ior.MakeImmutable;
-
 /**
  * 
  * A class depicting an assembly line in the system. An assembly line is composed of a number of workposts.

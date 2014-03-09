@@ -2,8 +2,6 @@ package domain;
 
 import java.util.List;
 
-import com.sun.media.sound.ModelConnectionBlock;
-
 public class NewOrderSessionHandler {
 	/* -------------------------------------------------------------------------
 	 * Constructors
