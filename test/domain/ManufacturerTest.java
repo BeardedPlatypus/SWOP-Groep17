@@ -49,17 +49,17 @@ public class ManufacturerTest {
 		Mockito.verify(this.mockProdSched).getPendingOrderContainers();
 	}
 	
-	@Test
-	public void constructorNormalTest() {
-		new Manufacturer(mockProdSched, mockModCat);
-		// TODO Te triviale test? Hoe maken we die avontuurlijker?
-	}
+//	@Test
+//	public void constructorNormalTest() {
+//		new Manufacturer(mockProdSched, mockModCat);
+//		// TODO Te triviale test? Hoe maken we die avontuurlijker?
+//	}
 	
-	@Test
-	public void constructorNullScheduleTest() {
-		exception.expect(IllegalArgumentException.class);
-		new Manufacturer(null, mockModCat);
-	}
+//	@Test
+//	public void constructorNullScheduleTest() {
+//		exception.expect(IllegalArgumentException.class);
+//		new Manufacturer(null, mockModCat);
+//	}
 	
 	@Test
 	public void constructorNullModelCatalogTest() {
