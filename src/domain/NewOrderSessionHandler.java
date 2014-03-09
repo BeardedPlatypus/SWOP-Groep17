@@ -2,6 +2,8 @@ package domain;
 
 import java.util.List;
 
+import com.sun.media.sound.ModelConnectionBlock;
+
 public class NewOrderSessionHandler {
 	/* -------------------------------------------------------------------------
 	 * Constructors
@@ -58,8 +60,16 @@ public class NewOrderSessionHandler {
 		return getManufacturer().getPendingOrderContainers();
 	}
 
-	public void startNewOrder() {
-		// TODO
+	/**
+	 * Indicates the user wants to order a car, so returns a list with the possible models the
+	 * manufacturer is able to make, and their respective options (embedded).
+	 * These models are immutable objects.
+	 * 
+	 * @return
+	 * 		The list of possible models to choose from, available in the system
+	 */
+	public List<Model> getNewOrderModels() {
+		return this.getManufacturer().getModels();
 	}
 
 	/**
