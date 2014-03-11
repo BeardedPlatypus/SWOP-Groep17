@@ -316,4 +316,19 @@ public class AssemblyLine {
 			TaskType taskType, int index) {
 			return new AssemblyTask(taskName, actionDescription, taskType, index);
 	}
+
+	/**
+	 * Makes a list of all workposts which still have matching tasks on their procedure that are unfinished.
+	 * 
+	 * @return
+	 * 		The list of workposts with unfinished tasks.
+	 */
+	public List<WorkPostContainer> getUnfinishedWorkPosts() {
+		List<WorkPostContainer> unfinishedWorkPosts = new ArrayList<>();
+		for( WorkPost post : getWorkPosts()){
+			if(!post.allMatchingTasksFinished())
+				unfinishedWorkPosts.add(post);
+		}
+		return unfinishedWorkPosts;
+	}
 }

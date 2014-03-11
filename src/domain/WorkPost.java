@@ -159,4 +159,20 @@ public class WorkPost implements WorkPostContainer {
 	public TaskType getWorkPostType() {
 		return this.workPostType;
 	}
+
+	/**
+	 * Checks whether or not all Assembly tasks that can be completed at this workpost on the current procedure
+	 * have been completed and returns this result.
+	 * 
+	 * @return
+	 * 		Whether or not all matching tasks of the current procedure are finished by the workpost
+	 */
+	public boolean allMatchingTasksFinished() {
+		List<AssemblyTaskContainer> matchingTasks = getMatchingAssemblyTasks();
+		for(AssemblyTaskContainer task : matchingTasks){
+			if(!task.isCompleted())
+				return false;
+		}
+		return true;
+	}
 }

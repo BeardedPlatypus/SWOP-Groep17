@@ -43,4 +43,14 @@ public class AdvanceAssemblyLineHandler {
 	public void tryAdvance(int Time) {
 		assemblyLine.tryAdvance(Time);
 	}
+	
+	/**
+	 * Queries the assembly line for workposts with assemblyprocedures where all matching tasks haven't been completed yet.
+	 * 
+	 * @return
+	 * 		The list of workposts.
+	 */
+	public List<WorkPostContainer> getUnfinishedWorkPosts(){
+		return assemblyLine.getUnfinishedWorkPosts();
+	}
 }
