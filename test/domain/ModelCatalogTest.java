@@ -5,6 +5,9 @@ package domain;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,7 +33,8 @@ public class ModelCatalogTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		this.modelCatalog = new ModelCatalog();
+		List<Model> list = new ArrayList<Model>(); 
+		this.modelCatalog = new ModelCatalog(list);
 	}
 
 	@Test

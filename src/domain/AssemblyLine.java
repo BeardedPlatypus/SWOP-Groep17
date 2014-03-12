@@ -30,6 +30,7 @@ public class AssemblyLine {
 			throw new IllegalArgumentException();
 		}
 		this.productionSchedule = productionSchedule;
+		productionSchedule.setAssemblyLine(this);
 		
 		this.workPosts = new ArrayList<WorkPost>();
 		int workPostNum = 0;
