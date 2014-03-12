@@ -16,7 +16,7 @@ public class Manufacturer {
 	/**
 	 * The ProductionSchedule this manufacturer uses for scheduling orders.
 	 */
-	private final ProductionSchedule productionSchedule;
+	private ProductionSchedule productionSchedule;
 	
 	/**
 	 * A list this class keeps of orders the assembly system has completed in the past.
@@ -31,22 +31,29 @@ public class Manufacturer {
 	/**
 	 * Constructor
 	 * 
-	 * Instantiates an object of the class with a given productionSchedule and modelCatalog.
+	 * Instantiates an object of the class with a given modelCatalog.
 	 * 
-	 * @param productionSchedule
-	 * 		The productionSchedule this manufacturer will use to schedule its orders for assembly
+	 * Binary association with schedule will be set by schedule.
+	 * 
 	 * @param modelCatalog
 	 * 		The modelCatalog of the manufacturer which contains the models this manufacturer can assemble.
 	 * @throws IllegalArgumentException
 	 * 		When either of the arguments is null.
 	 */
-	public Manufacturer(ProductionSchedule productionSchedule, ModelCatalog modelCatalog) throws IllegalArgumentException{
-//		if(productionSchedule == null)
-//			throw new IllegalArgumentException("productionSchedule is not allowed to be null when creating a new Manufacturer.");
+	public Manufacturer(ModelCatalog modelCatalog) throws IllegalArgumentException{
 		if(modelCatalog == null)
 			throw new IllegalArgumentException("modelCatalog is not allowed to be null when creating a new Manufacturer.");
-		this.productionSchedule = productionSchedule;
 		this.modelCatalog = modelCatalog;
+	}
+	
+	/**
+	 * Sets the production schedule to given schedule
+	 * 
+	 * @param productionSchedule
+	 * 		The productionSchedule this manufacturer will use to schedule its orders for assembly
+	 */
+	public void setProductionSchedule(ProductionSchedule productionSchedule){
+		this.productionSchedule = productionSchedule;
 	}
 	
 	/**
