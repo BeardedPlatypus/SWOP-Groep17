@@ -260,7 +260,7 @@ public class AssemblyLine {
 		if(this.finishedAssemblyProcedure != null)
 			throw new IllegalStateException("The last finished assembly is still not recovered from the end of the Assembly line.");
 		this.finishedAssemblyProcedure = getWorkPost(getAmountOfWorkPosts()-1).getAssemblyProcedure();
-		for(int i = workPosts.size()-1; i > 0 ; i++){
+		for(int i = workPosts.size()-1; i > 0 ; i--){
 			AssemblyProcedure shiftedProcedure = getWorkPost(i-1).getAssemblyProcedure();
 			getWorkPost(i).setAssemblyProcedure(shiftedProcedure);
 		}
