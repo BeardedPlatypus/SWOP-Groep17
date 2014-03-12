@@ -69,6 +69,7 @@ public class AssemblyTask implements AssemblyTaskContainer{
 	/**
 	 * Getter for this task's type.
 	 */
+	@Override
 	public TaskType getTaskType() {
 		return this.type;
 	}
@@ -76,6 +77,7 @@ public class AssemblyTask implements AssemblyTaskContainer{
 	/**
 	 * Getter for this task's name.
 	 */
+	@Override
 	public String getName() {
 		return this.name;
 	}
@@ -84,6 +86,7 @@ public class AssemblyTask implements AssemblyTaskContainer{
 	 * Getter for this task's action info. The action info is a brief description of what exactly must be done to
 	 * complete this task.
 	 */
+	@Override
 	public String getActionInfo() {
 		return this.actionInfo;
 	}
@@ -91,6 +94,7 @@ public class AssemblyTask implements AssemblyTaskContainer{
 	/**
 	 * Determines whether this task is held completed.
 	 */
+	@Override
 	public boolean isCompleted() {
 		return this.isCompleted;
 	}

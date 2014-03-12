@@ -42,7 +42,7 @@ public class OrderTest {
 		exception.expect(IllegalArgumentException.class);
 		
 		Mockito.when(this.mockSuperModel.isValidSpecification(spectacles)).thenReturn(false);
-		Order test = new Order(mockSuperModel, spectacles, 0, dt1, dt2);
+		new Order(mockSuperModel, spectacles, 0, dt1, dt2);
 		
 		Mockito.verify(this.mockSuperModel, Mockito.times(1));
 	}
@@ -50,25 +50,25 @@ public class OrderTest {
 	@Test 
 	public void test_constructorNullPointerExceptionModel() {
 		exception.expect(NullPointerException.class);
-		Order test = new Order(null, spectacles, 0, dt1, dt2);
+		new Order(null, spectacles, 0, dt1, dt2);
 	}
 	
 	@Test
 	public void test_constructorNullPointerExceptionSpecs() {
 		exception.expect(NullPointerException.class);
-		Order test = new Order(mockSuperModel, null, 0, dt1, dt2);
+		new Order(mockSuperModel, null, 0, dt1, dt2);
 	}
 
 	@Test
 	public void test_constructorNullPointerExceptionInitDateTime() {
 		exception.expect(NullPointerException.class);
-		Order test = new Order(mockSuperModel, spectacles, 0, null, dt2);		
+		new Order(mockSuperModel, spectacles, 0, null, dt2);		
 	}
 
 	@Test
 	public void test_constructorNullPointerExceptionCompletionDateTime() {
 		exception.expect(NullPointerException.class);
-		Order test = new Order(mockSuperModel, spectacles, 0, dt1, null);		
+		new Order(mockSuperModel, spectacles, 0, dt1, null);		
 	}
 
 	@Test

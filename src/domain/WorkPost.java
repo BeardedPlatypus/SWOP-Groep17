@@ -3,11 +3,32 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class for workposts that are part of an assembly line.
+ * A workpost has a type, and a name, derived from its type.
+ * It also has a number, which depicts it's relative order in the assemblyline.
+ */
+
 public class WorkPost implements WorkPostContainer {
 	
-	private String name;
+	/**
+	 * The work post's name.
+	 */
+	private final String name;
+	
+	/**
+	 * The work post's number.
+	 */
 	private int workPostNum;
-	private TaskType workPostType;
+	
+	/**
+	 * The work post's type.
+	 */
+	private final TaskType workPostType;
+	
+	/**
+	 * The assembly procedure the work post is currently working on.
+	 */
 	private AssemblyProcedure activeAssembly;
 	
 	/**
@@ -29,11 +50,21 @@ public class WorkPost implements WorkPostContainer {
 	
 	/**
 	 * Getter for the work post type.
+	 * 
+	 * @return
+	 * 		The type of this workpost
 	 */
 	public TaskType getTaskType() {
 		return this.workPostType;
 	}
 
+	/**
+	 * Queries the Assembly task of this workpost for tasks matching the workpost's type.
+	 * 
+	 * @return
+	 * 		A list of assembly tasks from the assembly procedure with the same type as this workpost
+	 */
+	@Override
 	public List<AssemblyTaskContainer> getMatchingAssemblyTasks() {
 		if (this.getAssemblyProcedure() == null) {
 			return new ArrayList<AssemblyTaskContainer>();
@@ -41,36 +72,107 @@ public class WorkPost implements WorkPostContainer {
 		return this.activeAssembly.getAssemblyTasks(this.getTaskType());
 	}
 	
+	/**
+	 * Gets the domain object version of the assembly procedure
+	 * that this work post is currently working on.
+	 */
 	protected AssemblyProcedure getAssemblyProcedure(){
 		return activeAssembly;
 	}
 	
+	/**
+	 * Gets a view of the assembly procedure that this work post
+	 * is currently working on.
+	 * 
+	 * @return
+	 * 		the active assembly procedure as a container
+	 */
 	public AssemblyProcedureContainer getAssemblyProcedureContainer() {
 		return this.activeAssembly;
 	}
 	
+	/**
+	 * Sets the assembly procedure for this work post to work on
+	 * to the given assembly procedure.
+	 * 
+	 * @param assemblyProcedure
+	 * 		The assembly procedure for this work post to work on.
+	 */
 	public void setAssemblyProcedure(AssemblyProcedure assemblyProcedure) {
 		this.activeAssembly = assemblyProcedure;
 	}
 
-	public void completeTask(int intTask) {
-		this.activeAssembly.completeTask(intTask, this.getTaskType());
+	/**
+	 * Completes the work post's assembly procedure's task specified by intTask.
+	 * @param intTask
+	 * 		The number of the task in this work post's assembly procedure.
+	 * @throws IllegalArgumentException
+	 * 		intTask is smaller than 0, or intTask is equal to or greater than
+	 * 		the number of tasks in this work post's assembly procedure.
+	 * @throws IllegalArgumentException
+	 * 		intTask refers to a task that has a type different from this
+	 * 		work post's type.
+	 */
+	public void completeTask(int intTask) throws IllegalArgumentException {
+		this.getAssemblyProcedure().completeTask(intTask, this.getTaskType());
 	}
 
+	/**
+	 * Gets a view of the order encapsulated in this work post's assembly procedure.
+	 * 
+	 * @return
+	 * 		The order in the active assembly as a container
+	 */
 	public OrderContainer getOrderContainer() {
-		throw new UnsupportedOperationException();
+		return this.getAssemblyProcedure().getOrderContainer();
 	}
 	
+	/**
+	 * Returns the name string of the workpost
+	 * 
+	 * @return
+	 * 		The name of the workpost
+	 */
+	@Override
 	public String getName() {
 		return this.name;
 	}
 	
+	/**
+	 * Returns the number of the workpost
+	 * 
+	 * @return
+	 * 		The number of the workpost
+	 */
+	@Override
 	public int getWorkPostNumber() {
 		return this.workPostNum;
 	}
 
+	/**
+	 * Returns the type of the workpost
+	 * 
+	 * @return
+	 * 		The type of the workpost
+	 */
 	@Override
 	public TaskType getWorkPostType() {
 		return this.workPostType;
+	}
+
+	/**
+	 * Checks whether or not all Assembly tasks that can be completed at this workpost on the current procedure
+	 * have been completed and returns this result.
+	 * 
+	 * @return
+	 * 		Whether or not all matching tasks of the current procedure are finished by the workpost
+	 */
+	public boolean allMatchingTasksFinished() {
+		List<AssemblyTaskContainer> matchingTasks = getMatchingAssemblyTasks();
+		for(AssemblyTaskContainer task : matchingTasks){
+			if(!task.isCompleted())
+				return false;
+		}
+		return true;
 	}
 }

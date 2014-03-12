@@ -3,7 +3,7 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.corba.se.spi.ior.MakeImmutable;
+import org.javatuples.Pair;
 
 /**
  * 
@@ -55,21 +55,27 @@ public class AssemblyLine {
 	private AssemblyProcedure finishedAssemblyProcedure = null;
 
 	/**
-	 * Gets all assemblies currently residing on the assembly line.
-	 * Empty workposts will not return a assembly, so the amount of active assemblies might be lower than the amount of workposts.
+	 * Gets a list of all assemblies currently assigned to a workstation.
+	 * Empty workposts will return null, which will be included in the list.
+	 * The list will thusly have the same number of elements as there are workposts.
+	 * The list of assemblies will have a corresponding order with the queried workstations.
 	 * 
 	 * @return
-	 * 		A list of the assemblies on the assembly line
+	 * 		A list of the assemblies on the workstations of the assembly line
 	 */
-	public List<AssemblyProcedureContainer> getActiveAssemblies() {
+	public List<AssemblyProcedureContainer> getAssemblyOnEachWorkStation() {
 		List<AssemblyProcedureContainer> toReturn = new ArrayList<AssemblyProcedureContainer>();
-		for (WorkPost workPost : this.workPosts) {
-			AssemblyProcedureContainer activeAssembly = workPost.getAssemblyProcedure();
-			if (activeAssembly != null) {
-				toReturn.add(activeAssembly);
-			}
+		for (WorkPost workPost : this.getWorkPosts()) {
+			toReturn.add(workPost.getAssemblyProcedure());
 		}
 		return toReturn;
+	}
+
+	/**
+	 * @return
+	 */
+	private List<WorkPost> getWorkPosts() {
+		return workPosts;
 	}
 
 	/**
@@ -78,7 +84,7 @@ public class AssemblyLine {
 	 * @return
 	 * 		A list of immutable containers for all respective workposts in their order
 	 */
-	public List<WorkPostContainer> getWorkPosts() {
+	public List<WorkPostContainer> getWorkPostContainers() {
 		return new ArrayList<WorkPostContainer>(workPosts);
 	}
 
@@ -114,37 +120,51 @@ public class AssemblyLine {
 	}
 
 	/**
-	 * Returns the current active assemblies on the {@link AssemblyLine}.
+	 * Returns the current active assemblies on the {@link AssemblyLine}, coupled with the {@link WorkPost}s they currently belong to, as containers.
+	 * {@link WorkPost}s without an active assembly are coupled with null.
 	 * 
 	 * @return
-	 * 		A list all of {@link AssemblyProcedureContainer}s of the active assemblies on the {@link AssemblyLine}.
+	 * 		A list all of {@link AssemblyProcedureContainer}s of the active assemblies on the {@link AssemblyLine}, coupled with their respective {@link WorkPostContainer}s.
 	 */
-	public List<AssemblyProcedureContainer> getCurrentActiveAssemblies() {
-		return getActiveAssemblies();
+	public List<Pair<AssemblyProcedureContainer, WorkPostContainer>> getCurrentWorkPostsAndActiveAssemblies() {
+		List<Pair<AssemblyProcedureContainer, WorkPostContainer>> toReturn = new ArrayList<Pair<AssemblyProcedureContainer, WorkPostContainer>>();
+		List<AssemblyProcedureContainer> currentAssemblies = getAssemblyOnEachWorkStation();
+		for(int i = 0; i < getWorkPostContainers().size(); i++){
+			toReturn.add(new Pair<AssemblyProcedureContainer, WorkPostContainer>(currentAssemblies.get(i), getWorkPost(i)));
+			// Due to lack of zipwith, this is necessary, feel free to improve.
+			// If you are frustrated to death by this method, please don't look at the one below this one.
+		}
+		return toReturn;
 	}
 
 	/**
-	 * Returns a list of the {@link AssemblyProcedure}s on the {@link AssemblyLine}, in the hypothetical situation 
+	 * Takes a list of the {@link AssemblyProcedure}s on the {@link AssemblyLine}, in the hypothetical situation 
 	 * where the {@link AssemblyLine} would advance one post, thus shifting all assemblies one post forwards,
 	 * removing the current last assembly, and scheduling a new assembly on the first post if the {@link ProductionSchedule}
-	 * has a new order that can still be fully assembled on time according to the schedule.
+	 * has a new order that can still be fully assembled on time according to the schedule. This list is then
+	 * coupled in order with their respective {@link WorkPostContainer}s in the hypothetical situation. This resulting
+	 * list of pairs is then returned.
+	 * {@link WorkPost}s without a future active assembly are coupled with null.
 	 * 
 	 * @return
-	 * 		The list of active {@link AssemblyProcedure}s in the hypothetical situation
+	 * 		The list of active {@link AssemblyProcedure}s with their {@link WorkPostContainer}s in the hypothetical situation
 	 */
-	public List<AssemblyProcedureContainer> getFutureActiveAssemblies() {
-		ArrayList<AssemblyProcedureContainer> activeAssemblies = new ArrayList<>(getActiveAssemblies());
-		if(activeAssemblies.size()>0)
-			activeAssemblies.remove(activeAssemblies.size()-1);
+	public List<Pair<AssemblyProcedureContainer, WorkPostContainer>> getFutureWorkPostsAndActiveAssemblies() {
+		List<Pair<AssemblyProcedureContainer, WorkPostContainer>> toReturn = new ArrayList<Pair<AssemblyProcedureContainer, WorkPostContainer>>();
+		ArrayList<AssemblyProcedureContainer> futureAssemblies = new ArrayList<>(getAssemblyOnEachWorkStation());
+		if(futureAssemblies.size()>0)
+			futureAssemblies.remove(futureAssemblies.size()-1);
 		try{
 			Order nextOrder = productionSchedule.getNextOrderToSchedule();
 			AssemblyProcedureContainer nextAssembly = createNewAssemblyProcedure(nextOrder); 
-			activeAssemblies.add(0, nextAssembly);
+			futureAssemblies.add(0, nextAssembly);
 		} catch (IndexOutOfBoundsException e){
-			activeAssemblies.add(0, null);
+			futureAssemblies.add(0, null);
 		}
-		return activeAssemblies;
-		
+		for(int i = 0; i < getWorkPostContainers().size(); i++){
+			toReturn.add(new Pair<AssemblyProcedureContainer, WorkPostContainer>(futureAssemblies.get(i), getWorkPost(i)));
+		}
+		return toReturn;
 	}
 	
 	/**
@@ -156,7 +176,8 @@ public class AssemblyLine {
 	 * 		An assembly procedure based on the given order
 	 */
 	private AssemblyProcedure createNewAssemblyProcedure(Order nextOrder) {
-		return new AssemblyProcedure(nextOrder);
+		List<AssemblyTask> tasks = this.generateTasksFrom(nextOrder);
+		return new AssemblyProcedure(nextOrder, tasks);
 	}
 
 	/**
@@ -181,7 +202,7 @@ public class AssemblyLine {
 	 */
 	public void tryAdvance(int time) throws IllegalStateException{
 		ArrayList<AssemblyTaskContainer> tasks = new ArrayList<>();
-		for(WorkPostContainer post : getWorkPosts()){
+		for(WorkPostContainer post : getWorkPostContainers()){
 			tasks.addAll(post.getMatchingAssemblyTasks());
 		}
 		for(AssemblyTaskContainer task : tasks){
@@ -239,7 +260,7 @@ public class AssemblyLine {
 		if(this.finishedAssemblyProcedure != null)
 			throw new IllegalStateException("The last finished assembly is still not recovered from the end of the Assembly line.");
 		this.finishedAssemblyProcedure = getWorkPost(getAmountOfWorkPosts()-1).getAssemblyProcedure();
-		for(int i = workPosts.size()-1; i > 0 ; i++){
+		for(int i = workPosts.size()-1; i > 0 ; i--){
 			AssemblyProcedure shiftedProcedure = getWorkPost(i-1).getAssemblyProcedure();
 			getWorkPost(i).setAssemblyProcedure(shiftedProcedure);
 		}
@@ -294,5 +315,20 @@ public class AssemblyLine {
 	protected AssemblyTask makeAssemblyTask(String taskName, String actionDescription,
 			TaskType taskType, int index) {
 			return new AssemblyTask(taskName, actionDescription, taskType, index);
+	}
+
+	/**
+	 * Makes a list of all workposts which still have matching tasks on their procedure that are unfinished.
+	 * 
+	 * @return
+	 * 		The list of workposts with unfinished tasks.
+	 */
+	public List<WorkPostContainer> getUnfinishedWorkPosts() {
+		List<WorkPostContainer> unfinishedWorkPosts = new ArrayList<>();
+		for( WorkPost post : getWorkPosts()){
+			if(!post.allMatchingTasksFinished())
+				unfinishedWorkPosts.add(post);
+		}
+		return unfinishedWorkPosts;
 	}
 }

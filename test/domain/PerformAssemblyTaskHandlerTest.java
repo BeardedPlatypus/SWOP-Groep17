@@ -14,7 +14,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
@@ -85,7 +84,7 @@ public class PerformAssemblyTaskHandlerTest {
 	public void getWorkPostsTest() {
 		List<WorkPostContainer> array = new ArrayList<WorkPostContainer>();
 		array.add(this.workPost1);
-		Mockito.when(this.assemblyLine.getWorkPosts()).thenReturn(array);
+		Mockito.when(this.assemblyLine.getWorkPostContainers()).thenReturn(array);
 		
 		List<WorkPostContainer> returnVal = handler.getWorkPosts();
 		assertTrue(returnVal.contains(workPost1));

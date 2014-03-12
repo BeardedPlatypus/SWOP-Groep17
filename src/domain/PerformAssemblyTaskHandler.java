@@ -5,23 +5,21 @@ import java.util.List;
 /**
  * Coordinates with the outside world in order to complete assembly tasks of a single workpost.
  * 
- * @author Thomas Vochten
  *
  */
 public class PerformAssemblyTaskHandler {
 	
 	/**
-	 * Contains the workposts.
+	 * The assembly line this handler operates on.
 	 */
 	private AssemblyLine assemblyLine;
 
 	/**
-	 * Initialises this handler with the given assembly line.
-	 * 
+	 * Instantiates a new handler with the given assembly line.
 	 * @param assemblyLine
-	 * 		An assembly line this handler will get work posts from.
+	 * 		The assembly line that the new handler will operate on.
 	 * @throws IllegalArgumentException
-	 * 		assemblyLine == null
+	 * 		assemblyLine is non-existent.
 	 */
 	public PerformAssemblyTaskHandler(AssemblyLine assemblyLine) throws IllegalArgumentException {
 		if (assemblyLine == null) {
@@ -31,10 +29,11 @@ public class PerformAssemblyTaskHandler {
 	}
 	
 	/**
+	 * 
 	 * Gets views of the contained assembly line's work posts.
 	 */
 	public List<WorkPostContainer> getWorkPosts() {
-		return this.assemblyLine.getWorkPosts();
+		return this.assemblyLine.getWorkPostContainers();
 	}
 	
 	/**
@@ -50,16 +49,18 @@ public class PerformAssemblyTaskHandler {
 	}
 
 	/**
-	 * Completes the specified task at the specified work post. Has no effect
-	 * if the specified task has already been completed.
+	 * Performs the specified task at the specified work post.
 	 * @param workPostNumber
-	 * 		The number of the work post of which a task is to be completed.
+	 * 		The number of the work post.
 	 * @param taskNumber
-	 * 		The number of the task to be completed.
+	 * 		The number of the task.
 	 * @throws IllegalArgumentException
 	 * 		workPostNumber refers to a work post that does not exist.
 	 * @throws IllegalArgumentException
 	 * 		taskNumber refers to a task that does not exist.
+	 * @throws IllegalArgumentException
+	 * 		taskNumber refers to a task with a type incompatible with the given
+	 * 		work post.
 	 */
 	public void completeWorkpostTask(int workPostNumber, int taskNumber) throws IllegalArgumentException {
 		this.assemblyLine.completeWorkpostTask(workPostNumber, taskNumber);

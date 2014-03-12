@@ -41,8 +41,8 @@ public class Manufacturer {
 	 * 		When either of the arguments is null.
 	 */
 	public Manufacturer(ProductionSchedule productionSchedule, ModelCatalog modelCatalog) throws IllegalArgumentException{
-		if(productionSchedule == null)
-			throw new IllegalArgumentException("productionSchedule is not allowed to be null when creating a new Manufacturer.");
+//		if(productionSchedule == null)
+//			throw new IllegalArgumentException("productionSchedule is not allowed to be null when creating a new Manufacturer.");
 		if(modelCatalog == null)
 			throw new IllegalArgumentException("modelCatalog is not allowed to be null when creating a new Manufacturer.");
 		this.productionSchedule = productionSchedule;
