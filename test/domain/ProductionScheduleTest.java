@@ -55,7 +55,8 @@ public class ProductionScheduleTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		
-		this.prodSched = new ProductionSchedule(manMan, assemblyCokeLine);
+		this.prodSched = new ProductionSchedule(manMan);
+		this.prodSched.setAssemblyLine(assemblyCokeLine);
 	}
 
 	@Test
