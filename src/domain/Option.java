@@ -15,11 +15,22 @@ public class Option {
 	 * The name of this Option, eg. body.
 	 */
 	private final String optionName;
+	
+	/**
+	 * A small text depicting on how a choice of this option should be applied to the car.
+	 */
+	private final String optionActionDescription;
+	
 	/**
 	 * A list of Strings which represent the possible choices for this options.
 	 * Eg. sedan, break...
 	 */
 	private final ArrayList<String> choices;
+	
+	/**
+	 * The type of the task this option will amount to
+	 */
+	private final TaskType optionType;
 	
 	/**
 	 * Constructor
@@ -31,9 +42,11 @@ public class Option {
 	 * @param choicesArgs
 	 * 		The possible choices, these can be variable in number.
 	 */
-	public Option(String name, String...choicesArgs){
+	public Option(String name, String optionActionDescription, TaskType type, String...choicesArgs){
 		this.optionName = name;
+		this.optionActionDescription = optionActionDescription;
         this.choices = new ArrayList<String>();
+        this.optionType = type;
         for (String choice : choicesArgs) {
             this.choices.add(choice);
         }
@@ -45,6 +58,22 @@ public class Option {
 	 */
 	public String getOptionName() {
 		return this.optionName;
+	}
+	
+	/**
+	 * @return
+	 * 		The type associated with this option
+	 */
+	public TaskType getType(){
+		return this.optionType;
+	}
+	
+	/**
+	 * @return
+	 * 		The description of the action to execute for adding this option to a car
+	 */
+	public String getOptionActionDescription() {
+		return this.optionActionDescription;
 	}
 	
 	/**

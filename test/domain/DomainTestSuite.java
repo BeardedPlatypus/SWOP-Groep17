@@ -5,7 +5,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ AssemblyTaskInfoTest.class,
+@SuiteClasses({ AdvanceAssemblyLineHandlerTest.class,
+				AssemblyProcedureTest.class,
 				AssemblyTaskTest.class,
 				DateTimeTest.class, 
 				ManufacturerTest.class,
@@ -14,6 +15,7 @@ import org.junit.runners.Suite.SuiteClasses;
 				NewOrderSessionHandlerTest.class,
 				OptionTest.class,
 	            OrderTest.class,
+	            PerformAssemblyTaskHandlerTest.class,
 	            ProductionScheduleTest.class,
 	            SpecificationTest.class,
 	            WorkPostTest.class })

@@ -13,7 +13,7 @@ public class OptionTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		 testOption = new Option("OptionName","choice1","choice2","choice3");
+		 testOption = new Option("OptionName", "Mount chosen part on the tailpipes", TaskType.ACCESSORIES, "choice1","choice2","choice3");
 	}
 	
 	@Test
@@ -37,7 +37,7 @@ public class OptionTest {
 	public void constructorTest() {
 		assertTrue(testOption.getOptionName().equals("OptionName"));
 		assertTrue(testOption.getAmountOfChoices() == 3);
-		testOption = new Option("OptionName2","choice1","choice2","choice3","choice4");
+		testOption = new Option("OptionName2", "Mount chosen part on the tailpipes", TaskType.BODY, "choice1","choice2","choice3","choice4");
 		assertTrue(testOption.getOptionName().equals("OptionName2"));
 		assertTrue(testOption.getAmountOfChoices() == 4);
 	}
@@ -50,6 +50,16 @@ public class OptionTest {
 		choices.next();
 		choices.next();
 		assertFalse(choices.hasNext());
+	}
+	
+	@Test
+	public void getOptionActionDescriptionTest() {
+		assertTrue(testOption.getOptionActionDescription().equals("Mount chosen part on the tailpipes"));
+	}
+	
+	@Test
+	public void getOptionTypeTest() {
+		assertTrue(testOption.getType()==TaskType.ACCESSORIES);
 	}
 
 

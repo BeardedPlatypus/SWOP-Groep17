@@ -15,8 +15,8 @@ public class ModelTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		testBodyOption = new Option("Body", "sedan", "break");
-		testPaintOption = new Option("Paint", "pink", "blue");
+		testBodyOption = new Option("Body", "Mount body", TaskType.BODY, "sedan", "break");
+		testPaintOption = new Option("Paint", "Paint car", TaskType.BODY, "pink", "blue");
 		ArrayList<Option> options = new ArrayList<Option>();
 		options.add(testBodyOption);
 		options.add(testPaintOption);

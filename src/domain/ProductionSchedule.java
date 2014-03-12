@@ -59,42 +59,18 @@ public class ProductionSchedule {
 	 * @throws IllegalArgumentException | ! order.isComplete || 
 	 * 									| order in this.getPendingOrderContainers()
 	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order) throws IllegalArgumentException {
-		if (order.isCompleted())
-			return order.getEstimatedCompletionTime();
+	public DateTime getEstimatedCompletionTime(OrderContainer order) throws IllegalArgumentException {				
 		
 		List<OrderContainer> pendingOrders = this.getPendingOrderContainers();
-		List<OrderContainer> activeOrders = this.getAssemblyLine().getActiveOrderContainers();
-		
 		int index = pendingOrders.indexOf(order);
-		if (index >= 0) { //Pending orders branch
-			int estHoursForCompletion = N_HOURS_MOVE * (index + this.getAssemblyLine().getSize());
-			int timeLeftToday = 22 * 60 - this.getCurrentTime().getHours() * 60 
-									    - this.getCurrentTime().getMinutes()
-									    - this.getOverTime();
-			
-			if (estHoursForCompletion * 60 <= timeLeftToday) {
-				return this.getCurrentTime().addTime(0, estHoursForCompletion, 0);
-			} else {
-				int timeLeftHours = timeLeftToday / 60; 
-				if (timeLeftToday % 60 > 0)
-					timeLeftHours -= 1;
-				
-				estHoursForCompletion = estHoursForCompletion - timeLeftHours;
-				int day = this.getCurrentTime().getDays() + 1 + (estHoursForCompletion / WORKHOURS);
-				int hours = STARTHOUR + (estHoursForCompletion % WORKHOURS);
-				return makeNewDateTime(day, hours, 0);
-			}
+		if (index >= 0) {
+			return this.getEstimatedCompletionTime(index + this.getAssemblyLine().getAmountOfWorkPosts());
 		} else {
-			index = activeOrders.indexOf(order);
-			if (index >= 0) { //Active orders branch. 
-				return this.getEstimatedCompletionTime(index);
-			} else { // Order does not exist in this ProductionSchedule.
-				throw new IllegalArgumentException("order does not exist within this ProductionSchedule.");	
-			}
-		}
+			index = this.getAssemblyLine().getOrderPositionOnAssemblyLine(order);
+			return this.getEstimatedCompletionTime(index);
+		}		
 	}
-	
+				
 	/**
 	 * Get the estimated completion based on the current position of the order
 	 * in the assembly process. 
@@ -109,29 +85,49 @@ public class ProductionSchedule {
 	 * @throws IllegalArgumentException | positionOrder < 0
 	 */
 	public DateTime getEstimatedCompletionTime(int positionOrder) {
-		if (positionOrder < 0) { // Invalid Argument
-			throw new IllegalArgumentException("position smaller than 0");
-		} else if (positionOrder < this.getAssemblyLine().getSize()) { // on assembly line
-			int estHoursForCompletion = N_HOURS_MOVE * (this.getAssemblyLine().getSize() - positionOrder);
-			return this.getCurrentTime().addTime(0, estHoursForCompletion, 0);
+		int assemblyLineSize = this.getAssemblyLine().getAmountOfWorkPosts();
 		
+		if (positionOrder < 0) {                                                    // Invalid Argument
+			throw new IllegalArgumentException("position smaller than 0");			//
+		} else if (positionOrder < assemblyLineSize) {                              // on assembly line
+			int estHoursForCompletion = N_HOURS_MOVE * (positionOrder + 1);         //
+			return this.getCurrentTime().addTime(0, estHoursForCompletion, 0);
 		} else { // in pending orders
-			
-			
-			int estHoursForCompletion = N_HOURS_MOVE * (positionOrder + 1); // add one for current action on AssemblyLine to complete.
+			int estHoursForCompletion = N_HOURS_MOVE * (positionOrder + 1);         // add one for current action on AssemblyLine to complete.
 			int timeLeftToday = 22 * 60 - this.getCurrentTime().getHours() * 60 
 									    - this.getCurrentTime().getMinutes()
 									    - this.getOverTime();
 			
-			if (estHoursForCompletion * 60 <= timeLeftToday) {
+			if (estHoursForCompletion * 60 <= timeLeftToday) {                      // Task can be finished today.
 				return this.getCurrentTime().addTime(0, estHoursForCompletion, 0);
-			} else {				
-				int numberMovesToday  
-				
-				return null;
+			} else {								                                // Task can't be finished today. 
+				if (timeLeftToday < 0) {                                            // there is overtime, which is specified by timeLeftToday
+					int timeLeftTomorrow = WORKHOURS * 60 + timeLeftToday;
+					
+					if(estHoursForCompletion * 60 <= timeLeftTomorrow)              // Time can be 
+						return this.makeNewDateTime(this.getCurrentTime().getDays() + 1, STARTHOUR + estHoursForCompletion - 1, 0); // Remove the add one because no current action has to be completed in the morning.
+					else {
+						System.out.println(timeLeftTomorrow);
+						int nCarsMoved = Math.max(0, (timeLeftTomorrow - 60 * N_HOURS_MOVE * assemblyLineSize) / 60 * N_HOURS_MOVE);
+						System.out.println(nCarsMoved);
+						int newPos =  positionOrder - nCarsMoved;
+						System.out.println(newPos);
+						int extraDays = newPos / ((WORKHOURS - N_HOURS_MOVE * assemblyLineSize) / N_HOURS_MOVE);
+						int extraHours = (newPos % ((WORKHOURS - N_HOURS_MOVE * assemblyLineSize) / N_HOURS_MOVE + 1)) * N_HOURS_MOVE; 
+						
+						return this.makeNewDateTime(this.getCurrentTime().getDays() + 2 + extraDays, STARTHOUR + extraHours, 0);
+					}
+				} else {
+					int nCarsMoved = Math.max(0, (timeLeftToday - N_HOURS_MOVE * 60 * assemblyLineSize) / (60 * N_HOURS_MOVE));
+					int newPos =  positionOrder - nCarsMoved;
+					int extraDays = newPos / ((WORKHOURS - N_HOURS_MOVE * assemblyLineSize) / N_HOURS_MOVE);
+					
+					int extraHours = (newPos % ((WORKHOURS - N_HOURS_MOVE * assemblyLineSize) / N_HOURS_MOVE + 1)) * N_HOURS_MOVE; 
+					
+					return this.makeNewDateTime(this.getCurrentTime().getDays() + 1 + extraDays, STARTHOUR + extraHours, 0);
+				}
 			}
 		}	
-		
 	}
 	
 	//--------------------------------------------------------------------------
@@ -194,13 +190,24 @@ public class ProductionSchedule {
 	 */
 	public void endDay(DateTime endTime) {
 		int timeLeft = WORKHOURS * 60 - ((endTime.getHours() - STARTHOUR) * 60 + endTime.getMinutes()) - this.getOverTime();
-		if ( timeLeft >= this.getAssemblyLine().getSize() * 60)
+		if ( timeLeft >= this.getAssemblyLine().getAmountOfWorkPosts() * 60)
 			throw new IllegalArgumentException("Time left exceeds time to fabricate another car.");
 		
 		this.setOverTime(-1 * timeLeft);
 		this.setCurrentTime(makeNewDateTime(endTime.getDays() + 1, STARTHOUR, 0));		
 	}
 	
+	/** 
+	 * Create a new DateTime (abstraction of constructor DateTime
+	 * 
+	 * @param days
+	 * 		The number of days of the new DateTime.
+	 * @param hours
+	 * 		The number of hours of the new DateTime
+	 * @param minutes
+	 * 		The number of minutes of the new DateTime. 
+	 * @return a new DateTime 
+	 */
 	protected DateTime makeNewDateTime(int days, int hours, int minutes) {
 		return new DateTime(days, hours, minutes);
 	}
@@ -259,8 +266,8 @@ public class ProductionSchedule {
 	 * @throws IllegalArgumentException
 	 * 		| !model.isValidSpecifications(specs)
 	 */
-	public void addNewOrder(Model model, Specification specs) throws NullPointerException, IllegalArgumentException{
-		int curPos = this.getPendingOrderContainers().size() + this.getAssemblyLine().getSize();
+public void addNewOrder(Model model, Specification specs) throws NullPointerException, IllegalArgumentException{
+		int curPos = this.getPendingOrderContainers().size() + this.getAssemblyLine().getAmountOfWorkPosts();
 		
 		Order newOrder = makeNewOrder(model, specs, 
 				                      this.getCurrentOrderIdentifier(),

@@ -24,42 +24,37 @@ public class AssemblyTaskTest {
 	@Test
 	public void constructor_NullNameTest() {
 		exception.expect(IllegalArgumentException.class);
-		new AssemblyTask(null, "dummy", TaskType.BODY);
+		new AssemblyTask(null, "dummy", TaskType.BODY, 0);
 	}
 	
 	@Test
 	public void constructor_NullActionInfoTest() {
 		exception.expect(IllegalArgumentException.class);
-		new AssemblyTask("dummy", null, TaskType.BODY);
+		new AssemblyTask("dummy", null, TaskType.BODY, 0);
 	}
 	
 	@Test
 	public void constructor_NullTaskTypeTest() {
 		exception.expect(IllegalArgumentException.class);
-		new AssemblyTask("dummy", "dummy", null);
+		new AssemblyTask("dummy", "dummy", null, 0);
 	}
 	
 	@Test
 	public void constructor_ValidArgumentsTest() {
-		AssemblyTask task = new AssemblyTask("john", "doe", TaskType.BODY);
+		AssemblyTask task = new AssemblyTask("john", "doe", TaskType.BODY, 1);
 		assertEquals(task.getName(), "john");
 		assertEquals(task.getActionInfo(), "doe");
 		assertEquals(task.getTaskType(), TaskType.BODY);
-	}
-	
-	@Test
-	public void getTaskInfoTest() {
-		AssemblyTask task = new AssemblyTask("john", "doe", TaskType.BODY);
-		AssemblyTaskInfo taskInfo = task.getTaskInfo(0);
-		assertEquals(taskInfo.isCompleted(), false);
-		assertEquals(taskInfo.getName(), task.getName());
-		assertEquals(taskInfo.getActionInfo(), task.getActionInfo());
-		assertEquals(taskInfo.getTaskNumber(), 0);
-		assertEquals(taskInfo.getTaskType(), task.getTaskType());
-		
-		task.setCompleted(true);
-		taskInfo = task.getTaskInfo(0);
-		assertEquals(taskInfo.isCompleted(), true);
+		assertTrue(task.getTaskNumber() == 1);
 	}
 
+	@Test
+	public void setCompletedTest() {
+		AssemblyTask task = new AssemblyTask("baz", "qux", TaskType.BODY, 1);
+		assertFalse(task.isCompleted());
+		task.setCompleted(true);
+		assertTrue(task.isCompleted());
+		task.setCompleted(false);
+		assertFalse(task.isCompleted());
+	}
 }
