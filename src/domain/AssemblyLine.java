@@ -72,7 +72,10 @@ public class AssemblyLine {
 	}
 
 	/**
+	 * Getter for the workposts variable for internal use
+	 * 
 	 * @return
+	 * 		the workposts variable
 	 */
 	private List<WorkPost> getWorkPosts() {
 		return workPosts;
@@ -330,5 +333,25 @@ public class AssemblyLine {
 				unfinishedWorkPosts.add(post);
 		}
 		return unfinishedWorkPosts;
+	}
+	
+	/**
+	 * Returns the position of the order's assembly on the assemblyline, relative form the end of the line.
+	 * The last post returns position 0, subsequent posts count up from there.
+	 * If the order is not being assembled right now, an IllegalArgumentException is thrown.
+	 * 
+	 * @param order
+	 * 		The order we want to get the position of.
+	 * @return
+	 * 		The position of the order's assembly on the assembly line, counted up from 0 from the last post on the assembly line.
+	 * @throws IllegalArgumentException
+	 * 		When the order is not being assembled right now.
+	 */
+	int getOrderPositionOnAssemblyLine(Order order) throws IllegalArgumentException{
+		for(WorkPost post: getWorkPosts()){
+			if(post.isWorkingOnOrder(order))
+				return ((getAmountOfWorkPosts() - post.getWorkPostNumber()) - 1);
+		}
+		throw new IllegalArgumentException("Order is not on assemblyLine.");
 	}
 }
