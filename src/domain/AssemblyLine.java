@@ -45,6 +45,17 @@ public class AssemblyLine {
 	 * The production schedule this assembly line works for
 	 */
 	private ProductionSchedule productionSchedule;
+	
+	/**
+	 * Getter for the production schedule for internal use
+	 * 
+	 * @return
+	 * 		The production schedule
+	 */
+	private ProductionSchedule getProductionSchedule() {
+		return productionSchedule;
+	}
+
 	/**
 	 * The workposts which compose this assembly line, in their respective orders in the list as they are ordered in the assembly line's layout
 	 */
@@ -212,12 +223,14 @@ public class AssemblyLine {
 			if(!task.isCompleted())
 				throw new IllegalStateException("One or more of the tasks on the current state of the assemblyline are still to be executed.");
 		}
-		// TODO This part has to be reviewed how things work in combination with ProductionSchedule
 		shiftWorkPosts();
+		getProductionSchedule().advanceTime(time);
 		putNextOrderOnAssemblyLine();
-		// TODO advance time of prod sched
-		// TODO Give completed order to schedule for manufacturer and delete the assembly procedure?
+		AssemblyProcedure finishedAssembly = removeFinishedAssemblyFromFinishedAssemblyProcedureCollectionSpace();
+		getProductionSchedule().completeOrder(finishedAssembly.getOrder());
 	}
+	
+	
 	
 	/**
 	 * Fills the empty first workpost with an order from the schedule if it has one ready for production.
@@ -230,7 +243,7 @@ public class AssemblyLine {
 		if(getWorkPost(0).getAssemblyProcedure() != null)
 			throw new IllegalStateException("First workpost is not empty yet, cannot add a new assembly to the assemblyline.");
 		try{
-			Order nextOrder = productionSchedule.getNextOrderToSchedule();
+			Order nextOrder = productionSchedule.removeNextOrderFromSchedule();
 			getWorkPost(0).setAssemblyProcedure(createNewAssemblyProcedure(nextOrder));
 		} catch (IndexOutOfBoundsException e) {
 			getWorkPost(0).setAssemblyProcedure(null);
@@ -276,7 +289,7 @@ public class AssemblyLine {
 	 * @return
 	 * 		The finished assembly or null if there isn't one
 	 */
-	AssemblyProcedure removeFinishedAssemblyFromFinishedAssemblyProcedureCollectionSpace() {
+	private AssemblyProcedure removeFinishedAssemblyFromFinishedAssemblyProcedureCollectionSpace() {
 		AssemblyProcedure finished = this.finishedAssemblyProcedure;
 		this.finishedAssemblyProcedure = null;
 		return finished;
