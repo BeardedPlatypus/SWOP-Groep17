@@ -2,6 +2,7 @@ package domain;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -18,6 +19,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class ProductionScheduleTest {
+	//--------------------------------------------------------------------------
+	// Test Fissures
+	//--------------------------------------------------------------------------
 	@Rule public ExpectedException exception = ExpectedException.none();
 	
 	@Mock AssemblyLine assemblyCokeLine;
@@ -59,18 +63,24 @@ public class ProductionScheduleTest {
 		this.prodSched = new ProductionSchedule(manMan, assemblyCokeLine);
 	}
 
+	//==========================================================================
+	// Tests 
+	//==========================================================================
+	//--------------------------------------------------------------------------
+	// Add New Order
+	//--------------------------------------------------------------------------
 	@Test
 	public void test_addNewOrder_addOrder() throws Exception {
 		// Setup all the mocked objects
 		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
-		Mockito.when(spiedProdSched.getCurrentTime()).thenReturn(dt0);
+		Mockito.doReturn(dt0).when(spiedProdSched).getCurrentTime();
 
 		Mockito.when(assemblyCokeLine.getSize()).thenReturn(3);
-		
-		Mockito.when(spiedProdSched.getEstimatedCompletionTime(3)).thenReturn(dt1);
-		Mockito.when(spiedProdSched.getEstimatedCompletionTime(4)).thenReturn(dt2);
-		Mockito.when(spiedProdSched.getEstimatedCompletionTime(5)).thenReturn(dt3);
-		Mockito.when(spiedProdSched.getEstimatedCompletionTime(6)).thenReturn(dt4);
+
+		Mockito.doReturn(dt1).when(spiedProdSched).getEstimatedCompletionTime(3);
+		Mockito.doReturn(dt2).when(spiedProdSched).getEstimatedCompletionTime(4);
+		Mockito.doReturn(dt3).when(spiedProdSched).getEstimatedCompletionTime(5);
+		Mockito.doReturn(dt4).when(spiedProdSched).getEstimatedCompletionTime(6);
 
 		Mockito.when(mockOrder1.getOrderNumber()).thenReturn(0);
 		Mockito.when(mockOrder2.getOrderNumber()).thenReturn(1);
@@ -96,16 +106,178 @@ public class ProductionScheduleTest {
 		assertEquals(2, result.get(2).getOrderNumber());
 		assertEquals(3, result.get(3).getOrderNumber());
 	}
-		
+
+	//--------------------------------------------------------------------------
+	// estimatedCompletionTime(int posLine)
+	//--------------------------------------------------------------------------
+	// FIXME should I completely mock the DateTime objects here?
 	@Test
-	public void test_getEstimatedCompletionTimeOrderIncomplete() {
-		fail();
+	public void test_getEstimatedCompletionTimePosValidAssemblyLine() {
+		// ASSUMES THAT HOURS TO MOVE A WORKSTATION IS ONE.
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(4);
+		
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		DateTime time = new DateTime(1, 6, 12);
+		Mockito.doReturn(time).when(spiedProdSched).getCurrentTime();
+		
+		DateTime res1 = spiedProdSched.getEstimatedCompletionTime(0);
+		assertEquals(1, res1.getDays());
+		assertEquals(10, res1.getHours());
+		assertEquals(12, res1.getMinutes());
+		
+		DateTime res2 = spiedProdSched.getEstimatedCompletionTime(1);
+		assertEquals(1, res2.getDays());
+		assertEquals(9, res2.getHours());
+		assertEquals(12, res2.getMinutes());
+		
+		DateTime res3 = spiedProdSched.getEstimatedCompletionTime(2);
+		assertEquals(1, res3.getDays());
+		assertEquals(8, res3.getHours());
+		assertEquals(12, res3.getMinutes());
+
+		
+		DateTime res4 = spiedProdSched.getEstimatedCompletionTime(3);
+		assertEquals(1, res4.getDays());
+		assertEquals(7, res4.getHours());
+		assertEquals(12, res4.getMinutes());
+	}
+	
+	//--------------------------------------------------------------------------
+	@Test
+	public void test_getEstimatedCompletionTimePosValidPendingToday() {
+		// ASSUMES THAT HOURS TO MOVE A WORKSTATION IS ONE.
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(4);
+		
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		Mockito.doReturn(0).when(spiedProdSched).getOverTime();
+		
+		DateTime time = new DateTime(1, 6, 12);
+		Mockito.doReturn(time).when(spiedProdSched).getCurrentTime();
+		
+		DateTime res = spiedProdSched.getEstimatedCompletionTime(6);
+		assertEquals(1, res.getDays());
+		assertEquals(13, res.getHours());
+		assertEquals(12, res.getMinutes());
+	}
+	
+	@Test
+	public void test_getEstimatedCompletionTimePosValidPendingDayAfterNoOverTime() {
+		// ASSUMES THAT HOURS TO MOVE A WORKSTATION IS ONE.
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(4);
+		
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+
+		DateTime time = new DateTime(1, 20, 12);
+		Mockito.doReturn(time).when(spiedProdSched).getCurrentTime();
+		Mockito.doReturn(0).when(spiedProdSched).getOverTime();
+		
+		DateTime res1 = spiedProdSched.getEstimatedCompletionTime(4);
+		assertEquals(2, res1.getDays());
+		assertEquals(10, res1.getHours());
+		assertEquals(0, res1.getMinutes());
+
+		DateTime res2 = spiedProdSched.getEstimatedCompletionTime(11);
+		assertEquals(2, res2.getDays());
+		assertEquals(17, res2.getHours());
+		assertEquals(0, res2.getMinutes());
+	}
+	
+	@Test
+	public void test_getEstimatedCompletionTimePosValidPendingDayAfterOverTimeToday() {
+		// ASSUMES THAT HOURS TO MOVE A WORKSTATION IS ONE.
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(4);
+		
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		
+		DateTime time = new DateTime(1, 18, 0);
+
+		Mockito.doReturn(time).when(spiedProdSched).getCurrentTime();
+		Mockito.doReturn(2 * 60).when(spiedProdSched).getOverTime();
+		
+		System.out.println("***");
+		DateTime res1 = spiedProdSched.getEstimatedCompletionTime(4);
+		assertEquals(2, res1.getDays());
+		assertEquals(10, res1.getHours());
+		assertEquals(0, res1.getMinutes());
+
+		DateTime res2 = spiedProdSched.getEstimatedCompletionTime(11);
+		assertEquals(2, res2.getDays());
+		assertEquals(17, res2.getHours());
+		assertEquals(0, res2.getMinutes());
 	}
 
+	@Test
+	public void test_getEstimatedCompletionTimePosValidPendingDayAfterOverTimeTomorrow() {
+		// ASSUMES THAT HOURS TO MOVE A WORKSTATION IS ONE.
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(4);
+		
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+
+		DateTime time = new DateTime(1, 20, 12);
+
+		Mockito.doReturn(time).when(spiedProdSched).getCurrentTime();
+		Mockito.doReturn(6 * 60).when(spiedProdSched).getOverTime();
+
+		
+		DateTime res1 = spiedProdSched.getEstimatedCompletionTime(4);
+		assertEquals(2, res1.getDays());
+		assertEquals(10, res1.getHours());
+		assertEquals(0, res1.getMinutes());
+
+		DateTime res2 = spiedProdSched.getEstimatedCompletionTime(13);
+		assertEquals(3, res2.getDays());
+		assertEquals(10, res2.getHours());
+		assertEquals(0, res2.getMinutes());
+	}
+	
+	@Test
+	public void test_getEstimatedCompletionTimePosValidPendingDayAfterOverTimeMultipleDays() {
+		// ASSUMES THAT HOURS TO MOVE A WORKSTATION IS ONE.
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(4);
+		
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+
+		DateTime time = new DateTime(1, 20, 12);
+
+		Mockito.doReturn(time).when(spiedProdSched).getCurrentTime();
+		Mockito.doReturn(36 * 60).when(spiedProdSched).getOverTime();
+		
+		DateTime res1 = spiedProdSched.getEstimatedCompletionTime(4);
+		assertEquals(4, res1.getDays());
+		assertEquals(10, res1.getHours());
+		assertEquals(0, res1.getMinutes());
+
+		DateTime res2 = spiedProdSched.getEstimatedCompletionTime(13);
+		assertEquals(4, res2.getDays());
+		assertEquals(19, res2.getHours());
+		assertEquals(0, res2.getMinutes());
+
+		DateTime res3 = spiedProdSched.getEstimatedCompletionTime(15);
+		assertEquals(5, res3.getDays());
+		assertEquals(10, res3.getHours());
+		assertEquals(0, res3.getMinutes());
+	}
+
+	//--------------------------------------------------------------------------
+	@Test
+	public void test_getEstimatedCompletionTimePosInvalid() {
+		exception.expect(IllegalArgumentException.class);
+
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(4);
+		
+		prodSched.getEstimatedCompletionTime(-1);
+	}
+	
+	//--------------------------------------------------------------------------
+	// estimatedCompletionTime(OrderContainer order)
+	//--------------------------------------------------------------------------
 	@Test
 	public void test_getEstimatedCompletionTimeOrderComplete() {
 		Mockito.when(mockOrder1.isCompleted()).thenReturn(true);
 		Mockito.when(mockOrder1.getEstimatedCompletionTime()).thenReturn(dt0);
+		
+		Mockito.when(assemblyCokeLine.getActiveOrderContainers()).thenReturn(new ArrayList<OrderContainer>());
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(3);
 		
 		DateTime test = prodSched.getEstimatedCompletionTime(mockOrder1);
 		assertEquals(dt0, test);
@@ -114,47 +286,322 @@ public class ProductionScheduleTest {
 		Mockito.verify(mockOrder1).getEstimatedCompletionTime();
 	}
 
+
 	@Test
 	public void test_getEstimatedCompletionTimeOrderInvalid() {
 		exception.expect(IllegalArgumentException.class);
 		Mockito.when(mockOrder1.isCompleted()).thenReturn(false);
+
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+
+		Mockito.doReturn(new ArrayList<OrderContainer>()).when(spiedProdSched).getPendingOrderContainers();
 		
-		prodSched.getEstimatedCompletionTime(mockOrder1);
+		Mockito.when(assemblyCokeLine.getActiveOrderContainers()).thenReturn(new ArrayList<OrderContainer>());
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(3);
+		
+		spiedProdSched.getEstimatedCompletionTime(mockOrder1);
 	}
 
+	//--------------------------------------------------------------------------
 	@Test
-	public void test_getEstimatedCompletionTimePosValid() {
-		fail();
+	public void test_getEstimatedCompletionTimeOrderValidAssemblyLine() {
+		// ASSUMES THAT HOURS TO MOVE A WORKSTATION IS ONE.
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(4);
+		
+		List<OrderContainer> resAss = new ArrayList<OrderContainer>();
+		resAss.add(mockOrder1);
+		resAss.add(mockOrder2);
+		resAss.add(mockOrder3);
+		resAss.add(mockOrder4);
+		Mockito.when(assemblyCokeLine.getActiveOrderContainers()).thenReturn(resAss);
+
+		
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		DateTime time = new DateTime(1, 6, 12);
+		Mockito.doReturn(time).when(spiedProdSched).getCurrentTime();
+		
+		DateTime res1 = spiedProdSched.getEstimatedCompletionTime(mockOrder1);
+		assertEquals(1, res1.getDays());
+		assertEquals(10, res1.getHours());
+		assertEquals(12, res1.getMinutes());
+		
+		DateTime res2 = spiedProdSched.getEstimatedCompletionTime(mockOrder2);
+		assertEquals(1, res2.getDays());
+		assertEquals(9, res2.getHours());
+		assertEquals(12, res2.getMinutes());
+		
+		DateTime res3 = spiedProdSched.getEstimatedCompletionTime(mockOrder3);
+		assertEquals(1, res3.getDays());
+		assertEquals(8, res3.getHours());
+		assertEquals(12, res3.getMinutes());
+
+		
+		DateTime res4 = spiedProdSched.getEstimatedCompletionTime(mockOrder4);
+		assertEquals(1, res4.getDays());
+		assertEquals(7, res4.getHours());
+		assertEquals(12, res4.getMinutes());
+	}
+	
+	//--------------------------------------------------------------------------
+	@Test
+	public void test_getEstimatedCompletionTimeOrderValidPendingToday() {
+		// ASSUMES THAT HOURS TO MOVE A WORKSTATION IS ONE.
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(4);
+		
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		Mockito.doReturn(0).when(spiedProdSched).getOverTime();
+
+		List<OrderContainer> resAss = new ArrayList<OrderContainer>();
+		resAss.add(mockOrder1);
+		resAss.add(mockOrder2);
+		resAss.add(mockOrder3);
+		
+		Mockito.doReturn(resAss).when(spiedProdSched).getPendingOrderContainers();
+
+		
+		DateTime time = new DateTime(1, 6, 12);
+		Mockito.doReturn(time).when(spiedProdSched).getCurrentTime();
+		
+		DateTime res = spiedProdSched.getEstimatedCompletionTime(mockOrder3);
+		assertEquals(1, res.getDays());
+		assertEquals(12, res.getHours());
+		assertEquals(12, res.getMinutes());
 	}
 	
 	@Test
-	public void test_getEstimatedCompletionTimePosInvalid() {
+	public void test_getEstimatedCompletionTimeOrderValidPendingDayAfterNoOverTime() {
+		// ASSUMES THAT HOURS TO MOVE A WORKSTATION IS ONE.
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(4);
+		
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+
+		DateTime time = new DateTime(1, 6, 12);
+		Mockito.doReturn(time).when(spiedProdSched).getCurrentTime();
+		Mockito.doReturn(0).when(spiedProdSched).getOverTime();
+
+		List<OrderContainer> resAss = new ArrayList<OrderContainer>();
+		resAss.add(mockOrder1);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(mockOrder2);
+
+		Mockito.doReturn(resAss).when(spiedProdSched).getPendingOrderContainers();
+		
+		DateTime res1 = spiedProdSched.getEstimatedCompletionTime(mockOrder1);
+		assertEquals(2, res1.getDays());
+		assertEquals(10, res1.getHours());
+		assertEquals(0, res1.getMinutes());
+
+		DateTime res2 = spiedProdSched.getEstimatedCompletionTime(mockOrder2);
+		assertEquals(2, res2.getDays());
+		assertEquals(17, res2.getHours());
+		assertEquals(0, res2.getMinutes());
+	}
+	
+	@Test
+	public void test_getEstimatedCompletionTimeOrderValidPendingDayAfterOverTimeToday() {
+		// ASSUMES THAT HOURS TO MOVE A WORKSTATION IS ONE.
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(4);
+		
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		
+		DateTime time = new DateTime(1, 18, 12);
+
+		Mockito.doReturn(time).when(spiedProdSched).getCurrentTime();
+		Mockito.doReturn(2 * 60).when(spiedProdSched).getOverTime();
+
+		List<OrderContainer> resAss = new ArrayList<OrderContainer>();
+		resAss.add(mockOrder1);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(mockOrder2);
+
+		Mockito.doReturn(resAss).when(spiedProdSched).getPendingOrderContainers();
+		
+		DateTime res1 = spiedProdSched.getEstimatedCompletionTime(mockOrder1);
+		assertEquals(2, res1.getDays());
+		assertEquals(10, res1.getHours());
+		assertEquals(0, res1.getMinutes());
+
+		DateTime res2 = spiedProdSched.getEstimatedCompletionTime(mockOrder2);
+		assertEquals(2, res2.getDays());
+		assertEquals(17, res2.getHours());
+		assertEquals(0, res2.getMinutes());
+	}
+
+	@Test
+	public void test_getEstimatedCompletionTimeOrderValidPendingDayAfterOverTimeTomorrow() {
+		// ASSUMES THAT HOURS TO MOVE A WORKSTATION IS ONE.
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(4);
+		
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+
+		DateTime time = new DateTime(1, 20, 12);
+
+		Mockito.doReturn(time).when(spiedProdSched).getCurrentTime();
+		Mockito.doReturn(6 * 60).when(spiedProdSched).getOverTime();
+
+		List<OrderContainer> resAss = new ArrayList<OrderContainer>();
+		resAss.add(mockOrder1);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(mockOrder2);
+
+		Mockito.doReturn(resAss).when(spiedProdSched).getPendingOrderContainers();
+		
+		DateTime res1 = spiedProdSched.getEstimatedCompletionTime(mockOrder1);
+		assertEquals(2, res1.getDays());
+		assertEquals(10, res1.getHours());
+		assertEquals(0, res1.getMinutes());
+
+		DateTime res2 = spiedProdSched.getEstimatedCompletionTime(mockOrder2);
+		assertEquals(3, res2.getDays());
+		assertEquals(10, res2.getHours());
+		assertEquals(0, res2.getMinutes());
+	}
+	
+	@Test
+	public void test_getEstimatedCompletionTimeOrderValidPendingDayAfterOverTimeMultipleDays() {
+		// ASSUMES THAT HOURS TO MOVE A WORKSTATION IS ONE.
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(4);
+		
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+
+		DateTime time = new DateTime(1, 20, 12);
+
+		Mockito.doReturn(time).when(spiedProdSched).getCurrentTime();
+		Mockito.doReturn(36 * 60).when(spiedProdSched).getOverTime();
+
+		List<OrderContainer> resAss = new ArrayList<OrderContainer>();
+		resAss.add(mockOrder1);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(null);
+		resAss.add(mockOrder2);
+		resAss.add(null);
+		resAss.add(mockOrder3);
+
+		Mockito.doReturn(resAss).when(spiedProdSched).getPendingOrderContainers();		
+		
+		DateTime res1 = spiedProdSched.getEstimatedCompletionTime(mockOrder1);
+		assertEquals(4, res1.getDays());
+		assertEquals(10, res1.getHours());
+		assertEquals(0, res1.getMinutes());
+
+		DateTime res2 = spiedProdSched.getEstimatedCompletionTime(mockOrder2);
+		assertEquals(4, res2.getDays());
+		assertEquals(19, res2.getHours());
+		assertEquals(0, res2.getMinutes());
+
+		DateTime res3 = spiedProdSched.getEstimatedCompletionTime(mockOrder3);
+		assertEquals(5, res3.getDays());
+		assertEquals(10, res3.getHours());
+		assertEquals(0, res3.getMinutes());
+	}
+	
+	//--------------------------------------------------------------------------
+	// endDay
+	//--------------------------------------------------------------------------
+	@Test
+	public void test_endDayIllegalArgumentException() {
 		exception.expect(IllegalArgumentException.class);
+		
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		Mockito.doReturn(0).when(spiedProdSched).getOverTime();
 
-		prodSched.getEstimatedCompletionTime(-1);
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(3);
+		
+		Mockito.when(dt1.getDays()).thenReturn(0);
+		Mockito.when(dt1.getHours()).thenReturn(0);
+		Mockito.when(dt1.getMinutes()).thenReturn(0);
+		
+		spiedProdSched.endDay(dt1);
+	}
+
+	@Test
+	public void test_endDayValidNoOverTime() throws Exception {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(3);		
+		Mockito.when(dt1.getDays()).thenReturn(0);
+		Mockito.when(dt1.getHours()).thenReturn(20);
+		Mockito.when(dt1.getMinutes()).thenReturn(51);
+
+		Mockito.doReturn(dt2).when(spiedProdSched).makeNewDateTime(1, 6, 0);
+		
+		spiedProdSched.endDay(dt1);
+
+		Mockito.verify(spiedProdSched).makeNewDateTime(1, 6, 0);
+		
+		assertEquals(dt2, spiedProdSched.getCurrentTime());
+		assertEquals(0, spiedProdSched.getOverTime());		
 	}
 	
+	@Test
+	public void test_endDayValidOverTimeDecrease() throws Exception {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		spiedProdSched.setOverTime(6*60);
+
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(3);
+		Mockito.when(dt1.getDays()).thenReturn(0);
+		Mockito.when(dt1.getHours()).thenReturn(18);
+		Mockito.when(dt1.getMinutes()).thenReturn(0);
+
+		Mockito.doReturn(dt2).when(spiedProdSched).makeNewDateTime(1, 6, 0);
+		
+		spiedProdSched.endDay(dt1);
+
+		Mockito.verify(spiedProdSched).makeNewDateTime(1, 6, 0);
+		
+		assertEquals(dt2, spiedProdSched.getCurrentTime());
+		assertEquals(2 * 60, spiedProdSched.getOverTime());		
+	}
+	
+	@Test
+	public void test_endDayValidOverTimeIncrease() throws Exception {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		spiedProdSched.setOverTime(0);
+
+		Mockito.when(assemblyCokeLine.getSize()).thenReturn(3);
+		Mockito.when(dt1.getDays()).thenReturn(0);
+		Mockito.when(dt1.getHours()).thenReturn(23);
+		Mockito.when(dt1.getMinutes()).thenReturn(0);
+
+		Mockito.doReturn(dt2).when(spiedProdSched).makeNewDateTime(1, 6, 0);
+		
+		spiedProdSched.endDay(dt1);
+
+		Mockito.verify(spiedProdSched).makeNewDateTime(1, 6, 0);
+
+		assertEquals(dt2, spiedProdSched.getCurrentTime());
+		assertEquals(1 * 60, spiedProdSched.getOverTime());		
+	}
+	//--------------------------------------------------------------------------
+	// removeNextOrder
+	//--------------------------------------------------------------------------
 	@Test
 	public void test_removeNextOrderToScheduleIndexOutOfBoundsException() {
 		exception.expect(IndexOutOfBoundsException.class);
 		
 		prodSched.removeNextOrderToSchedule();
 	}
-	
-//	@Test
-//	public void test_removeNextOrderToScheduleValid() {
-//		// TODO find way to remove dependency on addOrderMethod. 
-//		// Setup all the mocked objects
-//		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
-//		Mockito.when(spiedProdSched.getCurrentTime()).then;
-//
-//	}
-	
-//	@Test
-//	public void test_getPendingOrderContainers() {
-//		List<OrderContainer> array = new ArrayList<OrderContainer>();
-//		array.add(this.mockOrder1);
-//		Mockito.when(this.mockProdSched.getPendingOrderContainers()).thenReturn(array);
-//
-//	}
 }
