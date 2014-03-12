@@ -11,16 +11,17 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.*;
+import org.mockito.runners.MockitoJUnitRunner;
 /**
  * @author Month
  *
  */
+@RunWith(MockitoJUnitRunner.class )
 public class NewOrderSessionHandlerTest {
-	@Mock
-	Manufacturer mockManufacturer;
-	@Mock
-	OrderContainer orderContainer;
+	@Mock Manufacturer mockManufacturer;
+	@Mock OrderContainer orderContainer;
 	
 	NewOrderSessionHandler sessionHandler1;
 	
@@ -48,6 +49,6 @@ public class NewOrderSessionHandlerTest {
 		Mockito.when(this.mockManufacturer.getPendingOrderContainers()).thenReturn(array);
 		
 		assertEquals(array, this.sessionHandler1.getPendingOrders());
-		Mockito.verify(this.mockManufacturer, Mockito.times(1));
+		Mockito.verify(this.mockManufacturer).getPendingOrderContainers();
 	}
 }

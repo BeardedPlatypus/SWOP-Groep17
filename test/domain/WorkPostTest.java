@@ -18,9 +18,9 @@ public class WorkPostTest {
 	@Rule public ExpectedException exception = ExpectedException.none();
 
 	@Mock AssemblyProcedure assemblyProcedure;
-	@Mock AssemblyTaskInfo assemblyTaskInfo1;
-	@Mock AssemblyTaskInfo assemblyTaskInfo2;
-	@Mock AssemblyTaskInfo assemblyTaskInfo3;
+	@Mock AssemblyTaskContainer assemblyTaskInfo1;
+	@Mock AssemblyTaskContainer assemblyTaskInfo2;
+	@Mock AssemblyTaskContainer assemblyTaskInfo3;
 	
 	TaskType workPostType = TaskType.BODY;
 	TaskType wrongWorkPostType = TaskType.DRIVETRAIN;
@@ -35,7 +35,7 @@ public class WorkPostTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		
-		List<AssemblyTaskInfo> tasks = new ArrayList<AssemblyTaskInfo>();
+		List<AssemblyTaskContainer> tasks = new ArrayList<AssemblyTaskContainer>();
 		tasks.add(assemblyTaskInfo1);
 		tasks.add(assemblyTaskInfo2);
 		
@@ -45,24 +45,23 @@ public class WorkPostTest {
 		Mockito.when(assemblyTaskInfo2.getTaskType()).thenReturn(workPostType);
 		Mockito.when(assemblyTaskInfo3.getTaskType()).thenReturn(wrongWorkPostType);
 		
-		this.workPost = new WorkPost(this.workPostType);
+		this.workPost = new WorkPost(this.workPostType, 0);
 	}
 
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void constructor_NullTaskTypeTest() {
-		exception.expect(IllegalArgumentException.class);
-		new WorkPost(null);
+		new WorkPost(null, 0);
 	}
 	
 	@Test
 	public void constructor_ValidTaskTypeTest() {
-		WorkPost workPost = new WorkPost(TaskType.BODY);
+		WorkPost workPost = new WorkPost(TaskType.BODY, 0);
 		assertEquals(workPost.getTaskType(), TaskType.BODY);
 	}
 	
 	@Test
 	public void getAssemblyTaskInfosTest_noAssemblyAssigned() {
-		List<AssemblyTaskInfo> infos = workPost.getAssemblyTasks();
+		List<AssemblyTaskContainer> infos = workPost.getMatchingAssemblyTasks();
 		assertTrue(infos.isEmpty());
 	}
 	
@@ -70,7 +69,7 @@ public class WorkPostTest {
 	public void getAssemblyTaskInfosTest_assemblyAssigned() {
 		workPost.setAssemblyProcedure(assemblyProcedure);
 		
-		List<AssemblyTaskInfo> infos = workPost.getAssemblyTasks();
+		List<AssemblyTaskContainer> infos = workPost.getMatchingAssemblyTasks();
 		assertTrue(infos.contains(assemblyTaskInfo1));
 		assertTrue(infos.contains(assemblyTaskInfo2));
 		assertFalse(infos.contains(assemblyTaskInfo3));
