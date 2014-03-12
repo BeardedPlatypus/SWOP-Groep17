@@ -105,13 +105,6 @@ public class Terminal {
 		System.out.println("   ==================================");
 		System.out.println();
 		System.out.println();
-		
-		/**
-		System.out.println("--------------------------------");
-		System.out.println("~ Aperture Car Assembly System ~");
-		System.out.println("--------------------------------");
-		System.out.println();
-		**/
 	}
 	
 	public static void showLoginSuccess(){
