@@ -34,7 +34,7 @@ public class OrderTest {
 		MockitoAnnotations.initMocks(this);
 	
 		Mockito.when(this.mockSuperModel2.isValidSpecification(spectacles2)).thenReturn(true);
-		order1 = new Order(mockSuperModel2, spectacles2, 0, dt2);
+		order1 = new Order(mockSuperModel2, spectacles2, 0);
 	}
 
 	@Test 
@@ -42,7 +42,7 @@ public class OrderTest {
 		exception.expect(IllegalArgumentException.class);
 		
 		Mockito.when(this.mockSuperModel.isValidSpecification(spectacles)).thenReturn(false);
-		Order test = new Order(mockSuperModel, spectacles, 0, dt2);
+		Order test = new Order(mockSuperModel, spectacles, 0);
 		
 		Mockito.verify(this.mockSuperModel, Mockito.times(1));
 	}
@@ -50,70 +50,32 @@ public class OrderTest {
 	@Test 
 	public void test_constructorNullPointerExceptionModel() {
 		exception.expect(NullPointerException.class);
-		Order test = new Order(null, spectacles, 0, dt2);
+		Order test = new Order(null, spectacles, 0);
 	}
 	
 	@Test
 	public void test_constructorNullPointerExceptionSpecs() {
 		exception.expect(NullPointerException.class);
-		Order test = new Order(mockSuperModel, null, 0, dt2);
-	}
-
-	@Test
-	public void test_constructorNullPointerExceptionCompletionDateTime() {
-		exception.expect(NullPointerException.class);
-		Order test = new Order(mockSuperModel, spectacles, 0, null);		
+		Order test = new Order(mockSuperModel, null, 0);
 	}
 
 	@Test
 	public void test_constructorValidInput() {
 		Mockito.when(this.mockSuperModel.isValidSpecification(spectacles)).thenReturn(true);
 		
-		Order test = new Order(mockSuperModel, spectacles, 0, dt2);
+		Order test = new Order(mockSuperModel, spectacles, 0);
 		
 		assertEquals(false, test.isCompleted());
 		assertEquals(mockSuperModel, test.getModel());
 		assertEquals(spectacles, test.getSpecifications());
-		assertEquals(dt2, test.getEstimatedCompletionTime());
 		assertEquals(0, test.getOrderNumber());
-	}
+	} 
 	
 	@Test
-	public void test_setAsCompleted() {
-		order1.setAsCompleted(dt3);
+	public void test_setAsCompletedIfCompleted() {
+		Order spiedOrder = Mockito.spy(order1);
 		
-		assertEquals(true, order1.isCompleted());
-		assertEquals(dt3, order1.getEstimatedCompletionTime());
+		spiedOrder.setAsCompleted();
+		assertEquals(true, spiedOrder.isCompleted());
 	}
-	
-	@Test
-	public void test_setAsCompletedNull() {
-		order1.setAsCompleted(null);
-		
-		assertEquals(false, order1.isCompleted());
-		assertEquals(dt2, order1.getEstimatedCompletionTime());
-	}
-	
-	@Test
-	public void test_setAsCompletedNullAndDone() {
-		order1.setAsCompleted(dt3);
-		order1.setAsCompleted(null);
-		
-		assertEquals(true, order1.isCompleted());
-		assertEquals(dt3, order1.getEstimatedCompletionTime());
-	}
-	
-	@Test
-	public void test_setEstimatedCompletionTime() {
-		order1.setAsCompleted(dt3);
-		assertEquals(dt3, order1.getEstimatedCompletionTime());
-	}
-	
-	@Test
-	public void test_setEstimatedCompletionTimeWhenDone() {
-		order1.setAsCompleted(dt1);
-		order1.setEstimatedCompletionTime(dt3);
-		
-		assertEquals(dt1, order1.getEstimatedCompletionTime());
-	}	
 }

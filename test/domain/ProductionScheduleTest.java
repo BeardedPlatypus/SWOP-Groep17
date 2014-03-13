@@ -88,10 +88,10 @@ public class ProductionScheduleTest {
 		Mockito.when(mockOrder3.getOrderNumber()).thenReturn(2);
 		Mockito.when(mockOrder4.getOrderNumber()).thenReturn(3);
 		
-		Mockito.doReturn(mockOrder1).when(spiedProdSched).makeNewOrder(mockModel1, mockSpec1, 0, dt1);
-		Mockito.doReturn(mockOrder2).when(spiedProdSched).makeNewOrder(mockModel2, mockSpec2, 1, dt2);
-		Mockito.doReturn(mockOrder3).when(spiedProdSched).makeNewOrder(mockModel3, mockSpec3, 2, dt3);
-		Mockito.doReturn(mockOrder4).when(spiedProdSched).makeNewOrder(mockModel4, mockSpec4, 3, dt4);
+		Mockito.doReturn(mockOrder1).when(spiedProdSched).makeNewOrder(mockModel1, mockSpec1, 0);
+		Mockito.doReturn(mockOrder2).when(spiedProdSched).makeNewOrder(mockModel2, mockSpec2, 1);
+		Mockito.doReturn(mockOrder3).when(spiedProdSched).makeNewOrder(mockModel3, mockSpec3, 2);
+		Mockito.doReturn(mockOrder4).when(spiedProdSched).makeNewOrder(mockModel4, mockSpec4, 3);
 		
 		// Do the actual Code
 		spiedProdSched.addNewOrder(mockModel1, mockSpec1);
@@ -136,7 +136,6 @@ public class ProductionScheduleTest {
 		assertEquals(9, res3.getHours());
 		assertEquals(12, res3.getMinutes());
 
-		
 		DateTime res4 = spiedProdSched.getEstimatedCompletionTime(3);
 		assertEquals(1, res4.getDays());
 		assertEquals(10, res4.getHours());
@@ -581,9 +580,313 @@ public class ProductionScheduleTest {
 	// removeNextOrder
 	//--------------------------------------------------------------------------
 	@Test
-	public void test_removeNextOrderToScheduleIndexOutOfBoundsException() {
-		exception.expect(IndexOutOfBoundsException.class);
-		
-		prodSched.removeNextOrderToSchedule();
+	public void test_popNextOrderToScheduleNull() {
+		Order result = prodSched.popNextOrderFromSchedule();
+		assertEquals(null, result);
 	}
+	
+	@Test
+	public void test_popNextOrderToScheduleSingle() {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		Mockito.doReturn(mockOrder1).when(spiedProdSched).makeNewOrder(mockModel, mockSpecs, 0);		
+		
+		spiedProdSched.addNewOrder(mockModel, mockSpecs);
+		
+		Order result = prodSched.popNextOrderFromSchedule();
+		assertEquals(mockOrder1, result);
+	}
+	
+	@Test
+	public void test_popNextOrderToScheduleMulti() {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		Mockito.doReturn(mockOrder1).when(spiedProdSched).makeNewOrder(mockModel1, mockSpecs, 0);		
+		Mockito.doReturn(mockOrder2).when(spiedProdSched).makeNewOrder(mockModel2, mockSpecs, 1);		
+		Mockito.doReturn(mockOrder3).when(spiedProdSched).makeNewOrder(mockModel3, mockSpecs, 2);		
+		Mockito.doReturn(mockOrder4).when(spiedProdSched).makeNewOrder(mockModel4, mockSpecs, 3);		
+
+		
+		spiedProdSched.addNewOrder(mockModel1, mockSpecs);
+		spiedProdSched.addNewOrder(mockModel2, mockSpecs);
+		spiedProdSched.addNewOrder(mockModel3, mockSpecs);
+		spiedProdSched.addNewOrder(mockModel4, mockSpecs);
+		
+		Order result = prodSched.popNextOrderFromSchedule();
+		assertEquals(mockOrder1, result);
+
+		result = prodSched.popNextOrderFromSchedule();
+		assertEquals(mockOrder2, result);
+
+		result = prodSched.popNextOrderFromSchedule();
+		assertEquals(mockOrder3, result);
+		
+		result = prodSched.popNextOrderFromSchedule();
+		assertEquals(mockOrder4, result);
+	}
+	
+	@Test
+	public void test_hasTimeToScheduleNextTrueNoOverTime() {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		
+		Mockito.when(assemblyCokeLine.getAmountOfWorkPosts()).thenReturn(3);
+		spiedProdSched.setOverTime(0);		
+		Mockito.doReturn(dt1).when(spiedProdSched).getCurrentTime();
+
+		Mockito.when(dt1.getDays()).thenReturn(0);
+		Mockito.when(dt1.getHours()).thenReturn(6);
+		Mockito.when(dt1.getMinutes()).thenReturn(0);
+		
+		assertEquals(true, spiedProdSched.hasTimeToScheduleNext());
+	}
+
+	@Test
+	public void test_hasTimeToScheduleNextTrueOverTime() {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		
+		Mockito.when(assemblyCokeLine.getAmountOfWorkPosts()).thenReturn(3);
+		spiedProdSched.setOverTime(8 * 60);		
+		Mockito.doReturn(dt1).when(spiedProdSched).getCurrentTime();
+
+		Mockito.when(dt1.getDays()).thenReturn(0);
+		Mockito.when(dt1.getHours()).thenReturn(6);
+		Mockito.when(dt1.getMinutes()).thenReturn(0);
+		
+		assertEquals(true, spiedProdSched.hasTimeToScheduleNext());
+	}
+	
+	@Test
+	public void test_hasTimeToScheduleNextFalseNoOverTime() {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		spiedProdSched.setOverTime(0);		
+		Mockito.doReturn(dt1).when(spiedProdSched).getCurrentTime();
+
+		Mockito.when(dt1.getDays()).thenReturn(0);
+		Mockito.when(dt1.getHours()).thenReturn(20);
+		Mockito.when(dt1.getMinutes()).thenReturn(0);
+
+		Mockito.when(assemblyCokeLine.getAmountOfWorkPosts()).thenReturn(3);
+		
+		assertEquals(false, spiedProdSched.hasTimeToScheduleNext());
+	}
+
+	@Test
+	public void test_hasTimeToScheduleNextFalseOverTime() {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		spiedProdSched.setOverTime(8 * 60);		
+		Mockito.doReturn(dt1).when(spiedProdSched).getCurrentTime();
+
+		Mockito.when(dt1.getDays()).thenReturn(0);
+		Mockito.when(dt1.getHours()).thenReturn(16);
+		Mockito.when(dt1.getMinutes()).thenReturn(0);
+		
+		Mockito.when(assemblyCokeLine.getAmountOfWorkPosts()).thenReturn(3);
+		
+		assertEquals(false, spiedProdSched.hasTimeToScheduleNext());
+	}
+
+	@Test
+	public void test_hasTimeToScheduleNextFalseInOverTime() {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		spiedProdSched.setOverTime(0);		
+		Mockito.doReturn(dt1).when(spiedProdSched).getCurrentTime();
+
+		Mockito.when(dt1.getDays()).thenReturn(0);
+		Mockito.when(dt1.getHours()).thenReturn(23);
+		Mockito.when(dt1.getMinutes()).thenReturn(0);
+		
+		Mockito.when(assemblyCokeLine.getAmountOfWorkPosts()).thenReturn(3);
+		
+		assertEquals(false, spiedProdSched.hasTimeToScheduleNext());
+	}
+	
+	//--------------------------------------------------------------------------
+	
+//	@Test
+//	public void test_advanceAssemblyLineAdditionalOvertime() {
+//		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+//
+//		Mockito.when(assemblyCokeLine.getAmountOfWorkPosts()).thenReturn(3);
+//		Mockito.when(assemblyCokeLine.isEmpty()).thenReturn(false);
+//		
+//		Mockito.when(dt1.getDays()).thenReturn(0);
+//		Mockito.when(dt1.getHours()).thenReturn(22);
+//		Mockito.when(dt1.getMinutes()).thenReturn(0);
+//		
+//		spiedProdSched.advanceTime(30);
+//		
+//		DateTime newTime = spiedProdSched.getCurrentTime();
+//		
+//		assertEquals(0, newTime.getDays());
+//		assertEquals(22, newTime.getHours());
+//		assertEquals(30, newTime.getMinutes());
+//	}
+
+	@Test
+	public void test_advanceAssemblyLineNormalEmpty() {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		
+		Mockito.when(assemblyCokeLine.getAmountOfWorkPosts()).thenReturn(3);		
+		Mockito.when(assemblyCokeLine.isEmpty()).thenReturn(true);
+		
+		spiedProdSched.advanceTime(60);
+		DateTime newTime = spiedProdSched.getCurrentTime();
+		assertEquals(0, newTime.getDays());
+		assertEquals(7, newTime.getHours());
+		assertEquals(0, newTime.getMinutes());
+	}
+
+//	@Test
+//	public void test_advanceAssemblyLineNormalNonEmpty() {
+//		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+//		
+//		Mockito.when(assemblyCokeLine.getAmountOfWorkPosts()).thenReturn(3);
+//		
+//		Mockito.doReturn(dt1).when(spiedProdSched).getCurrentTime();
+//		Mockito.when(assemblyCokeLine.isEmpty()).thenReturn(false);
+//		
+//		Mockito.when(dt1.getDays()).thenReturn(0);
+//		Mockito.when(dt1.getHours()).thenReturn(7);
+//		Mockito.when(dt1.getMinutes()).thenReturn(0);
+//		
+//		spiedProdSched.advanceTime(60);
+//		DateTime newTime = spiedProdSched.getCurrentTime();
+//		assertEquals(0, newTime.getDays());
+//		assertEquals(8, newTime.getDays());
+//		assertEquals(0, newTime.getMinutes());
+//	}
+//
+//	@Test
+//	public void test_advanceAssemblyLineNextDayNoOvertime() {
+//		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+//		
+//		Mockito.when(assemblyCokeLine.getAmountOfWorkPosts()).thenReturn(3);
+//
+//		Mockito.doReturn(dt1).when(spiedProdSched).getCurrentTime();
+//		Mockito.when(assemblyCokeLine.isEmpty()).thenReturn(true);
+//		
+//		Mockito.when(dt1.getDays()).thenReturn(0);
+//		Mockito.when(dt1.getHours()).thenReturn(21);
+//		Mockito.when(dt1.getMinutes()).thenReturn(0);
+//		
+//		spiedProdSched.advanceTime(30);
+//		DateTime newTime = spiedProdSched.getCurrentTime();
+//		assertEquals(1, newTime.getDays());
+//		assertEquals(6, newTime.getDays());
+//		assertEquals(0, newTime.getMinutes());
+//		
+//		assertEquals(0, spiedProdSched.getOverTime());
+//	}
+//
+//	@Test
+//	public void test_advanceAssemblyLineNextDayOvertime() {
+//		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+//
+//		Mockito.when(assemblyCokeLine.getAmountOfWorkPosts()).thenReturn(3);
+//
+//		Mockito.doReturn(dt1).when(spiedProdSched).getCurrentTime();
+//		Mockito.doReturn(8 * 60).when(spiedProdSched).getOverTime();
+//		Mockito.when(assemblyCokeLine.isEmpty()).thenReturn(true);
+//		
+//		Mockito.when(dt1.getDays()).thenReturn(0);
+//		Mockito.when(dt1.getHours()).thenReturn(13);
+//		Mockito.when(dt1.getMinutes()).thenReturn(0);
+//		
+//		spiedProdSched.advanceTime(30);
+//		DateTime newTime = spiedProdSched.getCurrentTime();
+//		assertEquals(1, newTime.getDays());
+//		assertEquals(6, newTime.getDays());
+//		assertEquals(0, newTime.getMinutes());
+//		
+//		assertEquals(0, spiedProdSched.getOverTime());
+//	}
+//
+//	@Test
+//	public void test_advanceAssemblyLineNextDayOvertime2() {
+//		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+//
+//		Mockito.when(assemblyCokeLine.getAmountOfWorkPosts()).thenReturn(3);
+//
+//		Mockito.doReturn(dt1).when(spiedProdSched).getCurrentTime();
+//		Mockito.doReturn(8 * 60).when(spiedProdSched).getOverTime();
+//		Mockito.when(assemblyCokeLine.isEmpty()).thenReturn(true);
+//		
+//		Mockito.when(dt1.getDays()).thenReturn(0);
+//		Mockito.when(dt1.getHours()).thenReturn(12);
+//		Mockito.when(dt1.getMinutes()).thenReturn(0);
+//		
+//		spiedProdSched.advanceTime(60);
+//		DateTime newTime = spiedProdSched.getCurrentTime();
+//		assertEquals(1, newTime.getDays());
+//		assertEquals(6, newTime.getDays());
+//		assertEquals(0, newTime.getMinutes());
+//		
+//		assertEquals(0, spiedProdSched.getOverTime());
+//	}
+//
+//	@Test
+//	public void test_advanceAssemblyLineOvertimeCumal() {
+//		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+//
+//		Mockito.when(assemblyCokeLine.getAmountOfWorkPosts()).thenReturn(3);
+//
+//		Mockito.doReturn(dt1).when(spiedProdSched).getCurrentTime();
+//		Mockito.doReturn(30).when(spiedProdSched).getOverTime();
+//		Mockito.when(assemblyCokeLine.isEmpty()).thenReturn(true);
+//		
+//		Mockito.when(dt1.getDays()).thenReturn(0);
+//		Mockito.when(dt1.getHours()).thenReturn(22);
+//		Mockito.when(dt1.getMinutes()).thenReturn(30);
+//		
+//		spiedProdSched.advanceTime(30);
+//		DateTime newTime = spiedProdSched.getCurrentTime();
+//		assertEquals(0, newTime.getDays());
+//		assertEquals(23, newTime.getDays());
+//		assertEquals(0, newTime.getMinutes());
+//	}
+
+	
+	//------------------------------------------------------------------------
+	@Test
+	public void test_getNextOrderNormal() {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		Mockito.doReturn(mockOrder1).when(spiedProdSched).makeNewOrder(mockModel1, mockSpecs, 0);		
+		Mockito.doReturn(true).when(spiedProdSched).hasTimeToScheduleNext();
+		
+		spiedProdSched.addNewOrder(mockModel1, mockSpecs);
+		
+		Order result = spiedProdSched.getNextOrderToSchedule();
+		assertEquals(mockOrder1, result);
+	}
+	
+	@Test
+	public void test_getNextOrderNoTimeHasEntry() {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		
+		Mockito.doReturn(mockOrder1).when(spiedProdSched).makeNewOrder(mockModel1, mockSpecs, 0);		
+		spiedProdSched.addNewOrder(mockModel1, mockSpecs);
+		
+		Mockito.doReturn(false).when(spiedProdSched).hasTimeToScheduleNext();
+		
+		Order result = spiedProdSched.getNextOrderToSchedule();
+		assertEquals(null, result);
+	}
+	
+	@Test
+	public void test_getNextOrderTimeNoEntry() {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		Mockito.doReturn(mockOrder1).when(spiedProdSched).makeNewOrder(mockModel1, mockSpecs, 0);		
+		Mockito.doReturn(true).when(spiedProdSched).hasTimeToScheduleNext();
+		
+		Order result = spiedProdSched.getNextOrderToSchedule();
+		assertEquals(null, result);
+	}	
+
+	@Test
+	public void test_getNextOrderNoTimeNoEntry() {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		Mockito.doReturn(mockOrder1).when(spiedProdSched).makeNewOrder(mockModel1, mockSpecs, 0);		
+		Mockito.doReturn(false).when(spiedProdSched).hasTimeToScheduleNext();
+		
+		Order result = spiedProdSched.getNextOrderToSchedule();
+		assertEquals(null, result);
+	}	
 }

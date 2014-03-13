@@ -39,25 +39,21 @@ public class Order implements OrderContainer{
 	 * @postcondition | (new this).order.getModel() == model
 	 * 				  | (new this).order.getSpecifications() == specifications
 	 * 			      | (new this).order.getInitTime() == initTime
-	 * 			      | (new this).order.getEstimatedCompletionDateTime() == estimatedCompletionDateTime
 	 * 				  | (new this).order.isCompleted() == False
 	 * 				  | (new this).order.getOrderNumber() == orderNumber
 	 * 
 	 * @throws NullPointerException
-	 * 		| model == null || specifications == null || initTime == null || estimatedCompletionDateTime == null 
+	 * 		| model == null || specifications == null || initTime == null 
 	 * @throws IllegalArgumentException
 	 * 		| !model.isValidSpecifications(specifications)
 	 */
-	public Order(Model model, Specification specification, int orderNumber,
-				 DateTime estimatedCompletionDateTime) throws NullPointerException,
+	public Order(Model model, Specification specification, int orderNumber) 
+													   throws NullPointerException,
 				 											  IllegalArgumentException{
 		if (model == null )
 			throw new NullPointerException("Model is null.");
 		if (specification == null)
-			throw new NullPointerException("Specification is null.");
-		if (estimatedCompletionDateTime == null)
-			throw new NullPointerException("estimatedCompletionDateTime is null.");
-		
+			throw new NullPointerException("Specification is null.");		
 		if (!model.isValidSpecification(specification))
 			throw new IllegalArgumentException();
 		
@@ -66,7 +62,6 @@ public class Order implements OrderContainer{
 		this.orderNumber = orderNumber;
 		
 		this.setIsComplete(false);
-		this.setEstimatedCompletionTime(estimatedCompletionDateTime);
 	}
 
 	//------------------------------------------------------------------------
@@ -75,18 +70,11 @@ public class Order implements OrderContainer{
 	/**
 	 * Set this order to completed at the given completionTime. 
 	 * 
-	 * @param completionTime : 
-	 * 		The time this order has been completed. 
 	 * 
-	 * @postcondition | !this.isCompleted() && 
-	 * 				  | completionTime != null -> (new this).isCompleted() == True
-	 * 				  |                           (new this).getCompletionTime() == completionTime
+ 	 * @postcondition | this.isCompleted()
 	 */
-	public void setAsCompleted(DateTime completionTime) {
-		if (!this.isCompleted() && completionTime != null) {
-			this.setEstimatedCompletionTime(completionTime);
-			this.setIsComplete(true);
-		}
+	public void setAsCompleted() {
+		this.setIsComplete(true);
 	}
 
 	/**
@@ -107,43 +95,13 @@ public class Order implements OrderContainer{
 	 * @postcondition (new this).isCompleted() == isCompleted
 	 */
 	//@Basic
-	private void setIsComplete(boolean isCompleted) {
+	protected void setIsComplete(boolean isCompleted) {
 		this.completed = isCompleted;
 	}
 
 	/** If this order has been completed. */
 	private boolean completed;
 
-	//--------------------------------------------------------------------------
-	/**
-	 * Get the estimated completion time of this Order. 
-	 * If completed, this is the actual completion time. 
-	 * 
-	 * @return the (estimated) completion time of this Order.
-	 */
-	//@Basic
-	@Override
-	public DateTime getEstimatedCompletionTime() {
-		return this.estimatedCompletionTime;
-	}
-
-	//@Basic
-	/** 
-	 * Set the estimated completion time of this Order to completionTime
-	 * 
-	 * @param completionTime
-	 * 		The new estimated completion time of this Order. 
-	 * 
-	 * @postconditions | !this.isCompleted -> (new this).getEstimatedCompletionTime() == completionTime
-	 */
-	public void setEstimatedCompletionTime(DateTime completionTime) {
-		if (!this.isCompleted())
-			this.estimatedCompletionTime = completionTime;
-	}
-	
-	/** The estimated completion time of this Order. */
-	private DateTime estimatedCompletionTime;
-	
 	//--------------------------------------------------------------------------
 	/**
 	 * Get the model of this Order.
@@ -192,7 +150,6 @@ public class Order implements OrderContainer{
 		return "Order\n" +
 			   "-----------------------\n" +
 			   "Model:" + this.getModel().getModelName() + "\n" +
-			   "Specifications: " + this.getSpecifications().toString() + "\n" +
-			   "Estimated Completion time: " + this.getEstimatedCompletionTime().toString() + "\n";
+			   "Specifications: " + this.getSpecifications().toString() + "\n";
 	}
 }

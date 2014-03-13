@@ -13,7 +13,7 @@ import org.javatuples.Pair;
  * It also has a space to store one completed assembly which just came of the assembly line completed, until
  * it is collected. If no assembly is waiting to be collected, this contains a null object.
  * 
- * @author Thomas Vochten, Frederik Goovaerts
+ * @author Thomas Vochten, Frederik Goovaerts, Maarten Tegelaers
  *
  */
 public class AssemblyLine {
@@ -232,9 +232,14 @@ public class AssemblyLine {
 		getProductionSchedule().advanceTime(time);
 		putNextOrderOnAssemblyLine();
 		AssemblyProcedure finishedAssembly = removeFinishedAssemblyFromFinishedAssemblyProcedureCollectionSpace();
-		getProductionSchedule().completeOrder(finishedAssembly.getOrder());
+		
+		if (finishedAssembly != null) {
+			Order finishedOrder = finishedAssembly.getOrder();
+			finishedOrder.setAsCompleted();
+		
+			getProductionSchedule().completeOrder(finishedOrder);
+		}
 	}
-	
 	
 	
 	/**
@@ -248,7 +253,7 @@ public class AssemblyLine {
 		if(getWorkPost(0).getAssemblyProcedure() != null)
 			throw new IllegalStateException("First workpost is not empty yet, cannot add a new assembly to the assemblyline.");
 		try{
-			Order nextOrder = productionSchedule.removeNextOrderFromSchedule();
+			Order nextOrder = productionSchedule.popNextOrderFromSchedule();
 			getWorkPost(0).setAssemblyProcedure(createNewAssemblyProcedure(nextOrder));
 		} catch (IndexOutOfBoundsException e) {
 			getWorkPost(0).setAssemblyProcedure(null);
@@ -371,5 +376,19 @@ public class AssemblyLine {
 				return ((getAmountOfWorkPosts() - post.getWorkPostNumber()) - 1);
 		}
 		throw new IllegalArgumentException("Order is not on assemblyLine.");
+	}
+	
+	/**
+	 * Return if this AssemblyLine is currently empty. 
+	 * 
+	 * @return True if empty, otherwise false.
+	 */
+	boolean isEmpty() {
+		for(WorkPost p : this.getWorkPosts()) {
+			if (!p.isEmpty()) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
