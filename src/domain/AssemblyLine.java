@@ -111,6 +111,7 @@ public class AssemblyLine {
 	 * @return
 	 * 		Assembly tasks at the given workpost matching the workpost's type
 	 * @throws IllegalArgumentException
+	 * 		workPostNumber refers to a workpost that does not exist.
 	 */
 	public List<AssemblyTaskContainer> getAssemblyTasksAtPost(int workPostNumber) throws IllegalArgumentException {
 		if(workPostNumber < 0 || workPostNumber >= getAmountOfWorkPosts())
