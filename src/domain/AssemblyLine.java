@@ -255,7 +255,7 @@ public class AssemblyLine {
 		try{
 			Order nextOrder = productionSchedule.popNextOrderFromSchedule();
 			getWorkPost(0).setAssemblyProcedure(createNewAssemblyProcedure(nextOrder));
-		} catch (IndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException | NullPointerException e) {
 			getWorkPost(0).setAssemblyProcedure(null);
 		}
 	}
