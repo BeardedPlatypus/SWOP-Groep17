@@ -405,7 +405,14 @@ public class ProductionSchedule {
 	 *                | otherwise                                          -> (new this).getCurrentTime() == currentTime.addTime(0, 0, minutes)
 	 */
 	public void advanceTime(int minutes) {
-		
+		this.incrementCurrentTime(0, 0, minutes);
+
+		if (!this.hasTimeToScheduleNext() && this.getAssemblyLine().isEmpty()) {
+			int newOverTime = Math.abs(Math.min(0, this.timeLeftMinutes()));
+			this.setOverTime(newOverTime);
+			DateTime newTime = this.makeNewDateTime(this.getCurrentTime().getDays() + 1, STARTHOUR, 0);
+			this.setCurrentTime(newTime);
+		}
 	}
 	
 	/**
