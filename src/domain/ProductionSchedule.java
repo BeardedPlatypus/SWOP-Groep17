@@ -273,20 +273,16 @@ public class ProductionSchedule {
 	 * @throws IllegalArgumentException
 	 * 		| !model.isValidSpecifications(specs)
 	 */
-public void addNewOrder(Model model, Specification specs) throws NullPointerException, IllegalArgumentException{
-		int curPos = this.getPendingOrderContainers().size() + this.getAssemblyLine().getAmountOfWorkPosts();
-		
+public void addNewOrder(Model model, Specification specs) throws NullPointerException, IllegalArgumentException{		
 		Order newOrder = makeNewOrder(model, specs, 
-				                      this.getCurrentOrderIdentifier(),
-				                      this.getEstimatedCompletionTime(curPos));		
+				                      this.getCurrentOrderIdentifier());		
 		this.addToPendingOrders(newOrder);
 		this.incrementOrderIdentifier();
 	}
 	
 	/** Isolated Order Constructor, mostly for testing purposes. */
-	protected Order makeNewOrder(Model model, Specification specs, int orderNumber, 
-			                     DateTime estimatedTime) {
-		return new Order(model, specs, orderNumber, estimatedTime);
+	protected Order makeNewOrder(Model model, Specification specs, int orderNumber) {
+		return new Order(model, specs, orderNumber);
 	}
 	
 	//--------------------------------------------------------------------------

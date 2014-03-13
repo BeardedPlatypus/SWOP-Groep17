@@ -136,7 +136,6 @@ public class ProductionScheduleTest {
 		assertEquals(9, res3.getHours());
 		assertEquals(12, res3.getMinutes());
 
-		
 		DateTime res4 = spiedProdSched.getEstimatedCompletionTime(3);
 		assertEquals(1, res4.getDays());
 		assertEquals(10, res4.getHours());
