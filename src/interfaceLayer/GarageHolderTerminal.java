@@ -12,13 +12,10 @@ public class GarageHolderTerminal {
 	/**
 	 * Starts the Garageholder terminal. It assumes the user is logged in at this point.
 	 * We start by showing an overview and help the user place a new car order.
+	 * @param handler 
 	 */
-	public static void login() {
+	public static void login(NewOrderSessionHandler handler) {
 		showHeader();
-		//TODO goeie contructor
-		NewOrderSessionHandler handler = null;
-		
-		
 		
 		while(true){
 			//Show overview
@@ -108,7 +105,11 @@ public class GarageHolderTerminal {
 			try{
 			out:while(true){
 					// We'll only read in the first character.
-					int choice = (int) System.in.read();
+					String choiceStr = String.valueOf((char) System.in.read());
+					int choice = 0;
+					try{
+						choice = Integer.parseInt(choiceStr);
+					}catch(Exception e){}
 					// Don't forget to clear the input buffer.
 					System.in.skip(System.in.available());
 					
@@ -117,7 +118,7 @@ public class GarageHolderTerminal {
 						System.out.println("Sorry, but \"" + choice + "\" is not a valid choice. Please try again.");
 						System.out.println();
 					}else{
-						selection[i] = choice;
+						selection[i] = (choice-1);
 						break out;
 					}
 				}
@@ -145,7 +146,12 @@ public class GarageHolderTerminal {
 		try{
 			while(true){
 				// We'll only read in the first character.
-				int choice = (int) System.in.read();
+				String choiceStr = String.valueOf((char) System.in.read());
+				int choice = 0;
+				try{
+					choice = Integer.parseInt(choiceStr);
+				}catch(Exception e){}
+				
 				// Don't forget to clear the input buffer.
 				System.in.skip(System.in.available());
 				
@@ -252,7 +258,7 @@ public class GarageHolderTerminal {
 	 * 
 	 * @post	The user feels welcome.
 	 */
-	public static void showHeader(){
+	private static void showHeader(){
 		System.out.println("   ==================================");
 		System.out.println("   = Aperture Car Assembly Terminal =");
 		System.out.println("   ==================================");
@@ -261,5 +267,5 @@ public class GarageHolderTerminal {
 		System.out.println();
 		System.out.println();
 	}
-
+	
 }

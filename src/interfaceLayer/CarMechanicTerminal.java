@@ -10,10 +10,7 @@ import domain.WorkPostContainer;
 
 public class CarMechanicTerminal {
 
-	public static void login() {
-		
-		//TODO: decent constructor
-		PerformAssemblyTaskHandler assHandler = null;
+	public static void login(PerformAssemblyTaskHandler assHandler) {
 		
 		int workPostNumber = selectWorkPost(assHandler);
 		List<AssemblyTaskContainer> assTaskList = assHandler.getAssemblyTasksAtPost(workPostNumber);
@@ -21,6 +18,8 @@ public class CarMechanicTerminal {
 	out:while(true){
 			
 			int assTaskNumber = selectAssemblyTask(assTaskList);
+			if(assTaskNumber == -1) return;
+			
 			listAssemblyTaskDetails(assTaskList.get(assTaskNumber));
 			
 			assHandler.completeWorkpostTask(workPostNumber, assTaskNumber);
@@ -123,7 +122,11 @@ public class CarMechanicTerminal {
 		try {
 			while(true){
 				// We'll only read in the first character.
-				int choice = (int) System.in.read();
+				String choiceStr = String.valueOf((char) System.in.read());
+				int choice = 0;
+				try{
+					choice = Integer.parseInt(choiceStr);
+				}catch(Exception e){}
 				// Don't forget to clear the input buffer.
 				System.in.skip(System.in.available());
 				if(choice < 1 || choice > pendingTasks.size()){
@@ -159,7 +162,11 @@ public class CarMechanicTerminal {
 		try {
 			while(true){
 				// We'll only read in the first character.
-				int choice = (int) System.in.read();
+				String choiceStr = String.valueOf((char) System.in.read());
+				int choice = 0;
+				try{
+					choice = Integer.parseInt(choiceStr);
+				}catch(Exception e){}
 				// Don't forget to clear the input buffer.
 				System.in.skip(System.in.available());
 				if(choice < 1 || choice > workpostList.size()){
@@ -168,7 +175,7 @@ public class CarMechanicTerminal {
 					System.out.println();
 				}else{
 					System.out.println();
-					return (choice-1);
+					return workpostList.get(choice-1).getWorkPostNumber();
 				}
 			}
 		} catch (IOException e) {

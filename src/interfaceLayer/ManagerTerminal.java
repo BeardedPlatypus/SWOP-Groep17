@@ -12,10 +12,7 @@ import domain.WorkPostContainer;
 
 public class ManagerTerminal {
 
-	public static void login() {
-		
-		//TODO: decent constructor
-		AdvanceAssemblyLineHandler advanceHandler = null;
+	public static void login(AdvanceAssemblyLineHandler advanceHandler) {
 		
 		if(!wantsToAdvance()){
 			return;
@@ -123,7 +120,7 @@ public class ManagerTerminal {
 		
 		System.out.println("---------------");
 		System.out.println();
-		System.out.println("|- COMPLETED");
+		System.out.println("|- AFTER ADVANCING");
 		System.out.println();
 		
 		procedureWorkpostList = advanceHandler.getFutureWorkpostsAndActiveAssemblies();
@@ -143,14 +140,18 @@ public class ManagerTerminal {
 			WorkPostContainer workPost = procedureWorkpostPair.getValue1();
 			
 			System.out.println("Workpost: " + workPost.getName());
-			List<AssemblyTaskContainer> assTasks = assProc.getAssemblyTasks();
-			
-			for(AssemblyTaskContainer assTask : assTasks){
-				System.out.print("Task: " + assTask.getName() + " ");
-				if(assTask.isCompleted()){
-					System.out.println("[COMPLETED]");
-				}else{
-					System.out.println("[PENDING]");
+			if(assProc == null){
+				System.out.println("No tasks pending.");
+			}else{
+				List<AssemblyTaskContainer> assTasks = assProc.getAssemblyTasks();
+				
+				for(AssemblyTaskContainer assTask : assTasks){
+					System.out.print("Task: " + assTask.getName() + " ");
+					if(assTask.isCompleted()){
+						System.out.println("[COMPLETED]");
+					}else{
+						System.out.println("[PENDING]");
+					}
 				}
 			}
 			System.out.println();

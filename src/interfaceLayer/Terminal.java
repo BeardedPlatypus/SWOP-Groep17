@@ -2,6 +2,8 @@ package interfaceLayer;
 
 import java.io.IOException;
 
+import domain.InitialisationHandler;
+
 /**
  * @author simon
  *
@@ -36,34 +38,81 @@ public class Terminal {
 	 * 			options from the System input stream.
 	 */
 	public static void main(String[] args) {
-		showHeader();
-		String user = "";
-		try {
-			user = selectUser();
-			showLoginSuccess();
-			redirectUser(user);
-		} catch(IOException e) {
-			System.err.println("Critical error: Unable to read user input.");
-			e.printStackTrace();
-		} catch (UndefinedUserException e) {
-			System.err.println("User type identifier valid, but not implemented.");
+		
+		InitialisationHandler init = new InitialisationHandler();
+		
+		while(true){
+			showHeader();
+			String user = "";
+			try {
+				user = selectUser();
+				showLoginSuccess();
+				redirectUser(user,init);
+				if(!askContinue()) return;
+			} catch(IOException e) {
+				System.err.println("Critical error: Unable to read user input.");
+				e.printStackTrace();
+			} catch (UndefinedUserException e) {
+				System.err.println("User type identifier valid, but not implemented.");
+			}
 		}
 	}
 	
 	/**
+	 * Asks the user whether he or she wants to continue using the terminal.
+	 * 
+	 * @return	boolean
+	 * 			corresponding to user choice
+	 */
+	private static boolean askContinue() {
+		
+		System.out.println("Do you want to continue using this terminal?");
+		System.out.println("1. [Y]es");
+		System.out.println("2. [N]o");
+		System.out.println();
+		
+		try {
+			while(true){
+				// We'll only read in the first character.
+				String choice = String.valueOf((char) System.in.read());
+				// Don't forget to clear the input buffer.
+				System.in.skip(System.in.available());
+				if(choice.equalsIgnoreCase("Y")){
+					System.out.println();
+					return true;
+				}else if(choice.equalsIgnoreCase("N")){
+					System.out.println();
+					return false;
+				}else{
+					System.out.println();
+					System.out.println("Sorry, but \"" + choice + "\" is not a choice. Please try again.");
+					System.out.println();
+				}
+			}
+		} catch (IOException e) {
+			System.err.println("Critical error: Unable to read user input.");
+			e.printStackTrace();
+		}
+		
+		return false;
+		
+	}
+
+	/**
 	 * Redirects the user to a specialized interface.
+	 * @param init 
 	 * 
 	 * @post	The user is redirected to a specialized interface.
 	 * @throws  UndefinedUserException 
 	 * 			If a user type is not implemented.
 	 */
-	private static void redirectUser(String user) throws UndefinedUserException {
+	private static void redirectUser(String user, InitialisationHandler init) throws UndefinedUserException {
 		switch (user.toUpperCase()) {
-		case "G":	GarageHolderTerminal.login();
+		case "G":	GarageHolderTerminal.login(init.getNewOrderHandler());
 					break;
-		case "C":	CarMechanicTerminal.login();
+		case "C":	CarMechanicTerminal.login(init.getTaskHandler());
 					break;
-		case "M":	ManagerTerminal.login();
+		case "M":	ManagerTerminal.login(init.getAdvanceHandler());
 					break;
 		
 		default: 	throw new UndefinedUserException(user);
