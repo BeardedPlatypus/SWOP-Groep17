@@ -148,4 +148,16 @@ public class Manufacturer {
 			throw new IllegalStateException("Order is not yet completed, can not add it to completed orders.");
 		this.getCompletedOrders().add(order);
 	}
+
+	/**
+	 * Returns a DateTime object with the estimated completion time of the given order.
+	 * 
+	 * @param order
+	 * 		The order to get the completion time for as a container.
+	 * @return
+	 * 		The DateTime of the estimated completion of the order
+	 */
+	public DateTime getEstimatedCompletionTime(OrderContainer order) {
+		return getProductionSchedule().getEstimatedCompletionTime(order);
+	}
 }

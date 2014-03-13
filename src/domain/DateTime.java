@@ -164,4 +164,13 @@ public class DateTime {
 	public DateTime subtractTime(DateTime dt) {
 		return this.subtractTime(dt.getDays(), dt.getHours(), dt.getMinutes());
 	}
+	
+	/**
+	 * Returns a simple string representation of the DateTime object, formatted as:
+	 * "Day DD, HHhMMm", based on the DateTime's data.
+	 */
+	@Override
+	public String toString(){
+		return ("Day " + this.getDays() + ", " + this.getHours() + "h" + this.getMinutes()+ "m");
+	}
 }
