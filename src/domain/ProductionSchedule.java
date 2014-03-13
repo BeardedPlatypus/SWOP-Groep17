@@ -85,47 +85,47 @@ public class ProductionSchedule {
 	 * @throws IllegalArgumentException | positionOrder < 0
 	 */
 	public DateTime getEstimatedCompletionTime(int positionOrder) {
-		int assemblyLineSize = this.getAssemblyLine().getAmountOfWorkPosts();
-		
-		if (positionOrder < 0) {                                                    // Invalid Argument
+		// TODO: Write this method in Scala, it would be worthy of worshipping. 
+		if (positionOrder < 0) {										            // Invalid Argument
 			throw new IllegalArgumentException("position smaller than 0");			//
-		} else if (positionOrder < assemblyLineSize) {                              // on assembly line
-			int estHoursForCompletion = N_HOURS_MOVE * (positionOrder + 1);         //
-			return this.getCurrentTime().addTime(0, estHoursForCompletion, 0);
-		} else { // in pending orders
-			int estHoursForCompletion = N_HOURS_MOVE * (positionOrder + 1);         // add one for current action on AssemblyLine to complete.
-			int timeLeftToday = 22 * 60 - this.getCurrentTime().getHours() * 60 
+		}																			//
+		                                                                            //
+		int assemblyLineSize = this.getAssemblyLine().getAmountOfWorkPosts();       //
+		int estHoursForCompletion = N_HOURS_MOVE * (positionOrder + 1);    		    // add one for the actions that are currently being executed to complete.	
+		DateTime timeToReturn = this.getCurrentTime();
+																					//        
+		if (positionOrder < assemblyLineSize) {                                     // order is on the assembly line
+			return timeToReturn.addTime(0, estHoursForCompletion, 0);
+		} else {                                                                    // order is in pending orders
+			int timeLeft = 22 * 60 - this.getCurrentTime().getHours() * 60 
 									    - this.getCurrentTime().getMinutes()
 									    - this.getOverTime();
 			
-			if (estHoursForCompletion * 60 <= timeLeftToday) {                      // Task can be finished today.
-				return this.getCurrentTime().addTime(0, estHoursForCompletion, 0);
-			} else {								                                // Task can't be finished today. 
-				if (timeLeftToday < 0) {                                            // there is overtime, which is specified by timeLeftToday
-					int timeLeftTomorrow = WORKHOURS * 60 + timeLeftToday;
+			if (estHoursForCompletion * 60 <= timeLeft) {                     		// Task can be finished today.
+				return timeToReturn.addTime(0, estHoursForCompletion, 0);
+				
+			} else {								                                // Task can't be finished today.
+				estHoursForCompletion -= N_HOURS_MOVE;								// We're moving to the next day, so there is no current action.
+				timeToReturn = this.makeNewDateTime(timeToReturn.getDays() + 1, STARTHOUR, 0);         											// Set to return time to the next day, since we cannot finish it today.
+
+				if (timeLeft < 0) {                                                 // there is left overtime after today, which is specified by a neg timeLeftToday
+					 timeLeft = WORKHOURS * 60 + timeLeft;
 					
-					if(estHoursForCompletion * 60 <= timeLeftTomorrow)              // Time can be 
-						return this.makeNewDateTime(this.getCurrentTime().getDays() + 1, STARTHOUR + estHoursForCompletion - 1, 0); // Remove the add one because no current action has to be completed in the morning.
-					else {
-						System.out.println(timeLeftTomorrow);
-						int nCarsMoved = Math.max(0, (timeLeftTomorrow - 60 * N_HOURS_MOVE * assemblyLineSize) / 60 * N_HOURS_MOVE);
-						System.out.println(nCarsMoved);
-						int newPos =  positionOrder - nCarsMoved;
-						System.out.println(newPos);
-						int extraDays = newPos / ((WORKHOURS - N_HOURS_MOVE * assemblyLineSize) / N_HOURS_MOVE);
-						int extraHours = (newPos % ((WORKHOURS - N_HOURS_MOVE * assemblyLineSize) / N_HOURS_MOVE + 1)) * N_HOURS_MOVE; 
-						
-						return this.makeNewDateTime(this.getCurrentTime().getDays() + 2 + extraDays, STARTHOUR + extraHours, 0);
+					if(estHoursForCompletion * 60 <= timeLeft) {                    // The order can be finished within the workday of tomorrow.
+						return timeToReturn.addTime(0, estHoursForCompletion, 0); 
+					} else {                                                        // The order cannot be finished within the workday of tomorrow
+						timeToReturn = timeToReturn.addTime(1, 0, 0);			    // We cannot finish the task tomorrow, so we will move to the day after tomorrow. 
 					}
-				} else {
-					int nCarsMoved = Math.max(0, (timeLeftToday - N_HOURS_MOVE * 60 * assemblyLineSize) / (60 * N_HOURS_MOVE));
-					int newPos =  positionOrder - nCarsMoved;
-					int extraDays = newPos / ((WORKHOURS - N_HOURS_MOVE * assemblyLineSize) / N_HOURS_MOVE);
-					
-					int extraHours = (newPos % ((WORKHOURS - N_HOURS_MOVE * assemblyLineSize) / N_HOURS_MOVE + 1)) * N_HOURS_MOVE; 
-					
-					return this.makeNewDateTime(this.getCurrentTime().getDays() + 1 + extraDays, STARTHOUR + extraHours, 0);
 				}
+				
+				int nCarsMoved = Math.max(0, ((timeLeft - 60 * N_HOURS_MOVE * assemblyLineSize) / 60 * N_HOURS_MOVE) + 1); // We do not let cars be moved in a negative direction.
+				int newPos =  positionOrder - nCarsMoved;                  // The position after tomorrow has ended. 
+				
+				int carsPerDay = (WORKHOURS - N_HOURS_MOVE * assemblyLineSize) / N_HOURS_MOVE + 1; // number of cars that can be produced on a day. + 1 is from the first car.                  
+				int extraDays = newPos / carsPerDay; 					   // Number of days that need to pass before order can be executed.
+				int extraHours = (newPos % carsPerDay) * N_HOURS_MOVE;     // Number of hours before car can be finished on a day.   
+				
+				return timeToReturn.addTime(extraDays, extraHours, 0);
 			}
 		}	
 	}
