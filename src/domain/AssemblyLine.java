@@ -171,8 +171,12 @@ public class AssemblyLine {
 			futureAssemblies.remove(futureAssemblies.size()-1);
 		try{
 			Order nextOrder = productionSchedule.getNextOrderToSchedule();
-			AssemblyProcedureContainer nextAssembly = createNewAssemblyProcedure(nextOrder); 
-			futureAssemblies.add(0, nextAssembly);
+			if(nextOrder != null){
+				AssemblyProcedureContainer nextAssembly = createNewAssemblyProcedure(nextOrder); 
+				futureAssemblies.add(0, nextAssembly);
+			} else {
+				futureAssemblies.add(0,null);
+			}
 		} catch (IndexOutOfBoundsException e){
 			futureAssemblies.add(0, null);
 		}
