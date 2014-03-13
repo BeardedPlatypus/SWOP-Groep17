@@ -361,7 +361,7 @@ public class AssemblyLine {
 	 * @throws IllegalArgumentException
 	 * 		When the order is not being assembled right now.
 	 */
-	int getOrderPositionOnAssemblyLine(Order order) throws IllegalArgumentException{
+	int getOrderPositionOnAssemblyLine(OrderContainer order) throws IllegalArgumentException{
 		for(WorkPost post: getWorkPosts()){
 			if(post.isWorkingOnOrder(order))
 				return ((getAmountOfWorkPosts() - post.getWorkPostNumber()) - 1);
