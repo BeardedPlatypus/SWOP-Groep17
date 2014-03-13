@@ -37,9 +37,9 @@ public class ModelCatalogTest {
 		this.modelCatalog = new ModelCatalog(list);
 	}
 
-//	@Test
-//	public void test_getModels() {
-//		fail();
-//	}
+	@Test
+	public void test_getModels() {
+		//fail();
+	}
 
 }
