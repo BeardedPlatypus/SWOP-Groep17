@@ -459,4 +459,13 @@ public class ProductionSchedule {
 				               - this.getCurrentTime().getMinutes()
     			               - this.getOverTime();
 	}
+	
+	/**
+	 * Complete order, pass it from the assembly line to the manufacturer.
+	 * 
+	 *  @precondition | order.isCompleted()
+	 */
+	void completeOrder(Order order) {
+		this.getManufacturer().addCompleteOrder(order);
+	}
 }

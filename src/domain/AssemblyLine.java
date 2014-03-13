@@ -229,10 +229,12 @@ public class AssemblyLine {
 		putNextOrderOnAssemblyLine();
 		AssemblyProcedure finishedAssembly = removeFinishedAssemblyFromFinishedAssemblyProcedureCollectionSpace();
 		
-		Order finishedOrder = finishedAssembly.getOrder();
-		finishedOrder.setAsCompleted();
+		if (finishedAssembly != null) {
+			Order finishedOrder = finishedAssembly.getOrder();
+			finishedOrder.setAsCompleted();
 		
-		getProductionSchedule().completeOrder();
+			getProductionSchedule().completeOrder(finishedOrder);
+		}
 	}
 	
 	
