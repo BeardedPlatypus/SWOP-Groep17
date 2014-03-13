@@ -38,7 +38,7 @@ public class ProductionSchedule {
 	}
 	
 	/**
-	 * Sets the assembly line to given assembly line
+	 * Set the assembly line to given assembly line
 	 * 
 	 * @param assemblyLine
 	 * 		The assemblyLine this ProductionSchedule will use to perform assemblies
@@ -273,7 +273,7 @@ public class ProductionSchedule {
 	 * @throws IllegalArgumentException
 	 * 		| !model.isValidSpecifications(specs)
 	 */
-public void addNewOrder(Model model, Specification specs) throws NullPointerException, IllegalArgumentException{		
+	public void addNewOrder(Model model, Specification specs) throws NullPointerException, IllegalArgumentException{		
 		Order newOrder = makeNewOrder(model, specs, 
 				                      this.getCurrentOrderIdentifier());		
 		this.addToPendingOrders(newOrder);
@@ -400,14 +400,19 @@ public void addNewOrder(Model model, Specification specs) throws NullPointerExce
 	private AssemblyLine assemblyLine;
 	
 	/**
-	 * Remove the Order that is next in line to be scheduled from 
-	 * This ProductionSchedule. 
-	 * 
+	 * Get and remove the next pending Order from this ProductionSchedule, 
+	 * returns null if no next order exists. 
+	 *
 	 * @postcondition !(new this).getPendingOrders().contains(this.getNextOrderToSchedule())
 	 * 
-	 * @throws IndexOutofBoundsException | this.getPendingOrderContainers().size() == 0;
+	 * @return next pending Order || null
 	 */
-	public void removeNextOrderToSchedule() {
-		this.pendingOrders.remove(0);
+	Order popNextOrderFromSchedule() {
+		// we need access to the original list, so the actual private variable is used.
+		if (!this.pendingOrders.isEmpty())
+			return this.pendingOrders.remove(0);
+		else {
+			return null;
+		}
 	}
 }

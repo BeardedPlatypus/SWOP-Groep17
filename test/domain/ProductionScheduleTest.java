@@ -88,10 +88,10 @@ public class ProductionScheduleTest {
 		Mockito.when(mockOrder3.getOrderNumber()).thenReturn(2);
 		Mockito.when(mockOrder4.getOrderNumber()).thenReturn(3);
 		
-		Mockito.doReturn(mockOrder1).when(spiedProdSched).makeNewOrder(mockModel1, mockSpec1, 0, dt1);
-		Mockito.doReturn(mockOrder2).when(spiedProdSched).makeNewOrder(mockModel2, mockSpec2, 1, dt2);
-		Mockito.doReturn(mockOrder3).when(spiedProdSched).makeNewOrder(mockModel3, mockSpec3, 2, dt3);
-		Mockito.doReturn(mockOrder4).when(spiedProdSched).makeNewOrder(mockModel4, mockSpec4, 3, dt4);
+		Mockito.doReturn(mockOrder1).when(spiedProdSched).makeNewOrder(mockModel1, mockSpec1, 0);
+		Mockito.doReturn(mockOrder2).when(spiedProdSched).makeNewOrder(mockModel2, mockSpec2, 1);
+		Mockito.doReturn(mockOrder3).when(spiedProdSched).makeNewOrder(mockModel3, mockSpec3, 2);
+		Mockito.doReturn(mockOrder4).when(spiedProdSched).makeNewOrder(mockModel4, mockSpec4, 3);
 		
 		// Do the actual Code
 		spiedProdSched.addNewOrder(mockModel1, mockSpec1);
@@ -580,9 +580,47 @@ public class ProductionScheduleTest {
 	// removeNextOrder
 	//--------------------------------------------------------------------------
 	@Test
-	public void test_removeNextOrderToScheduleIndexOutOfBoundsException() {
-		exception.expect(IndexOutOfBoundsException.class);
-		
-		prodSched.removeNextOrderToSchedule();
+	public void test_popNextOrderToScheduleNull() {
+		Order result = prodSched.popNextOrderFromSchedule();
+		assertEquals(null, result);
 	}
+	
+	@Test
+	public void test_popNextOrderToScheduleSingle() {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		Mockito.doReturn(mockOrder1).when(spiedProdSched).makeNewOrder(mockModel, mockSpecs, 0);		
+		
+		spiedProdSched.addNewOrder(mockModel, mockSpecs);
+		
+		Order result = prodSched.popNextOrderFromSchedule();
+		assertEquals(mockOrder1, result);
+	}
+	
+	@Test
+	public void test_popNextOrderToScheduleMulti() {
+		ProductionSchedule spiedProdSched = Mockito.spy(prodSched);
+		Mockito.doReturn(mockOrder1).when(spiedProdSched).makeNewOrder(mockModel1, mockSpecs, 0);		
+		Mockito.doReturn(mockOrder2).when(spiedProdSched).makeNewOrder(mockModel2, mockSpecs, 1);		
+		Mockito.doReturn(mockOrder3).when(spiedProdSched).makeNewOrder(mockModel3, mockSpecs, 2);		
+		Mockito.doReturn(mockOrder4).when(spiedProdSched).makeNewOrder(mockModel4, mockSpecs, 3);		
+
+		
+		spiedProdSched.addNewOrder(mockModel1, mockSpecs);
+		spiedProdSched.addNewOrder(mockModel2, mockSpecs);
+		spiedProdSched.addNewOrder(mockModel3, mockSpecs);
+		spiedProdSched.addNewOrder(mockModel4, mockSpecs);
+		
+		Order result = prodSched.popNextOrderFromSchedule();
+		assertEquals(mockOrder1, result);
+
+		result = prodSched.popNextOrderFromSchedule();
+		assertEquals(mockOrder2, result);
+
+		result = prodSched.popNextOrderFromSchedule();
+		assertEquals(mockOrder3, result);
+		
+		result = prodSched.popNextOrderFromSchedule();
+		assertEquals(mockOrder4, result);
+	}
+
 }
