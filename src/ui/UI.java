@@ -228,6 +228,7 @@ public class UI {
 				Option currentOption = currentOrderModel.getModelOption(i);
 				System.out.println("\tOption: " + currentOption.getOptionName() + ", with specification: " + currentOption.getChoiceName(currentSpec));
 			}
+			System.out.println("\twith estimated completion time: " + getNewOrderHandler().getEstimatedCompletionTime(order).toString());
 			System.out.println(SEPERATOR);
 		}
 		

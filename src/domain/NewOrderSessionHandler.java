@@ -81,4 +81,16 @@ public class NewOrderSessionHandler {
 	public void chooseModelAndSpecifications(Model model, Specification specifications) {
 		this.getManufacturer().createOrder(model, specifications);
 	}
+	
+	/**
+	 * Returns a DateTime object with the estimated completion time of the given order.
+	 * 
+	 * @param order
+	 * 		The order to get the completion time for as a container.
+	 * @return
+	 * 		The DateTime of the estimated completion of the order
+	 */
+	public DateTime getEstimatedCompletionTime(OrderContainer order){
+		return getManufacturer().getEstimatedCompletionTime(order);
+	}
 }
