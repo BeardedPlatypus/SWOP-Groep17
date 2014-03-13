@@ -175,4 +175,16 @@ public class WorkPost implements WorkPostContainer {
 		}
 		return true;
 	}
+
+	/**
+	 * Determines whether or not this workpost is working on the given order.
+	 * 
+	 * @param order
+	 * 		The order to check against
+	 * @return
+	 * 		Whether or not this workpost is working on the given order
+	 */
+	public boolean isWorkingOnOrder(OrderContainer order) {
+		return getAssemblyProcedure().getOrder().equals(order);
+	}
 }

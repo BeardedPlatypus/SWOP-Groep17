@@ -35,7 +35,8 @@ public class ManufacturerTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		
-		this.man = new Manufacturer(mockProdSched, mockModCat);
+		this.man = new Manufacturer(mockModCat);
+		man.setProductionSchedule(mockProdSched);
 
 	}
 
@@ -64,7 +65,7 @@ public class ManufacturerTest {
 	@Test
 	public void constructorNullModelCatalogTest() {
 		exception.expect(IllegalArgumentException.class);
-		new Manufacturer(mockProdSched, null);
+		new Manufacturer(null);
 	}
 
 	@Test

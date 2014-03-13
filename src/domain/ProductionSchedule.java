@@ -11,6 +11,7 @@ import java.util.List;
  * 
  * @author Martinus Wilhelmus Tegelaers
  *
+ * @invariant | this.getOverTime() >= 0
  */
 public class ProductionSchedule {
 	//--------------------------------------------------------------------------
@@ -22,22 +23,31 @@ public class ProductionSchedule {
 	 * 
 	 * @param manufacturer
 	 * 		The manufacturer associated with this new ProductionSchedule.
-	 * @param assemblyLine
-	 * 		The AssemblyLine associated with this new ProductionSchedule.
-	 * 
 	 * @precondition manufacturer != null
 	 * @precondition assemblyLine != null
 	 * 
 	 * @postcondition (new this).getCurrentTime() == new DateTime(0, 0, 0)
 	 */
-	public ProductionSchedule(Manufacturer manufacturer, AssemblyLine assemblyLine) {
+	public ProductionSchedule(Manufacturer manufacturer) {
 		this.manufacturer = manufacturer;
-		this.assemblyLine = assemblyLine;
+		manufacturer.setProductionSchedule(this);
 		
-		this.currentTime = new DateTime(0, 0, 0);
+		this.setCurrentTime(new DateTime(0, STARTHOUR, 0));
+		this.setOverTime(0);
 		this.setOrderIdentifier(0);
 	}
 	
+	/**
+	 * Sets the assembly line to given assembly line
+	 * 
+	 * @param assemblyLine
+	 * 		The assemblyLine this ProductionSchedule will use to perform assemblies
+	 */
+	public void setAssemblyLine(AssemblyLine assemblyLine){
+		this.assemblyLine = assemblyLine;
+	}
+	
+	// FIXME assumption that it takes another hour before next move. 
 	//--------------------------------------------------------------------------
 	// Time related methods and Properties. 
 	//--------------------------------------------------------------------------
@@ -56,14 +66,18 @@ public class ProductionSchedule {
 	 * @throws IllegalArgumentException | ! order.isComplete || 
 	 * 									| order in this.getPendingOrderContainers()
 	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order) throws IllegalArgumentException {
-		if (order.isCompleted())
-			return order.getEstimatedCompletionTime();
+	public DateTime getEstimatedCompletionTime(OrderContainer order) throws IllegalArgumentException {				
 		
-		// TODO add logic to find order in assembly line.
-		return null;
+		List<OrderContainer> pendingOrders = this.getPendingOrderContainers();
+		int index = pendingOrders.indexOf(order);
+		if (index >= 0) {
+			return this.getEstimatedCompletionTime(index + this.getAssemblyLine().getAmountOfWorkPosts());
+		} else {
+			index = this.getAssemblyLine().getOrderPositionOnAssemblyLine(order);
+			return this.getEstimatedCompletionTime(index);
+		}		
 	}
-	
+				
 	/**
 	 * Get the estimated completion based on the current position of the order
 	 * in the assembly process. 
@@ -78,10 +92,49 @@ public class ProductionSchedule {
 	 * @throws IllegalArgumentException | positionOrder < 0
 	 */
 	public DateTime getEstimatedCompletionTime(int positionOrder) {
-		if (positionOrder < 0)
-			throw new IllegalArgumentException("position smaller than 0");
-		// TODO 
-		return null;
+		// TODO: Write this method in Scala, it would be worthy of worshipping. 
+		if (positionOrder < 0) {										            // Invalid Argument
+			throw new IllegalArgumentException("position smaller than 0");			//
+		}																			//
+		                                                                            //
+		int assemblyLineSize = this.getAssemblyLine().getAmountOfWorkPosts();       //
+		int estHoursForCompletion = N_HOURS_MOVE * (positionOrder + 1);    		    // add one for the actions that are currently being executed to complete.	
+		DateTime timeToReturn = this.getCurrentTime();
+																					//        
+		if (positionOrder < assemblyLineSize) {                                     // order is on the assembly line
+			return timeToReturn.addTime(0, estHoursForCompletion, 0);
+		} else {                                                                    // order is in pending orders
+			int timeLeft = 22 * 60 - this.getCurrentTime().getHours() * 60 
+									    - this.getCurrentTime().getMinutes()
+									    - this.getOverTime();
+			
+			if (estHoursForCompletion * 60 <= timeLeft) {                     		// Task can be finished today.
+				return timeToReturn.addTime(0, estHoursForCompletion, 0);
+				
+			} else {								                                // Task can't be finished today.
+				estHoursForCompletion -= N_HOURS_MOVE;								// We're moving to the next day, so there is no current action.
+				timeToReturn = this.makeNewDateTime(timeToReturn.getDays() + 1, STARTHOUR, 0);         											// Set to return time to the next day, since we cannot finish it today.
+
+				if (timeLeft < 0) {                                                 // there is left overtime after today, which is specified by a neg timeLeftToday
+					 timeLeft = WORKHOURS * 60 + timeLeft;
+					
+					if(estHoursForCompletion * 60 <= timeLeft) {                    // The order can be finished within the workday of tomorrow.
+						return timeToReturn.addTime(0, estHoursForCompletion, 0); 
+					} else {                                                        // The order cannot be finished within the workday of tomorrow
+						timeToReturn = timeToReturn.addTime(1, 0, 0);			    // We cannot finish the task tomorrow, so we will move to the day after tomorrow. 
+					}
+				}
+				
+				int nCarsMoved = Math.max(0, ((timeLeft - 60 * N_HOURS_MOVE * assemblyLineSize) / 60 * N_HOURS_MOVE) + 1); // We do not let cars be moved in a negative direction.
+				int newPos =  positionOrder - nCarsMoved;                  // The position after tomorrow has ended. 
+				
+				int carsPerDay = (WORKHOURS - N_HOURS_MOVE * assemblyLineSize) / N_HOURS_MOVE + 1; // number of cars that can be produced on a day. + 1 is from the first car.                  
+				int extraDays = newPos / carsPerDay; 					   // Number of days that need to pass before order can be executed.
+				int extraHours = (newPos % carsPerDay) * N_HOURS_MOVE;     // Number of hours before car can be finished on a day.   
+				
+				return timeToReturn.addTime(extraDays, extraHours, 0);
+			}
+		}	
 	}
 	
 	//--------------------------------------------------------------------------
@@ -125,6 +178,80 @@ public class ProductionSchedule {
 	
 	/** The current time of this ProductionSchedule. */
 	private DateTime currentTime;
+
+	//--------------------------------------------------------------------------
+	/** 
+	 * End the current day of this ProductionSchedule at the specified endTime
+	 * this will update the over-time, current-time. 
+	 * 
+	 * @param endTime
+	 * 		The time at which this day has ended. 
+	 * 
+	 * @precondition | this.assemblyLine.isEmpty()
+	 * 
+	 * @postcondition | (new this).getCurrentTime() == new DateTime(endTime.days +1, 6, 0)
+	 * @postcondition | (new this).getOverTime() == this.getOverTime() + endTime.hours * 60 + endTime.minutes - 18 * 60 
+	 * 
+	 * @throws IllegalArgumentException | there is still time to finish another car assuming no delays take place
+	 * 									| >>> this.getOverTime() + endTime.hours * 60 + endTime.minutes - 18 * 60
+	 */
+	public void endDay(DateTime endTime) {
+		int timeLeft = WORKHOURS * 60 - ((endTime.getHours() - STARTHOUR) * 60 + endTime.getMinutes()) - this.getOverTime();
+		if ( timeLeft >= this.getAssemblyLine().getAmountOfWorkPosts() * 60)
+			throw new IllegalArgumentException("Time left exceeds time to fabricate another car.");
+		
+		this.setOverTime(-1 * timeLeft);
+		this.setCurrentTime(makeNewDateTime(endTime.getDays() + 1, STARTHOUR, 0));		
+	}
+	
+	/** 
+	 * Create a new DateTime (abstraction of constructor DateTime
+	 * 
+	 * @param days
+	 * 		The number of days of the new DateTime.
+	 * @param hours
+	 * 		The number of hours of the new DateTime
+	 * @param minutes
+	 * 		The number of minutes of the new DateTime. 
+	 * @return a new DateTime 
+	 */
+	protected DateTime makeNewDateTime(int days, int hours, int minutes) {
+		return new DateTime(days, hours, minutes);
+	}
+
+	// FIXME verify if these are correctly put here. 
+	/** Number of workhours in a shift. */
+	private final static int WORKHOURS = 16;
+	/** Start of a workday. */
+	private final static int STARTHOUR = 6;
+	/** Estimated number of hours to move to next station. */
+	private final static int N_HOURS_MOVE = 1;
+	
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the over time in minutes of this ProductionSchedule.
+	 * 
+	 * @return the OverTime in minutes of this ProductionSchedule.
+	 */
+	protected int getOverTime() {
+		return this.overTime;
+	}
+	
+	/**
+	 * Set the overtime in minutes of this ProductionSchedule to newOverTime. 
+	 * 
+	 * @param newOverTime
+	 * 		The new overtime in minutes of this ProductionSchedule.
+	 * 
+	 * @postcondition | newOverTime < 0 -> (new this).getOverTime() == 0
+	 * @postcondition | otherwise       -> (new this).getOverTime() == newOverTime  
+	 */
+	protected void setOverTime(int newOverTime) {
+		this.overTime = Math.max(0, newOverTime);
+	}
+	
+	/** The current overTime in minutes of this ProductionSchedule. */
+	private int overTime;
 	
 	//--------------------------------------------------------------------------
 	// Order related methods and Properties. 
@@ -151,16 +278,15 @@ public void addNewOrder(Model model, Specification specs) throws NullPointerExce
 		
 		Order newOrder = makeNewOrder(model, specs, 
 				                      this.getCurrentOrderIdentifier(),
-				                      this.getCurrentTime(),
 				                      this.getEstimatedCompletionTime(curPos));		
 		this.addToPendingOrders(newOrder);
 		this.incrementOrderIdentifier();
 	}
 	
 	/** Isolated Order Constructor, mostly for testing purposes. */
-	protected Order makeNewOrder(Model model, Specification specs, int orderNumber,
-			                  DateTime initTime, DateTime estimatedTime) {
-		return new Order(model, specs, orderNumber, initTime, estimatedTime);
+	protected Order makeNewOrder(Model model, Specification specs, int orderNumber, 
+			                     DateTime estimatedTime) {
+		return new Order(model, specs, orderNumber, estimatedTime);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -256,6 +382,12 @@ public void addNewOrder(Model model, Specification specs) throws NullPointerExce
 	 * @throws IndexOutOfBoundsException | this.getPendingOrderContainers().size() == 0;
 	 */
 	public Order getNextOrderToSchedule() throws IndexOutOfBoundsException{
+		List<OrderContainer> pendingOrders = this.getPendingOrderContainers();
+		
+		if (pendingOrders.size() == 0)
+			return null;
+		// if get time exceeds time for day return null
+		
 		return this.getPendingOrders().get(0);
 	}
 	
@@ -269,7 +401,7 @@ public void addNewOrder(Model model, Specification specs) throws NullPointerExce
 	}
 	
 	/** The AssemblyLine that is associated with this ProcedureSchedule. */
-	private final AssemblyLine assemblyLine;
+	private AssemblyLine assemblyLine;
 	
 	/**
 	 * Remove the Order that is next in line to be scheduled from 
