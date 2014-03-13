@@ -38,7 +38,7 @@ public class GarageHolderTerminal {
 					
 					//Easiest way to show estimated completion time at the moment...
 					List<OrderContainer> allOrders = new LinkedList<OrderContainer>();
-					allOrders.addAll(handler.getPendingOrders());
+					allOrders.addAll(handler.getIncompleteOrders());
 					Collections.sort(allOrders, new OrderDatesDescendingComparator());
 					System.out.print("Order placed. Estimated completion time: ");
 					System.out.println(allOrders.get(0).getEstimatedCompletionTime().toString());
@@ -256,7 +256,7 @@ public class GarageHolderTerminal {
 		System.out.println();
 		
 		//pending
-		showOrders(handler.getPendingOrders());
+		showOrders(handler.getIncompleteOrders());
 		
 		System.out.println("---------------");
 		System.out.println();

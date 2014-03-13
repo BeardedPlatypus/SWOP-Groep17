@@ -119,12 +119,15 @@ public class WorkPost implements WorkPostContainer {
 
 	/**
 	 * Gets a view of the order encapsulated in this work post's assembly procedure.
+	 * Returns null if no assembly is active.
 	 * 
 	 * @return
-	 * 		The order in the active assembly as a container
+	 * 		The order in the active assembly as a container, or null if there is no active assembly
 	 */
 	public OrderContainer getOrderContainer() {
-		return this.getAssemblyProcedure().getOrderContainer();
+		if(this.getAssemblyProcedure() != null)
+			return this.getAssemblyProcedure().getOrderContainer();
+		return null;
 	}
 	
 	/**

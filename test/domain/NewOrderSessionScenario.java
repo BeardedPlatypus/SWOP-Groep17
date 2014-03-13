@@ -27,7 +27,7 @@ public class NewOrderSessionScenario {
 		
 		//1. The system presents an overview of the orders placed by the user, divided into two parts. The first part shows a list of pending orders, 
 		// with estimated completion times, and the second part shows a history	of completed orders, sorted most recent first.
-		List<OrderContainer> initPending = orderHandler.getPendingOrders();
+		List<OrderContainer> initPending = orderHandler.getIncompleteOrders();
 		List<OrderContainer> initComplete = orderHandler.getCompletedOrders();
 		assertTrue(initPending.isEmpty());
 		assertTrue(initComplete.isEmpty());
@@ -55,7 +55,7 @@ public class NewOrderSessionScenario {
 		//7. The system stores the new order and updates the production schedule.
 		orderHandler.chooseModelAndSpecifications(chosenModel, specs);
 		//8. The system presents an estimated completion date for the new order.
-		initPending = orderHandler.getPendingOrders();
+		initPending = orderHandler.getIncompleteOrders();
 		initComplete = orderHandler.getCompletedOrders();
 		assertTrue(initPending.size() == 1);
 		assertTrue(initComplete.isEmpty());
@@ -65,7 +65,7 @@ public class NewOrderSessionScenario {
 	public void alternateFlow1Initial_test() {
 		//1. The system presents an overview of the orders placed by the user, divided into two parts. The first part shows a list of pending orders, 
 		// with estimated completion times, and the second part shows a history	of completed orders, sorted most recent first.
-		List<OrderContainer> initPending = orderHandler.getPendingOrders();
+		List<OrderContainer> initPending = orderHandler.getIncompleteOrders();
 		List<OrderContainer> initComplete = orderHandler.getCompletedOrders();
 		assertTrue(initPending.isEmpty());
 		assertTrue(initComplete.isEmpty());
@@ -77,7 +77,7 @@ public class NewOrderSessionScenario {
 	public void alternateFlow2Initial_test() {
 		//1. The system presents an overview of the orders placed by the user, divided into two parts. The first part shows a list of pending orders, 
 		// with estimated completion times, and the second part shows a history	of completed orders, sorted most recent first.
-		List<OrderContainer> initPending = orderHandler.getPendingOrders();
+		List<OrderContainer> initPending = orderHandler.getIncompleteOrders();
 		List<OrderContainer> initComplete = orderHandler.getCompletedOrders();
 		assertTrue(initPending.isEmpty());
 		assertTrue(initComplete.isEmpty());
@@ -100,7 +100,7 @@ public class NewOrderSessionScenario {
 		}
 		//6. (a) The user indicates he wants to cancel placing the order. ==HAPPENS IN UI==
 		//7. The use case returns to step 1.
-		initPending = orderHandler.getPendingOrders();
+		initPending = orderHandler.getIncompleteOrders();
 		initComplete = orderHandler.getCompletedOrders();
 		assertTrue(initPending.isEmpty());
 		assertTrue(initComplete.isEmpty());

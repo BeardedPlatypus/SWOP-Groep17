@@ -46,9 +46,9 @@ public class NewOrderSessionHandlerTest {
 	public void test_getPendingOrder() {
 		List<OrderContainer> array = new ArrayList<OrderContainer>();
 		array.add(this.orderContainer);
-		Mockito.when(this.mockManufacturer.getPendingOrderContainers()).thenReturn(array);
+		Mockito.when(this.mockManufacturer.getIncompleteOrderContainers()).thenReturn(array);
 		
-		assertEquals(array, this.sessionHandler1.getPendingOrders());
-		Mockito.verify(this.mockManufacturer).getPendingOrderContainers();
+		assertEquals(array, this.sessionHandler1.getIncompleteOrders());
+		Mockito.verify(this.mockManufacturer).getIncompleteOrderContainers();
 	}
 }

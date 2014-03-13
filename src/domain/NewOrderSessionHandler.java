@@ -54,8 +54,8 @@ public class NewOrderSessionHandler {
 	 * 		a list of pending orders in the system
 	 * 		
 	 */
-	public List<OrderContainer> getPendingOrders() {
-		return getManufacturer().getPendingOrderContainers();
+	public List<OrderContainer> getIncompleteOrders() {
+		return getManufacturer().getIncompleteOrderContainers();
 	}
 
 	/**
@@ -92,5 +92,16 @@ public class NewOrderSessionHandler {
 	 */
 	public DateTime getEstimatedCompletionTime(OrderContainer order){
 		return getManufacturer().getEstimatedCompletionTime(order);
+	}
+
+	
+	/**
+	 * Returns a DateTime object which contains the current system time.
+	 * 
+	 * @return
+	 * 		The current system time as a DateTime object
+	 */
+	public DateTime currentTime() {
+		return this.getManufacturer().getCurrentTime();
 	}
 }
