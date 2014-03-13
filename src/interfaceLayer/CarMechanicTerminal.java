@@ -21,28 +21,24 @@ public class CarMechanicTerminal {
 	 * Starts the car mechanic terminal. Assumes the user has been logged in at this point.
 	 * We let the user choose a workpost and guide him through completing the pending tasks.
 	 * 
-	 * @param 	assHandler
+	 * @param 	assemblyHandler
 	 * 			Used to interface with the domain layer.
 	 */
-	public static void login(PerformAssemblyTaskHandler assHandler) {
+	public static void login(PerformAssemblyTaskHandler assemblyHandler) {
 		
-		int workPostNumber = selectWorkPost(assHandler);
-		List<AssemblyTaskContainer> assTaskList = assHandler.getAssemblyTasksAtPost(workPostNumber);
+		int workPostNumber = selectWorkPost(assemblyHandler);
+		List<AssemblyTaskContainer> assemblyTaskList = assemblyHandler.getAssemblyTasksAtPost(workPostNumber);
 		
-	out:while(true){
+		do{
 			
-			int assTaskNumber = selectAssemblyTask(assTaskList);
-			if(assTaskNumber == -1) return;
+			int assemblyTaskNumber = selectAssemblyTask(assemblyTaskList);
+			if(assemblyTaskNumber == -1) return;
 			
-			listAssemblyTaskDetails(assTaskList.get(assTaskNumber));
+			listAssemblyTaskDetails(assemblyTaskList.get(assemblyTaskNumber));
 			
-			assHandler.completeWorkpostTask(workPostNumber, assTaskNumber);
+			assemblyHandler.completeWorkpostTask(workPostNumber, assemblyTaskNumber);
 			
-			if(!userWantsToContinue()){
-				break out;
-			}
-			
-		}
+		} while(userWantsToContinue());
 		
 	}
 
@@ -118,21 +114,21 @@ public class CarMechanicTerminal {
 	/**
 	 * Selects an assembly task from the list of pending assembly tasks at this workpost.
 	 * 
-	 * @param 	assTaskList
+	 * @param 	assemblyTaskList
 	 * 			List of assembly tasks at this workpost.
 	 * @return	int corresponding to a chosen (pending) assembly task.
 	 */
 	private static int selectAssemblyTask(
-			List<AssemblyTaskContainer> assTaskList) {
+			List<AssemblyTaskContainer> assemblyTaskList) {
 		
 		LinkedList<AssemblyTaskContainer> pendingTasks = new LinkedList<AssemblyTaskContainer>();
 		LinkedList<Integer> taskMapper = new LinkedList<Integer>();
 		
 		// First we gather the pending assembly tasks.
-		for(int i = 0; i < assTaskList.size(); i++){
-			AssemblyTaskContainer assTask = assTaskList.get(i);
-			if(!assTask.isCompleted()){
-				pendingTasks.add(assTask);
+		for(int i = 0; i < assemblyTaskList.size(); i++){
+			AssemblyTaskContainer assemblyTask = assemblyTaskList.get(i);
+			if(!assemblyTask.isCompleted()){
+				pendingTasks.add(assemblyTask);
 				taskMapper.add(i);
 			}
 		}
@@ -144,8 +140,8 @@ public class CarMechanicTerminal {
 		
 		System.out.println("Please select one of the pending assembly tasks...");
 		for(int i = 0; i < pendingTasks.size(); i++){
-			AssemblyTaskContainer assTask = pendingTasks.get(i);
-			System.out.println("[" + (i+1) + "] " + assTask.getName());
+			AssemblyTaskContainer assemblyTask = pendingTasks.get(i);
+			System.out.println("[" + (i+1) + "] " + assemblyTask.getName());
 		}
 		
 		System.out.println();
