@@ -7,12 +7,20 @@ import java.util.List;
 
 import domain.*;
 
+/**
+ * Specialized terminal for the garage holder, used to place new orders.
+ * 
+ * @author Simon Slangen
+ *
+ */
 public class GarageHolderTerminal {
 
 	/**
 	 * Starts the Garageholder terminal. It assumes the user is logged in at this point.
 	 * We start by showing an overview and help the user place a new car order.
-	 * @param handler 
+	 * 
+	 * @param 	handler
+	 * 			Used to interface with the domain layer. 
 	 */
 	public static void login(NewOrderSessionHandler handler) {
 		showHeader();
@@ -43,6 +51,16 @@ public class GarageHolderTerminal {
 		}
 	}
 
+	/**
+	 * Prints a selected model and corresponding specifications. Asks the user
+	 * to confirm an order with those items.
+	 * 
+	 * @param 	model
+	 * 			The car model in the proposed order.
+	 * @param 	spec
+	 * 			The specifications in the proposed order.
+	 * @return	A boolean corresponding with the user response.
+	 */
 	private static boolean userConfirmsOrder(Model model, Specification spec) {
 		
 		System.out.println("Please review your choices.");
@@ -86,6 +104,15 @@ public class GarageHolderTerminal {
 		return false;
 	}
 
+	/**
+	 * Receives a car model and lists the order options, one by one, registering
+	 * user choice. Based in these choices, it creates a specification that is
+	 * passed back to the caller.
+	 * 
+	 * @param 	model
+	 * 			The car model of the proposed order.
+	 * @return	The specifications selected by the user to order.
+	 */
 	private static Specification composeOrder(Model model) {
 		
 		int amountOfOptions = model.getAmountOfOptions();
@@ -134,6 +161,13 @@ public class GarageHolderTerminal {
 		
 	}
 
+	/**
+	 * Prints a list of available models and polls the user for a specific model.
+	 * 
+	 * @param 	newOrderModels
+	 * 			A list of available car models.
+	 * @return	The model selected by the user.
+	 */
 	private static Model selectModel(List<Model> newOrderModels) {
 		
 		System.out.println();
@@ -171,6 +205,12 @@ public class GarageHolderTerminal {
 		return null;
 	}
 
+	/**
+	 * Asks if the user wants to place an order, or exit the overview.
+	 * 
+	 * @return	true if the user wants to place an order
+	 * 			false if the user wants to exit the overview
+	 */
 	private static boolean userWantsOrder() {
 		
 		System.out.println("Do you want to...");
@@ -202,6 +242,11 @@ public class GarageHolderTerminal {
 		return false;
 	}
 
+	/**
+	 * Prints an overview of pending and completed orders.
+	 * 
+	 * @param 	handler
+	 */
 	private static void showOrderOverview(NewOrderSessionHandler handler) {
 		
 		System.out.println("ORDER OVERVIEW");
@@ -226,6 +271,13 @@ public class GarageHolderTerminal {
 		System.out.println();
 	}
 
+	/**
+	 * Prints the orders and (if the order is pending) estimated completion time.
+	 * Also displays the model and specification for each order.
+	 * 
+	 * @param 	completedOrders
+	 * 			The orders to be printed. 
+	 */
 	private static void showOrders(List<OrderContainer> completedOrders) {
 		
 		for(OrderContainer order : completedOrders){
