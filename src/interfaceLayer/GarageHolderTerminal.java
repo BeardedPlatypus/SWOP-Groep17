@@ -9,10 +9,16 @@ import domain.*;
 
 public class GarageHolderTerminal {
 
+	/**
+	 * Starts the Garageholder terminal. It assumes the user is logged in at this point.
+	 * We start by showing an overview and help the user place a new car order.
+	 */
 	public static void login() {
 		showHeader();
 		//TODO goeie contructor
 		NewOrderSessionHandler handler = null;
+		
+		
 		
 		while(true){
 			//Show overview
@@ -207,11 +213,8 @@ public class GarageHolderTerminal {
 		System.out.println();
 		
 		//completed
-		List<OrderContainer> allOrders = new LinkedList<OrderContainer>();
-		allOrders.addAll(handler.getCompletedOrders());
-		Collections.sort(allOrders, new OrderDatesDescendingComparator());
-		
-		showOrders(allOrders);
+		// These are already sorted by completion date, most recent first.
+		showOrders(handler.getCompletedOrders());
 		
 		System.out.println("---------------");
 		System.out.println();
