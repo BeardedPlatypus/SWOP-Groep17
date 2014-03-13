@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.javatuples.Pair;
+
 import domain.AdvanceAssemblyLineHandler;
 import domain.AssemblyProcedureContainer;
 import domain.AssemblyTaskContainer;
@@ -266,6 +267,7 @@ public class UI {
 		System.out.println("\t" + task.getActionInfo());
 		System.out.println("Please complete the task, press enter when task is completed.");
 		input.nextLine();
+		input.nextLine();
 		performTaskHandler.completeWorkpostTask(postNumber, task.getTaskNumber());
 	}
 
@@ -356,10 +358,11 @@ public class UI {
 					List<WorkPostContainer> unfinishedPosts = getAdvanceHandler().getUnfinishedWorkPosts();
 					System.out.println("Unfinished posts are:");
 					for(WorkPostContainer post : unfinishedPosts){
-						System.out.println(" " + post.getWorkPostNumber() + " - " + post.getName());
+						System.out.println(" " + (post.getWorkPostNumber()+1) + " - " + post.getName());
 					}
 				} finally {
 					System.out.println("Press enter to log out.");
+					input.nextLine();
 					input.nextLine();
 				}
 			}
