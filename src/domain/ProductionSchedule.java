@@ -104,10 +104,8 @@ public class ProductionSchedule {
 		if (positionOrder < assemblyLineSize) {                                     // order is on the assembly line
 			return timeToReturn.addTime(0, estHoursForCompletion, 0);
 		} else {                                                                    // order is in pending orders
-			int timeLeft = 22 * 60 - this.getCurrentTime().getHours() * 60 
-									    - this.getCurrentTime().getMinutes()
-									    - this.getOverTime();
-			
+			int timeLeft = this.timeLeftMinutes(); 
+					
 			if (estHoursForCompletion * 60 <= timeLeft) {                     		// Task can be finished today.
 				return timeToReturn.addTime(0, estHoursForCompletion, 0);
 				
@@ -180,29 +178,6 @@ public class ProductionSchedule {
 	private DateTime currentTime;
 
 	//--------------------------------------------------------------------------
-	/** 
-	 * End the current day of this ProductionSchedule at the specified endTime
-	 * this will update the over-time, current-time. 
-	 * 
-	 * @param endTime
-	 * 		The time at which this day has ended. 
-	 * 
-	 * @precondition | this.assemblyLine.isEmpty()
-	 * 
-	 * @postcondition | (new this).getCurrentTime() == new DateTime(endTime.days +1, 6, 0)
-	 * @postcondition | (new this).getOverTime() == this.getOverTime() + endTime.hours * 60 + endTime.minutes - 18 * 60 
-	 * 
-	 * @throws IllegalArgumentException | there is still time to finish another car assuming no delays take place
-	 * 									| >>> this.getOverTime() + endTime.hours * 60 + endTime.minutes - 18 * 60
-	 */
-	public void endDay(DateTime endTime) {
-		int timeLeft = WORKHOURS * 60 - ((endTime.getHours() - STARTHOUR) * 60 + endTime.getMinutes()) - this.getOverTime();
-		if ( timeLeft >= this.getAssemblyLine().getAmountOfWorkPosts() * 60)
-			throw new IllegalArgumentException("Time left exceeds time to fabricate another car.");
-		
-		this.setOverTime(-1 * timeLeft);
-		this.setCurrentTime(makeNewDateTime(endTime.getDays() + 1, STARTHOUR, 0));		
-	}
 	
 	/** 
 	 * Create a new DateTime (abstraction of constructor DateTime
@@ -224,6 +199,8 @@ public class ProductionSchedule {
 	private final static int WORKHOURS = 16;
 	/** Start of a workday. */
 	private final static int STARTHOUR = 6;
+	/** End of a workday. */
+	private final static int FINISHHOUR = 22;
 	/** Estimated number of hours to move to next station. */
 	private final static int N_HOURS_MOVE = 1;
 	
@@ -375,15 +352,16 @@ public class ProductionSchedule {
 	 * on the AssemblyLine that is associated with this ProductionSchedule. 
 	 * 
 	 * @return The next order of this ProductionSchedule that is to be scheduled.
-	 * @throws IndexOutOfBoundsException | this.getPendingOrderContainers().size() == 0;
+	 * 		   if empty or hasNoTime, return null. 
 	 */
-	public Order getNextOrderToSchedule() throws IndexOutOfBoundsException{
+	public Order getNextOrderToSchedule() {
 		List<OrderContainer> pendingOrders = this.getPendingOrderContainers();
 		
-		if (pendingOrders.size() == 0)
+		if (pendingOrders.isEmpty())
 			return null;
-		// if get time exceeds time for day return null
-		
+		if (!this.hasTimeToScheduleNext())
+			return null;
+		 
 		return this.getPendingOrders().get(0);
 	}
 	
@@ -414,5 +392,64 @@ public class ProductionSchedule {
 		else {
 			return null;
 		}
+	}
+
+	//--------------------------------------------------------------------------
+	/**
+	 * Advance the current time of this ProductionSchedule  by the specified amount.  
+	 * 
+	 * @param minutes
+	 * 		The number of minutes that have passed since the last 	
+	 * 
+	 * @postcondition | assemblyLine.isEmpty() && !hasTimeToScheduleNext() -> (new this).getCurrentTime() == new DateTime(days + 1, STARTHOUR, 0)
+	 *                | otherwise                                          -> (new this).getCurrentTime() == currentTime.addTime(0, 0, minutes)
+	 */
+	public void advanceTime(int minutes) {
+		
+	}
+	
+	/**
+	 * Check if this ProductSchedule has time to schedule a next car, assuming
+	 * the car immediately enters the first WorkPost of the AssemblyLine.
+	 * 
+	 * @return True if a next car can be scheduled
+	 */
+	public boolean hasTimeToScheduleNext() {
+		return (this.timeLeftMinutes() >= (N_HOURS_MOVE * 60) * this.getAssemblyLine().getAmountOfWorkPosts()); 
+	}
+
+	/** 
+	 * End the current day of this ProductionSchedule at the specified endTime
+	 * this will update the over-time, current-time. 
+	 * 
+	 * @param endTime
+	 * 		The time at which this day has ended. 
+	 * 
+	 * @precondition | this.assemblyLine.isEmpty()
+	 * 
+	 * @postcondition | (new this).getCurrentTime() == new DateTime(endTime.days +1, 6, 0)
+	 * @postcondition | (new this).getOverTime() == this.getOverTime() + endTime.hours * 60 + endTime.minutes - 18 * 60 
+	 * 
+	 * @throws IllegalArgumentException | there is still time to finish another car assuming no delays take place
+	 * 									| >>> this.getOverTime() + endTime.hours * 60 + endTime.minutes - 18 * 60
+	 */
+	public void endDay(DateTime endTime) {
+		int timeLeft = WORKHOURS * 60 - ((endTime.getHours() - STARTHOUR) * 60 + endTime.getMinutes()) - this.getOverTime();
+		if ( timeLeft >= this.getAssemblyLine().getAmountOfWorkPosts() * 60)
+			throw new IllegalArgumentException("Time left exceeds time to fabricate another car.");
+		
+		this.setOverTime(-1 * timeLeft);
+		this.setCurrentTime(makeNewDateTime(endTime.getDays() + 1, STARTHOUR, 0));		
+	}
+
+	/** 
+	 * Calculate the time in minutes left today. 
+	 * 
+	 * @return the time left today. 
+	 */
+	private int timeLeftMinutes() {
+		return FINISHHOUR * 60 - this.getCurrentTime().getHours() * 60 
+				               - this.getCurrentTime().getMinutes()
+    			               - this.getOverTime();
 	}
 }

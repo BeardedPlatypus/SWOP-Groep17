@@ -230,11 +230,10 @@ public class AssemblyLine {
 		AssemblyProcedure finishedAssembly = removeFinishedAssemblyFromFinishedAssemblyProcedureCollectionSpace();
 		
 		Order finishedOrder = finishedAssembly.getOrder();
-		finishedOrder.setAsCompleted(true);
+		finishedOrder.setAsCompleted();
 		
 		getProductionSchedule().completeOrder();
 	}
-	
 	
 	
 	/**
@@ -371,5 +370,19 @@ public class AssemblyLine {
 				return ((getAmountOfWorkPosts() - post.getWorkPostNumber()) - 1);
 		}
 		throw new IllegalArgumentException("Order is not on assemblyLine.");
+	}
+	
+	/**
+	 * Return if this AssemblyLine is currently empty. 
+	 * 
+	 * @return True if empty, otherwise false.
+	 */
+	boolean isEmpty() {
+		for(WorkPost p : this.getWorkPosts()) {
+			if (!p.isEmpty()) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
