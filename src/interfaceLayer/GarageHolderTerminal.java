@@ -227,9 +227,7 @@ public class GarageHolderTerminal {
 			
 			System.out.println("Order number: " + order.getOrderNumber());
 			//TODO: or do we need creation date for completed orders?
-			if(order.isCompleted()) {
-				System.out.print("Completed at: ");
-			}else{
+			if(!order.isCompleted()) {
 				System.out.print("Est. completion: ");
 			}
 			System.out.println(order.getEstimatedCompletionTime().toString());
