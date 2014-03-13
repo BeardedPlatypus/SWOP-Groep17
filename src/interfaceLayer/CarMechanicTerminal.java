@@ -47,12 +47,14 @@ public class CarMechanicTerminal {
 				// Don't forget to clear the input buffer.
 				System.in.skip(System.in.available());
 				if(choice.equalsIgnoreCase("C")){
+					System.out.println();
 					return true;
 				}else if(choice.equalsIgnoreCase("E")){
+					System.out.println();
 					return false;
 				}else{
 					System.out.println();
-					System.out.println("Sorry, but \"" + choice + "\" is not a valid workpost choice. Please try again.");
+					System.out.println("Sorry, but \"" + choice + "\" is not a valid option. Please try again.");
 					System.out.println();
 				}
 			}
@@ -126,7 +128,7 @@ public class CarMechanicTerminal {
 				System.in.skip(System.in.available());
 				if(choice < 1 || choice > pendingTasks.size()){
 					System.out.println();
-					System.out.println("Sorry, but \"" + choice + "\" is not a valid workpost choice. Please try again.");
+					System.out.println("Sorry, but \"" + choice + "\" is not a valid assembly task choice. Please try again.");
 					System.out.println();
 				}else{
 					System.out.println();
