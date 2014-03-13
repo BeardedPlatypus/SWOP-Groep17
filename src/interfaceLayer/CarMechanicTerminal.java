@@ -8,8 +8,22 @@ import domain.AssemblyTaskContainer;
 import domain.PerformAssemblyTaskHandler;
 import domain.WorkPostContainer;
 
+/**
+ * Specialized interface for the car mechanic. Used to poll for tasks and instructions
+ * on a specific workpost and mark said tasks as completed.
+ * 
+ * @author simon
+ *
+ */
 public class CarMechanicTerminal {
 
+	/**
+	 * Starts the car mechanic terminal. Assumes the user has been logged in at this point.
+	 * We let the user choose a workpost and guide him through completing the pending tasks.
+	 * 
+	 * @param 	assHandler
+	 * 			Used to interface with the domain layer.
+	 */
 	public static void login(PerformAssemblyTaskHandler assHandler) {
 		
 		int workPostNumber = selectWorkPost(assHandler);
@@ -32,6 +46,11 @@ public class CarMechanicTerminal {
 		
 	}
 
+	/**
+	 * Asks the user if he wants to continue working on this workpost.
+	 * 
+	 * @return	boolean corresponding with user answer
+	 */
 	private static boolean userWantsToContinue() {
 		
 		System.out.println();
@@ -65,6 +84,11 @@ public class CarMechanicTerminal {
 		return false;
 	}
 
+	/**
+	 * Lists the assembly task details for the assembly task passed in the arguments.
+	 * 
+	 * @param 	assemblyTaskContaine
+	 */
 	private static void listAssemblyTaskDetails(
 			AssemblyTaskContainer assemblyTaskContainer) {
 		
@@ -91,6 +115,13 @@ public class CarMechanicTerminal {
 		
 	}
 
+	/**
+	 * Selects an assembly task from the list of pending assembly tasks at this workpost.
+	 * 
+	 * @param 	assTaskList
+	 * 			List of assembly tasks at this workpost.
+	 * @return	int corresponding to a chosen (pending) assembly task.
+	 */
 	private static int selectAssemblyTask(
 			List<AssemblyTaskContainer> assTaskList) {
 		
@@ -147,6 +178,12 @@ public class CarMechanicTerminal {
 		return -1;
 	}
 
+	/**
+	 * Polls the user for the workspace he's currently residing at.
+	 * 
+	 * @param 	assHandler
+	 * @return	int corresponding to a workpost.
+	 */
 	private static int selectWorkPost(
 			PerformAssemblyTaskHandler assHandler) {
 		

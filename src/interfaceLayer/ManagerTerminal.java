@@ -2,16 +2,26 @@ package interfaceLayer;
 
 import java.io.IOException;
 import java.util.List;
-
 import org.javatuples.Pair;
-
 import domain.AdvanceAssemblyLineHandler;
 import domain.AssemblyProcedureContainer;
 import domain.AssemblyTaskContainer;
 import domain.WorkPostContainer;
 
+/**
+ * Specialized terminal for use by the manager. Can be used to advance the assembly line.
+ * 
+ * @author Simon Slangen
+ *
+ */
 public class ManagerTerminal {
-
+	
+	/**
+	 * Starting point for the manager terminal. Assumes the user has just logged in.
+	 * 
+	 * @param 	advanceHandler
+	 * 			Used to interface with the domain layer.
+	 */
 	public static void login(AdvanceAssemblyLineHandler advanceHandler) {
 		
 		if(!wantsToAdvance()){
@@ -49,7 +59,11 @@ public class ManagerTerminal {
 		pollReadyToProceed();
 		
 	}
-
+	
+	/**
+	 * Asks the user whether he's ready to proceed.
+	 * Doesn't return anything, but blocks on the input until user indicates he's ready.
+	 */
 	private static void pollReadyToProceed() {
 		
 		System.out.println("Press enter when you're finished...");
@@ -68,6 +82,11 @@ public class ManagerTerminal {
 		
 	}
 
+	/**
+	 * Asks the user for the amount of time spent in the current phase.
+	 * 
+	 * @return	the time spent in minutes
+	 */
 	private static int getTimeSpent() {
 		
 		System.out.println("How much time was spent during the current phase? (In minutes)");
@@ -104,6 +123,15 @@ public class ManagerTerminal {
 		
 	}
 
+	/**
+	 * Prints an overview of the current assembly line situation, with all workstations and the tasks that are pending.
+	 * Also prints an overview of what the assembly line situation would be if the assembly line would be advanced.
+	 * Waits for the user to confirm that he wants to advance.
+	 * 
+	 * @param 	advanceHandler
+	 * @return	true if the user still wants to advance the assembly line.
+	 * 			false otherwise
+	 */
 	private static boolean confirmsCurrentSituation(
 			AdvanceAssemblyLineHandler advanceHandler) {
 		
@@ -132,6 +160,13 @@ public class ManagerTerminal {
 		
 	}
 	
+	/**
+	 * Prints the assemblyline status, based on the assembly procedure and workpost data passed in the arguments.
+	 * 
+	 * @param 	procedureWorkpostList
+	 * 			List of pairs of AssemblyProcedureContainer and WorkPostContainer objects,
+	 * 			embedding the pending tasks.
+	 */
 	private static void printAssemblyLineStatus(
 			List<Pair<AssemblyProcedureContainer,WorkPostContainer>> procedureWorkpostList) {
 		
@@ -159,6 +194,11 @@ public class ManagerTerminal {
 		
 	}
 
+	/**
+	 * Asks the user whether he wants to advance the assembly line.
+	 * 
+	 * @return	boolean corresponding with user response
+	 */
 	private static boolean wantsToAdvance() {
 		
 		System.out.println("Do you want to advance the assembly line?");
