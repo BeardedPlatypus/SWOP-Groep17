@@ -26,12 +26,32 @@ public class UI {
 	public static final String SEPERATOR = "-------------------------";
 	public static final String CRLF = "\r\n";
 	
+	/**
+	 * The main method of the class. Set up the system with the initialisation handler and
+	 * set up a UI with the handlers from the initialisation.
+	 * 
+	 * The UI is then started.
+	 * 
+	 * @param args
+	 * 		Program input, which isn't used anyway
+	 */
 	public static void main(String[] args){
 		InitialisationHandler initHandler = new InitialisationHandler();
 		UI ui = new UI(initHandler.getAdvanceHandler(), initHandler.getNewOrderHandler(), initHandler.getTaskHandler());
 		ui.run();
 	}
 	
+	
+	/**
+	 * Instantiates a new UI object with given handlers for interfacing with the system.
+	 * 
+	 * @param advanceHandler
+	 * 		The AdvanceAssemblyLineHandler of the system
+	 * @param newOrderHandler
+	 * 		The NewOrderSessionHandler of the system
+	 * @param performTaskHandler
+	 * 		The PerformAssemblyTaskHandler of the system
+	 */
 	public UI(AdvanceAssemblyLineHandler advanceHandler, NewOrderSessionHandler newOrderHandler,
 			PerformAssemblyTaskHandler performTaskHandler){
 		if(advanceHandler == null)
@@ -46,6 +66,11 @@ public class UI {
 		input = new Scanner(System.in);
 	}
 	
+	/**
+	 * Runs the UI, displaying the main menu and giving the user the choice to log in or exit.
+	 * This is repeated when exiting a submenu, until the exit option is chosen.
+	 * After exiting the main menu the system quits, and all data is lost.
+	 */
 	public void run(){
 		boolean exitRequest = false;
 		while(!exitRequest){
@@ -72,6 +97,14 @@ public class UI {
 			
 	}
 
+	/**
+	 * Runs the routine for ordering a new car.
+	 * Until the exit choice is taken on the ordermenu the possible models are printed,
+	 * and after choosing one, the specs are collected and a new model is made if the user
+	 * hasn't canceled during the specs.
+	 * If both model and specs are chosen, the order is placed and the submenu runs again,
+	 * with an updated view of the pending and completed orders.
+	 */
 	private void orderNewCarRoutine() {
 		System.out.println(SEPERATOR);
 		boolean exitMenu = false;
@@ -94,6 +127,19 @@ public class UI {
 		
 	}
 
+	/**
+	 * Constructs a Specification from user input based on the options in the model.
+	 * Each option is showed with its choices and the user selects a choice for each one.
+	 * At each point, the user can also cancel the order, and is returned to the order submenu.
+	 * 
+	 * A null object is returned on canceling, which is handled by the OrderRoutine.
+	 * 
+	 * @param model
+	 * 		The model for which the user wants to set specifications
+	 * @return
+	 * 		The Specifications object created if all options are succesfully evaluated,
+	 * 		or null if the order is canceled.
+	 */
 	private Specification getSpecs(Model model) {
 		int optionsUpperLimit = model.getAmountOfOptions();
 		int[] choices = new int[optionsUpperLimit];
@@ -120,6 +166,16 @@ public class UI {
 		return new Specification(choices);
 	}
 
+	/**
+	 * Prints the given list of models as an option list, and lets the user choose one.
+	 * A choice int is returned, which symbolizes the chosen model.
+	 * The order to evaluate the chosen int in is the order of the list.
+	 * 
+	 * @param orderModels
+	 * 		The list of orders to display and choose from
+	 * @return
+	 * 		The choice number for the model the user selected
+	 */
 	private int getModelChoice(List<Model> orderModels) {
 		int amountOfChoices = orderModels.size();
 		System.out.println("Choose a model please");
@@ -132,6 +188,16 @@ public class UI {
 		return getIntFromUser(1, amountOfChoices)-1;
 	}
 
+	/**
+	 * Print the completed and pending orders in a nice list.
+	 * Orders show a model and specifications.
+	 * Pending orders also show an estimated completion time.
+	 * 
+	 * @param completedOrders
+	 * 		The list of completed orders from the system
+	 * @param pendingOrders
+	 * 		The list of pending orders from the system
+	 */
 	private void visualiseCompletedAndPendingOrders(List<OrderContainer> completedOrders,
 			List<OrderContainer> pendingOrders) {
 		System.out.println("Completed orders to date:");
@@ -166,6 +232,11 @@ public class UI {
 		
 	}
 
+	/**
+	 * Runs the submenu for performing an assembly task.
+	 * The user is asked to select his workpost and is presented with a list of tasks to complete.
+	 * The user can't exit this menu without choosing a workpost.
+	 */
 	private void performAssemblyTaskRoutine() {
 		System.out.println(SEPERATOR);
 		int postNumber = selectPost();
@@ -180,6 +251,15 @@ public class UI {
 		}
 	}
 
+	/**
+	 * The user is shown a description of given task, along with post number of the task, for completion purposes.
+	 * The user indicates when he is finished, and the task is marked as completed.
+	 * 
+	 * @param task
+	 * 		The task the user has to execute
+	 * @param postNumber
+	 * 		The post number the task originates from
+	 */
 	private void showAndCompleteTask(AssemblyTaskContainer task, int postNumber) {
 		System.out.println(SEPERATOR);
 		System.out.println("Short overview of task " + task.getName() + ":");
@@ -189,6 +269,17 @@ public class UI {
 		performTaskHandler.completeWorkpostTask(postNumber, task.getTaskNumber());
 	}
 
+	/**
+	 * Shows a menu of assembly tasks based on the given workpost number.
+	 * The tasks match the workpost's type.
+	 * The user chooses one of the tasks, which is then returned.
+	 * The user can also choose to stop performing tasks.
+	 * 
+	 * @param postNumber
+	 * 		The post number the user currently resides at
+	 * @return
+	 * 		The chosen task as a container
+	 */
 	private AssemblyTaskContainer selectTask(int postNumber) {
 		System.out.println("Please select an incomplete task at your workpost from the ones below:");
 		List<AssemblyTaskContainer> postTasks = getPerformTaskHandler().getAssemblyTasksAtPost(postNumber);
@@ -210,6 +301,15 @@ public class UI {
 		}
 	}
 
+	/**
+	 * The user is shown a list of all workposts in the system, and has to choose one.
+	 * The choice is made based on indices, and the returned int symbolising the workpost
+	 * is based on the order of the workposts, the first being 0.
+	 * 
+	 * @return
+	 * 		The number of the workpost, taken from the order they appear on the assembly line,
+	 * 		with the first workpost being 0
+	 */
 	private int selectPost() {
 		System.out.println("Welcome, please select your workpost:");
 		List<WorkPostContainer> posts= getPerformTaskHandler().getWorkPosts();
@@ -220,6 +320,15 @@ public class UI {
 		return (getIntFromUser(1, posts.size())-1);
 	}
 
+	/**
+	 * The user logs in as manager and is asked whether or not he wants to advance the assemblyline.
+	 * The user either immediately exits and doens't advance the assembly line, or gets a view
+	 * on the current and estimated future status, without checking the elapsed time.
+	 * If the user then wants to advance, he puts in the elapsed time, and the system checks whether
+	 * the line can actually be advanced.
+	 * If the line can be advanced, it is, and the system time is updated with the elapsed time.
+	 * If the line cannot be advanced an error is shown and the manager is logged out.
+	 */
 	private void advanceAssemblyLineRoutine() {
 		System.out.println(SEPERATOR);
 		System.out.println("Hello manager. Would you like to advance the assembly line?");
@@ -257,6 +366,13 @@ public class UI {
 		}
 	}
 
+	/**
+	 * Asks whether or not the manager wants to advance the assembly line, returning a boolean
+	 * signaling the decision.
+	 * 
+	 * @return
+	 * 		The choice the user made, whether or not he wants to advance the line
+	 */
 	private boolean confirmAdvance() {
 		System.out.println("Would you like to try and advance the assemblyline?");
 		System.out.println("1) Yes");
@@ -267,6 +383,11 @@ public class UI {
 		return false;
 	}
 
+	/**
+	 * Prints a view of the future assembly line status, in which all current assemblies are shifted forwards
+	 * one position, and a new order is scheduled on the first post if the system has time for its assembly.
+	 * Each assembly shows its tasks and whether or not those are completed.
+	 */
 	private void presentFutureLineStatus() {
 		List<Pair<AssemblyProcedureContainer, WorkPostContainer>> pairs = getAdvanceHandler().getFutureWorkpostsAndActiveAssemblies();
 		System.out.println("Future assembly line status (after advancing):"+CRLF+"----");
@@ -293,6 +414,10 @@ public class UI {
 		}
 	}
 
+	/**
+	 * Prints a view of the current assembly line status with its assemblies.
+	 * Each assembly shows its tasks and whether or not those are completed.
+	 */
 	private void presentCurrentLineStatus() {
 		List<Pair<AssemblyProcedureContainer, WorkPostContainer>> pairs = getAdvanceHandler().getCurrentWorkpostsAndActiveAssemblies();
 		System.out.println("Current assembly line status:"+CRLF+"----");
@@ -319,6 +444,9 @@ public class UI {
 		}
 	}
 
+	/**
+	 * Prints a basic main menu with all options.
+	 */
 	private void showMainMenu() {
 		System.out.println(SEPERATOR);
 		System.out.println("Welcome to the assembly system.");
@@ -330,18 +458,48 @@ public class UI {
 		System.out.println("(4) I would like to exit and shutdown the system. !CAUTION, LOSS OF ALL DATA!");
 	}
 
-	public AdvanceAssemblyLineHandler getAdvanceHandler() {
+	/**
+	 * Getter for internal use of the advanceHandler
+	 * 
+	 * @return
+	 * 		the advanceHandler
+	 */
+	private AdvanceAssemblyLineHandler getAdvanceHandler() {
 		return advanceHandler;
 	}
 
+	/**
+	 * Getter for internal use of the newOrderHandler
+	 * 
+	 * @return
+	 * 		the newOrderHandler
+	 */
 	private NewOrderSessionHandler getNewOrderHandler() {
 		return newOrderHandler;
 	}
 
+	/**
+	 * Getter for internal use of the performTaskHandler
+	 * 
+	 * @return
+	 * 		the performTaskHandler
+	 */
 	private PerformAssemblyTaskHandler getPerformTaskHandler() {
 		return performTaskHandler;
 	}
 	
+	/**
+	 * Method to get integer input from a user.
+	 * A lower and upper bound are supplied, between which the choice has to be, both bounds inclusive.
+	 * If an integer outside of the bounds is supplied, or wrong input is given, an error is displayed and the user
+	 * is asked for new input.
+	 * @param lowerBound
+	 * 		The lower bound for allowed input, inclusive
+	 * @param upperBound
+	 * 		The upper bound for allowed input, inclusive
+	 * @return
+	 * 		The legal input between the bounds
+	 */
 	private int getIntFromUser(int lowerBound, int upperBound){
 		int choice = 0;
 		boolean decided = false;
