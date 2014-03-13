@@ -23,14 +23,14 @@ public class NewOrderSessionScenario {
 
 	@Test
 	public void normalFlowInitial_test() {
-		exception.expect(NullPointerException.class); //TODO VERY BAD
+//		exception.expect(NullPointerException.class); //TODO VERY BAD
 		
 		//1. The system presents an overview of the orders placed by the user, divided into two parts. The first part shows a list of pending orders, 
 		// with estimated completion times, and the second part shows a history	of completed orders, sorted most recent first.
-		List<OrderContainer> initPending = orderHandler.getPendingOrders();
+		// System is currently empty
+		List<OrderContainer> initPending = orderHandler.getIncompleteOrders();
 		List<OrderContainer> initComplete = orderHandler.getCompletedOrders();
-		assertTrue(initPending.isEmpty());
-		assertTrue(initComplete.isEmpty());
+		
 		//2. The user indicates he wants to place a new car order. ==HAPPENS IN UI==
 		//3. The system shows a list of available car models.
 		List<Model> models = orderHandler.getNewOrderModels();	
@@ -58,6 +58,8 @@ public class NewOrderSessionScenario {
 		initPending = orderHandler.getPendingOrders();
 		initComplete = orderHandler.getCompletedOrders();
 		assertTrue(initPending.size() == 1);
+		OrderContainer newOrder = initPending.get(0);
+		assertEquals(orderHandler.getEstimatedCompletionTime(newOrder), new DateTime(0, 10, 0));
 		assertTrue(initComplete.isEmpty());
 	}
 	
