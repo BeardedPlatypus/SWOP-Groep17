@@ -23,21 +23,28 @@ public class ProductionSchedule {
 	 * 
 	 * @param manufacturer
 	 * 		The manufacturer associated with this new ProductionSchedule.
-	 * @param assemblyLine
-	 * 		The AssemblyLine associated with this new ProductionSchedule.
-	 * 
 	 * @precondition manufacturer != null
 	 * @precondition assemblyLine != null
 	 * 
 	 * @postcondition (new this).getCurrentTime() == new DateTime(0, 0, 0)
 	 */
-	public ProductionSchedule(Manufacturer manufacturer, AssemblyLine assemblyLine) {
+	public ProductionSchedule(Manufacturer manufacturer) {
 		this.manufacturer = manufacturer;
-		this.assemblyLine = assemblyLine;
+		manufacturer.setProductionSchedule(this);
 		
 		this.setCurrentTime(new DateTime(0, STARTHOUR, 0));
 		this.setOverTime(0);
 		this.setOrderIdentifier(0);
+	}
+	
+	/**
+	 * Sets the assembly line to given assembly line
+	 * 
+	 * @param assemblyLine
+	 * 		The assemblyLine this ProductionSchedule will use to perform assemblies
+	 */
+	public void setAssemblyLine(AssemblyLine assemblyLine){
+		this.assemblyLine = assemblyLine;
 	}
 	
 	// FIXME assumption that it takes another hour before next move. 
@@ -394,7 +401,7 @@ public void addNewOrder(Model model, Specification specs) throws NullPointerExce
 	}
 	
 	/** The AssemblyLine that is associated with this ProcedureSchedule. */
-	private final AssemblyLine assemblyLine;
+	private AssemblyLine assemblyLine;
 	
 	/**
 	 * Remove the Order that is next in line to be scheduled from 
