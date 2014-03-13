@@ -273,6 +273,19 @@ public class ProductionSchedule {
 		return new ArrayList<OrderContainer>(this.getPendingOrders());
 	}
 	
+	
+	/**
+	 * Get a list of pending containers in this ProductionSchedule and on the assembly line. 
+	 * 
+	 * @return List of pending order containers in this ProductionSchedule and on the assembly line.
+	 */
+	public List<OrderContainer> getIncompleteOrderContainers(){
+		ArrayList<OrderContainer> incompleteOrders = new ArrayList<OrderContainer>();
+		incompleteOrders.addAll(this.getAssemblyLine().getActiveOrderContainers());
+		incompleteOrders.addAll(this.getPendingOrderContainers());
+		return incompleteOrders;
+	}
+	
 	/**
 	 * Get (a copy of the) list of pending orders in this ProductionSchedule.
 	 * 

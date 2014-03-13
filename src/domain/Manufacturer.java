@@ -102,8 +102,8 @@ public class Manufacturer {
 	 * @return
 	 * 		A list with containers for the pending orders in the schedule
 	 */
-	public List<OrderContainer> getPendingOrderContainers() {
-		return this.getProductionSchedule().getPendingOrderContainers();
+	public List<OrderContainer> getIncompleteOrderContainers() {
+		return this.getProductionSchedule().getIncompleteOrderContainers();
 	}
 
 	/**
@@ -159,5 +159,15 @@ public class Manufacturer {
 	 */
 	public DateTime getEstimatedCompletionTime(OrderContainer order) {
 		return getProductionSchedule().getEstimatedCompletionTime(order);
+	}
+	
+	/**
+	 * Returns a DateTime object which contains the current system time.
+	 * 
+	 * @return
+	 * 		The current system time as a DateTime object
+	 */
+	public DateTime getCurrentTime() {
+		return this.getProductionSchedule().getCurrentTime();
 	}
 }

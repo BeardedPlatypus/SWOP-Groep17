@@ -46,7 +46,7 @@ public class ManufacturerTest {
 		array.add(this.orderContainer);
 		Mockito.when(this.mockProdSched.getPendingOrderContainers()).thenReturn(array);
 		
-		assertEquals(array, this.man.getPendingOrderContainers());
+		assertEquals(array, this.man.getIncompleteOrderContainers());
 		Mockito.verify(this.mockProdSched).getPendingOrderContainers();
 	}
 	
@@ -88,7 +88,7 @@ public class ManufacturerTest {
 		pendOrders.add(orderContainer);
 		Mockito.when(mockProdSched.getPendingOrderContainers()).thenReturn(pendOrders);
 		
-		assertTrue(man.getPendingOrderContainers().equals(pendOrders));
+		assertTrue(man.getIncompleteOrderContainers().equals(pendOrders));
 	}
 
 	@Test

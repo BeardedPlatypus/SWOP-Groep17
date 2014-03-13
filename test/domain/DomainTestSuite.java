@@ -18,7 +18,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	            PerformAssemblyTaskHandlerTest.class,
 	            ProductionScheduleTest.class,
 	            SpecificationTest.class,
-	            WorkPostTest.class })
+	            WorkPostTest.class,
+	            AssemblyLineTest.class })
 public class DomainTestSuite {
 
 }

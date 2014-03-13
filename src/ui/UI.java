@@ -111,7 +111,7 @@ public class UI {
 		boolean exitMenu = false;
 		while(!exitMenu){
 			List<OrderContainer> completedOrders = getNewOrderHandler().getCompletedOrders();
-			List<OrderContainer> pendingOrders = getNewOrderHandler().getPendingOrders();
+			List<OrderContainer> pendingOrders = getNewOrderHandler().getIncompleteOrders();
 			visualiseCompletedAndPendingOrders(completedOrders,pendingOrders);
 			System.out.println("What do you want to do?:" + CRLF + "1) Order a new car" + CRLF + "2) Exit this menu");
 			int choice = getIntFromUser(1, 2);
@@ -201,6 +201,8 @@ public class UI {
 	 */
 	private void visualiseCompletedAndPendingOrders(List<OrderContainer> completedOrders,
 			List<OrderContainer> pendingOrders) {
+		System.out.println("Current time: " + getNewOrderHandler().currentTime().toString());
+		System.out.println(SEPERATOR);
 		System.out.println("Completed orders to date:");
 		System.out.println(SEPERATOR);
 		for(OrderContainer order: completedOrders){

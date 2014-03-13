@@ -173,4 +173,32 @@ public class DateTime {
 	public String toString(){
 		return ("Day " + this.getDays() + ", " + this.getHours() + "h" + this.getMinutes()+ "m");
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + days;
+		result = prime * result + hours;
+		result = prime * result + minutes;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DateTime other = (DateTime) obj;
+		if (days != other.days)
+			return false;
+		if (hours != other.hours)
+			return false;
+		if (minutes != other.minutes)
+			return false;
+		return true;
+	}
 }

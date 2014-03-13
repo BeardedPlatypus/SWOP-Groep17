@@ -1,6 +1,7 @@
 package domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.javatuples.Pair;
@@ -391,5 +392,21 @@ public class AssemblyLine {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Get a list of pending containers on the assembly line. 
+	 * 
+	 * @return List of pending order containers on the assembly line.
+	 */
+	public List<OrderContainer> getActiveOrderContainers() {
+		ArrayList<OrderContainer> activeOrders = new ArrayList<>();
+		for (WorkPost post : this.getWorkPosts()){
+			OrderContainer order = post.getOrderContainer();
+			if (order != null) {
+				activeOrders.add(order);
+			}
+		}
+		return activeOrders;
 	}
 }
