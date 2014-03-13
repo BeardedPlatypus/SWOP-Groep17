@@ -97,12 +97,11 @@ public class PerformAssemblyTaskScenario {
 		assertFalse(taskBody2.isCompleted());
 		assertFalse(taskDriveTrain1.isCompleted());
 		assertFalse(taskDriveTrain2.isCompleted());
-		/* Step 7 is the responsibility of the user interface, since it should
-		 * have retrieved the list of views of assembly tasks at the chosen workpost
-		 * at the start of the use case,
-		 * thus already having access to up-to-date information.
+		/* Step 7: The system stores the changes and presents an updated overview
+		 * of pending assembly tasks for the car at the current work post.
+		 * 
+		 * !! The above is the responsibility of the UI !!
 		 */
-		// repetition of step 6
 		handler.completeWorkpostTask(0, 1);
 		assertTrue(taskBody1.isCompleted());
 		assertTrue(taskBody2.isCompleted());

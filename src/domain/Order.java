@@ -152,4 +152,26 @@ public class Order implements OrderContainer{
 			   "Model:" + this.getModel().getModelName() + "\n" +
 			   "Specifications: " + this.getSpecifications().toString() + "\n";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + orderNumber;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Order other = (Order) obj;
+		if (orderNumber != other.orderNumber)
+			return false;
+		return true;
+	}
 }
