@@ -511,13 +511,13 @@ public class UI {
 		boolean decided = false;
 		while(!decided){
 			try{
-				choice = input.nextInt();
+				choice = Integer.parseInt(input.nextLine());
 				if(choice >= lowerBound && choice <= upperBound){
 					decided = true;
 				} else{
 					System.out.println("That is not a valid choice.\r\nTry again:");
 				}
-			} catch (InputMismatchException e){
+			} catch (NumberFormatException e){
 				System.out.println("That is not a valid choice.\r\nTry again:");
 			}
 		}

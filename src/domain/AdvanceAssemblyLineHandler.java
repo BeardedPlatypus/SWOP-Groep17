@@ -40,7 +40,17 @@ public class AdvanceAssemblyLineHandler {
 		return assemblyLine.getFutureWorkPostsAndActiveAssemblies();
 	}
 	
-	public void tryAdvance(int Time) {
+	/**
+	 * This method tries advancing the assembly line by one workpost and tells the production schedule how much time has elapsed since
+	 * the last time the assembly line was advanced. The production schedule also possibly gives the assembly line a new order for
+	 * the first workpost, depending on the schedule time and elapsed time.
+	 * 
+	 * @param time
+	 * 		Amount of time that has passed since last time advancing the schedule, in minutes
+	 * @throws IllegalStateException
+	 * 		When trying to advance the assembly line while there are still workposts with pending and matching assembly tasks
+	 */
+	public void tryAdvance(int Time) throws IllegalStateException{
 		assemblyLine.tryAdvance(Time);
 	}
 	
