@@ -40,15 +40,15 @@ public class ManufacturerTest {
 
 	}
 
-	@Test
-	public void test_getPendingOrders() {
-		List<OrderContainer> array = new ArrayList<OrderContainer>();
-		array.add(this.orderContainer);
-		Mockito.when(this.mockProdSched.getPendingOrderContainers()).thenReturn(array);
-		
-		assertEquals(array, this.man.getIncompleteOrderContainers());
-		Mockito.verify(this.mockProdSched).getPendingOrderContainers();
-	}
+//	@Test
+//	public void test_getPendingOrders() {
+//		List<OrderContainer> array = new ArrayList<OrderContainer>();
+//		array.add(this.orderContainer);
+//		Mockito.when(this.mockProdSched.getPendingOrderContainers()).thenReturn(array);
+//		
+//		assertEquals(array, this.man.getIncompleteOrderContainers());
+//		Mockito.verify(this.mockProdSched).getPendingOrderContainers();
+//	}
 	
 //	@Test
 //	public void constructorNormalTest() {
@@ -82,14 +82,14 @@ public class ManufacturerTest {
 		assertTrue(complOrders.size() == 1);
 	}
 
-	@Test
-	public void testGetPendingOrderContainers() {
-		List<OrderContainer> pendOrders = new ArrayList<>();
-		pendOrders.add(orderContainer);
-		Mockito.when(mockProdSched.getPendingOrderContainers()).thenReturn(pendOrders);
-		
-		assertTrue(man.getIncompleteOrderContainers().equals(pendOrders));
-	}
+//	@Test
+//	public void testGetPendingOrderContainers() {
+//		List<OrderContainer> pendOrders = new ArrayList<>();
+//		pendOrders.add(orderContainer);
+//		Mockito.when(mockProdSched.getPendingOrderContainers()).thenReturn(pendOrders);
+//		
+//		assertTrue(man.getIncompleteOrderContainers().equals(pendOrders));
+//	}
 
 	@Test
 	public void testGetModels() {

@@ -6,6 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ AdvanceAssemblyLineHandlerTest.class,
+				AssemblyLineTest.class,
 				AssemblyProcedureTest.class,
 				AssemblyTaskTest.class,
 				DateTimeTest.class, 
@@ -18,8 +19,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	            PerformAssemblyTaskHandlerTest.class,
 	            ProductionScheduleTest.class,
 	            SpecificationTest.class,
-	            WorkPostTest.class,
-	            AssemblyLineTest.class })
+	            WorkPostTest.class })
 public class DomainTestSuite {
 
 }

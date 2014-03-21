@@ -256,7 +256,7 @@ public class ProductionSchedule {
 		this.addToPendingOrders(newOrder);
 		this.incrementOrderIdentifier();
 	}
-	
+
 	/** Isolated Order Constructor, mostly for testing purposes. */
 	protected Order makeNewOrder(Model model, Specification specs, int orderNumber) {
 		return new Order(model, specs, orderNumber);
