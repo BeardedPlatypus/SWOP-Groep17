@@ -250,13 +250,17 @@ public class ProductionSchedule {
 	 * @throws IllegalArgumentException
 	 * 		| !model.isValidSpecifications(specs)
 	 */
-	public void addNewOrder(Model model, Specification specs) throws NullPointerException, IllegalArgumentException{		
+	public void addNewOrder(Model model, Specification specs) throws NullPointerException, IllegalArgumentException{
+		if (!model.isValidSpecification(specs)) {
+			throw new IllegalArgumentException("invalid specification.");
+		}
+		
 		Order newOrder = makeNewOrder(model, specs, 
 				                      this.getCurrentOrderIdentifier());		
 		this.addToPendingOrders(newOrder);
 		this.incrementOrderIdentifier();
 	}
-	
+
 	/** Isolated Order Constructor, mostly for testing purposes. */
 	protected Order makeNewOrder(Model model, Specification specs, int orderNumber) {
 		return new Order(model, specs, orderNumber);

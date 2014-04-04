@@ -66,7 +66,6 @@ public class AdvanceAssemblyLineScenario {
 		assertTrue(orderHandler.getCompletedOrders().get(0).isCompleted());
 		
 		//6. The user indicates he is done viewing the status.
-		
 	}
 	
 	@Test

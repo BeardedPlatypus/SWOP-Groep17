@@ -188,8 +188,8 @@ public class WorkPost implements WorkPostContainer {
 	 * 		Whether or not this workpost is working on the given order
 	 */
 	public boolean isWorkingOnOrder(OrderContainer order) {
-		return getAssemblyProcedure().getOrder().equals(order);
-	}
+			return getAssemblyProcedure() != null && getAssemblyProcedure().getOrder().equals(order);
+		 }
 	
 	/**
 	 * Check whether this WorkPost is currently empty. 
