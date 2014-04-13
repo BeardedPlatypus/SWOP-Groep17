@@ -1,6 +1,6 @@
 package exceptions;
 
-public class NonMatchingStrategyContextException extends AssemAssistException{
+public class IllegalStrategyContextCombinationException extends AssemAssistException{
 
 	/**
 	 * UID this class uses for serialisability
