@@ -1,5 +1,6 @@
 package domain;
 
+//TODO new, original option, but now uses option object
 import java.util.ArrayList;
 import domain.Option;
 

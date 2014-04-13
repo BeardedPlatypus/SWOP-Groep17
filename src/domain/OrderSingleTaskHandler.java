@@ -1,5 +1,6 @@
 package domain;
 
+//TODO new in iteration 2
 public class OrderSingleTaskHandler {
 	public SingleOrderSession currentOrderSession;
 

@@ -1,5 +1,6 @@
 package domain;
 
+//TODO new in iteration 2
 public class DomainFacade {
 	public PerformAssemblyTaskHandler performAssemblyTaskHandler;
 	public NewOrderSessionHandler newOrderSessionHandler;
