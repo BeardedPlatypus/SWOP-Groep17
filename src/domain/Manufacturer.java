@@ -1,7 +1,7 @@
 package domain;
 
 import java.util.ArrayList;
-import java.util.List;
+import domain.Order;
 
 /**
  * A class which represents the book-keeping body of the system.
@@ -9,165 +9,74 @@ import java.util.List;
  * It passes information for a new order to the productionSchedule, which instantiates new orders.
  * 
  * @author Martinus Wilhelmus Tegelaers, Frederik Goovaerts
- *
  */
 public class Manufacturer {
-	
-	/**
-	 * The ProductionSchedule this manufacturer uses for scheduling orders.
-	 */
-	private ProductionSchedule productionSchedule;
-	
-	/**
-	 * A list this class keeps of orders the assembly system has completed in the past.
-	 */
-	private List<Order> completedOrders = new ArrayList<Order>();
+	public ProductionSchedule productionSchedule;
+	private ArrayList<Order> attribute2 = new ArrayList<Order>();
+	private ModelCatalog modelCatalog;
+	public AssemblyLine assemblyLine;
+	public CompleteOrderCatalog completeOrderCatalog;
+	public AlgorithmStrategyFactory algorithmStrategyFactory;
+	public OptionRestrictionManager unnamed_OptionRestrictionManager_;
+	public SingleTaskCatalog singleTaskCatalog;
 
-	/**
-	 * A ModelCatalog which contains the models this manufacturer is able to produce.
-	 */
-	private final ModelCatalog modelCatalog;
-
-	/**
-	 * Constructor
-	 * 
-	 * Instantiates an object of the class with a given modelCatalog.
-	 * 
-	 * Binary association with schedule will be set by schedule.
-	 * 
-	 * @param modelCatalog
-	 * 		The modelCatalog of the manufacturer which contains the models this manufacturer can assemble.
-	 * @throws IllegalArgumentException
-	 * 		When either of the arguments is null.
-	 */
-	public Manufacturer(ModelCatalog modelCatalog) throws IllegalArgumentException{
-		if(modelCatalog == null)
-			throw new IllegalArgumentException("modelCatalog is not allowed to be null when creating a new Manufacturer.");
-		this.modelCatalog = modelCatalog;
+	public void getPendingOrderContainers() {
+		throw new UnsupportedOperationException();
 	}
-	
-	/**
-	 * Sets the production schedule to given schedule
-	 * 
-	 * @param productionSchedule
-	 * 		The productionSchedule this manufacturer will use to schedule its orders for assembly
-	 */
-	public void setProductionSchedule(ProductionSchedule productionSchedule){
+
+	public void getCompletedOrderContainers() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void getCarModels() {
+		throw new UnsupportedOperationException();
+	}
+
+	public OrderSession getNewOrderSession() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void checkOrderValidity(Model model, Option options) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void submitStandardOrder(Model model, Option options) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void startNewOrderSession() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void submitSingleTaskOrder(Option option, DateTime deadline) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void getEstimatedCompletionTime(Object parameter) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void getWorkPostContainers() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void getTaskContainersAtWorkPost(Object parameter) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void completeTask(Object parameter, Object parameter2, Object parameter3) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void getAlgorithmFactory() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setNewSchedulingAlgorithm(Comparator comparator) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setProductionSchedule(ProductionSchedule productionSchedule) {
 		this.productionSchedule = productionSchedule;
-	}
-	
-	/**
-	 * A getter for the productionSchedule for internal use
-	 * 
-	 * @return
-	 * 		the productionSchedule of this class
-	 */
-	private ProductionSchedule getProductionSchedule() {
-		return this.productionSchedule;
-	}
-	
-	/**
-	 * A getter for the modelCatalog for internal use
-	 * 
-	 * @return
-	 * 		the modelCatalog of this class
-	 */
-	private ModelCatalog getModelCatalog() {
-		return modelCatalog;
-	}
-	
-	/**
-	 * A getter for the list of completed orders for internal use
-	 * 
-	 * @return
-	 * 		the list of completed orders
-	 */
-	private List<Order> getCompletedOrders() {
-		return completedOrders;
-	}
-
-	/**
-	 * Returns a list of containers for the completed orders for use by the UI.
-	 * 
-	 * @return
-	 * 		The list of completed orders as containers
-	 */
-	public List<OrderContainer> getCompletedOrderContainers() {
-		return new ArrayList<OrderContainer>(completedOrders);
-	}
-
-	/**
-	 * Returns the containers of the pending orders from the productionSchedule
-	 * 
-	 * @return
-	 * 		A list with containers for the pending orders in the schedule
-	 */
-	public List<OrderContainer> getIncompleteOrderContainers() {
-		return this.getProductionSchedule().getIncompleteOrderContainers();
-	}
-
-	/**
-	 * Gets the available models from the modelCatalog for use by the UI
-	 * 
-	 * @return
-	 * 		A list of the available models in the modelCatalog
-	 */
-	public List<Model> getModels() {
-		return this.getModelCatalog().getModels();
-	}
-
-	/**
-	 * Passes the information for a new order from the UI to the production schedule where an order will be created
-	 * 
-	 * @param model
-	 * 		The chosen model for the new order
-	 * @param specifications
-	 * 		The chosen specifications for the model for the new order
-	 * @throws IllegalArgumentException
-	 * 		When either of the arguments is null.
-	 */
-	public void createOrder(Model model, Specification specifications) throws IllegalArgumentException{
-		if(model == null)
-			throw new IllegalArgumentException("model is not allowed to be null when creating a new Order.");
-		if(specifications == null)
-			throw new IllegalArgumentException("modelCatalog is not allowed to be null when creating a new Order.");
-		this.getProductionSchedule().addNewOrder(model, specifications);
-	}
-
-	/**
-	 * Adds an order to the list of completed orders.
-	 * This method expects the order to already have been set as completed with a completion date.
-	 * 
-	 * @param order
-	 * 		The order to add to the completed orders list
-	 * @throws IllegalStateException
-	 * 		If the order is not yet set as completed
-	 */
-	public void addCompleteOrder(Order order) throws IllegalStateException{
-		if(!order.isCompleted())
-			throw new IllegalStateException("Order is not yet completed, can not add it to completed orders.");
-		this.getCompletedOrders().add(order);
-	}
-
-	/**
-	 * Returns a DateTime object with the estimated completion time of the given order.
-	 * 
-	 * @param order
-	 * 		The order to get the completion time for as a container.
-	 * @return
-	 * 		The DateTime of the estimated completion of the order
-	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order) {
-		return getProductionSchedule().getEstimatedCompletionTime(order);
-	}
-	
-	/**
-	 * Returns a DateTime object which contains the current system time.
-	 * 
-	 * @return
-	 * 		The current system time as a DateTime object
-	 */
-	public DateTime getCurrentTime() {
-		return this.getProductionSchedule().getCurrentTime();
 	}
 }

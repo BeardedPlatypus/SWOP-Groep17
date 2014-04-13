@@ -1,8 +1,7 @@
 package domain;
 
-public class NewOrderSessionHandler {
-	private Manufacturer manufacturer;
-	public OrderSession currentOrderSession;
+public class OrderDetailsHandler {
+	public Manufacturer manufacturer;
 
 	public void getPendingOrders() {
 		throw new UnsupportedOperationException();
@@ -12,27 +11,23 @@ public class NewOrderSessionHandler {
 		throw new UnsupportedOperationException();
 	}
 
-	public void getCarModels() {
+	public void getSpecification(Object parameter) {
 		throw new UnsupportedOperationException();
 	}
 
-	public void startNewOrderSession() {
+	public void getSubmissionTime(Object parameter) {
 		throw new UnsupportedOperationException();
 	}
 
-	public void chooseModel(Model model) {
+	public void isCompleted(Object parameter) {
 		throw new UnsupportedOperationException();
 	}
 
-	public void getNextOptionCategory() {
+	public void getCompletionTime() {
 		throw new UnsupportedOperationException();
 	}
 
-	public void selectOption(Option option) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void submitOrder() {
+	public void getEstimatedCompletionTime(Object parameter) {
 		throw new UnsupportedOperationException();
 	}
 }
