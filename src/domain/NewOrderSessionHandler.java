@@ -1,5 +1,6 @@
 package domain;
 
+//TODO new in Iteration 2
 public class NewOrderSessionHandler {
 	private Manufacturer manufacturer;
 	public OrderSession currentOrderSession;
