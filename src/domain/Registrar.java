@@ -1,5 +1,6 @@
 package domain;
 
+//TODO new in iteration 2
 public abstract class Registrar {
 	public StatisticsLogger unnamed_StatisticsLogger_;
 
