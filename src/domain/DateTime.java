@@ -1,5 +1,7 @@
 package domain;
 
+import util.annotations.Immutable;
+
 /**
  * The DateTime class is an immutable data object that contains the number of
  * days, hours, and minutes.
@@ -11,6 +13,7 @@ package domain;
  * @invariant 0 <= this.getHours() <= 23
  * @invariant 0 <= this.getMinutes() <= 59
  */
+@Immutable
 public class DateTime implements Comparable<DateTime>{
 	//--------------------------------------------------------------------------
 	// Constructor
