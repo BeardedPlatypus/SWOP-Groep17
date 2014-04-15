@@ -8,7 +8,7 @@ public enum TaskType {
 	DRIVETRAIN("Drivetrain Post"),
 	ACCESSORIES("Accessories Post");
 	
-	private String name;
+	private final String name;
 	
 	/**
 	 * Construct a new TaskType with the specified name.
