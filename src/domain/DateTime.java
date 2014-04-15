@@ -175,7 +175,7 @@ public class DateTime implements Comparable<DateTime>{
 	public DateTime subtractTime(DateTime dt) {
 		return this.subtractTime(dt.getDays(), dt.getHours(), dt.getMinutes());
 	}
-	
+
 	//--------------------------------------------------------------------------
 	// Comparable interface. 
 	//--------------------------------------------------------------------------

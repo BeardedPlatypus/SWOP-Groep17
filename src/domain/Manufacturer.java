@@ -1,7 +1,11 @@
 package domain;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+
 import domain.Order;
+
+//TODO everything
 
 /**
  * A class which represents the book-keeping body of the system.
@@ -11,7 +15,6 @@ import domain.Order;
  * @author Martinus Wilhelmus Tegelaers, Frederik Goovaerts
  */
 public class Manufacturer {
-	public ProductionSchedule productionSchedule;
 	private ArrayList<Order> attribute2 = new ArrayList<Order>();
 	private ModelCatalog modelCatalog;
 	public AssemblyLine assemblyLine;
@@ -68,15 +71,46 @@ public class Manufacturer {
 		throw new UnsupportedOperationException();
 	}
 
-	public void getAlgorithmFactory() {
-		throw new UnsupportedOperationException();
+	//--------------------------------------------------------------------------
+	// ProductionSchedule related variables and methods. 
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the ProductionSchedule of this Manufacturer.
+	 * 
+	 * @return The ProductionSchedule of this Manufacturer. 
+	 */
+	ProductionSchedule getProductionSchedule() {
+		return this.productionSchedule;
 	}
-
-	public void setNewSchedulingAlgorithm(Comparator comparator) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void setProductionSchedule(ProductionSchedule productionSchedule) {
+	
+	/**
+	 * Set the association with the ProductionSchedule. 
+	 * 
+	 * @param productionSchedule
+	 * 		The new ProductionSchedule of this Manufacturer. 
+	 * 
+	 * @post | (new this).getProductionSchedule == productionSchedule
+	 */
+	void setProductionSchedule(ProductionSchedule productionSchedule) {
 		this.productionSchedule = productionSchedule;
 	}
+	
+	/** The PrductionSchedule of this Manufacturer. */
+	private ProductionSchedule productionSchedule;
+
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the AlgorithmFactory of this Manufacturer
+	 * 
+	 * @return the AlogorithmFactory of this Manufacturer. 
+	 */
+	public AlgorithmFactory getAlgorithmFactory() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setNewSchedulingAlgorithm(Comparator<Order> comparator) {
+		throw new UnsupportedOperationException();
+	}
+	
+	
 }

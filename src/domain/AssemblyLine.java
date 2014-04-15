@@ -132,6 +132,48 @@ public class AssemblyLine {
 	public int getAssemblyLineSize() {
 		return this.workPosts.size();
 	}
+	
+
+	/**
+	 * Get the amount of WorkPosts who currently have an AssemblyProcedure, also
+	 * counting those with all tasks finished.
+	 * 
+	 * @return the amount of WorkPosts who currently have an AssemblyProcedure
+	 */
+	private int getNbOfActiveWorkPosts() {
+		int count = 0;
+		for(WorkPost p : this.getWorkPosts()) {
+			if (!p.isEmpty()) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	/**
+	 * Get the elapsed time since the last advancement of the AssemblyLine. The
+	 * elapsed time of this production stage is the maximum of the elapsed time
+	 * at each workpost this stage. This means the workpost that spent the longest
+	 * time working this stage indicates the elapsed time.
+	 * 
+	 * @return the elapsed time since the last advancement of the AssemblyLine
+	 */
+	private DateTime getElapsedTime() throws IllegalStateException{
+		DateTime elapsed = null;
+		
+		for(WorkPost p : this.getWorkPosts()){
+			if(elapsed == null){
+				elapsed = p.getElapsedTime();
+			} else if (elapsed < p.getElapsedTime()){
+				elapsed = p.getElapsedTime();
+			}
+		}
+		
+		if(elapsed == null)
+			throw new IllegalStateException("No workposts found or no elapsed time registered!");
+		
+		return elapsed;
+	}
 
 	/**
 	 * Return if this AssemblyLine is currently empty. 
@@ -189,50 +231,66 @@ public class AssemblyLine {
 	/** The {@link WorkPost}s of this assembly line, ordered by the assembly line's layout */
 	private final List<WorkPost> workPosts = new ArrayList<WorkPost>();
 
-	//--------------------------------------------------------------------------
-	//TODO: Everything: should update the internal counter to keep track of finished posts.
-	private void incrementFinishedAssemblyCounter() {
-		throw new UnsupportedOperationException();
+	/**
+	 * Increment the assemblyCounter, indicating an additional workPost has
+	 * finished the AssemblyTasks it can perform on its current AssemblyProcedure.
+	 * Notify the assemblyLine itself of the fact that a workPost has finished,
+	 * so it can check if it has to advance the Line.
+	 */
+	void incrementFinishedAssemblyCounter() {
+		this.finishedAssemblyCounter++;
+		this.checkAdvance();
 	}
 
-	private int assemblyCounter = 0;
+	/**
+	 * Counter that keeps track of how many WorkPosts have finished all their
+	 * respective tasks at this stage of production
+	 */
+	private int finishedAssemblyCounter = 0;
 	
 	//--------------------------------------------------------------------------
 	// AssemblyLine Advancement methods. 
 	//--------------------------------------------------------------------------
+	
+	/**
+	 * Check whether all WorkPosts with an AssemblyProcedure have finished their
+	 * work, and if this is the case, start advancing the AssemblyLine.
+	 */
+	private void checkAdvance() {
+		if((this.finishedAssemblyCounter >= this.getNbOfActiveWorkPosts()) &&
+				!this.isEmpty()){
+			DateTime elapsedTime = this.getElapsedTime();
+			this.tryAdvance(elapsedTime);
+		}
+		
+	}
+
 	//TODO: update this code. 
 	/**
 	 * Advance this AssemblyLine by one {@link WorkPost} and update the {@link DateTime}
 	 * with the elapsed time since the previous advancement. 
 	 * Request a new order from the {@link Manufacturer} for the first WorkPost. 
 	 * 
-	 * @param time
+	 * @param elapsedTime
 	 * 		The time that has elapsed since the last advancement, in minutes. 
-	 * 
 	 * @throws IllegalStateException
-	 * 		| EXISTS p in this.getWorkPostContainers(): not p.isFinished()
+	 * 		When there is still a finished assembly ready to be collected before
+	 * 		the shifting of the WorkPosts.
 	 */
-	public void tryAdvance(DateTime time) throws IllegalStateException{
+	public void tryAdvance(DateTime elapsedTime) throws IllegalStateException{
 		ArrayList<AssemblyTaskContainer> tasks = new ArrayList<>();
 
-		for(WorkPostContainer post : getWorkPostContainers()){
-			tasks.addAll(post.getMatchingAssemblyTasks());
-		}
-		
-		for(AssemblyTaskContainer task : tasks){
-			if(!task.isCompleted())
-				throw new IllegalStateException("One or more of the tasks on the current state of the assemblyline are still to be executed.");
-		}
 		this.shiftWorkPosts();
-		this.getProductionSchedule().advanceTime(time);
-		putNextOrderOnAssemblyLine();
-		AssemblyProcedure finishedAssembly = this.removeFinishedAssemblyFromFinishedAssemblyProcedureCollectionSpace();
 		
-		if (finishedAssembly != null) {
+		this.getProductionSchedule().advanceTime(elapsedTime);
+		
+		putNextOrderOnAssemblyLine();
+		
+		if(this.hasFinishedAssemblyProcedure()){
+			AssemblyProcedure finishedAssembly = this.removeFinishedAssemblyFromFinishedAssemblyProcedureCollectionSpace();
 			Order finishedOrder = finishedAssembly.getOrder();
 			finishedOrder.setAsCompleted();
-		
-			this.getProductionSchedule().completeOrder(finishedOrder);
+			this.getManufacturer().completeOrder(finishedOrder);
 		}
 	}
 	

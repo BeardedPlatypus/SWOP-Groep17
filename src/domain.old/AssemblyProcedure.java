@@ -16,7 +16,8 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 	 * The tasks that this procedure contains
 	 */
 	private final List<AssemblyTask> tasks;
-	/**
+	
+   /**
 	 * The order that this procedure fulfills.
 	 */
 	private final Order assemblyOrder;
