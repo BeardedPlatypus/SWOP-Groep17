@@ -19,6 +19,7 @@ public class WorkPost implements WorkPostContainer {
 	 * 
 	 * @post | (new this).getTaskType() == workPostType
 	 * @post | (new this).getPostNum() == workPostNum
+	 * @post | (new this).isEmpty()
 	 * 
 	 * @throws IllegalArgumentException
 	 * 		| workPostType == null
@@ -78,7 +79,46 @@ public class WorkPost implements WorkPostContainer {
 
 	@Override
 	public AssemblyProcedureContainer getAssemblyProcedureContainer() {
+		if (this.isEmpty())
+			throw new IllegalStateException();
+		
 		return this.activeAssembly;
+	}
+	
+	/**
+	 * Add the specified AssemblyProcedure as new active AssemblyProcedure to 
+	 * this WorkPost. 
+	 * 
+	 * @param assemblyProcedure
+	 * 		The new active AssemblyProcedure of this WorkPost.
+	 * 
+	 * @postcondition | (new this).getAssemblyProcedure() == assemblyProcedure
+	 * @postcondition | !(new this).isEmpty()
+	 * 
+	 * @throws IllegalStateException
+	 * 		| !this.isEmpty()
+	 * @throws IllegalArgumentException
+	 * 		| assemblyProcedure == null
+	 */
+	void addActiveAssemblyProcedure(AssemblyProcedure assemblyProcedure) {
+		if (!this.isEmpty())
+			throw new IllegalStateException("This workpost is not empty.");
+		if (assemblyProcedure == null)
+			throw new IllegalArgumentException("AssemblyProcedure may not be null");
+		
+		this.setAssemblyProcedure(assemblyProcedure);
+	}
+	
+	/**
+	 * Set the AssemblyProcedure on this WorkPost to the specified AssemblyProcedure.
+	 * 
+	 * @param assemblyProcedure
+	 * 		The AssemblyProcedure to be added to this WorkPost
+	 * 
+	 * @postcondition | (new this).getAssemblyProcedure() == assemblyProcedure
+	 */
+	protected void setAssemblyProcedure(AssemblyProcedure assemblyProcedure) {
+		this.activeAssembly = assemblyProcedure;
 	}
 	
 	/**

@@ -52,31 +52,72 @@ public class WorkPostTest {
 	// Constructor
 	//--------------------------------------------------------------------------
 	@Test(expected = IllegalArgumentException.class)
-	public void constructor_NullTaskTypeTest() {
+	public void test_constructorNullTaskTypeTest() {
 		new WorkPost(null, 0);
 	}
 	
 	@Test
-	public void constructor_ValidTaskTypeTest() {
-		WorkPost workPost = new WorkPost(TaskType.BODY, 0);
-		assertEquals(workPost.getTaskType(), TaskType.BODY);
+	public void test_constructorValid() {
+		WorkPost wp = new WorkPost(TaskType.BODY, 0);
+		
+		assertEquals(TaskType.BODY.toString(), wp.getName());
+		assertEquals(0, wp.getWorkPostNum());
+		assertEquals(TaskType.BODY, wp.getTaskType());
+		assertEquals(true, wp.isEmpty());
+		assertEquals(null, wp.getAssemblyProcedure());
+	}
+	
+	//--------------------------------------------------------------------------
+	// Active AssemblyProcedure methods.
+	//--------------------------------------------------------------------------
+	@Test
+	public void test_isNotEmpty() {
+		workPost.setAssemblyProcedure(assemblyProcedure);
+		
+		assertEquals(false, workPost.isEmpty());
 	}
 	
 	@Test
-	public void getAssemblyTaskInfosTest_noAssemblyAssigned() {
-		List<AssemblyTaskContainer> infos = workPost.getMatchingAssemblyTasks();
-		assertTrue(infos.isEmpty());
+	public void test_addActiveAssemblyProcedureValid() {
+		workPost.addActiveAssemblyProcedure(assemblyProcedure);
+		assertEquals(assemblyProcedure, workPost.getAssemblyProcedure());
+		assertEquals(false, workPost.isEmpty());
 	}
 	
+	@Test
+	public void test_addActiveAssemblyProcedureNull() {
+		exception.expect(IllegalArgumentException.class);
+		
+		workPost.addActiveAssemblyProcedure(null);
+	}
+	
+	@Test
+	public void test_addActiveAssemblyProcedureNotEmpty() {
+		exception.expect(IllegalStateException.class);
+		workPost.setAssemblyProcedure(assemblyProcedure);
+		workPost.addActiveAssemblyProcedure(assemblyProcedure);
+	}
+		
+	@Test 
+	public void test_getMatchinAssemblyTasks_empty() {
+		exception.expect(IllegalStateException.class);
+		workPost.getMatchingAssemblyTasks();
+	}
+
 	@Test
 	public void getAssemblyTaskInfosTest_assemblyAssigned() {
 		workPost.setAssemblyProcedure(assemblyProcedure);
-		
+
 		List<AssemblyTaskContainer> infos = workPost.getMatchingAssemblyTasks();
 		assertTrue(infos.contains(assemblyTaskInfo1));
 		assertTrue(infos.contains(assemblyTaskInfo2));
 		assertFalse(infos.contains(assemblyTaskInfo3));
 	}
+	
+	//--------------------------------------------------------------------------
+	// completing a task
+	//--------------------------------------------------------------------------
+	
 	
 	
 

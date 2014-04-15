@@ -41,7 +41,7 @@ public interface WorkPostContainer {
 	 * @throws IllegalStateException
 	 * 		| this.isEmpty()
 	 */
-	public List<AssemblyTaskContainer> getMatchingAssemblyTasks();
+	public List<AssemblyTaskContainer> getMatchingAssemblyTasks() throws IllegalStateException;
 	
 	/**
 	 * Check if this WorkPost is currently empty (has no active AssemblyProcedure).
@@ -53,7 +53,10 @@ public interface WorkPostContainer {
 	/**
 	 * Get the active AssemblyProcedureContainer of this WorkPost. 
 	 * 
-	 * @return The active AssemblyProcedureContainer of this WorkPost. 
+	 * @return The active AssemblyProcedureContainer of this WorkPost.
+	 * 
+	 * @throws IllegalStateException
+	 * 		| this.isEmpty()
 	 */
-	public AssemblyProcedureContainer getAssemblyProcedureContainer();
+	public AssemblyProcedureContainer getAssemblyProcedureContainer() throws IllegalStateException;
 }
