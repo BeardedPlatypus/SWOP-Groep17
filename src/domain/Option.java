@@ -22,8 +22,16 @@ public class Option {
 	 * 		The name of the new Option
 	 * @param optionActionInfo
 	 * 		The description of the new Option
+	 * @throws IllegalArgumentException
+	 * 		If one of the arguments is null
 	 */
 	public Option(TaskType optionType, String optionName, String optionActionInfo){
+		if(optionType == null)
+			throw new IllegalArgumentException("optionType can not be null.");
+		if(optionName == null)
+			throw new IllegalArgumentException("optionName can not be null.");
+		if(optionActionInfo == null)
+			throw new IllegalArgumentException("optionActionInfo can not be null.");
 		this.optionType = optionType;
 		this.optionName = optionName;
 		this.optionActionInfo = optionActionInfo;

@@ -10,6 +10,9 @@ import org.junit.Test;
 public class SpecificationTest {
 
 	Specification testSpec;
+	Option option1;
+	Option option1;
+	Option option1;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -30,7 +33,7 @@ public class SpecificationTest {
 	
 	@Test
 	public void getSpecTest() {
-		assertTrue(testSpec.getSpec(0) == 1);
+		assertTrue(testSpec.getOption(0).equals(obj));
 		assertTrue(testSpec.getSpec(1) == 4);
 		assertTrue(testSpec.getSpec(2) == 3);
 	}
