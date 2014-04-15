@@ -67,7 +67,7 @@ public class AssemblyProcedureTest {
 	@Test
 	public void constructor_NullTasksTest() {
 		exception.expect(IllegalArgumentException.class);
-		new AssemblyProcedure(order, tasks);
+		new AssemblyProcedure(order, null);
 	}
 	
 	@Test
@@ -122,6 +122,24 @@ public class AssemblyProcedureTest {
 		assertSame(containers.get(0), color);
 		assertSame(containers.get(1), body);
 		assertFalse(containers.contains(engine));
+	}
+	
+	@Test
+	public void getTask_NegativeNumber() {
+		exception.expect(IllegalArgumentException.class);
+		procedure.getTask(-1);
+	}
+	
+	@Test
+	public void getTask_TooBigNumber() {
+		exception.expect(IllegalArgumentException.class);
+		procedure.getTask(100);
+	}
+	
+	@Test
+	public void getTask_valid() {
+		AssemblyTask task = procedure.getTask(0);
+		assertTrue(task == color);
 	}
 
 }

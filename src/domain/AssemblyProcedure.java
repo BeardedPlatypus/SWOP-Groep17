@@ -58,7 +58,7 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 	 * 		A task of a type different from taskType was selected
 	 */
 	public void completeTask(int intTask, TaskType taskType) throws IllegalArgumentException {
-		if (intTask < 0 || intTask >= this.getAssemblyTasks().size()) {
+		if (! isValidTaskNumber(intTask)) {
 			throw new IllegalArgumentException("Task number is not a correct value for this procedure.");
 		}
 		if(tasks.get(intTask).getTaskType()!=taskType)
