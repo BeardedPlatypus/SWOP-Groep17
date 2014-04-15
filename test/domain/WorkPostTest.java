@@ -47,7 +47,10 @@ public class WorkPostTest {
 		
 		this.workPost = new WorkPost(this.workPostType, 0);
 	}
-
+	
+	//--------------------------------------------------------------------------
+	// Constructor
+	//--------------------------------------------------------------------------
 	@Test(expected = IllegalArgumentException.class)
 	public void constructor_NullTaskTypeTest() {
 		new WorkPost(null, 0);

@@ -12,6 +12,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+/**
+ * @author SimSla
+ *
+ */
 public class BatchComparatorTest {
 
 	@Mock Option option1;
@@ -19,10 +23,14 @@ public class BatchComparatorTest {
 	@Mock Option option3;
 	@Mock Option option4;
 	
+	@Mock Specification spec1;
+	@Mock Specification spec2;
+	
 	@Mock Order order1;
 	@Mock Order order2;
 	@Mock Order order3;
 	@Mock Order order4;
+	@Mock Order order5;
 	
 	Specification order1Specs;
 	Specification order2Specs;

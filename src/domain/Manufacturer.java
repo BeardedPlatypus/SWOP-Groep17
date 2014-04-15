@@ -17,7 +17,7 @@ import domain.Order;
 public class Manufacturer {
 	private ModelCatalog modelCatalog;
 	private AssemblyLine assemblyLine;
-	private CompleteOrderCatalog completeOrderCatalog;
+	private CompletedOrderCatalog completeOrderCatalog;
 	private AlgorithmStrategyFactory algorithmStrategyFactory;
 	private OptionRestrictionManager optionRestrictionManager;
 	private SingleTaskCatalog singleTaskCatalog;

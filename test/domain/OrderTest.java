@@ -41,22 +41,11 @@ public class OrderTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 	
-		Mockito.when(this.mockSuperModel2.isValidSpecification(spectacles2)).thenReturn(true);
 		order1 = new Order(mockSuperModel2, spectacles2, 0, submission1);
 		order2 = new Order(mockSuperModel2, spectacles2, 0, submission1);
 		order3 = new Order(mockSuperModel2, spectacles2, 1, submission1);
 	}
 
-	@Test 
-	public void test_constructorInvalidSpecifications() {
-		exception.expect(IllegalArgumentException.class);
-		
-		Mockito.when(this.mockSuperModel.isValidSpecification(spectacles)).thenReturn(false);
-		Order test = new Order(mockSuperModel, spectacles, 0, submission1);
-		
-		Mockito.verify(this.mockSuperModel, Mockito.times(1));
-	}
-	
 	@Test 
 	public void test_constructorNullPointerExceptionModel() {
 		exception.expect(NullPointerException.class);
@@ -77,7 +66,6 @@ public class OrderTest {
 	
 	@Test
 	public void test_constructorValidInput() {
-		Mockito.when(this.mockSuperModel.isValidSpecification(spectacles)).thenReturn(true);
 		
 		Order test = new Order(mockSuperModel, spectacles, 0, submission1);
 		
