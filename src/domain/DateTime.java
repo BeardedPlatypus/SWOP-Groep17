@@ -111,7 +111,7 @@ public class DateTime implements Comparable<DateTime>{
 	 * @return the time of this DateTime in minutes.
 	 */
 	public long getInMinutes() {
-		return this.days * 1440 + this.hours * 60 + this.minutes;
+		return this.getDays() * 1440 + this.getHours() * 60 + this.getMinutes();
 	}
 	
 	//--------------------------------------------------------------------------
