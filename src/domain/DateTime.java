@@ -11,5 +11,11 @@ package domain;
  * @invariant 0 <= this.getHours() <= 23
  * @invariant 0 <= this.getMinutes() <= 59
  */
-public class DateTime {
+public class DateTime implements Comparable<DateTime> {
+
+	@Override
+	public int compareTo(DateTime arg0) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

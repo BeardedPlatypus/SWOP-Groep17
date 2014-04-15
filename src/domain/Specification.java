@@ -1,6 +1,9 @@
 package domain;
 
 import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.collections4.*;
+
 import domain.Option;
 
 /**
@@ -12,5 +15,39 @@ import domain.Option;
  * @author Frederik Goovaerts
  */
 public class Specification {
-	public ArrayList<Option> options = new ArrayList<Option>();
+	
+	/** The Option objects contained in this Specification. */
+	public List<Option> options = new ArrayList<Option>();
+	
+	/** Get the Option objects contained in this Specification. */
+	public List<Option> getOptions() {
+		return new ArrayList<Option>(this.options);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((options == null) ? 0 : options.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Specification other = (Specification) obj;
+		if (options == null) {
+			if (other.options != null)
+				return false;
+		} else if (! CollectionUtils.isEqualCollection(this.getOptions(), other.getOptions()))
+			return false;
+		return true;
+	}
+	
+	
 }

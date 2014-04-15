@@ -27,7 +27,7 @@ public class Order implements OrderContainer {
 		throw new UnsupportedOperationException();
 	}
 
-	public void getSubmissionTime() {
+	public DateTime getSubmissionTime() {
 		throw new UnsupportedOperationException();
 	}
 
