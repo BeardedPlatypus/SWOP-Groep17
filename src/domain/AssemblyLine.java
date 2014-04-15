@@ -6,13 +6,13 @@ import java.util.List;
 import domain.WorkPost;
 
 /**
- * A class depicting an assembly line in the system. An assembly line is composed of a number of workposts.
- * It is linked to a production schedule, which supplies it with new orders when it needs a new order to fill
- * the first workpost when it becomes vacant.
- * It also has a space to store one completed assembly which just came of the assembly line completed, until
- * it is collected. If no assembly is waiting to be collected, this contains a null object.
+ * A class depicting an AssemblyLine in the system. An AssemblyLine is composed 
+ * of a number of {@link WorkPost}s.
+ * It is associated with a {@link Manufacturer} that it uses to communicate with the rest
+ * of the system.
+ * It provides methods for advancing the assembly line and requesting new {@link Order}s.
  * 
- * @author Thomas Vochten, Frederik Goovaerts, Maarten Tegelaers
+ * @author Thomas Vochten, Frederik Goovaerts, Martinus Wilhelmus Tegelaers
  */
 public class AssemblyLine {
 	//--------------------------------------------------------------------------
@@ -21,7 +21,8 @@ public class AssemblyLine {
 	//TODO: Raw method, add annotation
 	//TODO: Add additional throws of exceptions. 	
 	/**
-	 * Instantiates a new assembly line with the given Manufacturer
+	 * Instantiate a new AssemblyLine with the specified {@link Manufacturer}.
+	 * 
 	 * @param manufacturer
 	 * 		manufacturer that owns this AssemblyLine
 	 * @throws IllegalArgumentException
@@ -59,9 +60,8 @@ public class AssemblyLine {
 	private final Manufacturer manufacturer;
 
 	//--------------------------------------------------------------------------
-	// Workpost related methods and variables.
+	// WorkPost related methods and variables.
 	//--------------------------------------------------------------------------
- 
 	/**
 	 * Asks the given {@link WorkPost} to complete {@link AssemblyTask} with given number on its current {@link AssemblyProcedure}
 	 * 
@@ -82,7 +82,7 @@ public class AssemblyLine {
 	// OrderContainer methods.
 	
 	/**
-	 * Get the matching assemblyTasks at the specified WorkPost.
+	 * Get the matching assemblyTasks at the specified {@link WorkPost}.
 	 * 
 	 * @param workPostNumber
 	 * 		The number of the WorkPost for which we want to retrieve the tasks
@@ -99,7 +99,7 @@ public class AssemblyLine {
 	}
 
 	/**
-	 * Get a list of pending containers on the assembly line. 
+	 * Get a list of pending {@link OrderContainer}s on the assembly line. 
 	 * 
 	 * @return List of pending order containers on the assembly line.
 	 */
@@ -116,7 +116,7 @@ public class AssemblyLine {
 
 	//--------------------------------------------------------------------------
 	/**
-	 * Get the WorkPosts composing the assembly line, as immutable WorkPostContainer
+	 * Get the WorkPosts composing the assembly line, as immutable {@link WorkPostContainer}s
 	 * 
 	 * @return A list of immutable containers for all respective WorkPosts in their order.
 	 */
@@ -161,7 +161,7 @@ public class AssemblyLine {
 	}
 	
 	/**
-	 * Get the WorkPost at the specified position in the assembly line.
+	 * Get the {@link WorkPost} at the specified position in the assembly line.
 	 * 
 	 * @param workPostNumber
 	 * 		The index of the wanted WorkPost. 
@@ -178,7 +178,7 @@ public class AssemblyLine {
 	}
 	
 	/**
-	 * Get the WorkPosts of this AssemblyLine.
+	 * Get the {@link WorkPost}s of this AssemblyLine.
 	 * 
 	 * @return The WorkPosts of this AssLine
 	 */
@@ -186,7 +186,7 @@ public class AssemblyLine {
 		return new ArrayList<WorkPost>(this.workPosts);
 	}
 		
-	/** The workposts of this assembly line, ordered by the assembly line's layout */
+	/** The {@link WorkPost}s of this assembly line, ordered by the assembly line's layout */
 	private final List<WorkPost> workPosts = new ArrayList<WorkPost>();
 
 	//--------------------------------------------------------------------------
@@ -202,9 +202,9 @@ public class AssemblyLine {
 	//--------------------------------------------------------------------------
 	//TODO: update this code. 
 	/**
-	 * Advance this AssemblyLine by one WorkPost and update the TimeObject with 
-	 * the elapsed time since the previous advancement. 
-	 * Request a new order from the Manufacturer for the first WorkPost. 
+	 * Advance this AssemblyLine by one {@link WorkPost} and update the {@link DateTime}
+	 * with the elapsed time since the previous advancement. 
+	 * Request a new order from the {@link Manufacturer} for the first WorkPost. 
 	 * 
 	 * @param time
 	 * 		The time that has elapsed since the last advancement, in minutes. 
@@ -212,11 +212,13 @@ public class AssemblyLine {
 	 * @throws IllegalStateException
 	 * 		| EXISTS p in this.getWorkPostContainers(): not p.isFinished()
 	 */
-	public void tryAdvance(int time) throws IllegalStateException{
+	public void tryAdvance(DateTime time) throws IllegalStateException{
 		ArrayList<AssemblyTaskContainer> tasks = new ArrayList<>();
+
 		for(WorkPostContainer post : getWorkPostContainers()){
 			tasks.addAll(post.getMatchingAssemblyTasks());
 		}
+		
 		for(AssemblyTaskContainer task : tasks){
 			if(!task.isCompleted())
 				throw new IllegalStateException("One or more of the tasks on the current state of the assemblyline are still to be executed.");
@@ -232,6 +234,10 @@ public class AssemblyLine {
 		
 			this.getProductionSchedule().completeOrder(finishedOrder);
 		}
+	}
+	
+	public void tryAdvance(int time) throws IllegalStateException{
+		this.tryAdvance(new DateTime(0, 0, time));
 	}
 
 	//TODO:
