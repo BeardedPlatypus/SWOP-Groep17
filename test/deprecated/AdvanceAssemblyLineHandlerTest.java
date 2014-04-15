@@ -1,4 +1,4 @@
-package domain;
+package deprecated;
 
 import org.junit.Before;
 import org.junit.Rule;

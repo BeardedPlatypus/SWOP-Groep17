@@ -81,11 +81,22 @@ public class Order implements OrderContainer {
 	/**
 	 * Set this order to completed at the given completionTime. 
 	 * 
+	 * @param dt
+	 * 		The time at which this order was completed.
 	 * 
  	 * @postcondition | this.isCompleted()
+ 	 * @postcondition | this.getCompletionTimeh() == dt
+ 	 * 
+	 * @throws NullPointerException
+	 * 		| dt == null
+	 * @throws IllegalStateException
+	 * 		dt has been set already.
+	 * @throws IllegalArgumentException
+	 * 		| dt < this.getSubmissionTime()
 	 */
-	public void setAsCompleted() {
+	public void setAsCompleted(DateTime dt) {
 		this.setIsComplete(true);
+		this.setCompletionTime(dt);
 	}
 	
 	/** 
@@ -153,11 +164,13 @@ public class Order implements OrderContainer {
 	 * @throws IllegalArgumentException
 	 * 		| dt < this.getSubmissionTime()
 	 */
-	void setCompletionTime(DateTime dt) throws NullPointerException {
+	protected void setCompletionTime(DateTime dt) throws NullPointerException, 
+														 IllegalStateException,
+														 IllegalArgumentException {
 		if (dt == null)
 			throw new NullPointerException("Completion time cannot be null.");
 		if (this.completionTime != null)
-			throw new IllegalStateException("An order cannot be completed twice");
+			throw new IllegalStateException("An order cannot be completed twice");		
 		if (dt.compareTo(this.getSubmissionTime()) < 0)
 			throw new IllegalArgumentException("An order cannot be completed before it is submitted");
 		
