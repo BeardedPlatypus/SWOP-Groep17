@@ -1,7 +1,6 @@
 package domain;
 
 import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -129,5 +128,4 @@ public class BatchComparatorTest {
 		int result = comp.compare(order1, order1);
 		assertEquals(result, 0);
 	}
-
 }

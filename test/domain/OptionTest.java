@@ -2,65 +2,70 @@ package domain;
 
 import static org.junit.Assert.*;
 
-import java.util.Iterator;
-
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.MockitoAnnotations;
 
 public class OptionTest {
 	
 	Option testOption;
+	@Rule public ExpectedException exception = ExpectedException.none();
 	
 	@Before
 	public void setUp() throws Exception {
-		 testOption = new Option("OptionName", "Mount chosen part on the tailpipes", TaskType.ACCESSORIES, "choice1","choice2","choice3");
+		MockitoAnnotations.initMocks(this);
+		testOption = new Option(TaskType.ACCESSORIES, "option","description");
 	}
 	
 	@Test
-	public void getChoiceNameTest() {
-		assertTrue(testOption.getChoiceName(0).equals("choice1"));
-		assertTrue(testOption.getChoiceName(1).equals("choice2"));
-		assertTrue(testOption.getChoiceName(2).equals("choice3"));
-	}
-	
-	@Test(expected = IllegalArgumentException.class)
-	public void getChoiceNameIllegalArgumentNegativeTest() {
-		testOption.getChoiceName(-1);
-	}
-	
-	@Test(expected = IllegalArgumentException.class)
-	public void getChoiceNameIllegalArgumentTooBigTest() {
-		testOption.getChoiceName(5);
+	public void testConstructor() {
+		assertTrue(testOption.getType().equals(TaskType.ACCESSORIES));
+		assertTrue(testOption.getName().equals("option"));
+		assertTrue(testOption.getDescription().equals("description"));
 	}
 	
 	@Test
-	public void constructorTest() {
-		assertTrue(testOption.getOptionName().equals("OptionName"));
-		assertTrue(testOption.getAmountOfChoices() == 3);
-		testOption = new Option("OptionName2", "Mount chosen part on the tailpipes", TaskType.BODY, "choice1","choice2","choice3","choice4");
-		assertTrue(testOption.getOptionName().equals("OptionName2"));
-		assertTrue(testOption.getAmountOfChoices() == 4);
+	public void testConstructorNullName() {
+		exception.expect(IllegalArgumentException.class);
+		testOption = new Option(TaskType.ACCESSORIES, null,"description");
 	}
 	
 	@Test
-	public void getChoicesIteratorTest() {
-		Iterator<String> choices = testOption.getChoicesIterator();
-		assertTrue(choices.hasNext());
-		assertTrue(choices.next().equals("choice1"));
-		choices.next();
-		choices.next();
-		assertFalse(choices.hasNext());
+	public void testConstructorNullType() {
+		exception.expect(IllegalArgumentException.class);
+		testOption = new Option(null, "option","description");
 	}
 	
 	@Test
-	public void getOptionActionDescriptionTest() {
-		assertTrue(testOption.getOptionActionDescription().equals("Mount chosen part on the tailpipes"));
-	}
-	
-	@Test
-	public void getOptionTypeTest() {
-		assertTrue(testOption.getType()==TaskType.ACCESSORIES);
+	public void testConstructorNullDesc() {
+		exception.expect(IllegalArgumentException.class);
+		testOption = new Option(TaskType.ACCESSORIES, "option",null);
 	}
 
-
+	@Test
+	public void testEqualsObject() {
+		Option testOptionSame = new Option(TaskType.ACCESSORIES, "option", "description");
+		assertTrue(testOption.equals(testOptionSame));
+	}
+	
+	@Test
+	public void testNotEqualsObject(){
+		Option testOptionDifferentName = new Option(TaskType.ACCESSORIES, "another option", "other desc");
+		Option testOptionDifferentType = new Option(TaskType.BODY, "option", "other desc");
+		assertFalse(testOption.equals(testOptionDifferentName));
+		assertFalse(testOption.equals(testOptionDifferentType));
+		assertFalse(testOption.equals(new String("someString")));
+	}
+	
+	@Test
+	public void testEqualsSameObject(){
+		assertTrue(testOption.equals(testOption));
+	}
+	
+	@Test
+	public void testNotEqualsNullObject(){
+		assertFalse(testOption.equals(null));
+	}
 }

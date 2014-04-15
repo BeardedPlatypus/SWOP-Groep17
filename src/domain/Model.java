@@ -8,10 +8,10 @@ import domain.Option;
 import domain.OptionCategory;
 
 /**
- * A model class is a class representing a car model. Has a set of possible options chosen when a car
- * of this model is ordered made.
+ * A model class is a class representing a car model. Has a set of OptionCategories
+ * with possible Options chosen when a car of this model is ordered.
  * 
- * When an order is to be placed, choices based on the options are stored in specifications.
+ * When an order is to be placed, options from the categories are stored in a specification.
  * 
  * This class is instantiated by the ModelCatalog and instantiates Specification objects.
  * 
@@ -23,19 +23,17 @@ public class Model {
 	// Constructor
 	//-------------------------------------------------------------------------
 	/**  
-	 * Instantiate a new Model with the specified name and options. 
+	 * Instantiate a new Model with the specified name and OptionCategories. 
 	 * 
 	 * @param modelName
 	 * 		Name this model receives
-	 * @param options
-	 * 		Arraylist containing all the options this model should offer
+	 * @param optionCategories
+	 * 		Arraylist containing all the optionCategories this model should offer
 	 */
-	public Model(String modelName, 
-				 List<Option> options, 
+	public Model(String modelName,
 				 List<OptionCategory> optionCategories)
 	{
 		this.modelName = modelName;
-		this.options = new ArrayList<Option>(options);
 		this.optionCategories = new ArrayList<OptionCategory>(optionCategories);
 	}
 	
@@ -55,36 +53,34 @@ public class Model {
 	/** The name of this Model. Eg. "Ford Focus". */
 	private final String modelName;
 	
-	//FIXME: old functionality
 	/**
-	 * Get the number of Options that can be chosen when placing an order with
+	 * Get the amount of OptionCategories that can be used when placing an order with
 	 * this Model. 
 	 *  
-	 * @return The number of Options that can be chosen when placing an order with
+	 * @return The amount of OptionCategories that can be used when placing an order with
 	 * 		   this Model
 	 */
-	public int getAmountOfOptions() {
-		return this.getOptions().size();
+	public int getAmountOfOptionCategories() {
+		return this.getOptionCategories().size();
 	}
 
-	//FIXME: old functionality
 	/**
-	 * Request the Option corresponding with the specified index.
+	 * Request the OptionCategory corresponding with the specified index.
 	 * 
-	 * @param optionNb
-	 * 		The index of the requested Option. 
+	 * @param optionCategoryNb
+	 * 		The index of the requested OptionCategory. 
 	 * 	
-	 * @return The Option corresponding with index optionNb
+	 * @return The OptionCategory corresponding with index optionCategoryNb
 	 */
-	public Option getModelOption(int optionNb) {
-		if(optionNb < 0 || optionNb >= getAmountOfOptions())
-			throw new IllegalArgumentException("The option you requested does not exist.");
-		return options.get(optionNb);
+	public OptionCategory getModelOptionCategory(int optionCategoryNb) {
+		if(optionCategoryNb < 0 || optionCategoryNb >= getAmountOfOptionCategories())
+			throw new IllegalArgumentException("The optionCategory you requested does not exist.");
+		return optionCategories.get(optionCategoryNb);
 	}
 	
-	//--------------------------------------------------------------------------
 	/**
-	 * Get the OptionCategories of this Model.
+	 * Get all the OptionCategories of this Model. This is not the contained list
+	 * itself, but a copy containing the same elements.
 	 * 
 	 * @return the OptionCategories of this Model.
 	 */
@@ -95,47 +91,53 @@ public class Model {
 	/** The OptionCategories of this Model. */
 	private  final List<OptionCategory> optionCategories;
 	
+	/**
+	 * Check whether or not this model contains given options in one of its
+	 * optionCategories, and is therefore a possible choice.
+	 * 
+	 * @param option
+	 * 		The option to check for if it is an option of this model
+	 * @return
+	 * 		Whether or not the option is contained in this model
+	 * @throws IllegalArgumentException
+	 * 		If given option is null
+	 */
+	public boolean containsOption(Option option){
+		if(option == null)
+			throw new IllegalArgumentException("Option can not be null!");
+		for(OptionCategory cat : getOptionCategories()){
+			if(cat.containsOption(option)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	//--------------------------------------------------------------------------
 	// Specifications
 	//--------------------------------------------------------------------------
-	//FIXME: old functionality
 	/**
-	 * Takes an array of integers and makes a specification out of it if the amount of choices matches the
-	 * amount of choices to make for this model.
+	 * Take a list of options and make a specification containing said options
 	 * 
-	 * @param choices
-	 * 		int array containing the indices depicting choices made for this model's options
+	 * @param options
+	 * 		List containing the options from which to make a specification
 	 * 	
 	 * @return
-	 * 		Specification object containing the choices from the parameters
+	 * 		Specification object containing the given options
+	 * @throws IllegalArgumentException
+	 * 		When the list of options or one of the options is null, or one of the options
+	 * 		is not contained in this model
 	 */
-	public Specification makeSpecification(int[] choices){
-		if(choices.length != getAmountOfOptions())
-			throw new IllegalArgumentException("Not the right amount of specification choices for this model have been submitted.");
-		Specification newSpecs = new Specification(choices);
-		if(!isValidSpecification(newSpecs))
-			throw new IllegalArgumentException("Not a valid set of specifications for this model.");
-		return newSpecs;
-	}
-
-	//FIXME: old functionality
-	/**
-	 * Checks for a Specification object whether the encompassed specifications match the model's options, both in amount,
-	 * as not being too high an index for each option.
-	 * 
-	 * @param specs
-	 * 		The Specification object we want to compare to the options of the model
-	 * @return
-	 * 		A boolean depicting whether or not the given specs match the options of the model.
-	 */
-	public boolean isValidSpecification(Specification specs) {
-		if(specs.getAmountofSpecs() != options.size())
-			return false;
-		int amountsOfSpecs = specs.getAmountofSpecs();
-		for(int i=0; i < amountsOfSpecs; i++){
-			if(options.get(i).getAmountOfChoices() < specs.getSpec(i))
-				return false;
+	public Specification makeSpecification(List<Option> options) throws IllegalArgumentException{
+		if(options == null)
+			throw new IllegalArgumentException("Given list of options is null.");
+		for(Option listOpt : options){
+			if(!this.containsOption(listOpt))
+				throw new IllegalArgumentException("One of the options does not match this car model.");
+			if(listOpt == null)
+				throw new IllegalArgumentException("One of given options is null.");
 		}
-		return true;
+		Specification newSpecs = new Specification(options);
+		return newSpecs;
 	}
 }

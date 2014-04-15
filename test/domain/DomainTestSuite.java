@@ -4,6 +4,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import deprecated.AdvanceAssemblyLineHandlerTest;
+
 @RunWith(Suite.class)
 @SuiteClasses({ AdvanceAssemblyLineHandlerTest.class,
 				AssemblyLineTest.class,
