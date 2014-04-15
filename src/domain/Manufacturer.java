@@ -15,13 +15,13 @@ import domain.Order;
  * @author Martinus Wilhelmus Tegelaers, Frederik Goovaerts
  */
 public class Manufacturer {
-	private ArrayList<Order> attribute2 = new ArrayList<Order>();
 	private ModelCatalog modelCatalog;
-	public AssemblyLine assemblyLine;
-	public CompleteOrderCatalog completeOrderCatalog;
-	public AlgorithmStrategyFactory algorithmStrategyFactory;
-	public OptionRestrictionManager unnamed_OptionRestrictionManager_;
-	public SingleTaskCatalog singleTaskCatalog;
+	private AssemblyLine assemblyLine;
+	private CompleteOrderCatalog completeOrderCatalog;
+	private AlgorithmStrategyFactory algorithmStrategyFactory;
+	private OptionRestrictionManager optionRestrictionManager;
+	private SingleTaskCatalog singleTaskCatalog;
+	private ProductionScheduleFacade productionScheduleFacade;
 
 	public void getPendingOrderContainers() {
 		throw new UnsupportedOperationException();
@@ -72,15 +72,15 @@ public class Manufacturer {
 	}
 
 	//--------------------------------------------------------------------------
-	// ProductionSchedule related variables and methods. 
+	// ProductionScheduleFacade related variables and methods. 
 	//--------------------------------------------------------------------------
 	/**
 	 * Get the ProductionSchedule of this Manufacturer.
 	 * 
 	 * @return The ProductionSchedule of this Manufacturer. 
 	 */
-	ProductionSchedule getProductionSchedule() {
-		return this.productionSchedule;
+	ProductionScheduleFacade getProductionSchedule() {
+		return this.productionScheduleFacade;
 	}
 	
 	/**
@@ -91,12 +91,9 @@ public class Manufacturer {
 	 * 
 	 * @post | (new this).getProductionSchedule == productionSchedule
 	 */
-	void setProductionSchedule(ProductionSchedule productionSchedule) {
-		this.productionSchedule = productionSchedule;
+	void setProductionSchedule(ProductionScheduleFacade productionScheduleFacade) {
+		this.productionScheduleFacade = productionScheduleFacade;
 	}
-	
-	/** The PrductionSchedule of this Manufacturer. */
-	private ProductionSchedule productionSchedule;
 
 	//--------------------------------------------------------------------------
 	/**
@@ -104,7 +101,7 @@ public class Manufacturer {
 	 * 
 	 * @return the AlogorithmFactory of this Manufacturer. 
 	 */
-	public AlgorithmFactory getAlgorithmFactory() {
+	public AlgorithmStrategyFactory getAlgorithmFactory() {
 		throw new UnsupportedOperationException();
 	}
 

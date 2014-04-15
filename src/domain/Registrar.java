@@ -2,7 +2,7 @@ package domain;
 
 //TODO new in iteration 2
 public abstract class Registrar {
-	public StatisticsLogger unnamed_StatisticsLogger_;
+	private String registrarName;
 
 	public void addStatistics(ProcedureStatistics statistics) {
 		throw new UnsupportedOperationException();

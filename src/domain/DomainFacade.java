@@ -2,11 +2,11 @@ package domain;
 
 //TODO new in iteration 2
 public class DomainFacade {
-	public PerformAssemblyTaskHandler performAssemblyTaskHandler;
-	public NewOrderSessionHandler newOrderSessionHandler;
-	public OrderSingleTaskHandler orderSingleTaskHandler;
-	public OrderDetailsHandler orderDetailsHandler;
-	public SchedulingAlgorithmHandler schedulingAlgorithmHandler;
+	private PerformAssemblyTaskHandler performAssemblyTaskHandler;
+	private NewOrderSessionHandler newOrderSessionHandler;
+	private OrderSingleTaskHandler orderSingleTaskHandler;
+	private OrderDetailsHandler orderDetailsHandler;
+	private SchedulingAlgorithmHandler schedulingAlgorithmHandler;
 
 	public void getAlgorithms() {
 		throw new UnsupportedOperationException();

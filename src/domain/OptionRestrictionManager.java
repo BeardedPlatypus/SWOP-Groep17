@@ -1,7 +1,8 @@
 package domain;
 
+import java.util.ArrayList;
+
 //TODO new in iteration 2.
 public class OptionRestrictionManager {
-	public Manufacturer unnamed_Manufacturer_;
-	public Restriction unnamed_Restriction_;
+	private ArrayList<Restriction> restrictions;
 }

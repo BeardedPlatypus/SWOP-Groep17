@@ -3,7 +3,7 @@ package domain;
 //TODO new in Iteration 2
 public class NewOrderSessionHandler {
 	private Manufacturer manufacturer;
-	public OrderSession currentOrderSession;
+	private OrderSession currentOrderSession;
 
 	public void getPendingOrders() {
 		throw new UnsupportedOperationException();

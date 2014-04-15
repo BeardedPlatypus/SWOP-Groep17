@@ -1,8 +1,11 @@
 package domain;
 
 //TODO: new in iteration 2
-public class ProductionScheduleFacade implements ProductionSchedule {
-	public Manufacturer manufacturer;
+public class ProductionScheduleFacade {
+	private Manufacturer manufacturer;
+	private ProductionSchedule productionSchedule;
+	//If necessary
+	//private TimeManager timeLord;
 
 	public void getPendingOrdersContainers() {
 		throw new UnsupportedOperationException();
