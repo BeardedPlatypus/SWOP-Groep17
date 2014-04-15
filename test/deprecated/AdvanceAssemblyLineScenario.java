@@ -1,4 +1,4 @@
-package domain;
+package deprecated;
 
 import static org.junit.Assert.*;
 
@@ -6,6 +6,13 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import domain.DateTime;
+import domain.InitialisationHandler;
+import domain.Model;
+import domain.NewOrderSessionHandler;
+import domain.PerformAssemblyTaskHandler;
+import domain.Specification;
 
 public class AdvanceAssemblyLineScenario {
 
