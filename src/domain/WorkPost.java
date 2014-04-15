@@ -12,7 +12,7 @@ public class WorkPost implements WorkPostContainer {
 	// Constructor
 	//--------------------------------------------------------------------------
 	/**
-	 * Initialise this new WorkPost with the specified TaskTyp and number. 
+	 * Initialise this new WorkPost with the specified TaskType and number. 
 	 * 
 	 * @param workPostType
 	 * 		The type of this new work post.
