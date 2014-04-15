@@ -13,37 +13,27 @@ public class AssemblyTask implements AssemblyTaskContainer {
 	/**
 	 * Initialises a new assembly task with the given name, action info and type.
 	 * 
-	 * @param name
-	 * 		The new task's name.
-	 * @param actionInfo
-	 * 		A brief description of what exactly must be done to complete 
-	 * 		the new task.
-	 * @param type
-	 * 		The new task's type.
+	 * @param option
+	 * 		The Option that the new AssemblyTask must implement.
+	 * @param taskNumber
+	 * 		The number of the new AssemblyTask.
 	 * 
 	 * @throws IllegalArgumentException
-	 * 		A non-existent name was supplied.
+	 * 		A non-existent option was supplied.
 	 * @throws IllegalArgumentException
-	 * 		A non-existent action info was supplied.
-	 * @throws IllegalArgumentException
-	 * 		A non-existent task type was supplied.
+	 * 		A negative taskNumber was supplied.
 	 */
-	public AssemblyTask(String name, String actionInfo, TaskType type, int taskNumber) throws IllegalArgumentException {
-		if (name == null) {
-			throw new IllegalArgumentException("Cannot initialise task with non-existent name.");
+	public AssemblyTask(Option option, int taskNumber) throws IllegalArgumentException {
+		if (option == null) {
+			throw new IllegalArgumentException("Cannot initialise task with non-existent Option.");
 		}
-		if (actionInfo == null) {
-			throw new IllegalArgumentException("Cannot initialise task with non-existent action info.");
-		}
-		if (type == null) {
-			throw new IllegalArgumentException("Cannot initialise task with non-existent task type.");
+		if (taskNumber < 0) {
+			throw new IllegalArgumentException("Cannot initialise task with negative taskNumber.");
 		}
 		
-		this.name = name;
-		this.actionInfo = actionInfo;
-		this.type = type;
-		this.isCompleted = false;
-		this.taskNumber = taskNumber;	
+		this.option = option;
+		this.taskNumber = taskNumber;
+		this.isCompleted = false;	
 	}
 	
 	//--------------------------------------------------------------------------
@@ -84,7 +74,7 @@ public class AssemblyTask implements AssemblyTaskContainer {
 	 * 
 	 * @return the Option of this AssemblyTask.
 	 */
-	private Option getOption() {
+	public Option getOption() {
 		return this.option;
 	}
 	
@@ -95,11 +85,8 @@ public class AssemblyTask implements AssemblyTaskContainer {
 	//--------------------------------------------------------------------------
 	@Override
 	public TaskType getTaskType() {
-		return this.type;
+		return this.getOption().getType();
 	}
-	
-	/** The task's type. */
-	private TaskType type;
 
 	//--------------------------------------------------------------------------
 	@Override
