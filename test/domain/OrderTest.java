@@ -50,7 +50,7 @@ public class OrderTest {
 	@Test 
 	public void test_constructorInvalidSpecifications() {
 		exception.expect(IllegalArgumentException.class);
-		
+		 
 		Mockito.when(this.mockSuperModel.isValidSpecification(spectacles)).thenReturn(false);
 		Order test = new Order(mockSuperModel, spectacles, 0, submission1);
 		
