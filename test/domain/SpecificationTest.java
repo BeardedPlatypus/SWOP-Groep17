@@ -2,6 +2,8 @@ package domain;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,13 +13,19 @@ public class SpecificationTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		int[] choices = {1,4,3};
-		testSpec = new Specification(choices);
+		Option option1 = new Option(TaskType.BODY, "body", "mount body");
+		Option option2 = new Option(TaskType.DRIVETRAIN, "drivetrain", "mount drivetrain");
+		Option option3 = new Option(TaskType.ACCESSORIES, "accessories", "mount accessories");
+		ArrayList<Option> options = new ArrayList<>();
+		options.add(option1);
+		options.add(option2);
+		options.add(option3);
+		testSpec = new Specification(options);
 	}
 
 	@Test
 	public void constructorTest() {
-		assertTrue(testSpec.getAmountofSpecs() == 3);
+		assertTrue(testSpec.getAmountOfOptions() == 3);
 	}
 	
 	@Test
