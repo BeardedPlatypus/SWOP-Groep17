@@ -2,7 +2,8 @@ package domain;
 
 //TODO new in iteration 2
 public class SingleOrderSession {
-	public Manufacturer manufacturer;
+	private Manufacturer manufacturer;
+	private Option singleOption;
 
 	public void getPossibleTasks() {
 		throw new UnsupportedOperationException();

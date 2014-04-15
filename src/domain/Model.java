@@ -55,16 +55,6 @@ public class Model {
 	/** The name of this Model. Eg. "Ford Focus". */
 	private final String modelName;
 	
-	//--------------------------------------------------------------------------
-	/**
-	 * Get the Options of this Model. 
-	 * 
-	 * @return The Options of this Model.
-	 */
-	public List<Option> getOptions() {
-		return new ArrayList<>(this.options);
-	}
-	
 	//FIXME: old functionality
 	/**
 	 * Get the number of Options that can be chosen when placing an order with
@@ -92,9 +82,6 @@ public class Model {
 		return options.get(optionNb);
 	}
 	
-	/** The options of this Model. */
-	private final List<Option> options;
-
 	//--------------------------------------------------------------------------
 	/**
 	 * Get the OptionCategories of this Model.

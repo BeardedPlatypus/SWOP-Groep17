@@ -10,11 +10,23 @@ package domain;
 public class InitialisationHandler {
 	//FIXME: create new constructor
 	
+	//--------------------------------------------------------------------------
+	// Constructor
+	//--------------------------------------------------------------------------
+	/**
+	 * Construct the initialisationhandler, which in turn sets up a domainfacade,
+	 * by constructing all necessary components and putting them together.
+	 */
+	public InitialisationHandler(){
+		//TODO initialise ALL THE THINGS
+		domainFacade = new DomainFacade();
+	}
+	
 	/** 
 	 * Get the DomainFacade of the system initialised 
 	 * by this InitialisationHandler.
 	 * 
-	 * @return The DomainFacad of the system initialised by this InitialisationHandler
+	 * @return The DomainFacade of the system initialised by this InitialisationHandler
 	 */
 	public DomainFacade getDomainFacade() {
 		return this.domainFacade;

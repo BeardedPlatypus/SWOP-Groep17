@@ -1,6 +1,8 @@
 package domain;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+
 import domain.Order;
 
 /**
@@ -13,10 +15,7 @@ import domain.Order;
  * @invariant | this.getOverTime() >= 0
  */
 public class ProductionSchedule {
-	private DateTime attribute;
-	private ArrayList<Order> attribute2 = new ArrayList<Order>();
-	private Manufacturer manufacturer;
-	private AssemblyLine attribute4;
+	private ProductionScheduleFacade productionScheduleFacade;
 	public TimeManager timeManager;
 	public ScheduleContext scheduleContext;
 
@@ -32,15 +31,7 @@ public class ProductionSchedule {
 		throw new UnsupportedOperationException();
 	}
 
-	public void setNewSchedulingAlgorithm(Comparator comparator) {
+	public void setNewSchedulingAlgorithm(Comparator<Order> comparator) {
 		throw new UnsupportedOperationException();
-	}
-
-	public DateTime getAttribute() {
-		return this.attribute;
-	}
-
-	public void setAttribute4(AssemblyLine attribute4) {
-		this.attribute4 = attribute4;
 	}
 }

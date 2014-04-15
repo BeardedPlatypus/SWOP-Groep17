@@ -2,7 +2,8 @@ package domain;
 
 //TODO new in iteration 2
 public class OrderSingleTaskHandler {
-	public SingleOrderSession currentOrderSession;
+	private Manufacturer manufacturer;
+	private SingleOrderSession currentOrderSession;
 
 	public void startNewOrderSession() {
 		throw new UnsupportedOperationException();

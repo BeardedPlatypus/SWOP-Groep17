@@ -1,6 +1,8 @@
 package domain;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+
 import domain.Order;
 
 /**
@@ -11,14 +13,13 @@ import domain.Order;
  * @author Martinus Wilhelmus Tegelaers, Frederik Goovaerts
  */
 public class Manufacturer {
-	public ProductionSchedule productionSchedule;
-	private ArrayList<Order> attribute2 = new ArrayList<Order>();
 	private ModelCatalog modelCatalog;
-	public AssemblyLine assemblyLine;
-	public CompleteOrderCatalog completeOrderCatalog;
-	public AlgorithmStrategyFactory algorithmStrategyFactory;
-	public OptionRestrictionManager unnamed_OptionRestrictionManager_;
-	public SingleTaskCatalog singleTaskCatalog;
+	private AssemblyLine assemblyLine;
+	private CompleteOrderCatalog completeOrderCatalog;
+	private AlgorithmStrategyFactory algorithmStrategyFactory;
+	private OptionRestrictionManager optionRestrictionManager;
+	private SingleTaskCatalog singleTaskCatalog;
+	private ProductionScheduleFacade productionScheduleFacade;
 
 	public void getPendingOrderContainers() {
 		throw new UnsupportedOperationException();
@@ -72,11 +73,11 @@ public class Manufacturer {
 		throw new UnsupportedOperationException();
 	}
 
-	public void setNewSchedulingAlgorithm(Comparator comparator) {
+	public void setNewSchedulingAlgorithm(Comparator<Order> comparator) {
 		throw new UnsupportedOperationException();
 	}
 
-	public void setProductionSchedule(ProductionSchedule productionSchedule) {
-		this.productionSchedule = productionSchedule;
+	public void setProductionSchedule(ProductionScheduleFacade productionScheduleFacade) {
+		this.productionScheduleFacade = productionScheduleFacade;
 	}
 }
