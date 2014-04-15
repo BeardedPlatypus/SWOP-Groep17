@@ -47,20 +47,15 @@ public class Order implements OrderContainer {
 	 * 
 	 * @throws NullPointerException
 	 * 		| model == null || specifications == null || initTime == null 
-	 * @throws IllegalArgumentException
-	 * 		| !model.isValidSpecifications(specifications)
 	 */
 	public Order(Model model, Specification specification, int orderNumber, DateTime submissionTime) 
-													   throws NullPointerException,
-				 											  IllegalArgumentException{
+													   throws NullPointerException{
 		if (model == null )
 			throw new NullPointerException("Model is null.");
 		if (specification == null)
 			throw new NullPointerException("Specification is null.");		
 		if (submissionTime == null)
 			throw new NullPointerException("The submission time is null.");
-		if (!model.isValidSpecification(specification))
-			throw new IllegalArgumentException();
 
 		this.model = model; 
 		this.specifications = specification;
