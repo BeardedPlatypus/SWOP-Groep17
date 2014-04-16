@@ -70,7 +70,19 @@ public class Manufacturer {
 	public void completeTask(Object parameter, Object parameter2, Object parameter3) {
 		throw new UnsupportedOperationException();
 	}
-
+	
+	//--------------------------------------------------------------------------
+	// AssemblyLine-related variables and methods
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the AssemblyLine of this Manufacturer.
+	 * 
+	 * @return The AssemblyLine
+	 */
+	private AssemblyLine getAssemblyLine() {
+		return this.assemblyLine;
+	}
+	
 	//--------------------------------------------------------------------------
 	// ProductionScheduleFacade related variables and methods. 
 	//--------------------------------------------------------------------------
@@ -109,5 +121,11 @@ public class Manufacturer {
 		throw new UnsupportedOperationException();
 	}
 	
+	//--------------------------------------------------------------------------
+	// Querying the statistics
+	//--------------------------------------------------------------------------
+	public String getStatisticsReport() {
+		return this.getAssemblyLine().getStatisticsReport();
+	}
 	
 }
