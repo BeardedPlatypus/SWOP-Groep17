@@ -1,5 +1,7 @@
 package domain;
 
+import java.util.Set;
+
 import domain.Option;
 
 /**
@@ -14,32 +16,44 @@ import domain.Option;
 public abstract class Restriction {
 	
 	//-------------------------------------------------------------------------
-	// Constructor
-	//-------------------------------------------------------------------------
-	/**
-	 * Instatiate the abstract part of a Restriction class with an option as the
-	 * main restriction actor/participant.
-	 * 
-	 * @param part
-	 * 		The main participant for this restriction
-	 */
-	public Restriction(Option part){
-		mainParticipant = part;
-	}
-	
-	//-------------------------------------------------------------------------
-	// Properties
+	// Methods
 	//-------------------------------------------------------------------------
 	
 	/**
-	 * Get the main participant of the restriction.
+	 * Check wether or not a set of options is a valid set to check for 
+	 * restrictions and pass it to the actual restriction function if it is
+	 * a legal set.
 	 * 
-	 * @return the main participant of the restriction
+	 * @param options
+	 * 		The set of options on which to check the restriction
+	 * @return
+	 * 		Whether or not the set of options satisfies the condition(s) of this
+	 * 		restriction.
+	 * @effect
+	 * 		checkRestriction(options)
+	 * @throws IllegalArgumentException
+	 * 		if the set or one of its elements is null
 	 */
-	public Option getMainParticipant(){
-		return mainParticipant;
+	public boolean isLegalOptionSet(Set<Option> options) throws IllegalArgumentException{
+		if(options == null)
+			throw new IllegalArgumentException("Given list of options is null.");		
+		if(options.contains(null))
+			throw new IllegalArgumentException("One of given options is null.");
+		return checkRestriction(options);
 	}
 	
-	/** the main participant of the restriction */
-	private final Option mainParticipant;
+	/**
+	 * Checks this restriction on given set of options. Restriction details are
+	 * explained in the header of each non-abstract restriction type.
+	 * 
+	 * @pre
+	 * 		options != null
+	 * @pre
+	 * 		!options.contains(null)		
+	 * @param options
+	 * 		The set of options for which to check this restriction
+	 * @return
+	 * 		whether or not given set of options matches this restriction
+	 */
+	protected abstract boolean checkRestriction(Set<Option> options);
 }

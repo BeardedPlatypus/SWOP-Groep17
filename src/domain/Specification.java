@@ -24,8 +24,15 @@ public class Specification {
 	 * 
 	 * @param options
 	 * 		The options for the new specification object
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		When the list or an element in the list is null
 	 */
-	public Specification(List<Option> options) {
+	public Specification(List<Option> options) throws IllegalArgumentException{
+		if(options == null)
+			throw new IllegalArgumentException("Given list of options is null.");
+		if(options.contains(null))
+			throw new IllegalArgumentException("One of given options is null.");
 		this.options = options;
 	}
 	
