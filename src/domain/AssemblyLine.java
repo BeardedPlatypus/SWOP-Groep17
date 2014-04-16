@@ -425,4 +425,22 @@ public class AssemblyLine {
 	//--------------------------------------------------------------------------
 	/** The statistics logger of this assembly line. */
 	private final StatisticsLogger statisticsLogger;
+	
+	/**
+	 * Get this AssemblyLine's StatisticsLogger
+	 * 
+	 * @return The StatisticsLogger
+	 */
+	private StatisticsLogger getStatisticsLogger() {
+		return this.statisticsLogger;
+	}
+	
+	/**
+	 * Get a report on the statistical variables watched by this AssemblyLine
+	 * 
+	 * @return A report in the form of a String.
+	 */
+	public String getStatisticsReport() {
+		return this.getStatisticsLogger().getReport();
+	}
 }
