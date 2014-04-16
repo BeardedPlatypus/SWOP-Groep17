@@ -58,7 +58,7 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 	 * 		A task of a type different from taskType was selected
 	 */
 	public void completeTask(int intTask, TaskType taskType) throws IllegalArgumentException {
-		if (intTask < 0 || intTask >= this.getAssemblyTasks().size()) {
+		if (! isValidTaskNumber(intTask)) {
 			throw new IllegalArgumentException("Task number is not a correct value for this procedure.");
 		}
 		if(tasks.get(intTask).getTaskType()!=taskType)
@@ -66,27 +66,57 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 		tasks.get(intTask).setCompleted(true);
 	}
 	
-	//TODO
 	/**
 	 * Get the specified AssemblyTask from this AssemblyProcedure.
 	 * 
 	 * @param intTask
-	 * 		The int that specifies an AssemblyTask from this AssemblyPorcedure.
+	 * 		The int that specifies an AssemblyTask from this AssemblyProcedure.
 	 * 
 	 * @return The AssemblyTask that corresponds with the given intTask. 
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		intTask is an invalid index into the list of tasks.
 	 */
-	public AssemblyTask getTask(int intTask) {
-		throw new UnsupportedOperationException();
+	public AssemblyTask getTask(int intTask) throws IllegalArgumentException {
+		if (! this.isValidTaskNumber(intTask)) {
+			throw new IllegalArgumentException("intTask refers to a non-existent"
+					+ "task");
+		}
+		return this.getTasksInternal().get(intTask);
 	}
 
-	//TODO
 	/** 
 	 * Check if this AssemblyProcedure is finished.
 	 * 
 	 * @return True if this AssemblyProcedure is finished, else false. 
 	 */
-	public void isFinished() {
-		throw new UnsupportedOperationException();
+	public boolean isFinished() {
+		for (AssemblyTask task : this.getTasksInternal()) {
+			if (! task.isCompleted()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Check whether the specified task number refers to an existent task.
+	 * @param intTask
+	 * 		Index into the list of tasks.
+	 * @return
+	 * 		Whether intTask is a valid index into the list of tasks.
+	 */
+	private boolean isValidTaskNumber(int intTask) {
+		return intTask >= 0 && intTask < this.getAssemblyTasks().size();
+	}
+	
+	/**
+	 * Get this AssemblyProcedure's AssemblyTask objects for internal use.
+	 * @return
+	 * 		This AssemblyProcedure's AssemblyTask objects.
+	 */
+	private List<AssemblyTask> getTasksInternal() {
+		return this.tasks;
 	}
 	
 	/** The tasks that this procedure contains */
@@ -103,7 +133,7 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 		return this.assemblyOrder;
 	}
 	
-	/** The Order that this AssemblyProcedure fulfils. */
+	/** The Order that this AssemblyProcedure fulfills. */
 	private final Order assemblyOrder;
 
 	//--------------------------------------------------------------------------

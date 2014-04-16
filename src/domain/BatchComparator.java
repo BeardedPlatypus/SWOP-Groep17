@@ -28,6 +28,8 @@ public class BatchComparator implements Comparator<Order> {
 			throw new IllegalArgumentException("Cannot initialise a BatchComparator"
 					+ "with a non-existent specification.");
 		}
+		this.spec = spec;
+		this.fifoComp = new FifoComparator();
 	}
 	
 	@Override

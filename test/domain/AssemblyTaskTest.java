@@ -7,10 +7,21 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 public class AssemblyTaskTest {
 	
 	@Rule public ExpectedException exception = ExpectedException.none();
+	
+	String optionName = "Blue";
+	String optionDescription = "Paint the car blue.";
+	TaskType optionType = TaskType.BODY;
+	
+	@Mock Option option;
+	
+	AssemblyTask task;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -18,39 +29,50 @@ public class AssemblyTaskTest {
 
 	@Before
 	public void setUp() throws Exception {
+		MockitoAnnotations.initMocks(this);
 		
+		Mockito.when(option.getName()).thenReturn(optionName);
+		Mockito.when(option.getDescription()).thenReturn(optionDescription);
+		Mockito.when(option.getType()).thenReturn(optionType);
+		
+		task = new AssemblyTask(option, 1);
 	}
 
 	@Test
-	public void constructor_NullNameTest() {
+	public void constructor_NullOptionTest() {
 		exception.expect(IllegalArgumentException.class);
-		new AssemblyTask(null, "dummy", TaskType.BODY, 0);
+		new AssemblyTask(null, 0);
 	}
 	
 	@Test
-	public void constructor_NullActionInfoTest() {
+	public void constructor_NegativeTaskNumberTest() {
 		exception.expect(IllegalArgumentException.class);
-		new AssemblyTask("dummy", null, TaskType.BODY, 0);
-	}
-	
-	@Test
-	public void constructor_NullTaskTypeTest() {
-		exception.expect(IllegalArgumentException.class);
-		new AssemblyTask("dummy", "dummy", null, 0);
+		new AssemblyTask(option, -1);
 	}
 	
 	@Test
 	public void constructor_ValidArgumentsTest() {
-		AssemblyTask task = new AssemblyTask("john", "doe", TaskType.BODY, 1);
-		assertEquals(task.getName(), "john");
-		assertEquals(task.getActionInfo(), "doe");
-		assertEquals(task.getTaskType(), TaskType.BODY);
+		assertEquals(task.getOption(), option);
 		assertTrue(task.getTaskNumber() == 1);
+	}
+	
+	@Test
+	public void getOptionNameTest() {
+		assertEquals(task.getOptionName(), optionName);
+	}
+	
+	@Test
+	public void getOptionDescriptionTest() {
+		assertEquals(task.getOptionDescription(), optionDescription);
+	}
+	
+	@Test
+	public void getTaskTypeTest() {
+		assertEquals(task.getTaskType(), optionType);
 	}
 
 	@Test
 	public void setCompletedTest() {
-		AssemblyTask task = new AssemblyTask("baz", "qux", TaskType.BODY, 1);
 		assertFalse(task.isCompleted());
 		task.setCompleted(true);
 		assertTrue(task.isCompleted());

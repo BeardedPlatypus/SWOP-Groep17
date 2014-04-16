@@ -23,6 +23,10 @@ public class AssemblyProcedureTest {
 	
 	@Mock Order order;
 	
+	@Mock Option option1;
+	@Mock Option option2;
+	@Mock Option option3;
+	
 	AssemblyProcedure procedure;
 	
 	AssemblyTask color;
@@ -38,9 +42,13 @@ public class AssemblyProcedureTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		
-		color = new AssemblyTask("blue", "Paint the car blue", TaskType.BODY, 0);
-		body = new AssemblyTask("sedan", "Assemble a sedan body", TaskType.BODY, 1);
-		engine = new AssemblyTask("4 cilinders", "Install standard 2l 4 cilinders", TaskType.DRIVETRAIN, 2);
+		Mockito.when(option1.getType()).thenReturn(TaskType.BODY);
+		Mockito.when(option2.getType()).thenReturn(TaskType.BODY);
+		Mockito.when(option3.getType()).thenReturn(TaskType.DRIVETRAIN);
+		
+		color = new AssemblyTask(option1, 0);
+		body = new AssemblyTask(option2, 1);
+		engine = new AssemblyTask(option3, 2);
 		
 		tasks = new ArrayList<AssemblyTask>();
 		tasks.add(color);
@@ -57,10 +65,35 @@ public class AssemblyProcedureTest {
 	}
 	
 	@Test
+	public void constructor_NullTasksTest() {
+		exception.expect(IllegalArgumentException.class);
+		new AssemblyProcedure(order, null);
+	}
+	
+	@Test
 	public void completeTask_negativeIntTask() {
 		exception.expect(IllegalArgumentException.class);
 		procedure.completeTask(-1, TaskType.BODY);
 		
+	}
+	
+	@Test
+	public void isFinished_noTaskCompleted() {
+		assertFalse(procedure.isFinished());
+	}
+	
+	@Test
+	public void isFinished_partlyCompleted() {
+		tasks.get(0).setCompleted(true);
+		assertFalse(procedure.isFinished());
+	}
+	
+	@Test
+	public void isFinished_whollyCompleted() {
+		for (AssemblyTask task : tasks) {
+			task.setCompleted(true);
+		}
+		assertTrue(procedure.isFinished());
 	}
 	
 	@Test
@@ -89,6 +122,24 @@ public class AssemblyProcedureTest {
 		assertSame(containers.get(0), color);
 		assertSame(containers.get(1), body);
 		assertFalse(containers.contains(engine));
+	}
+	
+	@Test
+	public void getTask_NegativeNumber() {
+		exception.expect(IllegalArgumentException.class);
+		procedure.getTask(-1);
+	}
+	
+	@Test
+	public void getTask_TooBigNumber() {
+		exception.expect(IllegalArgumentException.class);
+		procedure.getTask(100);
+	}
+	
+	@Test
+	public void getTask_valid() {
+		AssemblyTask task = procedure.getTask(0);
+		assertTrue(task == color);
 	}
 
 }

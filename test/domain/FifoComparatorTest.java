@@ -20,6 +20,8 @@ public class FifoComparatorTest {
 	DateTime time2;
 	DateTime time3;
 	DateTime time4;
+	
+	FifoComparator comp;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -32,17 +34,32 @@ public class FifoComparatorTest {
 		time1 = new DateTime(1, 0, 0);
 		time2 = new DateTime(2, 0, 0);
 		time3 = new DateTime(3, 0, 0);
-		time4 = new DateTime(4, 0, 0);
+		time4 = new DateTime(1, 0, 0);
 		
 		Mockito.when(order1.getSubmissionTime()).thenReturn(time1);
 		Mockito.when(order2.getSubmissionTime()).thenReturn(time2);
 		Mockito.when(order3.getSubmissionTime()).thenReturn(time3);
 		Mockito.when(order4.getSubmissionTime()).thenReturn(time4);
+		
+		comp = new FifoComparator();
 	}
 
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void compare_SmallerThan() {
+		int result = comp.compare(order1, order2);
+		assertTrue(result < 0);
+	}
+	
+	@Test
+	public void compare_Equals() {
+		int result = comp.compare(order1, order4);
+		assertEquals(result, 0);
+	}
+	
+	@Test
+	public void compare_GreaterThan() {
+		int result = comp.compare(order3, order2);
+		assertTrue(result > 0);
 	}
 
 }

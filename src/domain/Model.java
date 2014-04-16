@@ -102,7 +102,7 @@ public class Model {
 	 * @throws IllegalArgumentException
 	 * 		If given option is null
 	 */
-	public boolean containsOption(Option option){
+	public boolean containsOption(Option option) throws IllegalArgumentException{
 		if(option == null)
 			throw new IllegalArgumentException("Option can not be null!");
 		for(OptionCategory cat : getOptionCategories()){
