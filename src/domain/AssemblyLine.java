@@ -296,6 +296,11 @@ public class AssemblyLine implements WorkPostObserver {
 	 */
 	private void resetFinishedAssemblyCounter() {
 		this.finishedAssemblyCounter = 0;
+		for (WorkPost workPost : this.getWorkPosts()) {
+			if (! workPost.isEmpty() && workPost.isFinished()) {
+				this.incrementFinishedAssemblyCounter();
+			}
+		}
 	}
 
 	/**

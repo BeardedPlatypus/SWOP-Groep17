@@ -277,6 +277,7 @@ public class AssemblyLineTest {
 			assertEquals(procedure2, workPosts.get(2).getAssemblyProcedure());
 			assertEquals(newOrder, workPosts.get(0).getAssemblyProcedure().getOrder());
 			assertEquals(-120, procedure3.makeStatisticsEvent().getDelay());
+			assertEquals(2, Whitebox.getInternalState(assemblyLine, "finishedAssemblyCounter"));
 			Mockito.verify(logger).addStatistics(Matchers.isA(ProcedureStatistics.class));
 			Mockito.verify(manufacturer).addToCompleteOrders(order3);
 		} catch (Exception e) {

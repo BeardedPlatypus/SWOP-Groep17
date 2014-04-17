@@ -53,8 +53,9 @@ public interface WorkPostContainer {
 	/**
 	 * Indicate whether this WorkPost has finished its work.
 	 * @return Whether this WorkPost has finished its work.
+	 * @throws This WorkPostContainer has no active AssemblyProcedure
 	 */
-	public boolean isFinished();
+	public boolean isFinished() throws IllegalStateException;
 	
 	/**
 	 * Get the active AssemblyProcedureContainer of this WorkPost. 

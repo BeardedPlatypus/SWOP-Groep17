@@ -185,13 +185,12 @@ public class WorkPost implements WorkPostContainer {
 		other.setAssemblyProcedure(null);
 	}
 	
-	/**
-	 * Indicate whether this WorkPost has finished its work.
-	 * @return Whether this WorkPost has finished its work.
-	 */
 	@Override
-	public boolean isFinished() {
-		return this.isEmpty() || this.getAssemblyProcedure().isFinished(this.getTaskType());
+	public boolean isFinished() throws IllegalStateException {
+		if (this.isEmpty()) {
+			throw new IllegalArgumentException("The WorkPost has no AssemblyProcedure");
+		}
+		return this.getAssemblyProcedure().isFinished(this.getTaskType());
 	}
 	
 	/**
