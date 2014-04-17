@@ -1,13 +1,24 @@
 package domain;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import domain.Order;
 
 //TODO new in iteration 2
 public class CompletedOrderCatalog {
-	private ArrayList<Order> completedOrders = new ArrayList<Order>();
+	
+	private List<Order> completedOrders = new ArrayList<Order>();
 
-	public void getCompletedOrderContainers() {
-		throw new UnsupportedOperationException();
+	public List<OrderContainer> getCompletedOrderContainers() {
+		return new ArrayList<OrderContainer>(completedOrders);
+	}
+	
+	private List<Order> getCompletedOrders() {
+		return this.completedOrders;
+	}
+	
+	public void addCompletedOrder(Order order) {
+		this.getCompletedOrders().add(order);
 	}
 }

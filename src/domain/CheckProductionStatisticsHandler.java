@@ -15,8 +15,13 @@ public class CheckProductionStatisticsHandler {
 	 * 
 	 * @param manufacturer
 	 * 		The manufacturer of the new CheckProductionStatisticsHandler
+	 * @throws IllegalArgumentException
+	 * 		Manufacturer is null
 	 */
-	public CheckProductionStatisticsHandler(Manufacturer manufacturer) {
+	public CheckProductionStatisticsHandler(Manufacturer manufacturer) throws IllegalArgumentException {
+		if (manufacturer == null) {
+			throw new IllegalArgumentException();
+		}
 		this.manufacturer = manufacturer;
 	}
 	

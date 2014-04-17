@@ -14,7 +14,7 @@ import domain.WorkPost;
  * 
  * @author Thomas Vochten, Frederik Goovaerts, Martinus Wilhelmus Tegelaers
  */
-public class AssemblyLine {
+public class AssemblyLine implements WorkPostObserver {
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -41,7 +41,10 @@ public class AssemblyLine {
 			WorkPost newPost = new WorkPost(type, workPostNum);
 			workPostNum++;
 			this.workPosts.add(newPost);
+			newPost.register(this);
 		}
+		
+		this.elapsedTime = new DateTime(0, 0, 0);
 	}	
 	
 	//--------------------------------------------------------------------------
@@ -60,7 +63,7 @@ public class AssemblyLine {
 	private final Manufacturer manufacturer;
 
 	//--------------------------------------------------------------------------
-	// WorkPost related methods and variables.
+	// WorkPost-related methods and variables.
 	//--------------------------------------------------------------------------
 	/**
 	 * Asks the given {@link WorkPost} to complete {@link AssemblyTask} with given number on its current {@link AssemblyProcedure}
@@ -71,32 +74,20 @@ public class AssemblyLine {
 	 * 		The number of the {@link AssemblyTask} that should be marked as completed at given {@link WorkPost}
 	 * @throws IllegalArgumentException
 	 * 		When the workPostNumber is not a valid index
+	 * @throws IllegalArgumentException
+	 * 		See {@link WorkPost#completeTask(int, int) completeTask(int, int)}
+	 * @throws IllegalStateException
+	 * 		See {@link WorkPost#completeTask(int, int) completeTask(int, int)}
 	 */
-	public void completeWorkpostTask(int workPostNumber, int taskNumber) throws IllegalArgumentException {
+	public void completeWorkpostTask(int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException,
+			IllegalStateException{
 		if(!this.isValidWorkPost(workPostNumber))
 			throw new IllegalArgumentException("Argument is not an existing workpost.");
-		this.getWorkPost(workPostNumber).completeTask(taskNumber);
+		this.getWorkPost(workPostNumber).completeTask(taskNumber, minutes);
 	}
 	
 	//--------------------------------------------------------------------------
 	// OrderContainer methods.
-	
-	/**
-	 * Get the matching assemblyTasks at the specified {@link WorkPost}.
-	 * 
-	 * @param workPostNumber
-	 * 		The number of the WorkPost for which we want to retrieve the tasks
-	 * 
-	 * @return AssemblyTasks at the given WorkPost matching the workpost's type
-	 * 
-	 * @throws IllegalArgumentException
-	 * 		workPostNumber refers to a WorkPost that does not exist.
-	 */
-	public List<AssemblyTaskContainer> getMatchingTaskContainersAtWorkPost(int workPostNumber) throws IllegalArgumentException {
-		if(!this.isValidWorkPost(workPostNumber))
-			throw new IllegalArgumentException("Argument is not an existing workpost.");
-		return this.getWorkPost(workPostNumber).getMatchingAssemblyTasks();
-	}
 
 	/**
 	 * Get a list of pending {@link OrderContainer}s on the assembly line. 
@@ -113,7 +104,55 @@ public class AssemblyLine {
 		}
 		return activeOrders;
 	}
+	
+	//--------------------------------------------------------------------------
+	// Querying AssemblyProcedure objects
+	//--------------------------------------------------------------------------
+	/**
+	 * Get views of the AssemblyProcedures currently active on each WorkPost
+	 * 
+	 * @return The views of the AssemblyProcedures
+	 */
+	public List<AssemblyProcedureContainer> getAssemblyOnEachWorkPost() {
+		List<AssemblyProcedureContainer> toReturn = new ArrayList<AssemblyProcedureContainer>();
+		for (WorkPost workPost : this.getWorkPosts()) {
+			toReturn.add(workPost.getAssemblyProcedureContainer());
+		}
+		return toReturn;
+	}
+	
+	//--------------------------------------------------------------------------
+	/**
+	 * Get views those AssemblyTasks that are of the specified WorkPost's type.
+	 * 
+	 * @param workPostNum
+	 * 		The WorkPost of interest
+	 * @return Views of the AssemblyTasks that are of the specified WorkPost's type
+	 * @throws IllegalArgumentException
+	 * 		workPostNum refers to a WorkPost that does not exist
+	 */
+	public List<AssemblyTaskContainer> getAssemblyTasksAtPost(int workPostNum)
+		throws IllegalArgumentException {
+		if (! this.isValidWorkPostNum(workPostNum)) {
+			throw new IllegalArgumentException("workPostNum refers to an"
+					+ "invalid WorkPost");
+		}
+		return this.getWorkPost(workPostNum).getMatchingAssemblyTasks();
+	}
+	
+	/**
+	 * Indicate whether the specified WorkPost number is valid.
+	 * 
+	 * @param workPostNum
+	 * 		The WorkPost of interest
+	 * @return workPostNum is valid
+	 */
+	private boolean isValidWorkPostNum(int workPostNum) {
+		return workPostNum >= 0 && workPostNum < this.getAssemblyLineSize();
+	}
 
+	//--------------------------------------------------------------------------
+	// WorkPost-related variables and methods
 	//--------------------------------------------------------------------------
 	/**
 	 * Get the WorkPosts composing the assembly line, as immutable {@link WorkPostContainer}s
@@ -150,29 +189,27 @@ public class AssemblyLine {
 		return count;
 	}
 	
+	/** The amount of time that has passed since last advancing the AssemblyLine */
+	private DateTime elapsedTime;
+	
 	/**
-	 * Get the elapsed time since the last advancement of the AssemblyLine. The
-	 * elapsed time of this production stage is the maximum of the elapsed time
-	 * at each workpost this stage. This means the workpost that spent the longest
-	 * time working this stage indicates the elapsed time.
+	 * Get the elapsed time since the last advancement of the AssemblyLine.
 	 * 
 	 * @return the elapsed time since the last advancement of the AssemblyLine
 	 */
 	private DateTime getElapsedTime() throws IllegalStateException{
-		DateTime elapsed = null;
-		
-		for(WorkPost p : this.getWorkPosts()){
-			if(elapsed == null){
-				elapsed = p.getElapsedTime();
-			} else if (elapsed < p.getElapsedTime()){
-				elapsed = p.getElapsedTime();
-			}
-		}
-		
-		if(elapsed == null)
-			throw new IllegalStateException("No workposts found or no elapsed time registered!");
-		
-		return elapsed;
+		return this.elapsedTime;
+	}
+	
+	/**
+	 * Set the elapsed time since the last advancement of the AssemblyLine
+	 * to the specified value.
+	 * 
+	 * @param elapsedTime
+	 * 		The value the elapsed time will be set to.
+	 */
+	private void setElapsedTime(DateTime elapsedTime) {
+		this.elapsedTime = elapsedTime;
 	}
 
 	/**
@@ -230,6 +267,18 @@ public class AssemblyLine {
 		
 	/** The {@link WorkPost}s of this assembly line, ordered by the assembly line's layout */
 	private final List<WorkPost> workPosts = new ArrayList<WorkPost>();
+	
+	//--------------------------------------------------------------------------
+	// WorkPostObserver logic
+	//--------------------------------------------------------------------------
+	@Override
+	public void notifyWorkComplete(int minutes) {
+		DateTime prospectiveElapsedTime = new DateTime(0, 0, minutes);
+		if (this.getElapsedTime().compareTo(prospectiveElapsedTime) < 0) {
+			this.setElapsedTime(prospectiveElapsedTime);
+		}
+		this.incrementFinishedAssemblyCounter();
+	}
 
 	/**
 	 * Increment the assemblyCounter, indicating an additional workPost has
@@ -237,9 +286,16 @@ public class AssemblyLine {
 	 * Notify the assemblyLine itself of the fact that a workPost has finished,
 	 * so it can check if it has to advance the Line.
 	 */
-	void incrementFinishedAssemblyCounter() {
+	private void incrementFinishedAssemblyCounter() {
 		this.finishedAssemblyCounter++;
 		this.checkAdvance();
+	}
+	
+	/**
+	 * Reset the finished assembly counter
+	 */
+	private void resetFinishedAssemblyCounter() {
+		this.finishedAssemblyCounter = 0;
 	}
 
 	/**
@@ -265,7 +321,6 @@ public class AssemblyLine {
 		
 	}
 
-	//TODO: update this code. 
 	/**
 	 * Advance this AssemblyLine by one {@link WorkPost} and update the {@link DateTime}
 	 * with the elapsed time since the previous advancement. 
@@ -277,45 +332,33 @@ public class AssemblyLine {
 	 * 		When there is still a finished assembly ready to be collected before
 	 * 		the shifting of the WorkPosts.
 	 */
-	public void tryAdvance(DateTime elapsedTime) throws IllegalStateException{
-		ArrayList<AssemblyTaskContainer> tasks = new ArrayList<>();
-
+	private void tryAdvance(DateTime elapsedTime) throws IllegalStateException{
 		this.shiftWorkPosts();
-		
-		this.getProductionSchedule().advanceTime(elapsedTime);
-		
-		putNextOrderOnAssemblyLine();
-		
-		if(this.hasFinishedAssemblyProcedure()){
-			AssemblyProcedure finishedAssembly = this.removeFinishedAssemblyFromFinishedAssemblyProcedureCollectionSpace();
-			Order finishedOrder = finishedAssembly.getOrder();
-			finishedOrder.setAsCompleted();
-			this.getManufacturer().completeOrder(finishedOrder);
-		}
-	}
-	
-	public void tryAdvance(int time) throws IllegalStateException{
-		this.tryAdvance(new DateTime(0, 0, time));
+		this.putNextOrderOnAssemblyLine();
+		this.setElapsedTime(new DateTime(0, 0, 0));
+		this.resetFinishedAssemblyCounter();
 	}
 
-	//TODO:
 	/**
-	 * Advance this AssemblyLine by one WorkPost. If the final WorkPost is not 
-	 * empty its AssemblyProcedure will be put in the completedOrder field.
-	 * All other AssemblyProcedures are shifted forward by one WorkPost.
+	 * Advance this AssemblyLine by one WorkPost. All AssemblyProcedures
+	 * are shifted forward by one WorkPost. Concerning the last AssemblyProcedure:
+	 * its order is retrieved and information about it is reported to the StatisticsLogger
 	 * 
 	 * @throws IllegalStateException
 	 * 		If the completedOrder field is not empty, the line cannot be advanced.
 	 */
 	private void shiftWorkPosts() throws IllegalStateException{
-		if(this.finishedAssemblyProcedure != null)
-			throw new IllegalStateException("The last finished assembly is still not recovered from the end of the Assembly line.");
-		this.finishedAssemblyProcedure = getWorkPost(getAmountOfWorkPosts()-1).getAssemblyProcedure();
-		for(int i = workPosts.size()-1; i > 0 ; i--){
-			AssemblyProcedure shiftedProcedure = getWorkPost(i-1).getAssemblyProcedure();
-			getWorkPost(i).setAssemblyProcedure(shiftedProcedure);
+		AssemblyProcedure finishedProcedure = this.getWorkPosts()
+				.get(this.getWorkPosts().size() - 1).getAssemblyProcedure();
+		
+		this.getWorkPost(this.getAssemblyLineSize() - 1)
+			.addToElapsedMinutes((int) this.getElapsedTime().getInMinutes());
+		for(int i = this.getAssemblyLineSize() - 1; i > 0 ; i--){
+			this.getWorkPost(i - 1).addToElapsedMinutes((int) this.getElapsedTime().getInMinutes());
+			this.getWorkPost(i).takeAssemblyProcedureFrom(this.getWorkPost(i - 1));
 		}
-		getWorkPost(0).setAssemblyProcedure(null);
+		
+		this.handleFinishedAssemblyProcedure(finishedProcedure);
 	}
 
 	//TODO
@@ -327,21 +370,40 @@ public class AssemblyLine {
 	 * 		| !this.getWorkPost(0).isEmpty()
 	 */
 	private void putNextOrderOnAssemblyLine() throws IllegalStateException{
-		if(this.getWorkPost(0).isEmpty())
-			throw new IllegalStateException("First workpost is not empty yet, cannot add a new assembly to the assemblyline.");
-		
-		try{
-			Order nextOrder = this.getManufacturer().popNextOrderFromSchedule();
-			this.getWorkPost(0).setAssemblyProcedure(this.createNewAssemblyProcedure(nextOrder));
-		} catch (IndexOutOfBoundsException | NullPointerException e) {
-			//FIXME VERY BAD
-			this.getWorkPost(0).setAssemblyProcedure(null);
+		Order order = this.getManufacturer().popNextOrderFromSchedule();
+		if (order == null) {
+			return;
 		}
+		AssemblyProcedure procedure = this.makeAssemblyProcedure(order);
+		this.getWorkPost(0).setAssemblyProcedure(procedure);
+	}
+	
+	/**
+	 * Call this method when advancing to handle the AssemblyProcedure that
+	 * is rolling off this AssemblyLine, if any. Concretely, submit the
+	 * AssemblyProcedure's Order to the Manufacturer as a completed Order, record
+	 * statistical information and give that information to the StatisticsLogger.
+	 */
+	private void handleFinishedAssemblyProcedure(AssemblyProcedure finishedProcedure) {
+		if (finishedProcedure == null) {
+			return;
+		}
+		
+		ProcedureStatistics stats = finishedProcedure.makeStatisticsEvent();
+		this.addStatistics(stats);
+		
+		this.getManufacturer().addToCompleteOrders(finishedProcedure.getOrder());
 	}
 
 	//--------------------------------------------------------------------------
 	// AssemblyProcedure Factory Methods. 
 	//--------------------------------------------------------------------------
+	public AssemblyProcedure makeAssemblyProcedure(Order order) {
+		List<AssemblyTask> tasks = this.generateTasksFrom(order);
+		int expectedMinutes = this.calculateExpectedTimeOnLine(order);
+		return new AssemblyProcedure(order, tasks, expectedMinutes);
+	}
+	
 	/**
 	 * Generate a list of AssemblyTasks from the specified order.
 	 * 
@@ -355,76 +417,34 @@ public class AssemblyLine {
 	 * @throws IllegalStateException
 	 * 		! order.getModel().isValidSpecification(order.getSpecifications())
 	 */
-	protected List<AssemblyTask> generateTasksFrom(OrderContainer order) throws IllegalStateException {
+	protected List<AssemblyTask> generateTasksFrom(OrderContainer order) {
 		Specification orderSpecs = order.getSpecifications();
-		Model orderModel = order.getModel();
-		
-		if(!orderModel.isValidSpecification(orderSpecs))
-			throw new IllegalStateException("This order does not have matching specifications and model.");
 		
 		List<AssemblyTask> toReturn = new ArrayList<AssemblyTask>();
 		
-		for(int i = 0; i < orderSpecs.getAmountofSpecs(); i++){
-			Option currentOption = orderModel.getModelOption(i);
-			String choiceName = currentOption.getChoiceName(orderSpecs.getSpec(i));
-			String taskName = currentOption.getOptionName() + " - " + choiceName;
-			
-			toReturn.add(makeAssemblyTask(taskName,
-										  currentOption.getOptionActionDescription(),
-										  currentOption.getType(), i));
+		for (int i = 0; i < orderSpecs.getOptions().size(); i++) {
+			toReturn.add(new AssemblyTask(orderSpecs.getOptions().get(i), i));
 		}
+		
 		return toReturn;
 	}
 	
 	/**
-	 * Construct a new AssemblyTask with the specified parameters. 
+	 * Calculate the time in minutes that the order is expected to spend
+	 * on this AssemblyLine
 	 * 
-	 * @see AssemblyTask
+	 * @param order
+	 * @return The expected amount of minutes
 	 */
-	protected AssemblyTask makeAssemblyTask(String taskName, 
-											String actionDescription,
-											TaskType taskType, 
-											int index) {
-			return new AssemblyTask(taskName, actionDescription, taskType, index);
-	}
-
-	/**
-	 * Check if this AssemblyLine has a collectedFinshedAssemblyProcedureRobot9000. 
-	 * 
-	 * @return if has collectedFinishedAssemblyProcedureRobot9000
-	 */
-	protected boolean hasFinishedAssemblyProcedure() {
-		return this.finishedAssemblyProcedure != null;
+	private int calculateExpectedTimeOnLine(Order order) {
+		return order.getMinutesPerPost() * this.getAssemblyLineSize();
 	}
 	
-	/**
-	 * Remove and return the finished AssemblyProcedure from this AssemblyLine's 
-	 * lastFinishedAssemblyProcedure.
-	 * 
-	 * @return
-	 * 		The finished assembly or null if there isn't one
-	 * 
-	 * @throws IllegalStateException
-	 * 		| !this.hasFinishedAssemblyProcedure()
-	 */
-	private AssemblyProcedure removeFinishedAssemblyFromFinishedAssemblyProcedureCollectionSpace() {
-		if (!this.hasFinishedAssemblyProcedure())
-			throw new IllegalStateException("I ate fish for breakfast.");
-		
-		AssemblyProcedure finished = this.finishedAssemblyProcedure;
-		this.finishedAssemblyProcedure = null;
-		return finished;
-	}
-
-	/** The last unprocessed finishedAssemblyProcedure of this AssemblyLine. */
-	private AssemblyProcedure finishedAssemblyProcedure = null;
-	
-	//--------------------------------------------------------------------------
 	//--------------------------------------------------------------------------
 	// Statistics logger and related methods
 	//--------------------------------------------------------------------------
 	/** The statistics logger of this assembly line. */
-	private final StatisticsLogger statisticsLogger;
+	private StatisticsLogger statisticsLogger;
 	
 	/**
 	 * Get this AssemblyLine's StatisticsLogger
@@ -436,11 +456,42 @@ public class AssemblyLine {
 	}
 	
 	/**
+	 * Set this AssemblyLine's StatisticsLogger to the specified StatisticsLogger
+	 * 
+	 * @param logger
+	 * 		The StatisticsLogger of interest
+	 * @throws IllegalArgumentException
+	 * 		logger is null
+	 */
+	public void setStatisticsLogger(StatisticsLogger logger) throws IllegalArgumentException {
+		if (logger == null) {
+			throw new IllegalArgumentException("Cannot set logger to null.");
+		}
+		this.statisticsLogger = logger;
+	}
+	
+	/**
 	 * Get a report on the statistical variables watched by this AssemblyLine
 	 * 
 	 * @return A report in the form of a String.
 	 */
 	public String getStatisticsReport() {
+		if (this.getStatisticsLogger() == null) {
+			return "Not currently recording statistics";
+		}
 		return this.getStatisticsLogger().getReport();
+	}
+	
+	/**
+	 * Pass the specified ProcedureStatistics onto the StatisticsLogger
+	 * 
+	 * @param stats
+	 * 		A new statistical event
+	 */
+	private void addStatistics(ProcedureStatistics stats) {
+		if (this.getStatisticsLogger() == null) {
+			return;
+		}
+		this.getStatisticsLogger().addStatistics(stats);
 	}
 }

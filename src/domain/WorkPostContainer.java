@@ -51,6 +51,12 @@ public interface WorkPostContainer {
 	public boolean isEmpty();
 	
 	/**
+	 * Indicate whether this WorkPost has finished its work.
+	 * @return Whether this WorkPost has finished its work.
+	 */
+	public boolean isFinished();
+	
+	/**
 	 * Get the active AssemblyProcedureContainer of this WorkPost. 
 	 * 
 	 * @return The active AssemblyProcedureContainer of this WorkPost.
