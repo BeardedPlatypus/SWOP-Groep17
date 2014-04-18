@@ -47,11 +47,11 @@ public class AdaptSchedulingAlgorithmHandler {
 	//--------------------------------------------------------------------------
 	// Batch flow
 	//FIXME check which datatype batch should be. 
-	public List<Batch> getCurrentBatches() {
+	public List<Specification> getCurrentBatches() {
 		throw new UnsupportedOperationException();
 	}
 	
-	public void setBatchAlgorithm(Batch batch) throws IllegalArgumentException {
+	public void setBatchAlgorithm(Specification batch) throws IllegalArgumentException {
 		throw new UnsupportedOperationException();
 	}
 	
