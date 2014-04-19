@@ -2,7 +2,9 @@ package domain;
 
 import java.util.List;
 
+import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
+import exceptions.OptionRestrictionException;
 
 /**
  * Coordinates with the outside world in order to place a new order.
@@ -175,14 +177,12 @@ public class NewOrderSessionHandler {
 	public void selectOption(Option option) throws IllegalStateException, NoOptionCategoriesRemainingException{
 		if(!isRunningNewOrderSession())
 			throw new IllegalStateException("No active order session.");
-		getCurrentOrderSession().selectOption(option);
+		getCurrentOrderSession().addOption(option);
 	}
 
 	/**
 	 * Submit the order composed by the active new order session, and return
 	 * the resulting order as a container.
-	 * 
-	 * @return the object of the new order
 	 * 
 	 * @throws IllegalStateException
 	 *		If there is no active new order session.
@@ -190,11 +190,17 @@ public class NewOrderSessionHandler {
 	 * 		If no model has been chosen
 	 * @throws IllegalStateException
 	 * 		If there are unfulfilled OptionCategories
+	 * @throws IllegalCarOptionCombinationException 
+	 * 		When the chosen options are not valid with given model
+	 * @throws OptionRestrictionException
+	 * 		When the set of options does not meet the system's restrictions
+	 * @throws IllegalStateException
+	 * 		When the order was already submitted
 	 */
-	public OrderContainer submitOrder() throws IllegalStateException {
+	public void submitOrder() throws IllegalStateException, IllegalArgumentException, IllegalCarOptionCombinationException, OptionRestrictionException {
 		if(!isRunningNewOrderSession())
 			throw new IllegalStateException("No active order session.");
-		return getCurrentOrderSession().submitOrder();
+		getCurrentOrderSession().submitOrder();
 	}
 
 	/**

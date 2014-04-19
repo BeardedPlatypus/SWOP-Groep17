@@ -9,6 +9,8 @@ import domain.Model;
 /**
  * The ModelCatalog provides an overview of the Models that a Manufacturer 
  * can produce.
+ * 
+ * @author Frederik Goovaerts et al.
  */
 @Immutable
 public class ModelCatalog {

@@ -164,4 +164,16 @@ public class Model {
 		// TODO Auto-generated method stub
 		
 	}
+
+
+	public OptionCategory getNextOptionCategory(ArrayList<Option> options) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public boolean hasUnfilledOptions(List<Option> options) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

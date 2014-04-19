@@ -3,6 +3,9 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import exceptions.IllegalCarOptionCombinationException;
+import exceptions.OptionRestrictionException;
+
 
 /**
  * Class which represents an ordering session for the system. The session is tied
@@ -31,6 +34,8 @@ public class OrderSession {
 			throw new IllegalArgumentException("Manufacturer can not be null.");
 		this.manufacturer = man;
 		this.model = null;
+		this.resultingOrder = null;
+		this.options = new ArrayList<Option>();
 	}
 	
 	//--------------------------------------------------------------------------
@@ -43,7 +48,7 @@ public class OrderSession {
 	/**
 	 * Get the list of options of this class for internal use.
 	 * 
-	 * @returnthe list of options of this class
+	 * @return the list of options of this class
 	 */
 	private List<Option> getOptions(){
 		return this.options;
@@ -65,6 +70,21 @@ public class OrderSession {
 		if(option == null)
 			throw new IllegalArgumentException("Option should not be null.");
 		this.getOptions().add(option);
+	}
+
+	/**
+	 * Check whether the model has unfilled OptionCategories with the given Options
+	 * in this class.
+	 * 
+	 * @return whether the model has unfilled options
+	 * 
+	 * @throws IllegalStateException
+	 * 		When the session does not have a model yet.
+	 */
+	public boolean hasUnfilledOptions() throws IllegalStateException{
+		if(!this.modelIsChosen())
+			throw new IllegalStateException("Model is not yet chosen.");
+		return this.getModel().hasUnfilledOptions(new ArrayList<Option>(this.getOptions()));
 	}
 	
 	//--------------------------------------------------------------------------
@@ -149,27 +169,108 @@ public class OrderSession {
 	//--------------------------------------------------------------------------
 	
 	//--------------------------------------------------------------------------
+	// Order methods
+	
+	
+	/**
+	 * Check whether or not an order is made with this session.
+	 * 
+	 * @return whether or not an order is made with this session
+	 */
+	private boolean orderIsMade(){
+		return (this.getOrder() == null);
+	}
+	
+	/**
+	 * Get the Order of this class, for internal use
+	 * 
+	 * @return the order of this class
+	 */
+	private Order getOrder(){
+		return this.resultingOrder;
+	}
+	
+	/**
+	 * Set the Order of this class to given order, if it is a valid order, and
+	 * an order hasn't been set yet.
+	 * 
+	 * @post this.resultingOrder = order
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		When the given order is not valid
+	 * @throws IllegalStateException
+	 * 		When an order was previously set
+	 */
+	private void setOrder(Order order) throws IllegalArgumentException, IllegalStateException{
+		if(order == null)
+			throw new IllegalArgumentException("Order is not valid.");
+		if(orderIsMade())
+			throw new IllegalStateException("An order has already been set.");
+		this.resultingOrder = order;
+	}
+	
+	/** The order this  */
+	private Order resultingOrder;
+
+	//--------------------------------------------------------------------------
+
+	
+	//--------------------------------------------------------------------------
 	// Class Methods
 	//--------------------------------------------------------------------------
-	
-	public List<Model> getCarModels() {
-		throw new UnsupportedOperationException();
+
+	/**
+	 * Get the list of models in the system
+	 * 
+	 * @return	the list of models in the system
+	 * 
+	 * @pre
+	 * 		this.getManufacturer != null
+	 */
+	public List<Model> getCarModels(){
+		return this.getManufacturer().getCarModels();
 	}
 
-	public OptionCategory getNextOptionCategory() {
-		throw new UnsupportedOperationException();
+	/**
+	 * Get the next unfilled optionCategory from set model with the options
+	 * currently chosen in this session
+	 * 
+	 * @return the next unfilled optionCategory
+	 * 
+	 * @throws IllegalStateException
+	 * 		When no model has been set
+	 */
+	public OptionCategory getNextOptionCategory() throws IllegalStateException{
+		if(!this.modelIsChosen())
+			throw new IllegalStateException("No model has been chosen yet.");
+		return this.getModel().getNextOptionCategory(options);
 	}
 
-	public void selectOption(Option option) {
-		throw new UnsupportedOperationException();
-	}
-
-	public OrderContainer submitOrder() {
-		throw new UnsupportedOperationException();
-	}
-
-	public boolean hasUnfilledOptions() {
-		// TODO Auto-generated method stub
-		return false;
+	/**
+	 * Submit the current state of this session to the system, to form an order.
+	 * The order is then saved in this session, so the ETA can be calculated.
+	 * 
+	 * @throws IllegalCarOptionCombinationException 
+	 * 		When the chosen options are not valid with given model
+	 * @throws OptionRestrictionException
+	 * 		When the set of options does not meet the system's restrictions
+	 * @throws IllegalStateException
+	 * 		When the model or options are null
+	 * @throws IllegalStateException
+	 * 		When the order was already submitted
+	 */
+	public void submitOrder() throws IllegalArgumentException,
+									 IllegalCarOptionCombinationException,
+									 OptionRestrictionException,
+									 IllegalStateException
+	{
+		if(this.orderIsMade())
+			throw new IllegalStateException("An order has already been made from this Session.");
+		try{
+			Order generatedOrder = this.getManufacturer().submitStandardOrder(this.getModel(), new ArrayList<Option>(this.getOptions()));
+			this.setOrder(generatedOrder);
+		} catch (IllegalArgumentException e){
+			throw new IllegalStateException("Session is not valid (yet).");
+		}
 	}
 }
