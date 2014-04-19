@@ -117,6 +117,16 @@ public class Order implements OrderContainer {
 
 	/** The model of this Order. */
 	public final Model model;
+	
+	/**
+	 * Get the amount of minutes that the ordered car is expected to spend
+	 * at each work post.
+	 * 
+	 * @return The amount of minutes
+	 */
+	public int getMinutesPerPost() {
+		return this.getModel().getMinsPerWorkPost();
+	}
 
 	//--------------------------------------------------------------------------
 	@Override

@@ -29,12 +29,16 @@ public class Model {
 	 * 		Name this model receives
 	 * @param optionCategories
 	 * 		Arraylist containing all the optionCategories this model should offer
+	 * @param minsPerWorkPost
+	 * 		The amount of minutes that cars of this model are expected to spend
+	 * 		on each WorkPost
 	 */
 	public Model(String modelName,
-				 List<OptionCategory> optionCategories)
+				 List<OptionCategory> optionCategories, int minsPerWorkPost)
 	{
 		this.modelName = modelName;
 		this.optionCategories = new ArrayList<OptionCategory>(optionCategories);
+		this.minsPerWorkPost = minsPerWorkPost;
 	}
 	
 
@@ -139,5 +143,19 @@ public class Model {
 		}
 		Specification newSpecs = new Specification(options);
 		return newSpecs;
+	}
+	
+	/** The amount of time in minutes that cars of this model are expected to spend
+	 * on each WorkPost */
+	private final int minsPerWorkPost;
+	
+	/**
+	 * Get the amount of time in minutes that cars of this model are expected to spend
+	 * on each WorkPost.
+	 * 
+	 * @return The amount
+	 */
+	public int getMinsPerWorkPost() {
+		return this.minsPerWorkPost;
 	}
 }

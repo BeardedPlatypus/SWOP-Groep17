@@ -14,7 +14,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 @RunWith(PowerMockRunner.class)
 public class AssemblyProcedureTest {
@@ -55,19 +57,33 @@ public class AssemblyProcedureTest {
 		tasks.add(body);
 		tasks.add(engine);
 		
-		procedure = Mockito.spy(new AssemblyProcedure(order, tasks));
+		procedure = Mockito.spy(new AssemblyProcedure(order, tasks, 180));
 	}
 	
 	@Test
 	public void constructor_NullOrderTest() {
 		exception.expect(IllegalArgumentException.class);
-		new AssemblyProcedure(null, tasks);
+		new AssemblyProcedure(null, tasks, 180);
 	}
 	
 	@Test
 	public void constructor_NullTasksTest() {
 		exception.expect(IllegalArgumentException.class);
-		new AssemblyProcedure(order, null);
+		new AssemblyProcedure(order, null, 180);
+	}
+	
+	@Test
+	public void constructor_NegativeExpectedMinutesTest() {
+		exception.expect(IllegalArgumentException.class);
+		new AssemblyProcedure(order, tasks, -1);
+	}
+	
+	@Test
+	public void constructor_valid() {
+		AssemblyProcedure procedure = PowerMockito.spy(new AssemblyProcedure(order, tasks, 180));
+		assertEquals(order, procedure.getOrder());
+		assertEquals(tasks, procedure.getAssemblyTasks());
+		assertEquals(180, Whitebox.getInternalState(procedure, "expectedMinutes"));
 	}
 	
 	@Test
@@ -75,6 +91,19 @@ public class AssemblyProcedureTest {
 		exception.expect(IllegalArgumentException.class);
 		procedure.completeTask(-1, TaskType.BODY);
 		
+	}
+	
+	@Test
+	public void addToElapsedMinutes_negativeMins() {
+		exception.expect(IllegalArgumentException.class);
+		procedure.addToElapsedMinutes(-1);
+	}
+	
+	@Test
+	public void addToElapsedMinutes_valid() {
+		AssemblyProcedure procedure = PowerMockito.spy(new AssemblyProcedure(order, tasks, 180));
+		procedure.addToElapsedMinutes(60);
+		assertEquals(60, (int) Whitebox.getInternalState(procedure, "elapsedMinutes"));
 	}
 	
 	@Test
@@ -94,6 +123,47 @@ public class AssemblyProcedureTest {
 			task.setCompleted(true);
 		}
 		assertTrue(procedure.isFinished());
+	}
+	
+	@Test
+	public void isFinishedType_noTaskCompleted() {
+		assertFalse(procedure.isFinished(TaskType.BODY));
+	}
+	
+	@Test
+	public void isFinishedType_partlyCompleted() {
+		tasks.get(0).setCompleted(true);
+		assertFalse(procedure.isFinished(TaskType.BODY));
+	}
+	
+	@Test
+	public void isFinishedType_whollyCompleted() {
+		tasks.get(0).setCompleted(true);
+		tasks.get(1).setCompleted(true);
+		assertTrue(procedure.isFinished(TaskType.BODY));
+	}
+	
+	@Test
+	public void taskIsFinished_false() {
+		assertFalse(procedure.taskIsFinished(0));
+	}
+	
+	@Test
+	public void taskIsFinished_true() {
+		procedure.completeTask(0, TaskType.BODY);
+		assertTrue(procedure.taskIsFinished(0));
+	}
+	
+	@Test
+	public void taskIsFinished_negativeTaskNum() {
+		exception.expect(IllegalArgumentException.class);
+		procedure.taskIsFinished(-1);
+	}
+	
+	@Test
+	public void taskIsFinished_tooBigIntTask() {
+		exception.expect(IllegalArgumentException.class);
+		procedure.taskIsFinished(Integer.MAX_VALUE);
 	}
 	
 	@Test
@@ -140,6 +210,24 @@ public class AssemblyProcedureTest {
 	public void getTask_valid() {
 		AssemblyTask task = procedure.getTask(0);
 		assertTrue(task == color);
+	}
+	
+	@Test
+	public void makeStatistics_notYetFinished() {
+		exception.expect(IllegalStateException.class);
+		procedure.makeStatisticsEvent();
+	}
+	
+	@Test
+	public void makeStatistics_finished() {
+		AssemblyProcedure procedure = PowerMockito.spy(new AssemblyProcedure(order, tasks, 180));
+		procedure.addToElapsedMinutes(200);
+		List<AssemblyTask> tasks = (ArrayList<AssemblyTask>) Whitebox.getInternalState(procedure, "tasks");
+		for (AssemblyTask task : tasks) {
+			task.setCompleted(true);
+		}
+		ProcedureStatistics stats = procedure.makeStatisticsEvent();
+		assertEquals(20, stats.getDelay());
 	}
 
 }

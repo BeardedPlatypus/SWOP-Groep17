@@ -16,25 +16,34 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 	// Constructor 
 	//--------------------------------------------------------------------------
 	/**
-	 * Initialise this new AssemblyProcedure with the specified Order and AssemblyTasks.
+	 * Initialise this new AssemblyProcedure with the specified Order, AssemblyTasks
+	 * and expected minutes.
 	 * 
 	 * @param order
-	 * 		The Order that this procedure fulfils.
+	 * 		The Order that this procedure fulfills.
 	 * @param tasks
-	 * 		The sequence of AssemblyTasks that must be performed in order to fulfil the specified order.
+	 * 		The sequence of AssemblyTasks that must be performed in order to fulfill the specified order.
+	 * @param expectedMinutes
+	 * 		The amount of minutes that this procedure is expected to spend on the AssemblyLine
+	 * 		in total.
 	 * 
 	 * @throws IllegalArgumentException
-	 * 		| order == null || tasks == null
+	 * 		| order == null || tasks == null || expectedMinutes < 0
 	 */
-	public AssemblyProcedure(Order order, List<AssemblyTask> tasks) throws IllegalArgumentException {
+	public AssemblyProcedure(Order order, List<AssemblyTask> tasks, int expectedMinutes) throws IllegalArgumentException {
 		if (order == null) {
 			throw new IllegalArgumentException("Cannot initialise an assembly procedure with non-existent order.");
 		}
 		if (tasks == null) {
 			throw new IllegalArgumentException("Cannot initialise an assembly procedure with non-existent tasks.");
 		}
+		if (expectedMinutes < 0) {
+			throw new IllegalArgumentException("Cannot initialise an assembly procedure with a negative amount"
+					+ "of expected minutes.");
+		}
 		this.assemblyOrder = order;
 		this.tasks = tasks;
+		this.expectedMinutes = expectedMinutes;
 	}
 
 	//--------------------------------------------------------------------------
@@ -100,6 +109,38 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 	}
 	
 	/**
+	 * Check if all tasks of type have been completed.
+	 * 
+	 * @param type
+	 * 		Type of task to check for
+	 * @return All tasks of type have been completed
+	 */
+	public boolean isFinished(TaskType type) {
+		for (AssemblyTask task : this.getTasksInternal()) {
+			if (task.getTaskType() == type && ! task.isCompleted()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Check if the AssemblyTask with the specified task number has been finished.
+	 * 
+	 * @return The task is finished
+	 * @throws IllegalArgumentException
+	 * 		taskNum refers to a task that does not exist
+	 */
+	public boolean taskIsFinished(int taskNum) throws IllegalArgumentException {
+		try {
+			return this.getTasksInternal().get(taskNum).isCompleted();
+		} catch (IndexOutOfBoundsException e) {
+			throw new IllegalArgumentException("taskNum refers to a task"
+					+ "that does not exist");
+		}
+	}
+	
+	/**
 	 * Check whether the specified task number refers to an existent task.
 	 * @param intTask
 	 * 		Index into the list of tasks.
@@ -138,16 +179,93 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 
 	//--------------------------------------------------------------------------
 	// getStatistics related methods and variables. 
-	//--------------------------------------------------------------------------	
-	public void makeStatisticsEvent() {
-		throw new UnsupportedOperationException();
+	//--------------------------------------------------------------------------
+	/** The amount of minutes that this AssemblyProcedure is expected to
+	 * spend on the AssemblyLine. */
+	private final int expectedMinutes;
+	
+	/**
+	 * Get the amount of minutes that this AssemblyProcedure is expected to
+	 * spend on the AssemblyLine.
+	 * 
+	 * @return The amount of minutes.
+	 */
+	public int getExpectedMinutes() {
+		return this.expectedMinutes;
 	}
+	
+	/** The amount of time that this AssemblyProcedure has spent on the
+	 * AssemblyLine so far. */
+	private int elapsedMinutes;
+	
+	/**
+	 * Add the specified amount of minutes to the time spent on the
+	 * AssemblyLine so far.
+	 * 
+	 * @param minutes
+	 * 		The amount of minutes to add
+	 * @throws IllegalArgumentException
+	 * 		minutes is negative
+	 */
+	public void addToElapsedMinutes(int minutes) throws IllegalArgumentException {
+		if (minutes < 0) {
+			throw new IllegalArgumentException("Cannot add a negative amount of time"
+					+ "to the elapsed time");
+		}
+		this.setElapsedMinutes(this.getElapsedMinutes() + minutes);
+	}
+	
+	/**
+	 * Get the amount of minutes spent on the AssemblyLine so far.
+	 * 
+	 * @return The amount of minutes
+	 */
+	private int getElapsedMinutes() {
+		return this.elapsedMinutes;
+	}
+	
+	/**
+	 * Set the time spent on the AssemblyLine so far to the specified value.
+	 * 
+	 * @param minutes
+	 * 		The amount of minutes
+	 */
+	private void setElapsedMinutes(int minutes) {
+		this.elapsedMinutes = minutes;
+	}
+	
+	/**
+	 * Calculate the delay on this AssemblyProcedure. It is assumed that this
+	 * AssemblyProcedure has been finished before calling this method.
+	 * 
+	 * @return The delay
+	 */
+	private int calculateDelay() {
+		return this.getElapsedMinutes() - this.getExpectedMinutes();
+	}
+	
+	/**
+	 * Make an event wherein all information of interest about this AssemblyProcedure
+	 * is stored so it can be recorded.
+	 * 
+	 * @return A statistical object that contains information about this AssemblyProcedure
+	 * @throws IllegalStateException
+	 * 		This AssemblyProcedure is not yet finished
+	 */
+	public ProcedureStatistics makeStatisticsEvent() throws IllegalStateException {
+		if (! this.isFinished()) {
+			throw new IllegalStateException("Cannot record statistical information"
+					+ "of an unfinished AssemblyProcedure");
+		}
+		return new ProcedureStatistics(this.calculateDelay());
+	}
+	
 
 	//--------------------------------------------------------------------------
 	//  AssemblyProcedureContainer immutable views.
 	//--------------------------------------------------------------------------
 	@Override
-	public OrderContainer getOrder() {
+	public Order getOrder() {
 		return this.getOrderInternal();
 	}
 

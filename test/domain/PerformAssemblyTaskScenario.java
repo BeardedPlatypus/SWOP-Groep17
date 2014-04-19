@@ -41,7 +41,8 @@ public class PerformAssemblyTaskScenario {
 	}
 
 	@Before
-	public void setUp() throws Exception {MockitoAnnotations.initMocks(this);
+	public void setUp() throws Exception {
+	MockitoAnnotations.initMocks(this);
 
 	assemblyLine = Mockito.spy(new AssemblyLine(schedule));
 	
