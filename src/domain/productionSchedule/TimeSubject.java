@@ -1,5 +1,7 @@
 package domain.productionSchedule;
 
+import java.util.List;
+
 /**
  * The TimeSubject provides the subject interface of the ObserverStrategy for 
  * the internal time in this System. 
@@ -46,4 +48,11 @@ public interface TimeSubject {
 	 * @postcondition | FORALL t: t == TimeObserver AND t observes this -> t.update()
 	 */
 	public void notifyTime();
+	
+	/**
+	 * Get the TimeObservers of this TimeSubject. 
+	 * 
+	 * @return The TimeObservers of this TimeSubject.
+	 */
+	public List<TimeObserver> getTimeObservers();
 }

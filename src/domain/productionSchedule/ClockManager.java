@@ -1,5 +1,8 @@
 package domain.productionSchedule;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import domain.DateTime;
 
 /**
@@ -37,12 +40,13 @@ public class ClockManager implements TimeSubject, IncrementTimeObserver {
 	}
 	
 	/**
-	 * Construct a new ClockManager with a zero DateTime object as begin time.
+	 * Construct a new ClockManager with a starting day DateTime object 
+	 * as begin time.
 	 * 
-	 * @effect | this(new DateTime(0, 0, 0);
+	 * @effect | this(new DateTime(0, 6, 0);
 	 */
 	public ClockManager() {
-		this(new DateTime(0, 0, 0));
+		this(new DateTime(0, 6, 0));
 	}
 	
 	//--------------------------------------------------------------------------
@@ -90,7 +94,7 @@ public class ClockManager implements TimeSubject, IncrementTimeObserver {
 	 */
 	private void setTime(DateTime t) {
 		this.currentTime = t;
-		this.notify();
+		this.notifyTime();
 	}
 	
 	/** The current time of this ClockManager. */
@@ -100,31 +104,50 @@ public class ClockManager implements TimeSubject, IncrementTimeObserver {
 	// TimeSubject Methods.
 	//--------------------------------------------------------------------------
 	@Override
-	public void attachTimeObserver(TimeObserver t)
-			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
+	public void attachTimeObserver(TimeObserver t) throws IllegalArgumentException {
+		if (t == null) {
+			throw new IllegalArgumentException("Observer cannot be null");
+		}
 		
+		if (!this.observers.contains(t)) { 
+			this.observers.add(t); 
+		}
 	}
 
 	@Override
 	public void detachTimeObserver(TimeObserver t) {
-		// TODO Auto-generated method stub
-		
+		if (t == null) {
+			throw new IllegalArgumentException("Observer cannot be null");
+		}
+
+		if (this.observers.contains(t)) {
+			this.observers.remove(t);
+		}
 	}
 
 	@Override
 	public void notifyTime() {
-		// TODO Auto-generated method stub
-		
+		DateTime curTime = this.getCurrentTime();
+		for(TimeObserver obs : this.getTimeObservers()) {
+			obs.update(curTime);
+		}
 	}
 
+	@Override
+	public List<TimeObserver> getTimeObservers() {
+		return new ArrayList<TimeObserver>(this.observers);
+	}	
+	
+	/** The observes of this TimeSubject. */ 
+	private final List<TimeObserver> observers = new ArrayList<TimeObserver>();
+	
 	//--------------------------------------------------------------------------
 	// IncrementTimeObserver Methods
 	//--------------------------------------------------------------------------
 	@Override
 	public void update(DateTime time) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		
+		this.incrementTime(time);
 	}
+
 
 }
