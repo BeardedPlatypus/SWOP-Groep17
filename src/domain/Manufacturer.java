@@ -24,7 +24,7 @@ public class Manufacturer {
 
 	
 
-	public void getCompletedOrderContainers() {
+	public List<OrderContainer> getCompletedOrderContainers() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -44,7 +44,7 @@ public class Manufacturer {
 		throw new UnsupportedOperationException();
 	}
 
-	public void startNewOrderSession() {
+	public OrderSession startNewOrderSession() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -165,7 +165,7 @@ public class Manufacturer {
 		this.productionScheduleFacade = productionScheduleFacade;
 	}
 	
-	public void getPendingOrderContainers() {
+	public List<OrderContainer> getPendingOrderContainers() {
 		throw new UnsupportedOperationException();
 	}
 	

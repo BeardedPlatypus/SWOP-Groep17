@@ -1,5 +1,7 @@
 package domain;
 
+import java.util.List;
+
 /**
  * Facade on all handlers, so the UI only needs one object to interface with.
  * 
@@ -116,7 +118,7 @@ public class DomainFacade {
 	//-------------------------------------------------------------------------
 	// Class Methods
 	//-------------------------------------------------------------------------
-	
+
 	
 	public void getAlgorithms() {
 		throw new UnsupportedOperationException();
@@ -130,18 +132,116 @@ public class DomainFacade {
 		throw new UnsupportedOperationException();
 	}
 	
+	 
+	//-------------------------------------------------------------------------
+	// Order New Car Methods
+
+	/**
+	 * Get the system's pending orders. This includes the orders in the production
+	 * schedule, queueing to be assembled, as well as the orders which are active
+	 * on the assembly line.
+	 * 
+	 * @pre this.getNewOrderSessionHandler() != null
+	 * 
+	 * @return the list of pending orders in the system
+	 */
+	public List<OrderContainer> getPendingOrders(){
+		return this.getNewOrderSessionHandler().getPendingOrders();
+	}
+	
+	/**
+	 * Get the system's completed orders. This encompasses the orders which were
+	 * previously assembled and are now marked as complete.
+	 * 
+	 * @pre this.getNewOrderSessionHandler() != null
+	 * 
+	 * @return the list of completed orders in the system
+	 */
+	public List<OrderContainer> getCompletedOrders(){
+		return this.getNewOrderSessionHandler().getCompletedOrders();
+	}
+	
 	/**
 	 * Start a new orderSession in the newOrderSessionHandler, so a user can
 	 * put together an order from scratch. This resets all previously chosen
 	 * model and options in the Handler.
 	 * 
-	 * @pre
-	 * 		this.getNewOrderSessionHandler() != null
-	 * @effect
-	 * 		this.getNewOrderSessionHandler().startNewOrderSession()
+	 * @pre this.getNewOrderSessionHandler() != null
+	 * 
+	 * @effect this.getNewOrderSessionHandler().startNewOrderSession()
 	 * 
 	 */
 	public void startNewOrderSession(){
 		this.getNewOrderSessionHandler().startNewOrderSession();
 	}
+	
+	/**
+	 * Get a list of all possible Car Models for construction by the system.
+	 * 
+	 * @pre this.getNewOrderSessionHandler() != null
+	 * 
+	 * @return a list of all possible Car Models for the system
+	 */
+	public List<Model> getCarModels(){
+		return this.getNewOrderSessionHandler().getCarModels();
+	}
+	
+	/**
+	 * Choose the model for the current OrderSession active in the handler.
+	 * If a model was previously chosen, and a new session hasn't been started
+	 * yet, an exception will occur. If the model is not a model of the system,
+	 * an exception will occur.
+	 * 
+	 * @param model
+	 * 		The model the user wants to set for the OrderSession
+	 * @throws IllegalArgumentException
+	 * 		When the given model is not a model of the system or null
+	 * @throws IllegalStateException
+	 * 		When a model was already chosen for the current OrderSession
+	 */
+	public void chooseModel(Model model) throws IllegalArgumentException, IllegalStateException{
+		if(model == null)
+			throw new IllegalArgumentException("Model can not be null.");
+		this.getNewOrderSessionHandler().chooseModel(model);
+	}
+	
+	/**
+	 * Check whether or not all choices have been made for the order specification
+	 * 
+	 * @return whether or not all choices have been made
+	 */
+	public boolean orderHasUnfilledOptions(){
+		return this.getNewOrderSessionHandler().hasUnfilledOptions();
+	}
+	
+	/**
+	 * Get the next OptionCategory of which no option has been chosen yet.
+	 * If no options remain, throw an exception.
+	 * 
+	 * @return the next unchosen OptionCategory
+	 * 
+	 * @throws NoOptionCategoriesRemainingException
+	 * 		When no optionCategories are unfilled anymore
+	 */
+	public OptionCategory getNextOptionCategory() throws NoOptionCategoriesRemainingException{
+		return this.getNewOrderSessionHandler().getNextOptionCategory();
+	}
+	
+	/**
+	 * Add the given option to the current OrderSession specification
+	 * 
+	 * @param option
+	 * 		The option to add to the specification
+	 * @throws IllegalArgumentException
+	 * 		If the option is null or not an option of the given unfilled category
+	 * @throws NoOptionCategoriesRemainingException
+	 */
+	public void selectOption(Option option) throws IllegalArgumentException, NoOptionCategoriesRemainingException{
+		if(option == null)
+			throw new IllegalArgumentException("Option can not be null.");
+		this.getNewOrderSessionHandler().selectOption(option);
+	}
+
+	//-------------------------------------------------------------------------
+
 }

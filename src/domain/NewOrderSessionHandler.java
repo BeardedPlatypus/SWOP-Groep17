@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Coordinates with the outside world in order to place a new order.
  * 
- * @author Simon Slangen
+ * @author Simon Slangen, Frederik Goovaerts
  */
 public class NewOrderSessionHandler {
 	
@@ -13,9 +13,8 @@ public class NewOrderSessionHandler {
 	// Constructor
 	//--------------------------------------------------------------------------
 	public NewOrderSessionHandler(Manufacturer man) throws IllegalArgumentException {
-		if (manufacturer == null) {
+		if (manufacturer == null)
 			throw new IllegalArgumentException("Cannot initialise new order session handler with non-existent manufacturer.");
-		}
 		this.manufacturer = man;
 		this.currentOrderSession = null;
 	}
@@ -43,7 +42,7 @@ public class NewOrderSessionHandler {
 	 * @return List of pending orders.
 	 */
 	public List<OrderContainer> getPendingOrders() {
-		return getManufacturer().getPendingOrderContainers();
+		return this.getManufacturer().getPendingOrderContainers();
 	}
 
 	/**
@@ -51,8 +50,8 @@ public class NewOrderSessionHandler {
 	 * 
 	 * @return List of completed orders.
 	 */
-	public void getCompletedOrders() {
-		return getManufacturer().getCompletedOrderContainers();
+	public List<OrderContainer> getCompletedOrders() {
+		return this.getManufacturer().getCompletedOrderContainers();
 	}
 
 	//--------------------------------------------------------------------------
@@ -66,15 +65,15 @@ public class NewOrderSessionHandler {
 	 *			If there is no active new order session.
 	 */
 	public List<Model> getCarModels() throws IllegalStateException {
-		if(!isRunningNewOrderSession()){
+		if(!isRunningNewOrderSession())
 			throw new IllegalStateException("No active order session.");
-		} else {
-			return getCurrentOrderSession().getCarModels();
-		}
+		return getCurrentOrderSession().getCarModels();
 	}
 
 	/**
-	 * Starts a new order session.
+	 * Start a new order session.
+	 * 
+	 * @post this.getCurrentOrderSession() == getManufacturer().startNewOrderSession()
 	 */
 	public void startNewOrderSession() {
 		currentOrderSession = getManufacturer().startNewOrderSession();
@@ -97,7 +96,7 @@ public class NewOrderSessionHandler {
 	}
 	
 	/**
-	 * Selects the model passed as the argument in the active new order session.
+	 * Select the model passed as the argument in the active new order session.
 	 * 
 	 * @param 	model
 	 * 			The car model to create an order for.
@@ -105,30 +104,26 @@ public class NewOrderSessionHandler {
 	 *			If there is no active new order session.
 	 */
 	public void chooseModel(Model model) throws IllegalStateException {
-		if(isRunningNewOrderSession()){
-			getCurrentOrderSession().chooseModel(model);
-		} else {
+		if(!isRunningNewOrderSession())
 			throw new IllegalStateException("No active order session.");
-		}
+		getCurrentOrderSession().chooseModel(model);
 	}
 
 	/**
-	 * Returns the next option category to the caller.
+	 * Return the next option category to the caller.
 	 * 
 	 * @return  The next option category.
 	 * @throws IllegalStateException
 	 *			If there is no active new order session.
 	 */
 	public OptionCategory getNextOptionCategory() throws IllegalStateException {
-		if(isRunningNewOrderSession()){
-			return getCurrentOrderSession().getNextOptionCategory();
-		} else {
+		if(!isRunningNewOrderSession())
 			throw new IllegalStateException("No active order session.");
-		}
+		return getCurrentOrderSession().getNextOptionCategory();
 	}
 
 	/**
-	 * Selects the option passed as the argument in the active new order session.
+	 * Select the option passed as the argument in the active new order session.
 	 * 
 	 * @param option
 	 * 			An option to add to the order.
@@ -136,24 +131,33 @@ public class NewOrderSessionHandler {
 	 *			If there is no active new order session.
 	 */
 	public void selectOption(Option option) throws IllegalStateException {
-		if(isRunningNewOrderSession()){
-			getCurrentOrderSession().selectOption(option);
-		} else {
+		if(!isRunningNewOrderSession())
 			throw new IllegalStateException("No active order session.");
-		}
+		getCurrentOrderSession().selectOption(option);
 	}
 
 	/**
-	 * Submits the order composed by the active new order session.
+	 * Submit the order composed by the active new order session.
 	 * 
 	 * @throws IllegalStateException
 	 *			If there is no active new order session.
 	 */
 	public void submitOrder() throws IllegalStateException {
-		if(isRunningNewOrderSession()){
-			getCurrentOrderSession().submitOrder();
-		} else {
+		if(!isRunningNewOrderSession())
 			throw new IllegalStateException("No active order session.");
-		}
+		getCurrentOrderSession().submitOrder();
+	}
+
+	/**
+	 * Check whether or not the current orderSession has unfilled options.
+	 * 
+	 * @return whether or not the current orderSession has unfilled options.
+	 * @throws IllegalStateException
+	 * 		When no orderSession is active
+	 */
+	public boolean hasUnfilledOptions() throws IllegalStateException {
+		if(!isRunningNewOrderSession())
+			throw new IllegalStateException("No active order session.");
+		return getCurrentOrderSession().hasUnfilledOptions();
 	}
 }
