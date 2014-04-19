@@ -158,4 +158,10 @@ public class Model {
 	public int getMinsPerWorkPost() {
 		return this.minsPerWorkPost;
 	}
+
+
+	public boolean checkOptionsValdity(List<Option> options) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -1,6 +1,11 @@
 package exceptions;
 
-public class AssemAssistException extends Exception {
+/**
+ * General Exception class for the AssemAssist system.
+ * 
+ * @author Frederik Goovaerts
+ */
+public abstract class AssemAssistException extends Exception {
 
 	/**
 	 * UID this class uses for serialisability

@@ -1,5 +1,11 @@
 package exceptions;
 
+/**
+ * Thrown when an operation on an order is requested, but given order is not present
+ * in the system.
+ * 
+ * @author Frederik Goovaerts
+ */
 public class OrderDoesNotExistException extends AssemAssistException {
 
 	/**

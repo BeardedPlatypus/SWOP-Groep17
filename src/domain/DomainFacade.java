@@ -2,6 +2,8 @@ package domain;
 
 import java.util.List;
 
+import exceptions.NoOptionCategoriesRemainingException;
+
 /**
  * Facade on all handlers, so the UI only needs one object to interface with.
  * 
@@ -198,6 +200,8 @@ public class DomainFacade {
 	 * 		When the given model is not a model of the system or null
 	 * @throws IllegalStateException
 	 * 		When a model was already chosen for the current OrderSession
+	 * @throws IllegalStateException
+	 * 		When there is no active OrderSession
 	 */
 	public void chooseModel(Model model) throws IllegalArgumentException, IllegalStateException{
 		if(model == null)
@@ -222,6 +226,8 @@ public class DomainFacade {
 	 * 
 	 * @throws NoOptionCategoriesRemainingException
 	 * 		When no optionCategories are unfilled anymore
+	 * @throws IllegalStateException
+	 * 		If there is no active OrderSession
 	 */
 	public OptionCategory getNextOptionCategory() throws NoOptionCategoriesRemainingException{
 		return this.getNewOrderSessionHandler().getNextOptionCategory();
@@ -235,11 +241,30 @@ public class DomainFacade {
 	 * @throws IllegalArgumentException
 	 * 		If the option is null or not an option of the given unfilled category
 	 * @throws NoOptionCategoriesRemainingException
+	 * 		When no optionCategories are unfulfilled anymore
 	 */
 	public void selectOption(Option option) throws IllegalArgumentException, NoOptionCategoriesRemainingException{
 		if(option == null)
 			throw new IllegalArgumentException("Option can not be null.");
 		this.getNewOrderSessionHandler().selectOption(option);
+	}
+	
+	/**
+	 * Submit the order composed by the active OrderSession, and return
+	 * the resulting order as a container.
+	 * 
+	 * @return the object of the new order
+	 * 
+	 * @throws IllegalStateException
+	 *		If there is no active OrderSession.
+	 * @throws IllegalStateException
+	 * 		If no model has been chosen
+	 * @throws IllegalStateException
+	 * 		If there are unfulfilled OptionCategories
+	 */
+	public OrderContainer submitOrder(){
+		return this.getNewOrderSessionHandler().submitOrder();
+		
 	}
 
 	//-------------------------------------------------------------------------

@@ -8,17 +8,21 @@ import domain.Model;
 
 /**
  * The ModelCatalog provides an overview of the Models that a Manufacturer 
- * can produce. 
+ * can produce.
  */
 @Immutable
 public class ModelCatalog {
 	/**
-	 * Initialises a model catalog.
+	 * Create a new modelCatalog with given list of models as models of the catalog.
 	 * 
-	 * @post getModels() is not null
-	 * @post getModels() is not empty
+	 * @throws IllegalArgumentException
+	 * 		If either the list of models or one of its elements is null
 	 */
-	public ModelCatalog(List<Model> inputModels) {
+	public ModelCatalog(List<Model> inputModels) throws IllegalArgumentException{
+		if(inputModels == null)
+			throw new IllegalArgumentException("List of system models should not be null");
+		if(inputModels.contains(null))
+			throw new IllegalArgumentException("List of system models should not contain null");
 		models = new ArrayList<>(inputModels);
 	}	
 	
@@ -33,4 +37,16 @@ public class ModelCatalog {
 	
 	/** A list of all models of this ModelCatalog */
 	private final List<Model> models;
+
+	/**
+	 * Check whether or not the given model is contained in this catalog.
+	 * 
+	 * @param model
+	 * 		The model to check for.
+	 * 
+	 * @return whether or not given model is contained in this catalog
+	 */
+	public boolean contains(Model model) {
+		return models.contains(model);
+	}
 }
