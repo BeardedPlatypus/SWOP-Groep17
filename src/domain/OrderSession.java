@@ -6,6 +6,7 @@ import java.util.List;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
+import exceptions.OrderDoesNotExistException;
 
 
 /**
@@ -126,7 +127,7 @@ public class OrderSession {
 	public void chooseModel(Model model) throws IllegalArgumentException, IllegalStateException{
 		if(model == null)
 			throw new IllegalArgumentException("Chosen model can not be null.");
-		if(this.getManufacturer().isValidModel(model))
+		if(!this.getManufacturer().isValidModel(model))
 			throw new IllegalArgumentException("Not a valid model for the system.");
 		if(modelIsChosen())
 			throw new IllegalStateException("There already is a chosen model for this session.");
@@ -179,7 +180,7 @@ public class OrderSession {
 	 * @return whether or not an order is made with this session
 	 */
 	private boolean orderIsMade(){
-		return (this.getOrder() == null);
+		return !(this.getOrder() == null);
 	}
 	
 	/**
@@ -290,8 +291,10 @@ public class OrderSession {
 	 * 
 	 * @throws IllegalStateException
 	 * 		If the session has not created an order in the system.
+	 * @throws OrderDoesNotExistException 
+	 * 		Is the order of this OrderSession is not recognised by the system
 	 */
-	public DateTime getETA() {
+	public DateTime getETA() throws OrderDoesNotExistException {
 		if(!this.orderIsMade())
 			throw new IllegalStateException("No order has been made with this session yet!");
 		return this.getManufacturer().getEstimatedCompletionTime(this.getOrder());

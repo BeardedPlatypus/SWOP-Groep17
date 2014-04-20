@@ -5,6 +5,7 @@ import java.util.List;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
+import exceptions.OrderDoesNotExistException;
 
 /**
  * Facade on all handlers, so the UI only needs one object to interface with.
@@ -287,8 +288,10 @@ public class DomainFacade {
 	 * @throws IllegalStateException
 	 * 		If the handler has no active session or the session has not created
 	 * 		an order in the system.
+	 * @throws OrderDoesNotExistException 
+	 * 		If the order of the session is not recognized by the system
 	 */
-	public DateTime getNewOrderETA() throws IllegalStateException{
+	public DateTime getNewOrderETA() throws IllegalStateException, OrderDoesNotExistException{
 		return this.getNewOrderSessionHandler().getNewOrderETA();
 	}
 

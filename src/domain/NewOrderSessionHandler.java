@@ -5,6 +5,7 @@ import java.util.List;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
+import exceptions.OrderDoesNotExistException;
 
 /**
  * Coordinates with the outside world in order to place a new order.
@@ -228,8 +229,10 @@ public class NewOrderSessionHandler {
 	 * @throws IllegalStateException
 	 * 		If the handler has no active session or the session has not created
 	 * 		an order in the system.
+	 * @throws OrderDoesNotExistException
+	 * 		If the order of the session is not recognized in the system
 	 */
-	public DateTime getNewOrderETA() throws IllegalStateException{
+	public DateTime getNewOrderETA() throws IllegalStateException, OrderDoesNotExistException{
 		if(!this.isRunningNewOrderSession())
 			throw new IllegalStateException("No orderSession is running.");
 		return this.getCurrentOrderSession().getETA();
