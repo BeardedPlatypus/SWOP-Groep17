@@ -1,5 +1,6 @@
 package domain.restrictions;
 
+import java.util.List;
 import java.util.Set;
 
 import domain.Option;
@@ -34,7 +35,7 @@ public abstract class Restriction {
 	 * @throws IllegalArgumentException
 	 * 		if the set or one of its elements is null
 	 */
-	public boolean isLegalOptionSet(Set<Option> options) throws IllegalArgumentException{
+	public boolean isLegalOptionList(List<Option> options) throws IllegalArgumentException{
 		if(options == null)
 			throw new IllegalArgumentException("Given list of options is null.");		
 		if(options.contains(null))
@@ -55,5 +56,5 @@ public abstract class Restriction {
 	 * @return
 	 * 		whether or not given set of options matches this restriction
 	 */
-	protected abstract boolean checkRestriction(Set<Option> options);
+	protected abstract boolean checkRestriction(List<Option> options);
 }
