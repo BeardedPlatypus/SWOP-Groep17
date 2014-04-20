@@ -277,6 +277,20 @@ public class DomainFacade {
 		this.getNewOrderSessionHandler().submitOrder();
 		
 	}
+	
+	/**
+	 * When a new order has been constructed with a session, this allows the user
+	 * to query the system for the ETA of the new order.
+	 * 
+	 * @return the ETA of the order made with the current session
+	 * 
+	 * @throws IllegalStateException
+	 * 		If the handler has no active session or the session has not created
+	 * 		an order in the system.
+	 */
+	public DateTime getNewOrderETA() throws IllegalStateException{
+		return this.getNewOrderSessionHandler().getNewOrderETA();
+	}
 
 	//-------------------------------------------------------------------------
 

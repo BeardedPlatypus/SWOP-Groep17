@@ -273,10 +273,27 @@ public class OrderSession {
 		if(this.orderIsMade())
 			throw new IllegalStateException("An order has already been made from this Session.");
 		try{
-			Order generatedOrder = this.getManufacturer().submitStandardOrder(this.getModel(), new ArrayList<Option>(this.getOptions()));
+			Order generatedOrder = this.getManufacturer().
+					submitStandardOrder(this.getModel(),
+							new ArrayList<Option>(this.getOptions()));
 			this.setOrder(generatedOrder);
 		} catch (IllegalArgumentException e){
 			throw new IllegalStateException("Session is not valid (yet).");
 		}
+	}
+
+	/**
+	 * When a new order has been constructed with this session, this method allows
+	 * the user to query the system for the ETA of the new order.
+	 * 
+	 * @return the ETA of the order made with this session
+	 * 
+	 * @throws IllegalStateException
+	 * 		If the session has not created an order in the system.
+	 */
+	public DateTime getETA() {
+		if(!this.orderIsMade())
+			throw new IllegalStateException("No order has been made with this session yet!");
+		return this.getManufacturer().getEstimatedCompletionTime(this.getOrder());
 	}
 }

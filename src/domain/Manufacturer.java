@@ -1,7 +1,5 @@
 package domain;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -9,6 +7,7 @@ import domain.Order;
 import domain.restrictions.OptionRestrictionManager;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.OptionRestrictionException;
+import exceptions.OrderDoesNotExistException;
 
 //TODO everything
 
@@ -27,9 +26,6 @@ public class Manufacturer {
 		throw new UnsupportedOperationException();
 	}
 
-	public void getEstimatedCompletionTime(Object parameter) {
-		throw new UnsupportedOperationException();
-	}
 
 	public void getTaskContainersAtWorkPost(Object parameter) {
 		throw new UnsupportedOperationException();
@@ -53,6 +49,34 @@ public class Manufacturer {
 		List<OrderContainer> pending = this.getAssemblingPendingOrderContainers();
 		pending.addAll(this.getSchedulePendingOrderContainers());
 		return pending;
+	}
+	
+	
+	/**
+	 * Queries the system for estimated completion time of given order.
+	 * Checks sequentially if the order is found in the ProductionSchedule, the
+	 * AssemblyLine and the CompletedOrdersCatalog.
+	 * If the order is found, it queries the respective component for the ECT.
+	 * If the order is not present in the system, the system throws an
+	 * OrderDoesNotExistException.
+	 * 
+	 * @param order
+	 * 		The order to find in the system and return the ECT for
+	 * 
+	 * @return the ECT of given order
+	 * 
+	 * @throws OrderDoesNotExistException
+	 * 		When the order is not found in the system.
+	 */
+	//TODO Aan elkaar knopen
+	public DateTime getEstimatedCompletionTime(Order order) throws OrderDoesNotExistException{
+		if(this.getProductionSchedule().contains(order))
+			return this.getProductionSchedule().getEstimatedCompletionTime(order);
+		if(this.getAssemblyLine().contains(order))
+			return this.getAssemblyLine().getEstimatedCompletionTime(order);
+		if(this.getCompletedOrderCatalog().contains(order))
+			return this.getCompletedOrderCatalog().getCompletionTime(order);
+		throw new OrderDoesNotExistException("Order was not found in the system.");
 	}
 	
 	//--------------------------------------------------------------------------
