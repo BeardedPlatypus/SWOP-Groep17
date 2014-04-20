@@ -140,10 +140,10 @@ public class Model {
 		if(options == null)
 			throw new IllegalArgumentException("Given list of options is null.");
 		for(Option listOpt : options){
-			if(!this.containsOption(listOpt))
-				throw new IllegalArgumentException("One of the options does not match this car model.");
 			if(listOpt == null)
 				throw new IllegalArgumentException("One of given options is null.");
+			if(!this.containsOption(listOpt))
+				throw new IllegalArgumentException("One of the options does not match this car model.");
 		}
 		Specification newSpecs = new Specification(options);
 		return newSpecs;
@@ -179,7 +179,7 @@ public class Model {
 	 * @throws IllegalArgumentException
 	 * 		When either the list of options is or contains null
 	 */
-	public boolean checkOptionsValidity(List<Option> options) {
+	public boolean checkOptionsValidity(List<Option> options) throws IllegalArgumentException{
 		if(options == null)
 			throw new IllegalArgumentException("Options list should not be null.");
 		if(options.contains(null))
