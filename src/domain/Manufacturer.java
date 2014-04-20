@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import domain.Order;
+import domain.restrictions.OptionRestrictionManager;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.OptionRestrictionException;
 
@@ -133,7 +134,7 @@ public class Manufacturer {
 			throw new IllegalArgumentException("Options list should not be null.");
 		if(options.contains(null))
 			throw new IllegalArgumentException("Options list should not contain null.");
-		if(!model.checkOptionsValdity(options))
+		if(!model.checkOptionsValidity(options))
 			throw new IllegalCarOptionCombinationException("These options do not match given model.");
 		if(!this.getOptionRestrictionManager().checkValidity(model,options))
 			return false;

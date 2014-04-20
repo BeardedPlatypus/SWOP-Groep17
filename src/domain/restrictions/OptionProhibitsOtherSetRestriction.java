@@ -1,6 +1,8 @@
-package domain;
+package domain.restrictions;
 
 import java.util.Set;
+
+import domain.Option;
 
 /**
  * Restriction which has two participants, one present Option, and one set of

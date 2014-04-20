@@ -1,4 +1,4 @@
-package domain;
+package domain.restrictions;
 
 import java.util.Set;
 

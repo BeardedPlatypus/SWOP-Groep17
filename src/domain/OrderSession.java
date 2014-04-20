@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import exceptions.IllegalCarOptionCombinationException;
+import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
 
 
@@ -239,8 +240,13 @@ public class OrderSession {
 	 * 
 	 * @throws IllegalStateException
 	 * 		When no model has been set
+	 * @throws NoOptionCategoriesRemainingException 
+	 * 		When no more options are available
 	 */
-	public OptionCategory getNextOptionCategory() throws IllegalStateException{
+	public OptionCategory getNextOptionCategory()
+			throws IllegalStateException,
+			NoOptionCategoriesRemainingException
+	{
 		if(!this.modelIsChosen())
 			throw new IllegalStateException("No model has been chosen yet.");
 		return this.getModel().getNextOptionCategory(options);

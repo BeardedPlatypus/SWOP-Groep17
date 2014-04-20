@@ -2,7 +2,9 @@ package domain;
 
 import java.util.List;
 
+import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
+import exceptions.OptionRestrictionException;
 
 /**
  * Facade on all handlers, so the UI only needs one object to interface with.
@@ -229,7 +231,10 @@ public class DomainFacade {
 	 * @throws IllegalStateException
 	 * 		If there is no active OrderSession
 	 */
-	public OptionCategory getNextOptionCategory() throws NoOptionCategoriesRemainingException{
+	public OptionCategory getNextOptionCategory()
+			throws NoOptionCategoriesRemainingException,
+			IllegalStateException
+	{
 		return this.getNewOrderSessionHandler().getNextOptionCategory();
 	}
 	
@@ -256,14 +261,20 @@ public class DomainFacade {
 	 * @return the object of the new order
 	 * 
 	 * @throws IllegalStateException
-	 *		If there is no active OrderSession.
+	 *		If there is no active new order session.
 	 * @throws IllegalStateException
 	 * 		If no model has been chosen
 	 * @throws IllegalStateException
 	 * 		If there are unfulfilled OptionCategories
+	 * @throws IllegalCarOptionCombinationException 
+	 * 		When the chosen options are not valid with given model
+	 * @throws OptionRestrictionException
+	 * 		When the set of options does not meet the system's restrictions
+	 * @throws IllegalStateException
+	 * 		When the order was already submitted
 	 */
-	public OrderContainer submitOrder(){
-		return this.getNewOrderSessionHandler().submitOrder();
+	public void submitOrder() throws IllegalStateException, IllegalArgumentException, IllegalCarOptionCombinationException, OptionRestrictionException{
+		this.getNewOrderSessionHandler().submitOrder();
 		
 	}
 

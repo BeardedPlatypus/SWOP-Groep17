@@ -1,6 +1,8 @@
-package domain;
+package domain.restrictions;
 
 import java.util.Set;
+
+import domain.Option;
 
 /**
  * Restriction which requires the checked set of options to contain ONE OR MORE

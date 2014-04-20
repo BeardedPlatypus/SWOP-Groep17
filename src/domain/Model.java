@@ -6,14 +6,13 @@ import java.util.List;
 import util.annotations.Immutable;
 import domain.Option;
 import domain.OptionCategory;
+import exceptions.NoOptionCategoriesRemainingException;
 
 /**
  * A model class is a class representing a car model. Has a set of OptionCategories
  * with possible Options chosen when a car of this model is ordered.
  * 
  * When an order is to be placed, options from the categories are stored in a specification.
- * 
- * This class is instantiated by the ModelCatalog and instantiates Specification objects.
  * 
  * @author Frederik Goovaerts
  */
@@ -23,12 +22,13 @@ public class Model {
 	// Constructor
 	//-------------------------------------------------------------------------
 	/**  
-	 * Instantiate a new Model with the specified name and OptionCategories. 
+	 * Instantiate a new Model with the specified name, OptionCategories and
+	 * estimated time spent per workpost. 
 	 * 
 	 * @param modelName
 	 * 		Name this model receives
 	 * @param optionCategories
-	 * 		Arraylist containing all the optionCategories this model should offer
+	 * 		List containing all the optionCategories this model should offer
 	 * @param minsPerWorkPost
 	 * 		The amount of minutes that cars of this model are expected to spend
 	 * 		on each WorkPost
@@ -45,6 +45,7 @@ public class Model {
 	//--------------------------------------------------------------------------
 	// Properties
 	//--------------------------------------------------------------------------
+	
 	/**
 	 * Get the name of this Model.
 	 * 
@@ -54,8 +55,11 @@ public class Model {
 		return this.modelName;
 	}
 	
-	/** The name of this Model. Eg. "Ford Focus". */
+	/** The name of this Model */
 	private final String modelName;
+	
+	//--------------------------------------------------------------------------
+	// OptionCategory methods
 	
 	/**
 	 * Get the amount of OptionCategories that can be used when placing an order with
@@ -93,7 +97,7 @@ public class Model {
 	}
 	
 	/** The OptionCategories of this Model. */
-	private  final List<OptionCategory> optionCategories;
+	private final List<OptionCategory> optionCategories;
 	
 	/**
 	 * Check whether or not this model contains given options in one of its
@@ -106,7 +110,7 @@ public class Model {
 	 * @throws IllegalArgumentException
 	 * 		If given option is null
 	 */
-	public boolean containsOption(Option option) throws IllegalArgumentException{
+	private boolean containsOption(Option option) throws IllegalArgumentException{
 		if(option == null)
 			throw new IllegalArgumentException("Option can not be null!");
 		for(OptionCategory cat : getOptionCategories()){
@@ -116,10 +120,10 @@ public class Model {
 		}
 		return false;
 	}
+
+	//--------------------------------------------------------------------------
 	
-	//--------------------------------------------------------------------------
-	// Specifications
-	//--------------------------------------------------------------------------
+
 	/**
 	 * Take a list of options and make a specification containing said options
 	 * 
@@ -158,22 +162,128 @@ public class Model {
 	public int getMinsPerWorkPost() {
 		return this.minsPerWorkPost;
 	}
+	
+	//--------------------------------------------------------------------------
+	// Class Methods
+	//--------------------------------------------------------------------------
 
+	/**
+	 * Check whether all options in the list are contained in one of the model's
+	 * optionCategories, and no two of them come from the same optionCategory.
+	 * 
+	 * @param options
+	 * 		The list of options to check
+	 * 
+	 * @return whether or not the list of options matches these criteria
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		When either the list of options is or contains null
+	 */
+	public boolean checkOptionsValidity(List<Option> options) {
+		if(options == null)
+			throw new IllegalArgumentException("Options list should not be null.");
+		if(options.contains(null))
+			throw new IllegalArgumentException("Options list should not contain null.");
+		return this.checkContains(options) && this.checkNoDuplicates(options);
+	}
 
-	public boolean checkOptionsValdity(List<Option> options) {
-		// TODO Auto-generated method stub
-		
+	/**
+	 * Check to see if all given options are contained is this model.
+	 * 
+	 * @pre options is not or does not contain null
+	 * 
+	 * @param options
+	 * 		The options to check.
+	 * 
+	 * @return whether or not all given options are contained is this model
+	 */
+	private boolean checkContains(List<Option> options) {
+		for(Option opt: options){
+			if(!this.containsOption(opt))
+				return false;
+		}
+		return true;
 	}
 
 
-	public OptionCategory getNextOptionCategory(ArrayList<Option> options) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * Check to see if there are two or more options in given list, stemming from
+	 * the same optionCategory
+	 * 
+	 * @pre options is not or does not contain null
+	 * 
+	 * @param options
+	 * 		The list of options to check
+	 * 
+	 * @return whether or not there are two or more options from the same category.
+	 * 		Returns false if there are, true otherwise.
+	 */
+	private boolean checkNoDuplicates(List<Option> options) {
+		for(OptionCategory cat: getOptionCategories()){
+			boolean foundOne = false;
+			for(Option opt: options){
+				if(cat.containsOption(opt)){
+					if(foundOne){
+						return false;
+					} else{
+						foundOne = true;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Get the next unfilled optionCategory of this model. Unfilled is based on
+	 * given list of options, meaning the returned optionsCategory does not contain
+	 * any of given options
+	 * 
+	 * @param options
+	 * 		options to treat as already chosen
+	 * 
+	 * @return an optionCategory of the model which does not contain any of
+	 * 		given options
+	 * 
+	 * @throws NoOptionCategoriesRemainingException
+	 * 		When no unfilled optionCategories remain
+	 */
+	public OptionCategory getNextOptionCategory(ArrayList<Option> options)
+			throws NoOptionCategoriesRemainingException
+	{
+		for(OptionCategory cat : this.getOptionCategories()){
+			boolean containsNone = true;
+			for(Option opt : options){
+				if(cat.containsOption(opt))
+					containsNone = false;
+			}
+			if(containsNone)
+				return cat;
+		}
+		throw new NoOptionCategoriesRemainingException("No unfilled optionCategories remaining.");
 	}
 
 
+	/**
+	 * Check, based on given options, if there are optionCategories in the model
+	 * which do not contain any of given options.
+	 * 
+	 * @param options
+	 * 		The options to treat as already chosen
+	 * 
+	 * @return whether there are optionCategories in the system which do not
+	 * 		contain any of given options
+	 */
 	public boolean hasUnfilledOptions(List<Option> options) {
-		// TODO Auto-generated method stub
+		for(OptionCategory cat : this.getOptionCategories()){
+			boolean isUnfilled = true;
+			for(Option opt : options){
+				if(cat.containsOption(opt))
+					isUnfilled = false;
+			}
+			if(isUnfilled)
+				return true;
+		}
 		return false;
 	}
 }

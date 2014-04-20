@@ -1,7 +1,10 @@
-package domain;
+package domain.restrictions;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import domain.Model;
+import domain.Option;
 
 //TODO new in iteration 2.
 public class OptionRestrictionManager {

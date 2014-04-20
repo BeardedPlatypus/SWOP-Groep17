@@ -157,7 +157,10 @@ public class NewOrderSessionHandler {
 	 * @throws NoOptionCategoriesRemainingException
 	 * 		When no optionCategories are unfilled anymore
 	 */
-	public OptionCategory getNextOptionCategory() throws IllegalStateException {
+	public OptionCategory getNextOptionCategory()
+			throws IllegalStateException,
+			NoOptionCategoriesRemainingException
+	{
 		if(!isRunningNewOrderSession())
 			throw new IllegalStateException("No active order session.");
 		return getCurrentOrderSession().getNextOptionCategory();
