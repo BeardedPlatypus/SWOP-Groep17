@@ -1,16 +1,18 @@
 package domain;
 
+import java.util.List;
+
 //TODO: new in iteration 2
 public class ProductionScheduleFacade {
 	//If necessary
 	//private TimeManager timeLord;
 	private Manufacturer manufacturer;
 
-	public void getPendingOrdersContainers() {
+	public List<OrderContainer> getPendingOrdersContainers() {
 		throw new UnsupportedOperationException();
 	}
 
-	public void submitStandardOrder(Model model, Option options) {
+	public Order submitStandardOrder(Model model, Specification orderSpecs) {
 		throw new UnsupportedOperationException();
 	}
 

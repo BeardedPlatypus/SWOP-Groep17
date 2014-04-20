@@ -173,7 +173,8 @@ public class Manufacturer {
 			throw new IllegalArgumentException("Options list should not contain null.");
 		if(!checkOrderValidity(model, options))
 			throw new OptionRestrictionException("Options do not meet Restriction criteria.");
-		return this.getProductionSchedule().submitStandardOrder(model, options);
+		Specification orderSpecs = model.makeSpecification(options);
+		return this.getProductionSchedule().submitStandardOrder(model, orderSpecs);
 	}
 	
 
