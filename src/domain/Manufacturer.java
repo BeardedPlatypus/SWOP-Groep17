@@ -19,9 +19,64 @@ import exceptions.OrderDoesNotExistException;
  * @author Martinus Wilhelmus Tegelaers, Frederik Goovaerts
  */
 public class Manufacturer {
-	private AlgorithmStrategyFactory algorithmStrategyFactory;
-	private SingleTaskCatalog singleTaskCatalog;
-
+	
+	//--------------------------------------------------------------------------
+	// Constructor
+	//--------------------------------------------------------------------------
+	/**
+	 * Create a new manufacturer object with all given parameters as subsystems
+	 * to interface with.
+	 * 
+	 * @param stratFact
+	 * 		The {@link AlgorithmStrategyFactory} for the new {@link Manufacturer}
+	 * @param singleCat
+	 * 		The {@link SingleTaskCatalog} for the new {@link Manufacturer}
+	 * @param completedCat
+	 * 		The {@link CompletedOrderCatalog} for the new {@link Manufacturer}
+	 * @param modelCat
+	 * 		The {@link ModelCatalog} for the new {@link Manufacturer}
+	 * @param optionRestMan
+	 * 		The {@link OptionRestrictionManager} for the new {@link Manufacturer}
+	 * @param assemblyLine
+	 * 		The {@link AssemblyLine} for the new {@link Manufacturer}
+	 * @param prodSched
+	 * 		The {@link ProductionScheduleFacade} for the new {@link Manufacturer}
+	 * @throws IllegalArgumentException
+	 * 		If any of the parameters is null
+	 */
+	public Manufacturer(AlgorithmStrategyFactory stratFact,
+						SingleTaskCatalog singleCat,
+						CompletedOrderCatalog completedCat,
+						ModelCatalog modelCat,
+						OptionRestrictionManager optionRestMan,
+						AssemblyLine assemblyLine,
+						ProductionScheduleFacade prodSched)
+						throws IllegalArgumentException
+	{
+		if(stratFact == null)
+			throw new IllegalArgumentException("AlgorithmStrategyFactory should not be null.");
+		if(singleCat == null)
+			throw new IllegalArgumentException("SingleTaskCatalog should not be null.");
+		if(completedCat == null)
+			throw new IllegalArgumentException("CompletedOrderCatalog should not be null.");
+		if(modelCat == null)
+			throw new IllegalArgumentException("ModelCatalog should not be null.");
+		if(optionRestMan == null)
+			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+		if(assemblyLine == null)
+			throw new IllegalArgumentException("AssemblyLine should not be null.");
+		if(prodSched == null)
+			throw new IllegalArgumentException("ProductionScheduleFacade should not be null.");
+		this.algorithmStrategyFactory = stratFact;
+		this.singleTaskCatalog = singleCat;
+		this.completedOrderCatalog = completedCat;
+		this.modelCatalog = modelCat;
+		this.optionRestrictionManager = optionRestMan;
+		this.assemblyLine = assemblyLine;
+		this.productionScheduleFacade = prodSched;
+	}
+	
+	
 	public void submitSingleTaskOrder(Option option, DateTime deadline) {
 		throw new UnsupportedOperationException();
 	}
@@ -34,6 +89,9 @@ public class Manufacturer {
 	public void completeTask(Object parameter, Object parameter2, Object parameter3) {
 		throw new UnsupportedOperationException();
 	}
+	
+	private final AlgorithmStrategyFactory algorithmStrategyFactory;
+	private final SingleTaskCatalog singleTaskCatalog;
 	
 	//--------------------------------------------------------------------------
 	// Methods concerning multiple subsystems
@@ -124,7 +182,7 @@ public class Manufacturer {
 	}
 	
 	/** The restrictionManager this manufacturer keeps, to check given restriction on new orders */
-	private OptionRestrictionManager optionRestrictionManager;
+	private final OptionRestrictionManager optionRestrictionManager;
 
 	/**
 	 * Check whether or not the given model and list of options would make a valid
