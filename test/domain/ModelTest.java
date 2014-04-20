@@ -11,6 +11,9 @@ import org.junit.rules.ExpectedException;
 
 import exceptions.NoOptionCategoriesRemainingException;
 
+/**
+ * @author Frederik Goovaerts
+ */
 public class ModelTest {
 	@Rule public ExpectedException exception = ExpectedException.none();
 	
