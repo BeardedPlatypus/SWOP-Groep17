@@ -2,6 +2,8 @@ package domain;
 
 import java.util.List;
 
+import exceptions.OrderDoesNotExistException;
+
 /**
  * Coordinates with the outside world in order to place a new single task order.
  * 
@@ -127,9 +129,12 @@ public class OrderSingleTaskHandler {
 	 * 
 	 * @param 	order
 	 * 			The order of which to poll the estimated completion time.
+	 * @return	The estimated completion time for the given order.
+	 * @throws  OrderDoesNotExistException 
+	 * 			If the order does not exist.
 	 */
-	public void getEstimatedCompletionTime(Order order) {
-		getManufacturer().getEstimatedCompletionTime(order);
+	public DateTime getEstimatedCompletionTime(OrderContainer order) throws  OrderDoesNotExistException {
+		return getManufacturer().getEstimatedCompletionTime((Order) order);
 	}
 	
 	/**

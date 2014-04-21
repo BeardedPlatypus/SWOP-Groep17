@@ -11,6 +11,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import exceptions.OrderDoesNotExistException;
 /**
  * @author Simon Slangen
  *
@@ -19,6 +21,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class OrderSingleTaskHandlerTest {
 	@Mock Manufacturer mockManufacturer;
 	@Mock OrderContainer orderContainer;
+	@Mock SingleOrderSession singleOrderSession;
+	DateTime dateTime1;
 	
 	OrderSingleTaskHandler sessionHandler1;
 	
@@ -35,17 +39,24 @@ public class OrderSingleTaskHandlerTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
+		Mockito.when(this.mockManufacturer.startNewSingleTaskOrderSession()).thenReturn(singleOrderSession);
 		
-		this.sessionHandler1 = new NewOrderSessionHandler(this.mockManufacturer);
+		dateTime1 = new DateTime(1,2,3);
+		Mockito.when(mockManufacturer.getEstimatedCompletionTime((Order) orderContainer)).thenReturn(dateTime1);
+		
+		this.sessionHandler1 = new OrderSingleTaskHandler(this.mockManufacturer);
 	}
-
+	
 	@Test
-	public void test_getPendingOrder() {
-		List<OrderContainer> array = new ArrayList<OrderContainer>();
-		array.add(this.orderContainer);
-		Mockito.when(this.mockManufacturer.getIncompleteOrderContainers()).thenReturn(array);
-		
-		assertEquals(array, this.sessionHandler1.getIncompleteOrders());
-		Mockito.verify(this.mockManufacturer).getIncompleteOrderContainers();
+	public void test_startOrderSession() {
+		OrderSingleTaskHandler sessionHandler2 = new OrderSingleTaskHandler(this.mockManufacturer);
+		assertFalse(sessionHandler2.isRunningOrderSession());
+		sessionHandler2.startNewOrderSession();
+		assertTrue(sessionHandler2.isRunningOrderSession());
+	}
+	
+	@Test
+	public void test_getEstimatedCompletionTime() throws OrderDoesNotExistException {
+		assertEquals(sessionHandler1.getEstimatedCompletionTime(orderContainer),dateTime1);
 	}
 }

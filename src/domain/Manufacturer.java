@@ -152,6 +152,15 @@ public class Manufacturer {
 	}
 	
 	/**
+	 * Create and return a new single task order session.
+	 * 
+	 * @return	the new single task order session
+	 */
+	public SingleOrderSession startNewSingleTaskOrderSession() {
+		return new SingleOrderSession(this, this.singleTaskCatalog);
+	}
+	
+	/**
 	 * Get the modelCatalog for internal use
 	 * 
 	 * @return the modelCatalog of this class
