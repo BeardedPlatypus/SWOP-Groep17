@@ -16,6 +16,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import domain.order.OrderContainer;
+
 @RunWith(PowerMockRunner.class)
 public class ProductionScheduleTest {
 	//--------------------------------------------------------------------------

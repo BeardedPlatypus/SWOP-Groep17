@@ -14,7 +14,7 @@ import java.util.Comparator;
  */
 public class BatchComparator implements Comparator<Order> {
 
-	/** Initialises the new BatchComparator with the specified
+	/** Initialise the new BatchComparator with the specified
 	 *  Specification.
 	 *  
 	 *  @param spec

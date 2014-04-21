@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import domain.WorkPost;
+import domain.order.OrderContainer;
 
 /**
  * A class depicting an AssemblyLine in the system. An AssemblyLine is composed 

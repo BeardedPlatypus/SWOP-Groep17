@@ -14,10 +14,10 @@ import domain.InitialisationHandler;
 import domain.Model;
 import domain.NewOrderSessionHandler;
 import domain.Option;
-import domain.OrderContainer;
 import domain.PerformAssemblyTaskHandler;
 import domain.Specification;
 import domain.WorkPostContainer;
+import domain.order.OrderContainer;
 
 public class UI {
 	private final AdvanceAssemblyLineHandler advanceHandler;

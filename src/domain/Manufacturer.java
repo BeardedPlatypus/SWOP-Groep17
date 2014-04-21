@@ -3,11 +3,12 @@ package domain;
 import java.util.Comparator;
 import java.util.List;
 
-import domain.Order;
 import domain.restrictions.OptionRestrictionManager;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
+import domain.order.OrderContainer;
+import domain.productionSchedule.ProductionScheduleFacade;
 
 //TODO everything
 
@@ -127,6 +128,7 @@ public class Manufacturer {
 	 * 		When the order is not found in the system.
 	 */
 	//TODO Aan elkaar knopen
+	//FIXME FIX EVERYTHING
 	public DateTime getEstimatedCompletionTime(OrderContainer order) throws OrderDoesNotExistException{
 		if(this.getProductionSchedule().contains(order))
 			return this.getProductionSchedule().getEstimatedCompletionTime(order);
@@ -455,6 +457,4 @@ public class Manufacturer {
 	public String getStatisticsReport() {
 		return this.getAssemblyLine().getStatisticsReport();
 	}
-
-
 }

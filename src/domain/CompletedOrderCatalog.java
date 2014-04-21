@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import domain.Order;
+import domain.order.OrderContainer;
 
 //TODO new in iteration 2
 public class CompletedOrderCatalog {
