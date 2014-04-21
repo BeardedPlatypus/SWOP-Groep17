@@ -47,6 +47,7 @@ public class OrderSingleTaskHandlerTest {
 		dateTime1 = new DateTime(1,2,3);
 		
 		this.sessionHandler1 = new OrderSingleTaskHandler(this.mockManufacturer);
+		sessionHandler1.startNewOrderSession();
 	}
 	
 	@Test
@@ -81,9 +82,9 @@ public class OrderSingleTaskHandlerTest {
 	
 	@Test
 	public void test_getEstimatedCompletionTime() throws OrderDoesNotExistException {
-		Mockito.when(mockManufacturer.getEstimatedCompletionTime((Order) orderContainer)).thenReturn(dateTime1);
+		Mockito.when(mockManufacturer.getEstimatedCompletionTime(order)).thenReturn(dateTime1);
 		
-		assertEquals(sessionHandler1.getEstimatedCompletionTime(orderContainer),dateTime1);
+		assertEquals(sessionHandler1.getEstimatedCompletionTime(order),dateTime1);
 	}
 	
 	@Test
