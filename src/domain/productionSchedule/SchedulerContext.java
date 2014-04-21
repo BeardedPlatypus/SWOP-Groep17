@@ -9,8 +9,8 @@ import java.util.List;
 
 import domain.DateTime;
 import domain.Order;
-import domain.OrderContainer;
 import domain.SingleTaskCatalog;
+import domain.order.OrderContainer;
 
 /**
  * The SchedulerContext handles the scheduling of all orders of this system.
