@@ -7,17 +7,15 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import domain.DateTime;
 import domain.Model;
 import domain.Specification;
 
-public class StandardOrderTest {
+public class SingleTaskOrderTest {
 	//--------------------------------------------------------------------------
 	// Test variables.
 	//--------------------------------------------------------------------------
@@ -36,9 +34,13 @@ public class StandardOrderTest {
 	@Mock DateTime submission2;
 	@Mock DateTime submission3;
 	
-	StandardOrder order1;
-	StandardOrder order2;
-	StandardOrder order3;
+	@Mock DateTime deadline1;
+	@Mock DateTime deadline2;
+	@Mock DateTime deadline3;
+	
+	SingleTaskOrder order1;
+	SingleTaskOrder order2;
+	SingleTaskOrder order3;
 	
 	//--------------------------------------------------------------------------
 	// Setup Test
@@ -51,9 +53,9 @@ public class StandardOrderTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 	
-		order1 = new StandardOrder(mockSuperModel2, spectacles2, 0, submission1);
-		order2 = new StandardOrder(mockSuperModel2, spectacles2, 0, submission1);
-		order3 = new StandardOrder(mockSuperModel2, spectacles2, 1, submission1);
+		order1 = new SingleTaskOrder(mockSuperModel2, spectacles2, 0, submission1, deadline1);
+		order2 = new SingleTaskOrder(mockSuperModel2, spectacles2, 0, submission1, deadline2);
+		order3 = new SingleTaskOrder(mockSuperModel2, spectacles2, 1, submission1, deadline3);
 	}
 
 	//--------------------------------------------------------------------------
@@ -62,31 +64,38 @@ public class StandardOrderTest {
 	@Test 
 	public void test_constructorNullPointerExceptionModel() {
 		exception.expect(NullPointerException.class);
-		Order test = new StandardOrder(null, spectacles, 0, submission1);
+		Order test = new SingleTaskOrder(null, spectacles, 0, submission1, deadline1);
 	}
 	
 	@Test
 	public void test_constructorNullPointerExceptionSpecs() {
 		exception.expect(NullPointerException.class);
-		Order test = new StandardOrder(mockSuperModel, null, 0, submission1);
+		Order test = new SingleTaskOrder(mockSuperModel, null, 0, submission1, deadline1);
 	}
 
 	@Test
 	public void test_constructorNullPointerExceptionSubmissiontime() {
 		exception.expect(NullPointerException.class);
-		Order test = new StandardOrder(mockSuperModel, spectacles, 0, null);
+		Order test = new SingleTaskOrder(mockSuperModel, spectacles, 0, null, deadline1);
+	}
+	
+	@Test
+	public void test_constructorNullPointerExceptionDeadline() {
+		exception.expect(NullPointerException.class);
+		Order test = new SingleTaskOrder(mockSuperModel, spectacles, 0, submission1, null);
 	}
 	
 	@Test
 	public void test_constructorValidInput() {
 		
-		StandardOrder test = new StandardOrder(mockSuperModel, spectacles, 0, submission1);
+		SingleTaskOrder test = new SingleTaskOrder(mockSuperModel, spectacles, 0, submission1, deadline1);
 		
 		assertEquals(false, test.isCompleted());
 		assertEquals(mockSuperModel, test.getModel());
 		assertEquals(spectacles, test.getSpecifications());
 		assertEquals(0, test.getOrderNumber());
 		assertEquals(submission1, test.getSubmissionTime());
+		assertEquals(deadline1, test.getDeadline());
 	}
 	
 	
@@ -95,7 +104,7 @@ public class StandardOrderTest {
 	//--------------------------------------------------------------------------
 	@Test
 	public void test_setAsCompletedIfCompleted() {
-		StandardOrder spiedOrder = Mockito.spy(order1);
+		SingleTaskOrder spiedOrder = Mockito.spy(order1);
 		
 		Mockito.when(submission1.getDays()).thenReturn(0);
 		Mockito.when(submission1.getHours()).thenReturn(0);
