@@ -303,7 +303,6 @@ public class CheckOrderDetailsHandler {
 			throw new IllegalStateException("No order has been set!");
 		if(currentOrderIsComplete())
 			throw new IllegalStateException("The order already completed!");
-		//TODO CASTING, DANGIT
-		return this.getManufacturer().getEstimatedCompletionTime((Order) this.getCurrentObservedOrder());
+		return this.getManufacturer().getEstimatedCompletionTime(this.getCurrentObservedOrder());
 	}
 }
