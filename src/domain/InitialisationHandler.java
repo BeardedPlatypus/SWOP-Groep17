@@ -22,6 +22,10 @@ public class InitialisationHandler {
 		domainFacade = new DomainFacade();
 	}
 	
+	public OrderSingleTaskHandler getNewOrderSingleTaskHandler() {
+		throw new UnsupportedOperationException();
+	}
+	
 	/** 
 	 * Get the DomainFacade of the system initialised 
 	 * by this InitialisationHandler.
