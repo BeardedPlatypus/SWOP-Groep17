@@ -20,6 +20,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import domain.order.OrderContainer;
+
 @RunWith(PowerMockRunner.class)
 public class AssemblyLineTest {
 	
