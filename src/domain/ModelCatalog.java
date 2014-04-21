@@ -14,19 +14,44 @@ import domain.Model;
  */
 @Immutable
 public class ModelCatalog {
+	//--------------------------------------------------------------------------
+	// Constructor
+	//--------------------------------------------------------------------------
 	/**
 	 * Create a new modelCatalog with given list of models as models of the catalog.
+	 * 
+	 * @param normalOrderSessionModels
+	 * 		The list of models for normal orer sessions
+	 * @param singleTaskModel
+	 * 		The model to use for singleTaskOrders
 	 * 
 	 * @throws IllegalArgumentException
 	 * 		If either the list of models or one of its elements is null
 	 */
-	public ModelCatalog(List<Model> inputModels) throws IllegalArgumentException{
-		if(inputModels == null)
+	public ModelCatalog(List<Model> normalOrderSessionModels, Model singleTaskModel)
+			throws IllegalArgumentException{
+		if(normalOrderSessionModels == null)
 			throw new IllegalArgumentException("List of system models should not be null");
-		if(inputModels.contains(null))
+		if(normalOrderSessionModels.contains(null))
 			throw new IllegalArgumentException("List of system models should not contain null");
-		models = new ArrayList<>(inputModels);
+		models = new ArrayList<>(normalOrderSessionModels);
+		this.singleTaskDefaultModel = singleTaskModel;
 	}	
+	
+	//--------------------------------------------------------------------------
+	// Properties
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * Get the singleTaskModel for use in the single task orders.
+	 * 
+	 * @return the singleTaskModel
+	 */
+	public Model getSingleTaskModel(){
+		return this.singleTaskDefaultModel;
+	}
+	
+	private final Model singleTaskDefaultModel;
 	
 	/**
 	 * Get a list of all available Models in this ModelCatalog.
