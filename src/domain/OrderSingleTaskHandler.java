@@ -17,7 +17,7 @@ public class OrderSingleTaskHandler {
 	 * 
 	 * @param manufacturer
 	 */
-	public OrderSingleTaskHandler(Manufacturer manufacturer, SingleOrderSession currentOrderSession){
+	public OrderSingleTaskHandler(Manufacturer manufacturer){
 		this.manufacturer = manufacturer;
 	}
 
