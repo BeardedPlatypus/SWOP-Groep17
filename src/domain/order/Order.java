@@ -1,17 +1,22 @@
-package domain;
+package domain.order;
 
-import domain.order.OrderContainer;
+import domain.DateTime;
+import domain.Model;
+import domain.Specification;
 
-/**
- * Order class of the Assembly Line software system.
+
+/** 
+ * The Order provides an interface for orders within the Domain. It implements 
+ * the OrderContainer interface for passing to the outside system. 
+ * 
  * It provides a mostly immutable set of properties of an order, the model,
  * specification, and initialisation are immutable and set at creation.
  * An Order is created as !isCompleted, and can only be set to completed once.
  * The estimatedCompletionTime can be updated as time progresses.
  * 
  * Order objects are created by the ProductionScheduler, which keeps track of
- * them until they are placed on the AssemblyLine.
- * Once completed, they are placed in the completedOrderSet of the Manufacturer.
+ * them. They are converted to AssemblyProcedures before being placed on an
+ * AssemblyLine.
  * 
  * @author Martinus Wilhelmus Tegelaers
  * 
@@ -21,7 +26,7 @@ import domain.order.OrderContainer;
  * @invariant order.getEstimatedCompletionTime() != null
  * @invariant order.getModel().isValidSpecification(order.getSpecifications())
  */
-public class Order implements OrderContainer {
+public abstract class Order implements OrderContainer {
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -50,7 +55,7 @@ public class Order implements OrderContainer {
 	 * @throws NullPointerException
 	 * 		| model == null || specifications == null || initTime == null 
 	 */
-	public Order(Model model, Specification specification, int orderNumber, DateTime submissionTime) 
+	protected Order(Model model, Specification specification, int orderNumber, DateTime submissionTime) 
 													   throws NullPointerException{
 		if (model == null )
 			throw new NullPointerException("Model is null.");
@@ -65,11 +70,11 @@ public class Order implements OrderContainer {
 		this.submissionTime = submissionTime;
 		
 		this.setIsComplete(false);
-	}	
+	}
 	
-	//------------------------------------------------------------------------
-	// Properties
-	//------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
+	// completion of the Order. 
+	//--------------------------------------------------------------------------
 	@Override
 	public boolean isCompleted() {
 		return this.completed;
@@ -111,45 +116,7 @@ public class Order implements OrderContainer {
 	/** If this order has been completed. */
 	private boolean completed;
 
-	//--------------------------------------------------------------------------
-	@Override
-	public Model getModel() {
-		return this.model;
-	}
-
-	/** The model of this Order. */
-	public final Model model;
-	
-	/**
-	 * Get the amount of minutes that the ordered car is expected to spend
-	 * at each work post.
-	 * 
-	 * @return The amount of minutes
-	 */
-	public int getMinutesPerPost() {
-		return this.getModel().getMinsPerWorkPost();
-	}
-
-	//--------------------------------------------------------------------------
-	@Override
-	public Specification getSpecifications() {
-		return this.specifications;
-	}
-	
-	/** The specifications of this Order. */
-	public final Specification specifications;
-
-	//--------------------------------------------------------------------------
-
-	@Override
-	public DateTime getSubmissionTime() {
-		return this.submissionTime;
-	}
-	
-	/** The DateTime at which this order was submitted. */
-	private final DateTime submissionTime;
-	
-	//--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------	
 	@Override
 	public DateTime getCompletionTime() throws IllegalStateException {
 		if (!this.isCompleted()) {
@@ -186,7 +153,31 @@ public class Order implements OrderContainer {
 	
 	/** The time at which this Order was completed. */
 	private DateTime completionTime = null;	
+
+	//--------------------------------------------------------------------------
+	// SubmissionTime
+	//--------------------------------------------------------------------------
+	@Override
+	public DateTime getSubmissionTime() {
+		return this.submissionTime;
+	}
 	
+	/** The DateTime at which this order was submitted. */
+	private final DateTime submissionTime;
+
+	//--------------------------------------------------------------------------
+	// Specifications
+	//--------------------------------------------------------------------------
+	@Override
+	public Specification getSpecifications() {
+		return this.specifications;
+	}
+	
+	/** The specifications of this Order. */
+	public final Specification specifications;
+
+	//--------------------------------------------------------------------------
+	// OrderNumber
 	//--------------------------------------------------------------------------
 	@Override
 	public int getOrderNumber() {
@@ -195,6 +186,27 @@ public class Order implements OrderContainer {
 
 	/** The order number of this Order. */
 	public final int orderNumber;
+
+	//--------------------------------------------------------------------------
+	// Model
+	//--------------------------------------------------------------------------
+	@Override
+	public Model getModel() {
+		return this.model;
+	}
+
+	/** The model of this Order. */
+	public final Model model;
+	
+	/**
+	 * Get the amount of minutes that the ordered car is expected to spend
+	 * at each work post.
+	 * 
+	 * @return The amount of minutes
+	 */
+	public int getMinutesPerPost() {
+		return this.getModel().getMinsPerWorkPost();
+	}
 	
 	//--------------------------------------------------------------------------
 	//class methods
