@@ -77,7 +77,7 @@ public class Manufacturer {
 	}
 	
 	
-	public void submitSingleTaskOrder(Option option, DateTime deadline) {
+	public Order submitSingleTaskOrder(Option option, DateTime deadline) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -149,6 +149,15 @@ public class Manufacturer {
 	 */
 	public OrderSession getNewOrderSession() {
 		return new OrderSession(this);
+	}
+	
+	/**
+	 * Create and return a new single task order session.
+	 * 
+	 * @return	the new single task order session
+	 */
+	public SingleOrderSession startNewSingleTaskOrderSession() {
+		return new SingleOrderSession(this, this.singleTaskCatalog);
 	}
 	
 	/**
