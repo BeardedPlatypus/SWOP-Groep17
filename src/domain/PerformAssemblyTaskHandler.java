@@ -34,7 +34,7 @@ public class PerformAssemblyTaskHandler {
 	 * 
 	 * @return The Manufacturer of this PerformAssemblyTaskHandler.
 	 */
-	Manufacturer getManufacturer() {
+	private Manufacturer getManufacturer() {
 		return this.manufacturer;
 	}
 	
@@ -48,7 +48,7 @@ public class PerformAssemblyTaskHandler {
 	 * @return the WorkPostContainers of the ASsemblyLine's WorkPosts
 	 */
 	public List<WorkPostContainer> getWorkPosts() {
-		throw new UnsupportedOperationException();
+		return this.getManufacturer().getWorkPostContainers();
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class PerformAssemblyTaskHandler {
 	 * 		workPostNumber refers to a work post that does not exist.
 	 */
 	public List<AssemblyTaskContainer> getAssemblyTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
-		throw new UnsupportedOperationException();
+		return this.getManufacturer().getAssemblyTasksAtPost(workPostNumber);
 	}
 
 	/**
@@ -73,6 +73,8 @@ public class PerformAssemblyTaskHandler {
 	 * 		The number of the work post.
 	 * @param taskNumber
 	 * 		The number of the task.
+	 * @param minutes
+	 * 		The amount of minutes it took to complete the task.
 	 * 
 	 * @throws IllegalArgumentException
 	 * 		workPostNumber refers to a work post that does not exist.
@@ -82,7 +84,7 @@ public class PerformAssemblyTaskHandler {
 	 * 		taskNumber refers to a task with a type incompatible with the given
 	 * 		work post.
 	 */
-	public void completeWorkpostTask(int workPostNumber, int taskNumber) throws IllegalArgumentException {
-		throw new UnsupportedOperationException();
+	public void completeWorkpostTask(int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException {
+		this.getManufacturer().completeWorkpostTask(workPostNumber, taskNumber, minutes);
 	}
 }
