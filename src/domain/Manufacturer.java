@@ -77,7 +77,7 @@ public class Manufacturer {
 	}
 	
 	
-	public void submitSingleTaskOrder(Option option, DateTime deadline) {
+	public Order submitSingleTaskOrder(Option option, DateTime deadline) {
 		throw new UnsupportedOperationException();
 	}
 
