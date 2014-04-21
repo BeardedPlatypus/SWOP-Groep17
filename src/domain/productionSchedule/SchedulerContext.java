@@ -1,11 +1,26 @@
 package domain.productionSchedule;
 
+import Model;
+import Specification;
+
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import domain.DateTime;
 import domain.Order;
+import domain.OrderContainer;
+import domain.SingleTaskCatalog;
 
+/**
+ * The SchedulerContext handles the scheduling of all orders of this system.
+ * It provides methods for getting new AssemblyProcedures, ordering the orders, 
+ * checking if orders can be scheduled. 
+ * It is also responsible for keeping track of and minimising overtime. 
+ * 
+ * @author Martinus Wilhelmus Tegelaers
+ *
+ */
 public class SchedulerContext implements TimeObserver {
 	//--------------------------------------------------------------------------
 	// Constructor
@@ -31,6 +46,50 @@ public class SchedulerContext implements TimeObserver {
 	//--------------------------------------------------------------------------
 	// Strategy-related methods
 	//--------------------------------------------------------------------------
+	/**
+	 * Get the current scheduling strategy of this SchedulerContext. 
+	 * 
+	 * @return the current scheduling strategy of this SchedulerContext.
+	 */
+	public Comparator<Order> getSchedulingStrategy() {
+		throw new UnsupportedOperationException();
+	}
+	
+	/** 
+	 * Set the current scheduling strategy of this SchedulerContext to the specified 
+	 * SchedulingStrategy.
+	 * 
+	 * @param newStrategy 
+	 * 		The new stratgey of this SchedulerContext;
+	 * 
+	 * @postcondition | (new this).getSchedulingStrategy() == newStrategy
+	 */
+	public void setSchedulingStrategy(Comparator<Order> newStrategy) {
+		throw new UnsupportedOperationException();
+	}
+	
+	/** The current strategy of this SchedulerContext. */
+	private Comparator<Order> currentStrategy;
+	
+	//--------------------------------------------------------------------------
+	
+	/** 
+	 * Get the next OrderContainer that will be scheduled by this SchedulerContext.
+	 * 
+	 * @return The next OrderContainer that will be scheduled by this SchedulerContext.
+	 */
+	public OrderContainer getNextScheduledOrderContainer() {
+		return this.getNextScheduledOrder();
+	}
+	
+	/**
+	 * Get the next Order that will be scheduled by this SchedulerContext.
+	 * 
+	 * @return The next Order that will be scheduled by this SchedulerContext.
+	 */
+	public Order getNextScheduledOrder() {
+		return this.orderQueue.get(0);
+	}
 	
 	/** The order queue of this SchedulerContext */
 	private final List<Order> orderQueue = new ArrayList<>();
@@ -38,9 +97,134 @@ public class SchedulerContext implements TimeObserver {
 	//--------------------------------------------------------------------------
 	// Scheduling related methods.
 	//--------------------------------------------------------------------------
-	public boolean canScheduleToday() {
+	/**
+	 * Check if it is still possible to schedule an Order today.
+	 * @param timePerAdvance
+	 * 
+	 * @return True if an order can still be scheduled, false otherwise.
+	 */
+	public boolean canScheduleToday(int[] timePerAdvance) {
+		int currentDayMinutes = this.getCurrentTime().hours * 60 + 
+				                this.getCurrentTime().minutes;
+
+		//Test if the end of the day has already passed.
+		if (currentDayMinutes >= FINISHHOUR * 60 - this.getOverTime())
+			return false;
+		
+		//Test if a full order can still be scheduled. 
+		
+		//Test if a custom order can still be scheduled. 
+		
+		
+		return false;
+	}
+	
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the current estimated completion time of the specified OrderContainer.
+	 * 
+	 * @param order
+	 * 		The order of which the estimated completion time should be obtained.
+	 * 
+	 * @return The estimated completion time of the specified order.
+	 * 
+	 * @throws IllegalStateException
+	 * 		| !this.containsOrder(order)
+	 */
+	public DateTime getEstimatedCompletionTime(OrderContainer order) {
 		throw new UnsupportedOperationException();
 	}
+	
+	/**
+	 * Check if the specified OrderContainer is currently in this SchedulerContext.
+	 * 
+	 * @param order
+	 * 		The OrderContainer that should be checked. 
+	 * 
+	 * @return | order in this.
+	 */
+	public boolean containsOrder(OrderContainer order) {
+		throw new UnsupportedOperationException();
+	}
+	
+	//--------------------------------------------------------------------------
+	// Make order methods.
+	//--------------------------------------------------------------------------
+	//FIXME old functionality.
+	/**
+	 * create from the specified model and specs and internal time a new
+	 * order object and add this to the pendingOrders of this ProductionSchedule.
+	 * 
+	 * @param model
+	 * 		The model of this new Order
+	 * @param specs
+	 * 		The specification of this new Order. 
+	 * 
+	 * @postcondition
+	 * 		| o = new (Order(model, specs) && (new this).getPendingOrders().last = o 
+	 * 
+	 * @throws NullPointerException 
+	 * 		| model == null || specs == null
+	 * @throws IllegalArgumentException
+	 * 		| !model.isValidSpecifications(specs)
+	 */
+	public void addNewOrder(Model model, Specification specs) throws NullPointerException, IllegalArgumentException{
+		if (!model.isValidSpecification(specs)) {
+			throw new IllegalArgumentException("invalid specification.");
+		}
+		
+		Order newOrder = makeNewOrder(model, specs, 
+				                      this.getCurrentOrderIdentifier());		
+		this.addToPendingOrders(newOrder);
+		this.incrementOrderIdentifier();
+	}
+
+	/** Isolated Order Constructor, mostly for testing purposes. */
+	protected Order makeNewOrder(Model model, Specification specs, int orderNumber) {
+		return new Order(model, specs, orderNumber);
+	}
+	
+	//--------------------------------------------------------------------------
+	public void addNewSingleTaskOrder() {
+		throw new UnsupportedOperationException();
+	}
+	
+	protected SingleTaskOrder makenNewSingleTaskOrder() {
+		throw new UnsupportedOperationException();
+	}
+	
+	/** 
+	 * Get the current order identifier of this ProductionSchedule.
+	 * 
+	 * @return The current order identifier of this ProductionSchedule.
+	 */
+	private int getCurrentOrderIdentifier() {
+		return this.currentIdentifier;
+	}
+	
+	/**
+	 * Increment the current order identifier of this ProductionSchedule by one. 
+	 * 
+	 * @effect | this.setCurrentIdentifier(this.getCurrentIdentifier() + 1)
+	 */
+	private void incrementOrderIdentifier() {
+		this.setOrderIdentifier(this.getCurrentOrderIdentifier() + 1);
+	}
+	
+	/**
+	 * Set the currentOrderIdentifier of this ProductionSchedule to newIdentifier.
+	 * 
+	 * @param newIdentifier
+	 * 		The new value of the currentIdentifier.
+	 * 
+	 * @postcondition | (new this).getCurrentIdentifier() == newIdentifier.
+	 */
+	private void setOrderIdentifier(int newIdentifier) {
+		this.currentIdentifier = newIdentifier;
+	}
+	
+	/** The next unused order identifier issued by this ProductionSchedule. */
+	private int currentIdentifier;
 	
 	//--------------------------------------------------------------------------
 	// TimeObserver related methods.

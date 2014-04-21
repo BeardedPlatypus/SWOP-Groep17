@@ -1,12 +1,14 @@
-package domain;
+package domain.productionSchedule;
 
-//TODO: new in iteration 2
+import domain.Manufacturer;
+import domain.Model;
+import domain.Option;
+import domain.ProductionSchedule;
+
 public class ProductionScheduleFacade {
 	private Manufacturer manufacturer;
-	private ProductionSchedule productionSchedule;
-	//If necessary
-	//private TimeManager timeLord;
-
+	private ProductionSchedule productionSchedule; 
+	
 	public void getPendingOrdersContainers() {
 		throw new UnsupportedOperationException();
 	}
