@@ -14,7 +14,7 @@ public interface AssemblyProcedureContainer {
 	 * 
 	 * @return The OrderView of this AssemblyProcedure.
 	 */
-	public OrderContainer getOrder();
+	public OrderContainer getOrderContainer();
 	
 	/**
 	 * Get the AssemblyTaskContainers of this AssemblyProcedure.

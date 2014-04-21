@@ -146,6 +146,12 @@ public class WorkPostTest {
 		exception.expect(IllegalStateException.class);
 		emptyWorkPost.getMatchingAssemblyTasks();
 	}
+	
+	@Test
+	public void containsTest() {
+		workPost.contains(order);
+		Mockito.verify(order).equals(order);
+	}
 
 	@Test
 	public void getAssemblyTaskInfosTest_assemblyAssigned() {
@@ -161,6 +167,7 @@ public class WorkPostTest {
 	
 	@Test
 	public void isFinished_emptyWorkPost() {
+		exception.expect(IllegalStateException.class);
 		assertTrue(emptyWorkPost.isFinished());
 	}
 	
@@ -231,7 +238,6 @@ public class WorkPostTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	@Test

@@ -165,6 +165,13 @@ public class WorkPost implements WorkPostContainer {
 		return this.getAssemblyProcedure().getOrder();
 	}
 	
+	public boolean contains(Order order) {
+		if (this.getAssemblyProcedure() == null) {
+			return false;
+		}
+		return this.getAssemblyProcedure().contains(order);
+	}
+	
 	//--------------------------------------------------------------------------
 	// State management
 	//--------------------------------------------------------------------------
@@ -183,12 +190,13 @@ public class WorkPost implements WorkPostContainer {
 		}
 		this.setAssemblyProcedure(other.getAssemblyProcedure());
 		other.setAssemblyProcedure(null);
+		this.setMinutesOfWork(0);
 	}
 	
 	@Override
 	public boolean isFinished() throws IllegalStateException {
 		if (this.isEmpty()) {
-			throw new IllegalArgumentException("The WorkPost has no AssemblyProcedure");
+			throw new IllegalStateException("The WorkPost has no AssemblyProcedure");
 		}
 		return this.getAssemblyProcedure().isFinished(this.getTaskType());
 	}

@@ -39,6 +39,7 @@ public class AssemblyLineTest {
 	@Mock Order order;
 	@Mock Order order2;
 	@Mock Order order3;
+	@Mock Order notOnAssemblyLine;
 	
 	@Mock Order newOrder;
 	@Mock StatisticsLogger logger;
@@ -283,6 +284,16 @@ public class AssemblyLineTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void containsTest() {
+		assertTrue(assemblyLine.contains(order3));
+	}
+	
+	@Test
+	public void containsTest_false() {
+		assertFalse(assemblyLine.contains(notOnAssemblyLine));
 	}
 
 }
