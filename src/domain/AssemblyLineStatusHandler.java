@@ -40,11 +40,61 @@ public class AssemblyLineStatusHandler {
 	}
 	
 	/**
-	 * Returns a list of workpost containers, containing information about the assembly line status.
+	 * Returns a list of work post containers, containing information about the assembly line status.
 	 * 
-	 * @return List of workpost containers.
+	 * @return List of work post containers.
 	 */
 	public List<WorkPostContainer> getWorkPosts() {
 		return getManufacturer().getWorkPostContainers();
 	}
+	
+	/**
+	 * Returns the amount of different work posts on the assembly line.
+	 * 
+	 * @return Amount of work posts.
+	 */
+	public int getAmountOfWorkPosts() {
+		return getWorkPosts().size();
+	}
+	
+	/**
+	 * Retrieves a single work post from the list of work posts using the given index.
+	 * 
+	 * @param 	workPostNumber
+	 * 			The index of the work post.
+	 * @pre		workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts()
+	 * @return	The work post situated at the given index.
+	 */
+	public WorkPostContainer getWorkPost(int workPostNumber) throws IllegalArgumentException {
+		if(workPostNumber >= getAmountOfWorkPosts()){
+			throw new IllegalArgumentException("The passed index is invalid. Needs to be in between 0 and "
+						+ (getAmountOfWorkPosts()-1) + ". " + workPostNumber + " was passed.");
+		} else {
+			return getWorkPosts().get(workPostNumber);
+		}
+	}
+	
+	/**
+	 * Retrieves a list of tasks at the work post identified by the given index.
+	 * 
+	 * @param 	workPostNumber
+	 * 			The index of the work post.
+	 * @return	List of tasks at that work post.
+	 */
+	public List<AssemblyTaskContainer> getTasksAtWorkPost(int workPostNumber) {
+		return getWorkPost(workPostNumber).getMatchingAssemblyTasks();
+	}
+	
+	/**
+	 * Returns the amount of different tasks at the work post identified by the given index.
+	 * 
+	 * @param 	workPostNumber
+	 * 			The index of the work post.
+	 * @return	Amount of tasks at that work post.
+	 */
+	public int getAmountOfTasksAtWorkPost(int workPostNumber) {
+		return getTasksAtWorkPost(workPostNumber).size();
+	}
+	
+	
 }
