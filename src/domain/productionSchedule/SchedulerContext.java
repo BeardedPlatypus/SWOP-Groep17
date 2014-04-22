@@ -8,6 +8,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import domain.DateTime;
+import domain.assemblyLine.OrderObserver;
+import domain.assemblyLine.OrderSubject;
 import domain.order.Order;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
@@ -23,7 +25,7 @@ import domain.order.OrderContainer;
  * @author Martinus Wilhelmus Tegelaers
  *
  */
-public class SchedulerContext implements TimeObserver {
+public class SchedulerContext implements TimeObserver, OrderSubject {
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -336,5 +338,54 @@ public class SchedulerContext implements TimeObserver {
 	private final static int FINISHHOUR = 22;
 	/** Number of workhours in a shift. */
 	private final static int WORKHOURS = FINISHHOUR - STARTHOUR;
+
+	//--------------------------------------------------------------------------
+	// OrderSubject methods.
+	//--------------------------------------------------------------------------
+	@Override
+	public void attachOrderObserver(OrderObserver t)
+			throws IllegalArgumentException {
+		if (t == null) {
+			throw new IllegalArgumentException("Observer cannot be null");
+		}
+		
+		if (!this.observers.contains(t)) { 
+			this.observers.add(t);
+			t.updateOrder(this);
+		}		
+	}
+
+	@Override
+	public void detachOrderObserver(OrderObserver t) {
+		if (t == null) {
+			throw new IllegalArgumentException("Observer cannot be null");
+		}
+
+		if (this.observers.contains(t)) {
+			this.observers.remove(t);
+		}
+	}
+	
+	/** The OrderObservers that observe this OrderSubject */
+	private final List<OrderObserver> observers;
+
+	//--------------------------------------------------------------------------
+	@Override
+	public void notifyHasOrders() {
+		for(OrderObserver obs : this.getOrderObservers()) {
+			obs.updateOrder(this);
+		}
+	}
+
+	@Override
+	public List<OrderObserver> getOrderObservers() {
+		return new ArrayList<OrderObserver>(this.observers);
+	}
+
+	//TODO
+	@Override
+	public boolean hasOrders() {
+		return false;
+	}
 
 }
