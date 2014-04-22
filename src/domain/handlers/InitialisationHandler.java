@@ -1,6 +1,15 @@
 package domain.handlers;
 
-//TODO: This needs to be updated since the handlers will not be available anymore to the ui
+import java.util.ArrayList;
+import java.util.List;
+
+import domain.Manufacturer;
+import domain.Model;
+import domain.ModelCatalog;
+import domain.Option;
+import domain.OptionCategory;
+import domain.TaskType;
+
 /**
  * The InitialisationHandler is responsible for initialising the system. This
  * includes making all the appropriate objects and setting their associations. 
@@ -8,7 +17,6 @@ package domain.handlers;
  * 
  */
 public class InitialisationHandler {
-	//FIXME: create new constructor
 	
 	//--------------------------------------------------------------------------
 	// Constructor
@@ -18,12 +26,243 @@ public class InitialisationHandler {
 	 * by constructing all necessary components and putting them together.
 	 */
 	public InitialisationHandler(){
-		//TODO initialise ALL THE THINGS
-		domainFacade = new DomainFacade(null, null, null, null, null, null);
-	}
-	
-	public OrderSingleTaskHandler getNewOrderSingleTaskHandler() {
-		throw new UnsupportedOperationException();
+		
+		//Initialise Options
+		
+		// -- Body Options
+		Option bodySedanOption = new Option(TaskType.BODY, "Sedan Body",
+				"Mount the Sedan body on the car.");
+		Option bodyBreakOption = new Option(TaskType.BODY, "Break Body",
+				"Mount the Break body on the car.");
+		Option bodySportOption = new Option(TaskType.BODY, "Sport Body",
+				"Mount the Sport body on the car.");
+		// -- Paint
+		Option paintRedOption = new Option(TaskType.BODY, "Red Paint", "Paint the car red.");
+		Option paintBlueOption = new Option(TaskType.BODY, "Blue Paint", "Paint the car blue.");
+		Option paintYellowOption = new Option(TaskType.BODY, "Yellow Paint", "Paint the car yellow.");
+		Option paintGreenOption = new Option(TaskType.BODY, "Green Paint", "Paint the car green.");
+		Option paintWhiteOption = new Option(TaskType.BODY, "White Paint", "Paint the car white.");
+		Option paintBlackOption = new Option(TaskType.BODY, "Black Paint", "Paint the car black.");
+		// -- Engine Options
+		Option engineStandardOption = new Option(TaskType.DRIVETRAIN,
+				"standard 2l v4", "Mount the standard engine in the car.");
+		Option enginePerformanceOption = new Option(TaskType.DRIVETRAIN,
+				"performance 2.5l v6", "Mount the performance engine in the car.");
+		Option engineUltraOption = new Option(TaskType.DRIVETRAIN,
+				"ultra 3l v8", "Mount the Ultra engine in the car.");
+		// -- Gearbox Options
+		Option gearbox6ManOption = new Option(TaskType.DRIVETRAIN, "6 speed manual",
+				"Mount the 6 speed manual gearbox.");
+		Option gearbox5ManOption = new Option(TaskType.DRIVETRAIN, "5 speed manual",
+				"Mount the 5 speed manual gearbox.");
+		Option gearbox5AutoOption = new Option(TaskType.DRIVETRAIN, "5 speed automatic",
+				"Mount the 5 speed automatic gearbox.");
+		// -- Seat Options
+		Option seatLeatherWhiteOption = new Option(TaskType.ACCESSORIES,
+				"White leather seats", "Mount white leather seats in the car.");
+		Option seatLeatherBlackOption = new Option(TaskType.ACCESSORIES,
+				"Black leather seats", "Mount black leather seats in the car.");
+		Option seatVinylGrayOption = new Option(TaskType.ACCESSORIES,
+				"Gray Vinyl seats", "Mount grey Vinyl seats in the car.");
+		// -- Airco Options
+		Option aircoManOption = new Option(TaskType.ACCESSORIES, "Manual Airco",
+				"Put manual airco in the car");
+		Option aircoAutoOption = new Option(TaskType.ACCESSORIES, "Automatic Airco",
+				"Put automatic airco in the car");
+		Option aircoNoneOption = new Option(TaskType.ACCESSORIES, "No Airco",
+				"Put no airco in the car");
+		// -- Wheels Options
+		Option wheelsWinterOption = new Option(TaskType.ACCESSORIES, "Winter tires",
+				"Put winter tires on the car.");
+		Option wheelsComfortOption = new Option(TaskType.ACCESSORIES, "Comfort tires",
+				"Put comfort tires on the car.");
+		Option wheelsSportOption = new Option(TaskType.ACCESSORIES, "Sport tires",
+				"Put sport tires on the car.");
+		// -- Spoiler Options
+		Option spoilerHighOption = new Option(TaskType.ACCESSORIES, "High Spoiler",
+				"Mount high spoiler on the car.");
+		Option spoilerLowOption = new Option(TaskType.ACCESSORIES, "Low Spoiler",
+				"Mount low spoiler on the car.");
+		Option spoilerNoneOption = new Option(TaskType.ACCESSORIES, "No Spoiler",
+				"Mount no spoiler on the car.");
+		
+		//Initialise OptionCategories
+		List<Option> modelABodyList = new ArrayList<>();
+		List<Option> modelBBodyList = new ArrayList<>();
+		List<Option> modelCBodyList = new ArrayList<>();
+		modelABodyList.add(bodySedanOption);
+		modelABodyList.add(bodyBreakOption);
+		modelBBodyList.add(bodySedanOption);
+		modelBBodyList.add(bodyBreakOption);
+		modelBBodyList.add(bodySportOption);
+		modelCBodyList.add(bodySportOption);
+		OptionCategory modelABodyCategory = new OptionCategory(modelABodyList);
+		OptionCategory modelBBodyCategory = new OptionCategory(modelBBodyList);
+		OptionCategory modelCBodyCategory = new OptionCategory(modelCBodyList);
+
+		List<Option> modelAPaintList = new ArrayList<>();
+		List<Option> modelBPaintList = new ArrayList<>();
+		List<Option> modelCPaintList = new ArrayList<>();
+		modelAPaintList.add(paintRedOption);
+		modelAPaintList.add(paintBlueOption);
+		modelAPaintList.add(paintBlackOption);
+		modelAPaintList.add(paintWhiteOption);
+		modelBPaintList.add(paintRedOption);
+		modelBPaintList.add(paintBlueOption);
+		modelBPaintList.add(paintGreenOption);
+		modelBPaintList.add(paintYellowOption);
+		modelCPaintList.add(paintBlackOption);
+		modelCPaintList.add(paintWhiteOption);
+		OptionCategory modelAPaintCategory = new OptionCategory(modelAPaintList);
+		OptionCategory modelBPaintCategory = new OptionCategory(modelBPaintList);
+		OptionCategory modelCPaintCategory = new OptionCategory(modelCPaintList);
+		
+		List<Option> modelAEngineList = new ArrayList<>();
+		List<Option> modelBEngineList = new ArrayList<>();
+		List<Option> modelCEngineList = new ArrayList<>();
+		modelAEngineList.add(engineStandardOption);
+		modelAEngineList.add(enginePerformanceOption);
+		modelBEngineList.add(engineStandardOption);
+		modelBEngineList.add(enginePerformanceOption);
+		modelBEngineList.add(engineUltraOption);
+		modelCEngineList.add(enginePerformanceOption);
+		modelCEngineList.add(engineUltraOption);
+		OptionCategory modelAEngineCategory = new OptionCategory(modelAEngineList);
+		OptionCategory modelBEngineCategory = new OptionCategory(modelBEngineList);
+		OptionCategory modelCEngineCategory = new OptionCategory(modelCEngineList);
+		
+		List<Option> modelAGearboxList = new ArrayList<>();
+		List<Option> modelBGearboxList = new ArrayList<>();
+		List<Option> modelCGearboxList = new ArrayList<>();
+		modelAGearboxList.add(gearbox6ManOption);
+		modelAGearboxList.add(gearbox5ManOption);
+		modelAGearboxList.add(gearbox5AutoOption);
+		modelBGearboxList.add(gearbox6ManOption);
+		modelBGearboxList.add(gearbox5AutoOption);
+		modelCGearboxList.add(gearbox6ManOption);
+		OptionCategory modelAGearboxCategory = new OptionCategory(modelAGearboxList);
+		OptionCategory modelBGearboxCategory = new OptionCategory(modelBGearboxList);
+		OptionCategory modelCGearboxCategory = new OptionCategory(modelCGearboxList);
+
+		List<Option> modelASeatsList = new ArrayList<>();
+		List<Option> modelBSeatsList = new ArrayList<>();
+		List<Option> modelCSeatsList = new ArrayList<>();
+		modelASeatsList.add(seatVinylGrayOption);
+		modelASeatsList.add(seatLeatherBlackOption);
+		modelASeatsList.add(seatLeatherWhiteOption);
+		modelBSeatsList.add(seatVinylGrayOption);
+		modelBSeatsList.add(seatLeatherBlackOption);
+		modelBSeatsList.add(seatLeatherWhiteOption);
+		modelCSeatsList.add(seatLeatherBlackOption);
+		modelCSeatsList.add(seatLeatherWhiteOption);
+		OptionCategory modelASeatsCategory = new OptionCategory(modelASeatsList);
+		OptionCategory modelBSeatsCategory = new OptionCategory(modelBSeatsList);
+		OptionCategory modelCSeatsCategory = new OptionCategory(modelCSeatsList);
+
+		List<Option> modelAAircoList = new ArrayList<>();
+		List<Option> modelBAircoList = new ArrayList<>();
+		List<Option> modelCAircoList = new ArrayList<>();
+		modelAAircoList.add(aircoAutoOption);
+		modelAAircoList.add(aircoManOption);
+		modelAAircoList.add(aircoNoneOption);
+		modelBAircoList.add(aircoAutoOption);
+		modelBAircoList.add(aircoManOption);
+		modelBAircoList.add(aircoNoneOption);
+		modelCAircoList.add(aircoAutoOption);
+		modelCAircoList.add(aircoManOption);
+		modelCAircoList.add(aircoNoneOption);
+		OptionCategory modelAAircoCategory = new OptionCategory(modelAAircoList);
+		OptionCategory modelBAircoCategory = new OptionCategory(modelBAircoList);
+		OptionCategory modelCAircoCategory = new OptionCategory(modelCAircoList);
+
+		List<Option> modelAWheelsList = new ArrayList<>();
+		List<Option> modelBWheelsList = new ArrayList<>();
+		List<Option> modelCWheelsList = new ArrayList<>();
+		modelAWheelsList.add(wheelsSportOption);
+		modelAWheelsList.add(wheelsWinterOption);
+		modelAWheelsList.add(wheelsComfortOption);
+		modelBWheelsList.add(wheelsSportOption);
+		modelBWheelsList.add(wheelsWinterOption);
+		modelBWheelsList.add(wheelsComfortOption);
+		modelCWheelsList.add(wheelsSportOption);
+		modelCWheelsList.add(wheelsWinterOption);
+		OptionCategory modelAWheelsCategory = new OptionCategory(modelAWheelsList);
+		OptionCategory modelBWheelsCategory = new OptionCategory(modelBWheelsList);
+		OptionCategory modelCWheelsCategory = new OptionCategory(modelCWheelsList);
+
+		List<Option> modelASpoilerList = new ArrayList<>();
+		List<Option> modelBSpoilerList = new ArrayList<>();
+		List<Option> modelCSpoilerList = new ArrayList<>();
+		modelASpoilerList.add(spoilerNoneOption);
+		modelBSpoilerList.add(spoilerNoneOption);
+		modelBSpoilerList.add(spoilerLowOption);
+		modelCSpoilerList.add(spoilerNoneOption);
+		modelCSpoilerList.add(spoilerLowOption);
+		modelCSpoilerList.add(spoilerHighOption);
+		OptionCategory modelASpoilerCategory = new OptionCategory(modelASpoilerList);
+		OptionCategory modelBSpoilerCategory = new OptionCategory(modelBSpoilerList);
+		OptionCategory modelCSpoilerCategory = new OptionCategory(modelCSpoilerList);
+		
+		//Initialise Models
+		List<OptionCategory> modelACategories = new ArrayList<>();
+		modelACategories.add(modelAAircoCategory);
+		modelACategories.add(modelABodyCategory);
+		modelACategories.add(modelAEngineCategory);
+		modelACategories.add(modelAGearboxCategory);
+		modelACategories.add(modelAPaintCategory);
+		modelACategories.add(modelASeatsCategory);
+		modelACategories.add(modelASpoilerCategory);
+		modelACategories.add(modelAWheelsCategory);
+		Model modelA = new Model("Model A", modelACategories, 50);
+
+		List<OptionCategory> modelBCategories = new ArrayList<>();
+		modelBCategories.add(modelBAircoCategory);
+		modelBCategories.add(modelBBodyCategory);
+		modelBCategories.add(modelBEngineCategory);
+		modelBCategories.add(modelBGearboxCategory);
+		modelBCategories.add(modelBPaintCategory);
+		modelBCategories.add(modelBSeatsCategory);
+		modelBCategories.add(modelBSpoilerCategory);
+		modelBCategories.add(modelBWheelsCategory);
+		Model modelB = new Model("Model B", modelBCategories, 70);
+		
+		List<OptionCategory> modelCCategories = new ArrayList<>();
+		modelCCategories.add(modelCAircoCategory);
+		modelCCategories.add(modelCBodyCategory);
+		modelCCategories.add(modelCEngineCategory);
+		modelCCategories.add(modelCGearboxCategory);
+		modelCCategories.add(modelCPaintCategory);
+		modelCCategories.add(modelCSeatsCategory);
+		modelCCategories.add(modelCSpoilerCategory);
+		modelCCategories.add(modelCWheelsCategory);
+		Model modelC = new Model("Model C", modelCCategories, 60);
+
+		Model singleTaskModel = new Model("Single Task Order",
+				new ArrayList<OptionCategory>(), 60);
+		
+		//Initialise ModelCatalog
+		List<Model> normalOrderSessionModels = new ArrayList<>();
+		normalOrderSessionModels.add(modelA);
+		normalOrderSessionModels.add(modelB);
+		normalOrderSessionModels.add(modelC);
+		ModelCatalog modelCatalog = new ModelCatalog(normalOrderSessionModels,
+				singleTaskModel);
+		
+		//Initialise Restrictions
+		
+		//Initialise RestrictionCatalog
+		
+		//Initialise Manufacturer
+		Manufacturer manufacturer = new Manufacturer(
+				null,
+				null,
+				null,
+				modelCatalog,
+				null,
+				null,
+				null);
+		
+		domainFacade = new DomainFacade(null, null, null, null, null, null, null);
 	}
 	
 	/** 
@@ -39,8 +278,4 @@ public class InitialisationHandler {
 	/** The domain facade that is accessible by the UI. */
 	private final DomainFacade domainFacade;
 
-	public NewOrderSessionHandler getNewOrderHandler() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
-	}
 }

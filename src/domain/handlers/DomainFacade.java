@@ -44,6 +44,7 @@ public class DomainFacade {
 	 * 		If any of the given handlers is null.
 	 */
 	public DomainFacade(AdaptSchedulingAlgorithmHandler algorithmHandler,
+			AssemblyLineStatusHandler assemblyLineStatusHandler,
 			CheckOrderDetailsHandler orderDetailsHandler,
 			CheckProductionStatisticsHandler prodStatHandler,
 			NewOrderSessionHandler newOrderHandler,
@@ -52,6 +53,8 @@ public class DomainFacade {
 					throws IllegalArgumentException
 					{
 		if(algorithmHandler == null)
+			throw new IllegalArgumentException("Handler should not be null!");
+		if(assemblyLineStatusHandler == null)
 			throw new IllegalArgumentException("Handler should not be null!");
 		if(orderDetailsHandler == null)
 			throw new IllegalArgumentException("Handler should not be null!");
@@ -64,6 +67,7 @@ public class DomainFacade {
 		if(performHandler == null)
 			throw new IllegalArgumentException("Handler should not be null!");
 		this.schedulingAlgorithmHandler = algorithmHandler;
+		this.assemblyLineStatusHandler = assemblyLineStatusHandler;
 		this.orderDetailsHandler = orderDetailsHandler;
 		this.productionStatisticsHandler = prodStatHandler;
 		this.newOrderSessionHandler = newOrderHandler;
@@ -127,7 +131,16 @@ public class DomainFacade {
 	 */
 	private CheckProductionStatisticsHandler getCheckProductionStatisticsHandler() {
 		return this.productionStatisticsHandler;
-	}	
+	}
+	
+	/**
+	 * Get the AssemblyLineStatusHandler for internal use.
+	 * 
+	 * @return the AssemblyLineStatusHandlerHandler
+	 */
+	private AssemblyLineStatusHandler getAssemblyLineStatusHandler() {
+		return this.assemblyLineStatusHandler;
+	}
 
 	/**	The facade's PerformAssemblyTaskHandler */
 	private final PerformAssemblyTaskHandler performAssemblyTaskHandler;
@@ -145,7 +158,10 @@ public class DomainFacade {
 	private final AdaptSchedulingAlgorithmHandler schedulingAlgorithmHandler;
 
 	/**	The facade's CheckProductionStatisticsHandler */
-	private CheckProductionStatisticsHandler productionStatisticsHandler;
+	private final CheckProductionStatisticsHandler productionStatisticsHandler;
+
+	/**	The facade's AssemblyLineStatusHandler */
+	private final AssemblyLineStatusHandler assemblyLineStatusHandler;
 
 	//-------------------------------------------------------------------------
 	// Class Methods
@@ -625,6 +641,71 @@ public class DomainFacade {
 	public void completeWorkpostTask(int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException {
 		this.getPerformAssemblyTaskHandler().completeWorkpostTask(workPostNumber, taskNumber, minutes);
 	}
+
+	//--------------------------------------------------------------------------
+
+	//--------------------------------------------------------------------------
+	// AsemblyLine Status methods
+	
+	/**
+	 * Returns a list of work post containers, containing information about the assembly line status.
+	 * 
+	 * @return List of work post containers.
+	 */
+	public List<WorkPostContainer> getStatusWorkPosts() {
+		return this.getAssemblyLineStatusHandler().getWorkPosts();
+	}
+	
+	/**
+	 * Returns the amount of different work posts on the assembly line.
+	 * 
+	 * @return Amount of work posts.
+	 */
+	public int getAmountOfWorkPosts() {
+		return this.getAssemblyLineStatusHandler().getAmountOfWorkPosts();
+	}
+	
+	/**
+	 * Retrieves a single work post from the list of work posts using the given index.
+	 * 
+	 * @param 	workPostNumber
+	 * 			The index of the work post.
+	 * @pre		workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts()
+	 * @return	The work post situated at the given index.
+	 * @throws	IllegalArgumentException
+	 * 			If the given index does not satisfy the preconditions.
+	 */
+	public WorkPostContainer getWorkPost(int workPostNumber) throws IllegalArgumentException {
+		return this.getAssemblyLineStatusHandler().getWorkPost(workPostNumber);
+	}
+	
+	/**
+	 * Retrieves a list of tasks at the work post identified by the given index.
+	 * 
+	 * @param 	workPostNumber
+	 * 			The index of the work post.
+	 * @pre		workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts()
+	 * @return	List of tasks at that work post.
+	 * @throws	IllegalArgumentException
+	 * 			If the given index does not satisfy the preconditions.
+	 */
+	public List<AssemblyTaskContainer> getTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
+		return this.getAssemblyLineStatusHandler().getTasksAtWorkPost(workPostNumber);
+	}
+	
+	/**
+	 * Returns the amount of different tasks at the work post identified by the given index.
+	 * 
+	 * @param 	workPostNumber
+	 * 			The index of the work post.
+	 * @return	Amount of tasks at that work post.
+	 * @throws	IllegalArgumentException
+	 * 			If the given index does not satisfy the preconditions.
+	 */
+	public int getAmountOfTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
+		return this.getAssemblyLineStatusHandler().getAmountOfTasksAtWorkPost(workPostNumber);
+	}
+	
 
 	//--------------------------------------------------------------------------
 
