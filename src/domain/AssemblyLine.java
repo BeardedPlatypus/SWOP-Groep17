@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import domain.WorkPost;
+import domain.order.Order;
 import domain.order.OrderContainer;
 
 /**
@@ -67,7 +68,7 @@ public class AssemblyLine implements WorkPostObserver {
 	// WorkPost-related methods and variables.
 	//--------------------------------------------------------------------------
 	/**
-	 * Asks the given {@link WorkPost} to complete {@link AssemblyTask} with given number on its current {@link AssemblyProcedure}
+	 * Ask the given {@link WorkPost} to complete {@link AssemblyTask} with given number on its current {@link AssemblyProcedure}
 	 * 
 	 * @param workPostNumber
 	 * 		The number of the {@link WorkPost} we want to address

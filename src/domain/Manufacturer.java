@@ -7,6 +7,8 @@ import domain.restrictions.OptionRestrictionManager;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
+import domain.order.CompletedOrderCatalog;
+import domain.order.Order;
 import domain.order.OrderContainer;
 import domain.productionSchedule.ProductionScheduleFacade;
 
@@ -91,7 +93,9 @@ public class Manufacturer {
 		throw new UnsupportedOperationException();
 	}
 	
+	/** The AlgorithmStrategyFactory of this Manufacturer. */
 	private final AlgorithmStrategyFactory algorithmStrategyFactory;
+	/** The SingleTaskCatalog of this Manufacturer. */
 	private final SingleTaskCatalog singleTaskCatalog;
 	
 	//--------------------------------------------------------------------------
@@ -112,7 +116,7 @@ public class Manufacturer {
 	
 	
 	/**
-	 * Queries the system for estimated completion time of given order.
+	 * Query the system for estimated completion time of given order.
 	 * Checks sequentially if the order is found in the ProductionSchedule, the
 	 * AssemblyLine and the CompletedOrdersCatalog.
 	 * If the order is found, it queries the respective component for the ECT.

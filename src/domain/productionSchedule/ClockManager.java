@@ -148,6 +148,4 @@ public class ClockManager implements TimeSubject, IncrementTimeObserver {
 	public void update(DateTime time) throws IllegalArgumentException {
 		this.incrementTime(time);
 	}
-
-
 }

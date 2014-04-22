@@ -1,14 +1,16 @@
 package domain.productionSchedule;
 
-import Model;
-import Specification;
+import domain.Model;
+import domain.Specification;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import domain.DateTime;
-import domain.Order;
+import domain.order.Order;
+import domain.order.SingleTaskOrder;
+import domain.order.StandardOrder;
 import domain.SingleTaskCatalog;
 import domain.order.OrderContainer;
 
@@ -92,13 +94,14 @@ public class SchedulerContext implements TimeObserver {
 	}
 	
 	/** The order queue of this SchedulerContext */
-	private final List<Order> orderQueue = new ArrayList<>();
+	private final List<StandardOrder> orderQueue = new ArrayList<>();
 	
 	//--------------------------------------------------------------------------
 	// Scheduling related methods.
 	//--------------------------------------------------------------------------
 	/**
 	 * Check if it is still possible to schedule an Order today.
+	 * 
 	 * @param timePerAdvance
 	 * 
 	 * @return True if an order can still be scheduled, false otherwise.
@@ -165,34 +168,41 @@ public class SchedulerContext implements TimeObserver {
 	 * 
 	 * @throws NullPointerException 
 	 * 		| model == null || specs == null
-	 * @throws IllegalArgumentException
-	 * 		| !model.isValidSpecifications(specs)
 	 */
 	public void addNewOrder(Model model, Specification specs) throws NullPointerException, IllegalArgumentException{
-		if (!model.isValidSpecification(specs)) {
-			throw new IllegalArgumentException("invalid specification.");
-		}
+		//TODO check if this can be removed, should be checked at a different system.
+//		if (!model.isValidSpecification(specs)) {
+//			throw new IllegalArgumentException("invalid specification.");
+//		}
 		
-		Order newOrder = makeNewOrder(model, specs, 
-				                      this.getCurrentOrderIdentifier());		
+		Order newOrder = makeNewStandardOrder(model, specs, 
+				                              this.getCurrentOrderIdentifier(),
+				                              this.getCurrentTime());		
 		this.addToPendingOrders(newOrder);
 		this.incrementOrderIdentifier();
 	}
 
-	/** Isolated Order Constructor, mostly for testing purposes. */
-	protected Order makeNewOrder(Model model, Specification specs, int orderNumber) {
-		return new Order(model, specs, orderNumber);
+	/** Isolated StandardOrder Constructor, mostly for testing purposes. */
+	protected StandardOrder makeNewStandardOrder(Model model, Specification specs, 
+			int orderNumber, DateTime submissionTime) {
+		return new StandardOrder(model, specs, orderNumber, submissionTime);
 	}
 	
 	//--------------------------------------------------------------------------
-	public void addNewSingleTaskOrder() {
+	public void addNewSingleTaskOrder(Model model, Specification specs, DateTime deadline) {
 		throw new UnsupportedOperationException();
 	}
 	
-	protected SingleTaskOrder makenNewSingleTaskOrder() {
-		throw new UnsupportedOperationException();
+	/** Isolated SingleTaskOrder Constructor, mostly for testing purposes. */
+	protected SingleTaskOrder makenNewSingleTaskOrder(Model model, 
+			                                          Specification specification, 
+			                                          int orderNumber, 
+			                                          DateTime submissionTime, 
+			                                          DateTime deadline) {
+		return new SingleTaskOrder(model, specification, orderNumber, submissionTime, deadline);
 	}
 	
+	//--------------------------------------------------------------------------
 	/** 
 	 * Get the current order identifier of this ProductionSchedule.
 	 * 
