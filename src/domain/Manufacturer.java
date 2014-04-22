@@ -426,8 +426,22 @@ public class Manufacturer {
 		return this.completedOrderCatalog;
 	}
 
-	// TODO: completion time stamp must be set for the order
-	public void addToCompleteOrders(Order order) {
+	/**
+	 * Add the given order to the completedOrderCatalog.
+	 * This method passes the order right through.
+	 * 
+	 * @param order
+	 * 		The order to add to the catalog
+	 * @throws IllegalStateException
+	 * 		If the order is already completed and/or in the catalog
+	 * @throws IllegalArgumentException
+	 * 		If given order is null
+	 */
+	public void addToCompleteOrders(Order order)
+			throws IllegalStateException,
+			IllegalArgumentException{
+		if(order == null)
+			throw new IllegalArgumentException("Order Can not be null");
 		this.getCompletedOrderCatalog().addCompletedOrder(order);
 	}
 	

@@ -248,7 +248,7 @@ public class Model {
 	 * @throws NoOptionCategoriesRemainingException
 	 * 		When no unfilled optionCategories remain
 	 */
-	public OptionCategory getNextOptionCategory(ArrayList<Option> options)
+	public OptionCategory getNextOptionCategory(List<Option> options)
 			throws NoOptionCategoriesRemainingException
 	{
 		for(OptionCategory cat : this.getOptionCategories()){
