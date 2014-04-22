@@ -3,12 +3,15 @@ package domain.handlers;
 import java.util.ArrayList;
 import java.util.List;
 
+import domain.AssemblyLine;
 import domain.Manufacturer;
 import domain.Model;
 import domain.ModelCatalog;
 import domain.Option;
 import domain.OptionCategory;
 import domain.TaskType;
+import domain.order.CompletedOrderCatalog;
+import domain.productionSchedule.ProductionScheduleFacade;
 
 /**
  * The InitialisationHandler is responsible for initialising the system. This
@@ -253,16 +256,40 @@ public class InitialisationHandler {
 		//Initialise RestrictionCatalog
 		
 		//Initialise Manufacturer
+		//TODO Other stuff
 		Manufacturer manufacturer = new Manufacturer(
 				null,
 				null,
-				null,
+				new CompletedOrderCatalog(),
 				modelCatalog,
 				null,
-				null,
-				null);
+				new AssemblyLine(),
+				new ProductionScheduleFacade());
 		
-		domainFacade = new DomainFacade(null, null, null, null, null, null, null);
+		//Initialise Handlers
+		AdaptSchedulingAlgorithmHandler algorithmHandler = 
+				new AdaptSchedulingAlgorithmHandler(manufacturer);
+		AssemblyLineStatusHandler assemblyLineStatusHandler =
+				new AssemblyLineStatusHandler(manufacturer);
+		CheckOrderDetailsHandler orderDetailsHandler =
+				new CheckOrderDetailsHandler(manufacturer);
+		CheckProductionStatisticsHandler prodStatHandler =
+				new CheckProductionStatisticsHandler(manufacturer);
+		NewOrderSessionHandler newOrderHandler =
+				new NewOrderSessionHandler(manufacturer);
+		OrderSingleTaskHandler singleTaskHandler =
+				new OrderSingleTaskHandler(manufacturer);
+		PerformAssemblyTaskHandler performHandler =
+				new PerformAssemblyTaskHandler(manufacturer);
+		
+		this.domainFacade = new DomainFacade(
+				algorithmHandler,
+				assemblyLineStatusHandler,
+				orderDetailsHandler,
+				prodStatHandler,
+				newOrderHandler,
+				singleTaskHandler,
+				performHandler);
 	}
 	
 	/** 
