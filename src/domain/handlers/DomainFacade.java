@@ -2,10 +2,16 @@ package domain.handlers;
 
 import java.util.List;
 
+import domain.AlgorithmView;
+import domain.AssemblyTaskContainer;
 import domain.DateTime;
 import domain.Model;
 import domain.Option;
 import domain.OptionCategory;
+import domain.Specification;
+import domain.WorkPostContainer;
+import domain.order.Order;
+import domain.order.OrderContainer;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
@@ -17,7 +23,7 @@ import exceptions.OrderDoesNotExistException;
  * @author Frederik Goovaerts
  */
 public class DomainFacade {
-	
+
 	//-------------------------------------------------------------------------
 	// Constructor
 	//-------------------------------------------------------------------------
@@ -37,40 +43,45 @@ public class DomainFacade {
 	 * @throws IllegalArgumentException
 	 * 		If any of the given handlers is null.
 	 */
-	public DomainFacade(PerformAssemblyTaskHandler performHandler,
-					    NewOrderSessionHandler newOrderHandler,
-					    OrderSingleTaskHandler singleTaskHandler,
-					    OrderDetailsHandler orderDetailsHandler,
-					    SchedulingAlgorithmHandler algorithmHandler)
-	{
-		if(performHandler == null)
+	public DomainFacade(AdaptSchedulingAlgorithmHandler algorithmHandler,
+			CheckOrderDetailsHandler orderDetailsHandler,
+			CheckProductionStatisticsHandler prodStatHandler,
+			NewOrderSessionHandler newOrderHandler,
+			OrderSingleTaskHandler singleTaskHandler,
+			PerformAssemblyTaskHandler performHandler)
+					throws IllegalArgumentException
+					{
+		if(algorithmHandler == null)
+			throw new IllegalArgumentException("Handler should not be null!");
+		if(orderDetailsHandler == null)
+			throw new IllegalArgumentException("Handler should not be null!");
+		if(prodStatHandler == null)
 			throw new IllegalArgumentException("Handler should not be null!");
 		if(newOrderHandler == null)
 			throw new IllegalArgumentException("Handler should not be null!");
 		if(singleTaskHandler == null)
 			throw new IllegalArgumentException("Handler should not be null!");
-		if(orderDetailsHandler == null)
+		if(performHandler == null)
 			throw new IllegalArgumentException("Handler should not be null!");
-		if(algorithmHandler == null)
-			throw new IllegalArgumentException("Handler should not be null!");
-		this.performAssemblyTaskHandler = performHandler;
+		this.schedulingAlgorithmHandler = algorithmHandler;
+		this.orderDetailsHandler = orderDetailsHandler;
+		this.productionStatisticsHandler = prodStatHandler;
 		this.newOrderSessionHandler = newOrderHandler;
 		this.orderSingleTaskHandler = singleTaskHandler;
-		this.orderDetailsHandler = orderDetailsHandler;
-		this.schedulingAlgorithmHandler = algorithmHandler;
-	}
-	
+		this.performAssemblyTaskHandler = performHandler;
+					}
+
 	//-------------------------------------------------------------------------
 	// Properties
 	//-------------------------------------------------------------------------
-	
+
 	/**
 	 * Get the PerformAssemblyTaskHandler for internal use.
 	 * 
 	 * @return the performAssemblyTaskHandler
 	 */
 	private PerformAssemblyTaskHandler getPerformAssemblyTaskHandler() {
-		return performAssemblyTaskHandler;
+		return this.performAssemblyTaskHandler;
 	}
 
 	/**
@@ -79,7 +90,7 @@ public class DomainFacade {
 	 * @return the newOrderSessionHandler
 	 */
 	private NewOrderSessionHandler getNewOrderSessionHandler() {
-		return newOrderSessionHandler;
+		return this.newOrderSessionHandler;
 	}
 
 	/**
@@ -88,7 +99,7 @@ public class DomainFacade {
 	 * @return the orderSingleTaskHandler
 	 */
 	private OrderSingleTaskHandler getOrderSingleTaskHandler() {
-		return orderSingleTaskHandler;
+		return this.orderSingleTaskHandler;
 	}
 
 	/**
@@ -96,8 +107,8 @@ public class DomainFacade {
 	 * 
 	 * @return the orderDetailsHandler
 	 */
-	private OrderDetailsHandler getOrderDetailsHandler() {
-		return orderDetailsHandler;
+	private CheckOrderDetailsHandler getCheckOrderDetailsHandler() {
+		return this.orderDetailsHandler;
 	}
 
 	/**
@@ -105,10 +116,19 @@ public class DomainFacade {
 	 * 
 	 * @return the schedulingAlgorithmHandler
 	 */
-	private SchedulingAlgorithmHandler getSchedulingAlgorithmHandler() {
-		return schedulingAlgorithmHandler;
+	private AdaptSchedulingAlgorithmHandler getAdaptSchedulingAlgorithmHandler() {
+		return this.schedulingAlgorithmHandler;
 	}	
 	
+	/**
+	 * Get the CheckProductionStatisticsHandler for internal use.
+	 * 
+	 * @return the CheckProductionStatisticsHandler
+	 */
+	private CheckProductionStatisticsHandler getCheckProductionStatisticsHandler() {
+		return this.productionStatisticsHandler;
+	}	
+
 	/**	The facade's PerformAssemblyTaskHandler */
 	private final PerformAssemblyTaskHandler performAssemblyTaskHandler;
 
@@ -119,30 +139,197 @@ public class DomainFacade {
 	private final OrderSingleTaskHandler orderSingleTaskHandler;
 
 	/**	The facade's OrderDetailsHandler */
-	private final OrderDetailsHandler orderDetailsHandler;
+	private final CheckOrderDetailsHandler orderDetailsHandler;
 
 	/**	The facade's SchedulingAlgorithmHandler */
-	private final SchedulingAlgorithmHandler schedulingAlgorithmHandler;
-	
+	private final AdaptSchedulingAlgorithmHandler schedulingAlgorithmHandler;
+
+	/**	The facade's CheckProductionStatisticsHandler */
+	private CheckProductionStatisticsHandler productionStatisticsHandler;
+
 	//-------------------------------------------------------------------------
 	// Class Methods
 	//-------------------------------------------------------------------------
 
-	
-	public void getAlgorithms() {
-		throw new UnsupportedOperationException();
+
+	//--------------------------------------------------------------------------
+	// Algorithm adaption methods
+
+	// All flows
+	public List<AlgorithmView> getAlgorithms() {
+		return this.getAdaptSchedulingAlgorithmHandler().getAlgorithms();
 	}
 
-	public void getCurrentScheduleAlgorithm() {
-		throw new UnsupportedOperationException();
+	public AlgorithmView getCurrentAlgorithm() {
+		return this.getAdaptSchedulingAlgorithmHandler().getCurrentAlgorithm();
 	}
 
+	//--------------------------------------------------------------------------
+	// Fifo flow
 	public void setFifoAlgorithm() {
-		throw new UnsupportedOperationException();
+		this.getAdaptSchedulingAlgorithmHandler().setFifoAlgorithm();
+	}
+
+	//--------------------------------------------------------------------------
+	// Batch flow
+	public List<Specification> getCurrentBatches() {
+		return this.getAdaptSchedulingAlgorithmHandler().getCurrentBatches();
+	}
+
+	public void setBatchAlgorithm(Specification batch) throws IllegalArgumentException {
+		this.getAdaptSchedulingAlgorithmHandler().setBatchAlgorithm(batch);
+	}
+
+	//--------------------------------------------------------------------------
+
+	//--------------------------------------------------------------------------
+	// Check Order Details methods
+	
+	/**
+	 * Get a copy of the completed orders snapshot list for the user.
+	 * If the snapshots are deprecated, these are refreshed first.
+	 * 
+	 * @return a copy of the completed orders snapshot list.
+	 */
+	public List<OrderContainer> getCompletedOrdersContainers(){
+		return this.getCheckOrderDetailsHandler().getCompletedOrdersContainers();
 	}
 	
-	 
-	//-------------------------------------------------------------------------
+	/**
+	 * Get a copy of the pending orders snapshot list for the user.
+	 * If the snapshots are deprecated, these are refreshed first.
+	 * 
+	 * @return a copy of the pending orders snapshot list.
+	 */
+	public List<OrderContainer> getPendingOrdersContainers(){
+		return this.getCheckOrderDetailsHandler().getPendingOrdersContainers();
+	}
+	
+	/**
+	 * Select order with given index from the Completed Orders snapshot.
+	 * Both snapshots are then deprecated and can not be used anymore.
+	 * This method can not be used until the snapshots are refreshed.
+	 * 
+	 * @param orderIndex
+	 * 		The index of the wanted order in the list of completed orders
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		When the given index is out of the bounds of the list
+	 * @throws IllegalStateException
+	 * 		When this method is called with deprecated snapshots
+	 */
+	public void selectCompletedOrder(int orderIndex)
+			throws IllegalArgumentException,
+			IllegalStateException
+	{
+		this.getCheckOrderDetailsHandler().selectCompletedOrder(orderIndex);
+	}
+	
+	/**
+	 * Select order with given index from the Pending Orders snapshot.
+	 * Both snapshots are then deprecated and can not be used anymore.
+	 * This method can not be used until the snapshots are refreshed.
+	 * 
+	 * @param orderIndex
+	 * 		The index of the wanted order in the list of completed orders
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		When the given index is out of the bounds of the list
+	 * @throws IllegalStateException
+	 * 		When this method is called with deprecated snapshots
+	 */
+	public void selectPendingOrder(int orderIndex)
+			throws IllegalArgumentException,
+			IllegalStateException
+	{
+		this.getCheckOrderDetailsHandler().selectPendingOrder(orderIndex);
+	}
+	
+	/**
+	 * Get the Specification of the currently observed Order, if there is one.
+	 * 
+	 * @return the specification of the order
+	 * 
+	 * @throws IllegalStateException
+	 * 		If this method is called when no order is set
+	 */
+	public Specification getCurrentOrderSpecification(){
+		return this.getCheckOrderDetailsHandler().getCurrentOrderSpecification();
+	}
+
+	/**
+	 * Get the submission time of the currently observed Order, if there is one.
+	 * 
+	 * @return the submission time of the order
+	 * 
+	 * @throws IllegalStateException
+	 * 		If this method is called when no order is set
+	 */
+	public DateTime getCurrentOrderSubmissionTime(){
+		return this.getCheckOrderDetailsHandler().getCurrentOrderSubmissionTime();
+	}
+
+	/**
+	 * Get the completion state of the currently observed Order, if there is one.
+	 * 
+	 * @return the completion state of the order
+	 * 
+	 * @throws IllegalStateException
+	 * 		If this method is called when no order is set
+	 */
+	public boolean currentOrderIsComplete(){
+		return this.getCheckOrderDetailsHandler().currentOrderIsComplete();
+	}
+
+	/**
+	 * Get the Completion Time of the currently observed Order, if there is one.
+	 * 
+	 * @return the Completion Time of the order
+	 * 
+	 * @throws IllegalStateException
+	 * 		If this method is called when no order is set
+	 * @throws IllegalStateException
+	 * 		If the order has not been completed yet
+	 */
+	public DateTime getCurrentOrderCompletionTime(){
+		return this.getCheckOrderDetailsHandler().getCurrentOrderCompletionTime();
+	}
+
+	/**
+	 * Get the estimated Completion Time of the currently observed Order, if there is one.
+	 * 
+	 * @return the estimated Completion Time of the order
+	 * 
+	 * @throws OrderDoesNotExistException 
+	 * 		If the order is not recognised by the system
+	 * @throws IllegalStateException
+	 * 		If this method is called when no order is set
+	 * @throws IllegalStateException
+	 * 		If the order is already completed
+	 */
+	public DateTime getCurrentOrderEstimatedCompletionTime() throws OrderDoesNotExistException{
+		return this.getCheckOrderDetailsHandler().getCurrentOrderEstimatedCompletionTime();
+	}
+
+	//--------------------------------------------------------------------------
+	
+	//--------------------------------------------------------------------------
+	// Check Production Statistics Handler
+	
+	/**
+	 * Query the gathered statistics. The end user is responsible for
+	 * meaningful analysis of the report.
+	 * 
+	 * @return A report in the form of a String
+	 */
+	public String getStatisticsReport() {
+		return this.getCheckProductionStatisticsHandler().getStatisticsReport();
+	}
+	
+
+	//--------------------------------------------------------------------------
+
+	//--------------------------------------------------------------------------
 	// Order New Car Methods
 
 	/**
@@ -157,7 +344,7 @@ public class DomainFacade {
 	public List<OrderContainer> getPendingOrders(){
 		return this.getNewOrderSessionHandler().getPendingOrders();
 	}
-	
+
 	/**
 	 * Get the system's completed orders. This encompasses the orders which were
 	 * previously assembled and are now marked as complete.
@@ -169,7 +356,7 @@ public class DomainFacade {
 	public List<OrderContainer> getCompletedOrders(){
 		return this.getNewOrderSessionHandler().getCompletedOrders();
 	}
-	
+
 	/**
 	 * Start a new orderSession in the newOrderSessionHandler, so a user can
 	 * put together an order from scratch. This resets all previously chosen
@@ -183,7 +370,7 @@ public class DomainFacade {
 	public void startNewOrderSession(){
 		this.getNewOrderSessionHandler().startNewOrderSession();
 	}
-	
+
 	/**
 	 * Get a list of all possible Car Models for construction by the system.
 	 * 
@@ -194,7 +381,7 @@ public class DomainFacade {
 	public List<Model> getCarModels(){
 		return this.getNewOrderSessionHandler().getCarModels();
 	}
-	
+
 	/**
 	 * Choose the model for the current OrderSession active in the handler.
 	 * If a model was previously chosen, and a new session hasn't been started
@@ -215,7 +402,7 @@ public class DomainFacade {
 			throw new IllegalArgumentException("Model can not be null.");
 		this.getNewOrderSessionHandler().chooseModel(model);
 	}
-	
+
 	/**
 	 * Check whether or not all choices have been made for the order specification
 	 * 
@@ -224,7 +411,7 @@ public class DomainFacade {
 	public boolean orderHasUnfilledOptions(){
 		return this.getNewOrderSessionHandler().hasUnfilledOptions();
 	}
-	
+
 	/**
 	 * Get the next OptionCategory of which no option has been chosen yet.
 	 * If no options remain, throw an exception.
@@ -239,10 +426,10 @@ public class DomainFacade {
 	public OptionCategory getNextOptionCategory()
 			throws NoOptionCategoriesRemainingException,
 			IllegalStateException
-	{
+			{
 		return this.getNewOrderSessionHandler().getNextOptionCategory();
-	}
-	
+			}
+
 	/**
 	 * Add the given option to the current OrderSession specification
 	 * 
@@ -258,7 +445,7 @@ public class DomainFacade {
 			throw new IllegalArgumentException("Option can not be null.");
 		this.getNewOrderSessionHandler().selectOption(option);
 	}
-	
+
 	/**
 	 * Submit the order composed by the active OrderSession, and return
 	 * the resulting order as a container.
@@ -280,9 +467,9 @@ public class DomainFacade {
 	 */
 	public void submitOrder() throws IllegalStateException, IllegalArgumentException, IllegalCarOptionCombinationException, OptionRestrictionException{
 		this.getNewOrderSessionHandler().submitOrder();
-		
+
 	}
-	
+
 	/**
 	 * When a new order has been constructed with a session, this allows the user
 	 * to query the system for the ETA of the new order.
@@ -300,5 +487,145 @@ public class DomainFacade {
 	}
 
 	//-------------------------------------------------------------------------
+
+	//--------------------------------------------------------------------------
+	// Single Task Order Methods
+	
+	/**
+	 * Starts a new order session.
+	 */
+	public void startNewSingleTaskOrderSession() {
+		this.getOrderSingleTaskHandler().startNewOrderSession();
+	}
+
+	/**
+	 * Returns a list of option categories, containing the possible tasks to be ordered
+	 * in a single task order.
+	 * 
+	 * @return	List of option categories.
+	 * @throws 	IllegalStateException
+	 *			If there is no active new order session.
+	 */
+	public List<OptionCategory> getPossibleTasks() throws IllegalStateException {
+		return this.getOrderSingleTaskHandler().getPossibleTasks();
+	}
+
+	/**
+	 * Selects an option to be ordered as a single task.
+	 * 
+	 * @param 	option
+	 * 			The option to be ordered in this single task.
+	 * @throws IllegalStateException
+	 *			If there is no active new order session.
+	 */
+	public void selectSingleTaskOption(Option option) throws IllegalStateException {
+		this.getOrderSingleTaskHandler().selectOption(option);
+	}
+
+	/**
+	 * Sets the deadline for this single task order to be within the given number of days, hours and minutes.
+	 * 
+	 * @param	days
+	 * 			The number of days before the deadline.
+	 * @param	hours
+	 * 			The number of hours before the deadline modulo days.
+	 * @param	minutes
+	 * 			The number of minutes before the deadline modulo hours.
+	 * @throws 	IllegalStateException
+	 *			If there is no active new order session.
+	 */
+	public void specifyDeadline(int days, int hours, int minutes) throws IllegalStateException {
+		this.getOrderSingleTaskHandler().specifyDeadline(days, hours, minutes);
+	}
+
+	/**
+	 * Submits the single task order that's been composed in the active order session and schedules it for completion
+	 * Returns the order that's been scheduled.
+	 * 
+	 * @post	isRunningOrderSession() == false
+	 * @return	The submitted order.
+	 * @throws 	IllegalStateException
+	 *			If there is no active new order session.
+	 */
+	public Order submitSingleTaskOrder() throws IllegalStateException {
+		return this.getOrderSingleTaskHandler().submitSingleTaskOrder();
+	}
+
+	/**
+	 * Returns the estimated completion time for the given order.
+	 * 
+	 * @param 	order
+	 * 			The order of which to poll the estimated completion time.
+	 * @return	The estimated completion time for the given order.
+	 * @throws  OrderDoesNotExistException 
+	 * 			If the order does not exist.
+	 */
+	public DateTime getEstimatedCompletionTime(OrderContainer order)
+			throws OrderDoesNotExistException {
+		return this.getOrderSingleTaskHandler().getEstimatedCompletionTime(order);
+	}
+	
+	/**
+	 * Checks whether there is an active single order session.
+	 * 
+	 * @return	true if there is an active single order session
+	 * 			false otherwise
+	 */
+	public boolean isRunningOrderSession(){
+		return this.getOrderSingleTaskHandler().isRunningOrderSession();
+	}
+
+	//--------------------------------------------------------------------------
+
+	//--------------------------------------------------------------------------
+	// Perform AssemblyTask Methods
+	
+	/**
+	 * Get the WorkPostContainrs AssemblyLine's WorkPosts.
+	 * 
+	 * @return the WorkPostContainers of the ASsemblyLine's WorkPosts
+	 */
+	public List<WorkPostContainer> getWorkPosts() {
+		return this.getPerformAssemblyTaskHandler().getWorkPosts();
+	}
+
+	/**
+	 * Get the AssemblyTaskContainers of the specified work post.
+	 * 
+	 * @param workPostNumber
+	 * 		The work post of interest.
+	 * 
+	 * @return The AssemblyTaskContainers at the specified work post.
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		workPostNumber refers to a work post that does not exist.
+	 */
+	public List<AssemblyTaskContainer> getAssemblyTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
+		return this.getPerformAssemblyTaskHandler().getAssemblyTasksAtWorkPost(workPostNumber);
+	}
+
+	/**
+	 * Perform the specified taskNumber at the specified WorkPost.
+	 * 
+	 * @param workPostNumber
+	 * 		The number of the work post.
+	 * @param taskNumber
+	 * 		The number of the task.
+	 * @param minutes
+	 * 		The amount of minutes it took to complete the task.
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		workPostNumber refers to a work post that does not exist.
+	 * @throws IllegalArgumentException
+	 * 		taskNumber refers to a task that does not exist.
+	 * @throws IllegalArgumentException
+	 * 		taskNumber refers to a task with a type incompatible with the given
+	 * 		work post.
+	 */
+	public void completeWorkpostTask(int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException {
+		this.getPerformAssemblyTaskHandler().completeWorkpostTask(workPostNumber, taskNumber, minutes);
+	}
+
+	//--------------------------------------------------------------------------
 
 }

@@ -19,7 +19,7 @@ public class InitialisationHandler {
 	 */
 	public InitialisationHandler(){
 		//TODO initialise ALL THE THINGS
-		domainFacade = new DomainFacade();
+		domainFacade = new DomainFacade(null, null, null, null, null, null);
 	}
 	
 	/** 
