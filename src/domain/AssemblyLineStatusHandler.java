@@ -1,6 +1,5 @@
 package domain;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,7 +7,7 @@ import java.util.List;
  * 
  * @author Simon Slangen
  */
-public class AssemblyLineStatusHandler implements WorkPostObserver {
+public class AssemblyLineStatusHandler {
 	
 	private final Manufacturer manufacturer;
 	
