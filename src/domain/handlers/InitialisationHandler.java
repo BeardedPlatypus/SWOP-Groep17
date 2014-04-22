@@ -5,15 +5,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import oracle.jrockit.jfr.Options;
 import domain.AssemblyLine;
 import domain.Manufacturer;
 import domain.Model;
 import domain.ModelCatalog;
 import domain.Option;
 import domain.OptionCategory;
+import domain.SingleTaskCatalog;
 import domain.TaskType;
 import domain.order.CompletedOrderCatalog;
 import domain.productionSchedule.ProductionScheduleFacade;
+import domain.restrictions.OptionProhibitsOtherSetRestriction;
+import domain.restrictions.OptionRequiresOtherSetRestriction;
+import domain.restrictions.OptionRestrictionManager;
 import domain.restrictions.RequiredOptionSetRestriction;
 import domain.restrictions.Restriction;
 
@@ -272,24 +277,75 @@ public class InitialisationHandler {
 		
 		// Body is required
 		//Reusing old list, not good, but it makes for less lines
-		Set<Option> allBodyOptions = new HashSet<Option>(modelBBodyList);
-		restrictions.add(new RequiredOptionSetRestriction(allBodyOptions));
+		Set<Option> allBodyOptionsSet = new HashSet<Option>(modelBBodyList);
+		restrictions.add(new RequiredOptionSetRestriction(allBodyOptionsSet));
 		
 		//Paint is required
-		Set<Option> allPaintOptions = new HashSet<Option>(modelAPaintList);
-		allPaintOptions.addAll(modelBPaintList);
-		restrictions.add(new RequiredOptionSetRestriction(allPaintOptions));
+		Set<Option> allPaintOptionsSet = new HashSet<Option>(modelAPaintList);
+		allPaintOptionsSet.addAll(modelBPaintList);
+		restrictions.add(new RequiredOptionSetRestriction(allPaintOptionsSet));
 		
 		//Engine is required
-		Set<Option> allEngineOptions = new HashSet<Option>(modelBEngineList);
-		restrictions.add(new RequiredOptionSetRestriction(allEngineOptions));
+		Set<Option> allEngineOptionsSet = new HashSet<Option>(modelBEngineList);
+		restrictions.add(new RequiredOptionSetRestriction(allEngineOptionsSet));
 		
+		//Gearbox is required
+		Set<Option> allGearboxOptionsSet = new HashSet<Option>(modelAGearboxList);
+		restrictions.add(new RequiredOptionSetRestriction(allGearboxOptionsSet));
+		
+		//Seats are required
+		Set<Option> allSeatsOptionsSet = new HashSet<Option>(modelBSeatsList);
+		restrictions.add(new RequiredOptionSetRestriction(allSeatsOptionsSet));
+		
+		//Wheels are required
+		Set<Option> allWheelsOptionsSet = new HashSet<Option>(modelBWheelsList);
+		restrictions.add(new RequiredOptionSetRestriction(allWheelsOptionsSet));
+		
+		// If a sport body is selected, a spoiler is mandatory
+		Set<Option> reqSpoilers = new HashSet<Option>();
+		reqSpoilers.add(spoilerHighOption);
+		reqSpoilers.add(spoilerLowOption);
+		restrictions.add(new OptionRequiresOtherSetRestriction(bodySportOption, reqSpoilers));
+		
+		// If a sport body is selected, a performance or ultra engine is necessary
+		Set<Option> reqEngines = new HashSet<Option>();
+		reqEngines.add(enginePerformanceOption);
+		reqEngines.add(engineUltraOption);
+		restrictions.add(new OptionRequiresOtherSetRestriction(bodySportOption, reqEngines));
+		
+		// If an ultra engine is selected, this prohibits an automatic airco
+		Set<Option> prohAirco = new HashSet<>();
+		prohAirco.add(aircoAutoOption);
+		restrictions.add(new OptionProhibitsOtherSetRestriction(engineUltraOption, prohAirco));
+		//--------------------------------------------------------------------------
+		
+		//--------------------------------------------------------------------------
+		// Initialise RestrictionManager
+		OptionRestrictionManager restrictionsMan = new OptionRestrictionManager(restrictions);
+		//--------------------------------------------------------------------------
+		
+		//--------------------------------------------------------------------------
+		// Initialise Single Task Catalog
+		
+		//Necessary OptionCategories:
+		// All Paint options
+		List<Option> allPaintOptionsList = new ArrayList<Option>(allPaintOptionsSet);
+		OptionCategory allPaintCategory = new OptionCategory(allPaintOptionsList);
+		// All Seats options
+		List<Option> allSeatsOptionsList = new ArrayList<>(allSeatsOptionsSet);
+		OptionCategory allSeatsCategory = new OptionCategory(allSeatsOptionsList);
+		
+		List<OptionCategory> singleTaskCategories = new ArrayList<>();
+		singleTaskCategories.add(allSeatsCategory);
+		singleTaskCategories.add(allPaintCategory);
+		
+		SingleTaskCatalog singleCatalog = new SingleTaskCatalog(singleTaskCategories);
+		//--------------------------------------------------------------------------
 
-		//--------------------------------------------------------------------------
+		////--------------------------------------------------------------------------
+		// Initialise AlgorithmStrategyFactory
 		
-		//--------------------------------------------------------------------------
-		// Initialise RestrictionCatalog
-		
+		//TODO
 
 		//--------------------------------------------------------------------------
 
@@ -297,13 +353,14 @@ public class InitialisationHandler {
 		//--------------------------------------------------------------------------
 		// Initialise Manufacturer
 
-		//TODO Other stuff
 		Manufacturer manufacturer = new Manufacturer(
+				//TODO
 				null,
-				null,
+				singleCatalog,
 				new CompletedOrderCatalog(),
 				modelCatalog,
-				null,
+				restrictionsMan,
+				//TODO Fix this
 				new AssemblyLine(),
 				new ProductionScheduleFacade());
 		//--------------------------------------------------------------------------
