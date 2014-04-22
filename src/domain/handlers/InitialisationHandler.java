@@ -1,7 +1,9 @@
 package domain.handlers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import domain.AssemblyLine;
 import domain.Manufacturer;
@@ -12,6 +14,8 @@ import domain.OptionCategory;
 import domain.TaskType;
 import domain.order.CompletedOrderCatalog;
 import domain.productionSchedule.ProductionScheduleFacade;
+import domain.restrictions.RequiredOptionSetRestriction;
+import domain.restrictions.Restriction;
 
 /**
  * The InitialisationHandler is responsible for initialising the system. This
@@ -30,7 +34,8 @@ public class InitialisationHandler {
 	 */
 	public InitialisationHandler(){
 		
-		//Initialise Options
+		//----------------------------------------------------------------------
+		// Initialise Options
 		
 		// -- Body Options
 		Option bodySedanOption = new Option(TaskType.BODY, "Sedan Body",
@@ -88,8 +93,11 @@ public class InitialisationHandler {
 				"Mount low spoiler on the car.");
 		Option spoilerNoneOption = new Option(TaskType.ACCESSORIES, "No Spoiler",
 				"Mount no spoiler on the car.");
+		//----------------------------------------------------------------------
 		
-		//Initialise OptionCategories
+		//----------------------------------------------------------------------
+		// Initialise OptionCategories
+		
 		List<Option> modelABodyList = new ArrayList<>();
 		List<Option> modelBBodyList = new ArrayList<>();
 		List<Option> modelCBodyList = new ArrayList<>();
@@ -205,8 +213,10 @@ public class InitialisationHandler {
 		OptionCategory modelASpoilerCategory = new OptionCategory(modelASpoilerList);
 		OptionCategory modelBSpoilerCategory = new OptionCategory(modelBSpoilerList);
 		OptionCategory modelCSpoilerCategory = new OptionCategory(modelCSpoilerList);
+		//----------------------------------------------------------------------
 		
-		//Initialise Models
+		//--------------------------------------------------------------------------
+		// Initialise Models
 		List<OptionCategory> modelACategories = new ArrayList<>();
 		modelACategories.add(modelAAircoCategory);
 		modelACategories.add(modelABodyCategory);
@@ -242,20 +252,51 @@ public class InitialisationHandler {
 
 		Model singleTaskModel = new Model("Single Task Order",
 				new ArrayList<OptionCategory>(), 60);
+		//----------------------------------------------------------------------
 		
-		//Initialise ModelCatalog
+		//----------------------------------------------------------------------
+		// Initialise ModelCatalog
+
 		List<Model> normalOrderSessionModels = new ArrayList<>();
 		normalOrderSessionModels.add(modelA);
 		normalOrderSessionModels.add(modelB);
 		normalOrderSessionModels.add(modelC);
 		ModelCatalog modelCatalog = new ModelCatalog(normalOrderSessionModels,
 				singleTaskModel);
+		//----------------------------------------------------------------------
+
+		//--------------------------------------------------------------------------
+		// Initialise Restrictions
+
+		List<Restriction> restrictions = new ArrayList<Restriction>();
 		
-		//Initialise Restrictions
+		// Body is required
+		//Reusing old list, not good, but it makes for less lines
+		Set<Option> allBodyOptions = new HashSet<Option>(modelBBodyList);
+		restrictions.add(new RequiredOptionSetRestriction(allBodyOptions));
 		
-		//Initialise RestrictionCatalog
+		//Paint is required
+		Set<Option> allPaintOptions = new HashSet<Option>(modelAPaintList);
+		allPaintOptions.addAll(modelBPaintList);
+		restrictions.add(new RequiredOptionSetRestriction(allPaintOptions));
 		
-		//Initialise Manufacturer
+		//Engine is required
+		Set<Option> allEngineOptions = new HashSet<Option>(modelBEngineList);
+		restrictions.add(new RequiredOptionSetRestriction(allEngineOptions));
+		
+
+		//--------------------------------------------------------------------------
+		
+		//--------------------------------------------------------------------------
+		// Initialise RestrictionCatalog
+		
+
+		//--------------------------------------------------------------------------
+
+		
+		//--------------------------------------------------------------------------
+		// Initialise Manufacturer
+
 		//TODO Other stuff
 		Manufacturer manufacturer = new Manufacturer(
 				null,
@@ -265,8 +306,12 @@ public class InitialisationHandler {
 				null,
 				new AssemblyLine(),
 				new ProductionScheduleFacade());
+		//--------------------------------------------------------------------------
+
 		
-		//Initialise Handlers
+		//--------------------------------------------------------------------------
+		// Initialise Handlers
+		
 		AdaptSchedulingAlgorithmHandler algorithmHandler = 
 				new AdaptSchedulingAlgorithmHandler(manufacturer);
 		AssemblyLineStatusHandler assemblyLineStatusHandler =
@@ -281,6 +326,10 @@ public class InitialisationHandler {
 				new OrderSingleTaskHandler(manufacturer);
 		PerformAssemblyTaskHandler performHandler =
 				new PerformAssemblyTaskHandler(manufacturer);
+		//--------------------------------------------------------------------------
+		
+		//--------------------------------------------------------------------------
+		// Initialise DomainFacade
 		
 		this.domainFacade = new DomainFacade(
 				algorithmHandler,
@@ -290,6 +339,8 @@ public class InitialisationHandler {
 				newOrderHandler,
 				singleTaskHandler,
 				performHandler);
+		//--------------------------------------------------------------------------
+
 	}
 	
 	/** 
