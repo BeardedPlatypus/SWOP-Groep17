@@ -49,10 +49,16 @@ public interface OrderSubject {
 	public void notifyHasOrders();
 
 	/**
+	 * Check if this OrderSubject has Orders. 
+	 * 
+	 * @return True if still contains orders, false otherwise.
+	 */
+	public boolean hasOrders();
+	
+	/**
 	 * Get the OrderObservers of this OrderSubject. 
 	 * 
 	 * @return The OrderObservers of this OrderSubject.
 	 */
 	public List<OrderObserver> getOrderObservers();
-
 }
