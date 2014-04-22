@@ -38,4 +38,9 @@ public class InitialisationHandler {
 	
 	/** The domain facade that is accessible by the UI. */
 	private final DomainFacade domainFacade;
+
+	public NewOrderSessionHandler getNewOrderHandler() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
 }

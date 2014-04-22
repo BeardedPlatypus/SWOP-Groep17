@@ -1,6 +1,7 @@
 package domain;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import util.annotations.Immutable;
@@ -248,7 +249,7 @@ public class Model {
 	 * @throws NoOptionCategoriesRemainingException
 	 * 		When no unfilled optionCategories remain
 	 */
-	public OptionCategory getNextOptionCategory(ArrayList<Option> options)
+	public OptionCategory getNextOptionCategory(LinkedList<Option> options)
 			throws NoOptionCategoriesRemainingException
 	{
 		for(OptionCategory cat : this.getOptionCategories()){

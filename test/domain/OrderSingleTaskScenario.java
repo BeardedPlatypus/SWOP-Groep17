@@ -72,6 +72,8 @@ public class OrderSingleTaskScenario {
 		//4. The system asks the user for a deadline, as well as the required task options (e.g. color). ==HAPPENS IN UI==
 		//5. The user indicates he wants to cancel placing the order.
 		//6. The use case returns to step 1. ==SEE MAIN SCENARIO TEST==
+		orderSingleTaskHandler.startNewOrderSession();
+		assertTrue(orderSingleTaskHandler.isRunningOrderSession());
 	}
 
 }
