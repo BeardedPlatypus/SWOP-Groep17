@@ -2,6 +2,8 @@ package domain;
 
 import java.util.Comparator;
 
+import domain.order.Order;
+
 /**
  * Imposes an ordering on Order objects based on whether their Specification
  * match those of the Specification favoured by the BatchComparator.

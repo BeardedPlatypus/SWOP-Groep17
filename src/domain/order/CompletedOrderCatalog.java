@@ -3,7 +3,8 @@ package domain.order;
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.Order;
+import domain.DateTime;
+import domain.productionSchedule.TimeObserver;
 
 /**
  * Catalog which contains completed orders of the system.

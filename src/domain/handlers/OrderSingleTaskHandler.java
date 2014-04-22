@@ -7,6 +7,8 @@ import domain.Manufacturer;
 import domain.Option;
 import domain.OptionCategory;
 import domain.SingleOrderSession;
+import domain.order.Order;
+import domain.order.OrderContainer;
 import exceptions.OrderDoesNotExistException;
 
 /**
@@ -139,7 +141,7 @@ public class OrderSingleTaskHandler {
 	 * 			If the order does not exist.
 	 */
 	public DateTime getEstimatedCompletionTime(OrderContainer order) throws  OrderDoesNotExistException {
-		return getManufacturer().getEstimatedCompletionTime((Order) order);
+		return getManufacturer().getEstimatedCompletionTime( order);
 	}
 	
 	/**

@@ -2,6 +2,8 @@ package domain;
 
 import java.util.List;
 
+import domain.order.Order;
+
 /**
  * Used to compose and submit a single task order.
  * 
