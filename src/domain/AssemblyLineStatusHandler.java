@@ -58,15 +58,29 @@ public class AssemblyLineStatusHandler {
 	}
 	
 	/**
+	 * Checks if the given index is a valid work post number.
+	 * 
+	 * @param 	workPostNumber
+	 * 			The work post index to verify.
+	 * @return	true if larger than zero and smaller than the number of workposts
+	 * 			false otherwise
+	 */
+	private boolean isValidWorkPostNumber(int workPostNumber){
+		return workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts();
+	}
+	
+	/**
 	 * Retrieves a single work post from the list of work posts using the given index.
 	 * 
 	 * @param 	workPostNumber
 	 * 			The index of the work post.
 	 * @pre		workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts()
 	 * @return	The work post situated at the given index.
+	 * @throws	IllegalArgumentException
+	 * 			If the given index does not satisfy the preconditions.
 	 */
 	public WorkPostContainer getWorkPost(int workPostNumber) throws IllegalArgumentException {
-		if(workPostNumber >= getAmountOfWorkPosts()){
+		if(!isValidWorkPostNumber(workPostNumber)){
 			throw new IllegalArgumentException("The passed index is invalid. Needs to be in between 0 and "
 						+ (getAmountOfWorkPosts()-1) + ". " + workPostNumber + " was passed.");
 		} else {
@@ -79,10 +93,18 @@ public class AssemblyLineStatusHandler {
 	 * 
 	 * @param 	workPostNumber
 	 * 			The index of the work post.
+	 * @pre		workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts()
 	 * @return	List of tasks at that work post.
+	 * @throws	IllegalArgumentException
+	 * 			If the given index does not satisfy the preconditions.
 	 */
-	public List<AssemblyTaskContainer> getTasksAtWorkPost(int workPostNumber) {
-		return getWorkPost(workPostNumber).getMatchingAssemblyTasks();
+	public List<AssemblyTaskContainer> getTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
+		if(!isValidWorkPostNumber(workPostNumber)){
+			throw new IllegalArgumentException("The passed index is invalid. Needs to be in between 0 and "
+						+ (getAmountOfWorkPosts()-1) + ". " + workPostNumber + " was passed.");
+		} else {
+			return getWorkPost(workPostNumber).getMatchingAssemblyTasks();
+		}
 	}
 	
 	/**
@@ -91,9 +113,16 @@ public class AssemblyLineStatusHandler {
 	 * @param 	workPostNumber
 	 * 			The index of the work post.
 	 * @return	Amount of tasks at that work post.
+	 * @throws	IllegalArgumentException
+	 * 			If the given index does not satisfy the preconditions.
 	 */
-	public int getAmountOfTasksAtWorkPost(int workPostNumber) {
-		return getTasksAtWorkPost(workPostNumber).size();
+	public int getAmountOfTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
+		if(!isValidWorkPostNumber(workPostNumber)){
+			throw new IllegalArgumentException("The passed index is invalid. Needs to be in between 0 and "
+						+ (getAmountOfWorkPosts()-1) + ". " + workPostNumber + " was passed.");
+		} else {
+			return getTasksAtWorkPost(workPostNumber).size();
+		}
 	}
 	
 	
