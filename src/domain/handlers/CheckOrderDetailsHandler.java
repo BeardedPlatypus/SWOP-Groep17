@@ -1,8 +1,11 @@
-package domain;
+package domain.handlers;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import domain.DateTime;
+import domain.Manufacturer;
+import domain.Specification;
 import exceptions.OrderDoesNotExistException;
 
 /**

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package domain;
+package domain.handlers;
 
 import static org.junit.Assert.*;
 
@@ -15,6 +15,8 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import domain.Manufacturer;
+import domain.handlers.NewOrderSessionHandler;
 import domain.order.OrderContainer;
 /**
  * @author Month

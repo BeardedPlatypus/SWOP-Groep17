@@ -10,6 +10,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import domain.handlers.InitialisationHandler;
+import domain.handlers.NewOrderSessionHandler;
 import domain.order.OrderContainer;
 
 public class NewOrderSessionScenario {

@@ -1,4 +1,6 @@
-package domain;
+package domain.handlers;
+
+import domain.Manufacturer;
 
 //TODO new in iteration 2
 public class SchedulingAlgorithmHandler {

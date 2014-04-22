@@ -1,4 +1,4 @@
-package domain;
+package domain.handlers;
 
 //TODO: This needs to be updated since the handlers will not be available anymore to the ui
 /**

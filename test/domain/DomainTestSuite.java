@@ -5,6 +5,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import deprecated.AdvanceAssemblyLineHandlerTest;
+import domain.handlers.NewOrderSessionHandlerTest;
+import domain.handlers.PerformAssemblyTaskHandlerTest;
 import domain.order.StandardOrderTest;
 
 @RunWith(Suite.class)

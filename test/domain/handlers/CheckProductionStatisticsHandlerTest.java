@@ -1,4 +1,4 @@
-package domain;
+package domain.handlers;
 
 import static org.junit.Assert.*;
 
@@ -10,6 +10,9 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import domain.Manufacturer;
+import domain.handlers.CheckProductionStatisticsHandler;
 
 public class CheckProductionStatisticsHandlerTest {
 	

@@ -1,4 +1,4 @@
-package domain;
+package domain.handlers;
 
 import static org.junit.Assert.*;
 
@@ -12,6 +12,12 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import domain.DateTime;
+import domain.Manufacturer;
+import domain.Option;
+import domain.OptionCategory;
+import domain.SingleOrderSession;
+import domain.handlers.OrderSingleTaskHandler;
 import exceptions.OrderDoesNotExistException;
 /**
  * @author Simon Slangen

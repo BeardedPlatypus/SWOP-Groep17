@@ -1,7 +1,13 @@
-package domain;
+package domain.handlers;
 
 import java.util.List;
 
+import domain.DateTime;
+import domain.Manufacturer;
+import domain.Model;
+import domain.Option;
+import domain.OptionCategory;
+import domain.OrderSession;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;

@@ -1,7 +1,12 @@
-package domain;
+package domain.handlers;
 
 import java.util.List;
 
+import domain.DateTime;
+import domain.Manufacturer;
+import domain.Option;
+import domain.OptionCategory;
+import domain.SingleOrderSession;
 import exceptions.OrderDoesNotExistException;
 
 /**

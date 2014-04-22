@@ -1,6 +1,10 @@
-package domain;
+package domain.handlers;
 
 import java.util.List;
+
+import domain.AlgorithmView;
+import domain.Manufacturer;
+import domain.Specification;
 
 public class AdaptSchedulingAlgorithmHandler {	
 	//--------------------------------------------------------------------------

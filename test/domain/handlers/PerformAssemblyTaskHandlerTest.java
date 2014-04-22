@@ -1,4 +1,4 @@
-package domain;
+package domain.handlers;
 
 import static org.junit.Assert.*;
 
@@ -15,6 +15,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import domain.Manufacturer;
+import domain.handlers.PerformAssemblyTaskHandler;
 
 @RunWith(PowerMockRunner.class)
 public class PerformAssemblyTaskHandlerTest {
