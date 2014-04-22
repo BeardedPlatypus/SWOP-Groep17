@@ -22,6 +22,10 @@ public class InitialisationHandler {
 		domainFacade = new DomainFacade(null, null, null, null, null, null);
 	}
 	
+	public OrderSingleTaskHandler getNewOrderSingleTaskHandler() {
+		throw new UnsupportedOperationException();
+	}
+	
 	/** 
 	 * Get the DomainFacade of the system initialised 
 	 * by this InitialisationHandler.
@@ -34,4 +38,9 @@ public class InitialisationHandler {
 	
 	/** The domain facade that is accessible by the UI. */
 	private final DomainFacade domainFacade;
+
+	public NewOrderSessionHandler getNewOrderHandler() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
 }
