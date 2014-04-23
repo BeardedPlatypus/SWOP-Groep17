@@ -101,11 +101,21 @@ public class InteractionSimulator {
 	
 	/**
 	 * Simulates the completion of all tasks at each work post, for a given number of iterations.
-	 * Tasks are set to have been completed in 50 minutes.
+	 * Tasks are set to have been completed in 50 minutes each.
 	 * 
 	 * @param numberOfTimes
 	 */
 	public void simulateCompleteAllTasksOnAssemblyLine(int numberOfTimes) {
+		simulateCompleteAllTasksOnAssemblyLine(numberOfTimes, 50);
+	}
+	
+	/**
+	 * Simulates the completion of all tasks at each work post, for a given number of iterations.
+	 * Tasks are set to have been completed in the given number of minutes.
+	 * 
+	 * @param numberOfTimes
+	 */
+	public void simulateCompleteAllTasksOnAssemblyLine(int numberOfTimes, int timeSpentPerTask) {
 		//do numberOfTimes
 		for(int i = 0; i < numberOfTimes; i++){
 			//for each work post
@@ -114,7 +124,7 @@ public class InteractionSimulator {
 				for(AssemblyTaskContainer task : wp.getMatchingAssemblyTasks()){
 					//set uncompleted tasks to have been completed in 50 minutes
 					if(!task.isCompleted()){
-						facade.completeWorkpostTask(wp.getWorkPostNum(), task.getTaskNumber(), 50);
+						facade.completeWorkpostTask(wp.getWorkPostNum(), task.getTaskNumber(), timeSpentPerTask);
 					}
 				}
 			}
@@ -123,17 +133,25 @@ public class InteractionSimulator {
 	
 	/**
 	 * Completes a given number of unfinished tasks at a given work post, or the maximum number of
-	 * tasks if there not enough unfinished tasks. Tasks are set to have been completed in 50 minutes.
+	 * tasks if there not enough unfinished tasks. Tasks are set to have been completed in the given number of minutes.
 	 */
-	public void simulateCompleteTasksOnWorkPost(int numberOfTasks, int workPostNumber){
+	public void simulateCompleteTasksOnWorkPost(int numberOfTasks, int workPostNumber, int timeSpentPerTask){
 		List<AssemblyTaskContainer> tasks = facade.getWorkPost(workPostNumber).getMatchingAssemblyTasks();
 		int finished = 0;
 		for(int i = 0; i < tasks.size() && finished < numberOfTasks; i++){
 			if(!tasks.get(i).isCompleted()){
 				finished++;
-				facade.completeWorkpostTask(workPostNumber, tasks.get(i).getTaskNumber(), 50);
+				facade.completeWorkpostTask(workPostNumber, tasks.get(i).getTaskNumber(), timeSpentPerTask);
 			}
 		}
+	}
+	
+	/**
+	 * Completes a given number of unfinished tasks at a given work post, or the maximum number of
+	 * tasks if there not enough unfinished tasks. Tasks are set to have been completed in the given number of minutes.
+	 */
+	public void simulateCompleteTasksOnWorkPost(int numberOfTasks, int workPostNumber){
+		simulateCompleteTasksOnWorkPost(numberOfTasks, workPostNumber, 50);
 	}
 	
 	/**
