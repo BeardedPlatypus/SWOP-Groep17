@@ -33,8 +33,20 @@ public class SingleTaskCatalog {
 		return new ArrayList<OptionCategory>(this.optionCategories);
 	}
 
+	/**
+	 * Check whether or not this catalog contains given option
+	 * 
+	 * @param option
+	 * 		the option to check for
+	 * 
+	 * @return whether given option is present in this catalog
+	 */
 	public boolean contains(Option option) {
-		// TODO Auto-generated method stub
+		for(OptionCategory cat : getPossibleTasks()){
+			if(cat.containsOption(option)){
+				return true;
+			}
+		}
 		return false;
 	}
 }

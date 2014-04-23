@@ -563,7 +563,7 @@ public class DomainFacade {
 	 * @throws 	IllegalStateException
 	 *			If there is no active new order session.
 	 */
-	public Order submitSingleTaskOrder() throws IllegalStateException {
+	public OrderContainer submitSingleTaskOrder() throws IllegalStateException {
 		return this.getOrderSingleTaskHandler().submitSingleTaskOrder();
 	}
 
