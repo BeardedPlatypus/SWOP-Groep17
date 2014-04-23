@@ -18,6 +18,12 @@ import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
 
+/**
+ * Use case scenario test: Order New Car
+ * 
+ * @author Simon Slangen
+ *
+ */
 public class NewOrderSessionScenario {
 	@Rule public ExpectedException exception = ExpectedException.none();
 	
