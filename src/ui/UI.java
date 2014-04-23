@@ -1,23 +1,9 @@
 package ui;
 
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
 
-import org.javatuples.Pair;
-
-import domain.AssemblyProcedureContainer;
-import domain.AssemblyTaskContainer;
-import domain.Model;
-import domain.Option;
-import domain.Specification;
-import domain.WorkPostContainer;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
-import domain.handlers.NewOrderSessionHandler;
-import domain.handlers.PerformAssemblyTaskHandler;
-import domain.order.OrderContainer;
 
 public class UI {
 	
@@ -142,13 +128,15 @@ public class UI {
 	//--------------------------------------------------------------------------
 
 	private void orderNewCarRoutine() {
-		OrderNewCarUIPart uiPart = new OrderNewCarUIPart(this.facade.getNewOrderSessionHandler(),this.helper);
+		OrderNewCarUIPart uiPart = new OrderNewCarUIPart(
+				this.facade.getNewOrderSessionHandler(),this.helper);
 		uiPart.run();
 	}
 
 	private void checkOrderRoutine() {
-		// TODO Auto-generated method stub
-		
+		CheckOrderDetailsUIPart uiPart = new CheckOrderDetailsUIPart(
+				this.facade.getCheckOrderDetailsHandler(),this.helper);
+		uiPart.run();
 	}
 
 	private void performAssemblyTaskRoutine() {

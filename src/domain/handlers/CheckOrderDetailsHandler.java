@@ -309,4 +309,27 @@ public class CheckOrderDetailsHandler {
 			throw new IllegalStateException("The order already completed!");
 		return this.getManufacturer().getEstimatedCompletionTime(this.getCurrentObservedOrder());
 	}
+
+
+	/**
+	 * Get estimated completion time of given orderContainer
+	 * 
+	 * @param order
+	 * 		The order to check for
+	 * 
+	 * @return the estimated completion time of the order
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		If the order is null
+	 * @throws OrderDoesNotExistException
+	 * 		If the order is not an order of the system
+	 */
+	public DateTime getEstimatedCompletionTime(OrderContainer order) 
+			throws IllegalArgumentException,
+			OrderDoesNotExistException
+	{
+		if(order == null)
+			throw new IllegalArgumentException("Order can not be null.");
+		return this.getManufacturer().getEstimatedCompletionTime(order);
+	}
 }

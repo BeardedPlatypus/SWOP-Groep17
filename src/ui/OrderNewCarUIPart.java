@@ -1,6 +1,5 @@
 package ui;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import domain.Model;
@@ -18,11 +17,12 @@ public class OrderNewCarUIPart {
 	// constructor
 	//--------------------------------------------------------------------------
 	/**
-	 * Construct this part of the UI with given handler to interface with.
+	 * Construct this part of the UI with given handler and helper to interface with.
 	 * 
 	 * @param handler
 	 * 		The new handler for this object
 	 * @param helper 
+	 * 		The UIhelper of this class
 	 * 
 	 * @throws IllegalArgumentException
 	 * 		If either of the parameters is null
@@ -52,16 +52,6 @@ public class OrderNewCarUIPart {
 
 	/** Handler for this part of the UI */
 	private final NewOrderSessionHandler partHandler;
-	
-
-	/**
-	 * Get the helper for internal use.
-	 * 
-	 * @return the helper
-	 */
-	private UIHelper getHelper(){
-		return this.helper;
-	}
 	
 	/** UIhelper of this class */
 	private final UIHelper helper;
@@ -178,7 +168,7 @@ public class OrderNewCarUIPart {
 	}
 
 	/**
-	 * 
+	 * Set the desired options in the internal session
 	 */
 	private boolean setOptions() {
 
