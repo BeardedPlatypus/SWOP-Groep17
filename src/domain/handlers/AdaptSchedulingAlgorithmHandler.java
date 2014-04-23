@@ -7,6 +7,13 @@ import domain.Manufacturer;
 import domain.Specification;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
 
+/**
+ * Class responsible for viewing the current scheduling algorithm and changing
+ * that algorithm whenever the user desires.
+ * 
+ * @author Thomas Vochten
+ *
+ */
 public class AdaptSchedulingAlgorithmHandler {	
 	//--------------------------------------------------------------------------
 	// Constructor
