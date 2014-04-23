@@ -75,4 +75,13 @@ public class UIHelper {
 		}
 		return choice;
 	}
+	
+	/**
+	 * Awaits the user pressing enter by taking two newlines from the scanner.
+	 */
+	public void getEnter(){
+		System.out.println(CRLF + "Press enter to continue" + CRLF);
+		input.nextLine();
+		input.nextLine();
+	}
 }

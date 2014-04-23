@@ -140,13 +140,15 @@ public class UI {
 	}
 
 	private void performAssemblyTaskRoutine() {
-		// TODO Auto-generated method stub
-		
+		PerformAssemblyTasksUIPart uiPart = new PerformAssemblyTasksUIPart(
+				this.facade.getPerformAssemblyTaskHandler(),this.helper);
+		uiPart.run();
 	}
 
 	private void checkAssemblyLineStatusRoutine() {
-		// TODO Auto-generated method stub
-		
+		CheckAssemblyLineStatusUIPart uiPart = new CheckAssemblyLineStatusUIPart(
+				this.facade.getAssemblyLineStatusHandler(),this.helper);
+		uiPart.run();
 	}
 
 	private void checkProductionStatisticsRoutine() {
