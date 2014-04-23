@@ -4,6 +4,7 @@ import java.util.List;
 
 import domain.OptionCategory;
 import domain.handlers.OrderSingleTaskHandler;
+import domain.order.OrderContainer;
 
 public class OrderSingleTaskUIPart {
 
@@ -55,12 +56,7 @@ public class OrderSingleTaskUIPart {
 	//--------------------------------------------------------------------------
 
 	/**
-	 * Runs the routine for ordering a new car.
-	 * Until the exit choice is taken on the ordermenu the possible models are printed,
-	 * and after choosing one, the specs are collected and a new model is made if the user
-	 * hasn't canceled during the specs.
-	 * If both model and specs are chosen, the order is placed and the submenu runs again,
-	 * with an updated view of the pending and completed orders.
+	 * Allows the user to order a single task.
 	 */
 	public void run() {
 		System.out.println(helper.SEPERATOR);
@@ -72,20 +68,51 @@ public class OrderSingleTaskUIPart {
 			if(choice == 2){
 				exitMenu = true;
 			} else {
+				System.out.println(helper.SEPERATOR);
 				this.getHandler().startNewOrderSession();
 				List<OptionCategory> categories = getHandler().getPossibleTasks();
-//				int modelChoice = getModelChoice(orderModels);
-//				this.getHandler().chooseModel(orderModels.get(modelChoice));
-//				boolean continueOrder = setOptions();
-//				if(continueOrder){
-//					try{
-//						this.getHandler().submitOrder();
-//					} catch(OptionRestrictionException e){
-//						System.out.println("Order was not conform with system restrictions."
-//								+ helper.CRLF + "Try again." + helper.CRLF);
-//					}
-//				}
+				int categoryChoice = getCategoryChoice(categories);
+				System.out.println(helper.SEPERATOR);
+				boolean continueOrder = selectOption(categories.get(categoryChoice));
+				if(continueOrder){
+					System.out.println("Please specify the deadline for this order.");
+					System.out.println("On what day should the order be finished?");
+					int day = helper.getIntFromUser(0, Integer.MAX_VALUE);
+					System.out.println("On what hour should the order be finished?");
+					int hours = helper.getIntFromUser(0, 23);
+					System.out.println("On how many minutes past that hour should the order be finished?");
+					int minutes = helper.getIntFromUser(0, 59);
+					getHandler().specifyDeadline(day, hours, minutes);
+					OrderContainer order = getHandler().submitSingleTaskOrder();
+					System.out.println("Estimated Completion Time for this order is:");
+					System.out.println(getHandler().getEstimatedCompletionTime(order).toString());
+					helper.getEnter();
+					System.out.println(helper.SEPERATOR);
+				}
 			}
 		}
+	}
+
+
+	private int getCategoryChoice(List<OptionCategory> categories) {
+		System.out.println("Please choose the type of task you want to order:");
+		for(int i = 0; i<categories.size(); i++){
+			System.out.println(i + ") " + categories.get(i).getName());
+		}
+		return helper.getIntFromUser(1, categories.size());
+	}
+	
+
+	private boolean selectOption(OptionCategory optionCategory) {
+		System.out.println("Please choose the option you want to order:");
+		for(int i = 0; i<optionCategory.getAmountOfOptions(); i++){
+			System.out.println((i+1) + ") " + optionCategory.getOption(i).getName());
+		}
+		System.out.println((optionCategory.getAmountOfOptions()+1) + ") Cancel this order");
+		int choice = helper.getIntFromUser(1, optionCategory.getAmountOfOptions()+1);
+		if(choice == (optionCategory.getAmountOfOptions()+1))
+			return false;
+		getHandler().selectOption(optionCategory.getOption(choice));
+		return true;
 	}
 }
