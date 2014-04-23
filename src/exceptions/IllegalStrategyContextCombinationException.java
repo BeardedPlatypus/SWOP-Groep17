@@ -14,4 +14,8 @@ public class IllegalStrategyContextCombinationException extends AssemAssistExcep
 	public IllegalStrategyContextCombinationException(String message) {
 		super(message);
 	}
+	
+	public IllegalStrategyContextCombinationException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

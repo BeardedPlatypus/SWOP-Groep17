@@ -407,7 +407,7 @@ public class AssemblyLine implements WorkPostObserver {
 	}
 	
 	private boolean orderIsAvailable() {
-		return this.getManufacturer().
+		return this.getManufacturer().orderAvailable();
 	}
 	
 	/**

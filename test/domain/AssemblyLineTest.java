@@ -39,6 +39,13 @@ public class AssemblyLineTest {
 	AssemblyTask task2;
 	AssemblyTask task3;
 	
+	Option option1;
+	Option option12;
+	Option option2;
+	Option option3;
+	
+	Specification specGenProcedure;
+	
 	@Mock Order order;
 	@Mock Order order2;
 	@Mock Order order3;
@@ -61,10 +68,19 @@ public class AssemblyLineTest {
 		
 		List<AssemblyProcedure> procedures = new ArrayList<AssemblyProcedure>();
 		
-		task1 = new AssemblyTask(new Option(TaskType.BODY, "john", "doe"), 0);
-		task12 = new AssemblyTask(new Option(TaskType.BODY, "jona", "gold"), 0);
-		task2 = new AssemblyTask(new Option(TaskType.DRIVETRAIN, "jane", "doe"), 0);
-		task3 = new AssemblyTask(new Option(TaskType.ACCESSORIES, "adam", "smith"), 0);
+		option1 = new Option(TaskType.BODY, "kaworu", "jesus");
+		option12 = new Option(TaskType.BODY, "yui", "sama");
+		option2 = new Option(TaskType.DRIVETRAIN, "whiny", "shinji");
+		option3 = new Option(TaskType.ACCESSORIES, "moe", "rei");
+		
+		task1 = new AssemblyTask(option1, 0);
+		task12 = new AssemblyTask(option12, 0);
+		task2 = new AssemblyTask(option2, 0);
+		task3 = new AssemblyTask(option3, 0);
+		
+		specGenProcedure = new Specification(new ArrayList<Option>(Arrays.asList(option1, option12, option2, option3)));
+		
+		Mockito.when(notOnAssemblyLine.getSpecifications()).thenReturn(specGenProcedure);
 		
 		procedure1 = new AssemblyProcedure(order, new ArrayList<AssemblyTask>(Arrays.asList(task1)), 180);
 		procedure2 = new AssemblyProcedure(order2, new ArrayList<AssemblyTask>(Arrays.asList(task2)), 180);
@@ -113,6 +129,12 @@ public class AssemblyLineTest {
 		assertEquals(manufacturer, Whitebox.getInternalState(spiedAssemblyLine, Manufacturer.class));
 		List<WorkPostObserver> observers = (ArrayList<WorkPostObserver>) Whitebox.getInternalState(workPosts.get(0), "observers");
 		assertEquals(assemblyLine, observers.get(0));
+	}
+	
+	@Test
+	public void makeAssemblyProcedureTest() {
+		AssemblyProcedure generated = assemblyLine.makeAssemblyProcedure(notOnAssemblyLine);
+		assertEquals(specGenProcedure, generated.getOrder().getSpecifications());
 	}
 	
 	@Test
@@ -297,6 +319,20 @@ public class AssemblyLineTest {
 	@Test
 	public void containsTest_false() {
 		assertFalse(assemblyLine.contains(notOnAssemblyLine));
+	}
+	
+	@Test
+	public void setLogger_null() {
+		AssemblyLine line = new AssemblyLine(manufacturer);
+		expected.expect(IllegalArgumentException.class);
+		line.setStatisticsLogger(null);
+	}
+	
+	@Test
+	public void setLogger_valid() {
+		AssemblyLine line = new AssemblyLine(manufacturer);
+		line.setStatisticsLogger(logger);
+		assertEquals(logger, Whitebox.getInternalState(line, StatisticsLogger.class));
 	}
 
 }
