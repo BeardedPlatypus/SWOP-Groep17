@@ -10,7 +10,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import domain.DateTime;
-import domain.FifoComparator;
 import domain.order.Order;
 
 public class FifoComparatorTest {

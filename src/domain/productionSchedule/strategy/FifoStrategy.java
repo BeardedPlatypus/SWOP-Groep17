@@ -1,5 +1,6 @@
 package domain.productionSchedule.strategy;
 
+import java.util.Collections;
 import java.util.List;
 
 import domain.order.Order;
@@ -7,49 +8,52 @@ import domain.order.Order;
 //TODO
 /**
  * 
- * @author Martinus Wilhelmus Tegelaers
+ * @author Martinus Wilhelmus Tegelaers, Thomas Vochten
  *
  */
 public class FifoStrategy extends SchedulingStrategy {
-
+	
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
+	/**
+	 * Initialise a new FifoStrategy
+	 */
 	public FifoStrategy() {
-		throw new UnsupportedOperationException();
+		this.comparator = new FifoComparator();
 	}
 	
 	//--------------------------------------------------------------------------
 	// SchedulingStrategy methods.
 	//--------------------------------------------------------------------------
+	
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "First-in first-out strategy";
+	}
+	
+	@Override
+	public int compare(Order o, Order p) {
+		return this.getComparator().compare(o, p);
+	}
+	
+	@Override
+	public void sort(List<Order> orderQueue) {
+		Collections.sort(orderQueue, this.getComparator());
 	}
 
 	@Override
 	public boolean isDone(List<Order> orderQueue) {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
-	@Override
-	public void sort(List<Order> orderQueue) {
-		// TODO Auto-generated method stub
-		
+	
+	//--------------------------------------------------------------------------
+	// Comparator methods
+	//--------------------------------------------------------------------------
+	/** The comparator used to compare orders. */
+	private FifoComparator comparator;
+	
+	private FifoComparator getComparator() {
+		return this.comparator;
 	}
-
-	@Override
-	public void addTo(Order order, List<Order> orderQueue) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public int compare(Order o, Order p) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 }

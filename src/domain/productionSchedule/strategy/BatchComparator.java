@@ -51,7 +51,7 @@ public class BatchComparator implements Comparator<Order> {
 	}
 
 	/** Get the Specification that determines the ordering. */
-	private Specification getSpecification() {
+	public Specification getSpecification() {
 		return this.spec;
 	}
 	
