@@ -1,8 +1,6 @@
 package ui;
 
-import domain.handlers.AssemblyLineStatusHandler;
 import domain.handlers.CheckProductionStatisticsHandler;
-import domain.handlers.NewOrderSessionHandler;
 
 public class CheckProductionStatisticsUIPart {
 

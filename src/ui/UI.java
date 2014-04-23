@@ -152,18 +152,21 @@ public class UI {
 	}
 
 	private void checkProductionStatisticsRoutine() {
-		// TODO Auto-generated method stub
-		
+		CheckProductionStatisticsUIPart uiPart = new CheckProductionStatisticsUIPart(
+				this.facade.getCheckProductionStatisticsHandler(),this.helper);
+		uiPart.run();
 	}
 
 	private void adaptSchedulingAgorithmRoutine() {
-		// TODO Auto-generated method stub
-		
+		AdaptSchedulingAlgorithmUIPart uiPart = new AdaptSchedulingAlgorithmUIPart(
+				this.facade.getAdaptSchedulingAlgorithmHandler(),this.helper);
+		uiPart.run();
 	}
 
 	private void orderSingleTaskRoutine() {
-		// TODO Auto-generated method stub
-		
+		OrderSingleTaskUIPart uiPart = new OrderSingleTaskUIPart(
+				this.facade.getOrderSingleTaskHandler(),this.helper);
+		uiPart.run();
 	}
 
 }

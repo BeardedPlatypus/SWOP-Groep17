@@ -18,9 +18,11 @@ public class OptionCategory {
 	 * @param options
 	 * 		The list of options the new optionCategory should contain
 	 * @throws IllegalArgumentException
-	 * 		When the list or an element in the list is null
+	 * 		When the name, the list or an element in the list is null
 	 */
-	public OptionCategory(List<Option> options) throws IllegalArgumentException{
+	public OptionCategory(List<Option> options, String categoryName) throws IllegalArgumentException{
+		if(categoryName == null)
+			throw new IllegalArgumentException("Name can not be null");
 		if(options == null)
 			throw new IllegalArgumentException("Given list of options is null.");
 		if(options.contains(null))
