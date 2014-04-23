@@ -2,7 +2,7 @@ package domain;
 
 import java.util.List;
 
-import domain.productionSchedule.strategy.AlgorithmView;
+import domain.productionSchedule.strategy.SchedulingStrategyView;
 
 public class AdaptSchedulingAlgorithmHandler {	
 	//--------------------------------------------------------------------------
@@ -32,11 +32,11 @@ public class AdaptSchedulingAlgorithmHandler {
 	// Interaction methods.
 	//--------------------------------------------------------------------------
 	// All flows
-	public List<AlgorithmView> getAlgorithms() {
+	public List<SchedulingStrategyView> getAlgorithms() {
 		throw new UnsupportedOperationException();
 	}
 	
-	public AlgorithmView getCurrentAlgorithm() {
+	public SchedulingStrategyView getCurrentAlgorithm() {
 		throw new UnsupportedOperationException();
 	}
 	

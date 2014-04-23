@@ -171,11 +171,11 @@ public class DomainFacade {
 	// Algorithm adaption methods
 
 	// All flows
-	public List<AlgorithmView> getAlgorithms() {
+	public List<SchedulingStrategyView> getAlgorithms() {
 		return this.getAdaptSchedulingAlgorithmHandler().getAlgorithms();
 	}
 
-	public AlgorithmView getCurrentAlgorithm() {
+	public SchedulingStrategyView getCurrentAlgorithm() {
 		return this.getAdaptSchedulingAlgorithmHandler().getCurrentAlgorithm();
 	}
 

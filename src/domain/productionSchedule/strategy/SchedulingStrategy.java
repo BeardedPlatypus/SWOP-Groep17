@@ -10,6 +10,6 @@ package domain.productionSchedule.strategy;
  * @author Martinus Wilhelmus Tegelaers
  *
  */
-public abstract class SchedulingStrategy {
+public abstract class SchedulingStrategy implements SchedulingStrategyView{
 	
 }

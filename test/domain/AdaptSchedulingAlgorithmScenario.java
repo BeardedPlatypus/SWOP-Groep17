@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
-import domain.productionSchedule.strategy.AlgorithmView;
+import domain.productionSchedule.strategy.SchedulingStrategyView;
 import domain.handlers.AdaptSchedulingAlgorithmHandler;
 
 public class AdaptSchedulingAlgorithmScenario extends TestCase {
@@ -40,10 +40,10 @@ public class AdaptSchedulingAlgorithmScenario extends TestCase {
 		//   selected algorithm.
 		
 		// test the getting of the algorithms. 
-		List<AlgorithmView> algorithms = handler.getAlgorithms();
+		List<SchedulingStrategyView> algorithms = handler.getAlgorithms();
 		
 		// test the current algorithm.
-		AlgorithmView curAlg = handler.getCurrentAlgorithm();
+		SchedulingStrategyView curAlg = handler.getCurrentAlgorithm();
 		
 		//3. The user selects the new scheduling algorithm to be used.
 		//4. The system applies the new scheduling algorithm5 and updates its
@@ -51,7 +51,7 @@ public class AdaptSchedulingAlgorithmScenario extends TestCase {
 		handler.setFifoAlgorithm();
 		
 		// Check if fifo algorithm is indeed used. 
-		AlgorithmView setAlg = handler.getCurrentAlgorithm();
+		SchedulingStrategyView setAlg = handler.getCurrentAlgorithm();
 		assertEquals(null, setAlg); //FIXME change this fifo algorithm view.
 		
 		// Check if orders are indeed ordered by the fifo algorithm
@@ -65,10 +65,10 @@ public class AdaptSchedulingAlgorithmScenario extends TestCase {
 		//   selected algorithm.
 		
 		// test the getting of the algorithms. 
-		List<AlgorithmView> algorithms = handler.getAlgorithms();
+		List<SchedulingStrategyView> algorithms = handler.getAlgorithms();
 		
 		// test the current algorithm.
-		AlgorithmView curAlg = handler.getCurrentAlgorithm();
+		SchedulingStrategyView curAlg = handler.getCurrentAlgorithm();
 		
 		//3. (a) The user indicates he wants to use the Specifcation Batch al-
 		//       gorithm.
@@ -88,7 +88,7 @@ public class AdaptSchedulingAlgorithmScenario extends TestCase {
 		handler.setBatchAlgorithm(batch);
 		
 		// Check if batch algorithm is indeed used. 
-		AlgorithmView setAlg = handler.getCurrentAlgorithm();
+		SchedulingStrategyView setAlg = handler.getCurrentAlgorithm();
 		assertEquals(null, setAlg); //FIXME change this batch algorithm view.
 		
 		// Check if orders are indeed ordered by the batch algorithm

@@ -34,11 +34,11 @@ public class AdaptSchedulingAlgorithmHandler {
 	// Interaction methods.
 	//--------------------------------------------------------------------------
 	// All flows
-	public List<AlgorithmView> getAlgorithms() {
+	public List<SchedulingStrategyView> getAlgorithms() {
 		throw new UnsupportedOperationException();
 	}
 	
-	public AlgorithmView getCurrentAlgorithm() {
+	public SchedulingStrategyView getCurrentAlgorithm() {
 		throw new UnsupportedOperationException();
 	}
 	
