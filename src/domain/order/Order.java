@@ -238,7 +238,7 @@ public abstract class Order implements OrderContainer {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof Order))
 			return false;
 		Order other = (Order) obj;
 		if (orderNumber != other.orderNumber)

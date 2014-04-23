@@ -53,7 +53,6 @@ public class Manufacturer {
 						CompletedOrderCatalog completedCat,
 						ModelCatalog modelCat,
 						OptionRestrictionManager optionRestMan,
-						AssemblyLine assemblyLine,
 						ProductionScheduleFacade prodSched)
 						throws IllegalArgumentException
 	{
@@ -67,8 +66,6 @@ public class Manufacturer {
 			throw new IllegalArgumentException("ModelCatalog should not be null.");
 		if(optionRestMan == null)
 			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
-		if(assemblyLine == null)
-			throw new IllegalArgumentException("AssemblyLine should not be null.");
 		if(prodSched == null)
 			throw new IllegalArgumentException("ProductionScheduleFacade should not be null.");
 		this.algorithmStrategyFactory = stratFact;
@@ -76,22 +73,7 @@ public class Manufacturer {
 		this.completedOrderCatalog = completedCat;
 		this.modelCatalog = modelCat;
 		this.optionRestrictionManager = optionRestMan;
-		this.assemblyLine = assemblyLine;
 		this.productionScheduleFacade = prodSched;
-	}
-	
-	
-	public Order submitSingleTaskOrder(Option option, DateTime deadline) {
-		throw new UnsupportedOperationException();
-	}
-
-
-	public void getTaskContainersAtWorkPost(Object parameter) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void completeTask(Object parameter, Object parameter2, Object parameter3) {
-		throw new UnsupportedOperationException();
 	}
 	
 	/** The AlgorithmStrategyFactory of this Manufacturer. */
@@ -165,6 +147,51 @@ public class Manufacturer {
 	 */
 	public SingleOrderSession startNewSingleTaskOrderSession() {
 		return new SingleOrderSession(this, this.singleTaskCatalog);
+	}
+	
+	/**
+	 * Submit the parameters for a single task order to the production schedule.
+	 * We expect the schedule to make an order and schedule it. The schedule
+	 * will also return the order, which is further passed on.
+	 * 
+	 * @param option
+	 * 		The option for the single task order
+	 * @param deadline
+	 * 		The deadline for the single task order
+	 * 
+	 * @return
+	 * 		The generated order
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		If the given option is not an option of the singleTaskCatalog
+	 * @throws IllegalArgumentException
+	 * 		If either of the arguments is null
+	 */
+	public OrderContainer submitSingleTaskOrder(Option option, DateTime deadline) {
+		if(option == null)
+			throw new IllegalArgumentException("Option should not be null.");
+		if(deadline == null)
+			throw new IllegalArgumentException("Option should not be null.");
+		if(!this.singleTaskCatalogContains(option))
+			throw new IllegalArgumentException("Option is not a singleTaskOption.");
+		this.getProductionSchedule().submitSingleTaskOrder(option, deadline);
+	}
+	
+	/**
+	 * Check whether or not given option is present in the singleTaskCatalog
+	 * 
+	 * @param option
+	 * 		The option to check if it is present in the singleTaskCatalog
+	 * 
+	 * @return whether or not given option is present in the singleTaskCatalog
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		If given option is not present in the singelTaskCatalog
+	 */
+	private boolean singleTaskCatalogContains(Option option) throws IllegalArgumentException{
+		if(option == null)
+			throw new IllegalArgumentException("Option can not be null.");
+		return this.singleTaskCatalog.contains(option);
 	}
 	
 	/**
@@ -400,8 +427,23 @@ public class Manufacturer {
 		this.productionScheduleFacade = productionScheduleFacade;
 	}
 
-	public Order popNextOrderFromSchedule() {
+	/**
+	 * Remove an Order from this Manufacturer's ProductionSchedule and
+	 * pass it along.
+	 * 
+	 * @return The removed order
+	 */
+	public Order popNextOrderFromSchedule() throws IllegalStateException {
 		return this.getProductionSchedule().popNextOrderFromSchedule();
+	}
+	
+	/**
+	 * Ask this Manufacturer's ProductionSchedule if an order is available
+	 * 
+	 * @return Whether an order is available
+	 */
+	public boolean orderAvailable() {
+		return this.getProductionSchedule().orderAvailable();
 	}
 
 	/**
@@ -473,6 +515,12 @@ public class Manufacturer {
 	//--------------------------------------------------------------------------
 	// Querying the statistics
 	//--------------------------------------------------------------------------
+	/**
+	 * Ask this Manufacturer's AssemblyLine for a report of statistics concerning its
+	 * production activities.
+	 * 
+	 * @return The report
+	 */
 	public String getStatisticsReport() {
 		return this.getAssemblyLine().getStatisticsReport();
 	}

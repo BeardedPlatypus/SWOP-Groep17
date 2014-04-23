@@ -13,6 +13,7 @@ import org.junit.rules.ExpectedException;
 
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
 import domain.productionSchedule.strategy.AlgorithmView;
+import domain.handlers.AdaptSchedulingAlgorithmHandler;
 
 public class AdaptSchedulingAlgorithmScenario extends TestCase {
 	//--------------------------------------------------------------------------

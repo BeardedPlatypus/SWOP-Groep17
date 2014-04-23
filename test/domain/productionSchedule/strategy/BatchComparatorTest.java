@@ -1,4 +1,4 @@
-package domain;
+package domain.productionSchedule.strategy;
 
 import static org.junit.Assert.*;
 
@@ -13,7 +13,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import domain.productionSchedule.strategy.BatchComparator;
+import domain.BatchComparator;
+import domain.DateTime;
+import domain.Option;
+import domain.Specification;
+import domain.TaskType;
+import domain.order.Order;
 
 /**
  * @author SimSla

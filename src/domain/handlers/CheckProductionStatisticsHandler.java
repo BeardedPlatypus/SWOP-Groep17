@@ -1,4 +1,6 @@
-package domain;
+package domain.handlers;
+
+import domain.Manufacturer;
 
 /**
  * Class responsible for delivering statistical reports whenever the user

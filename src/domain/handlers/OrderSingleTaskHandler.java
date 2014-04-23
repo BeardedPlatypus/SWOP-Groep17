@@ -1,7 +1,14 @@
-package domain;
+package domain.handlers;
 
 import java.util.List;
 
+import domain.DateTime;
+import domain.Manufacturer;
+import domain.Option;
+import domain.OptionCategory;
+import domain.SingleOrderSession;
+import domain.order.Order;
+import domain.order.OrderContainer;
 import exceptions.OrderDoesNotExistException;
 
 /**
@@ -114,9 +121,9 @@ public class OrderSingleTaskHandler {
 	 * @throws 	IllegalStateException
 	 *			If there is no active new order session.
 	 */
-	public Order submitSingleTaskOrder() throws IllegalStateException {
+	public OrderContainer submitSingleTaskOrder() throws IllegalStateException {
 		if(isRunningOrderSession()){
-			Order submittedOrder = getCurrentOrderSession().submitSingleTaskOrder();
+			OrderContainer submittedOrder = getCurrentOrderSession().submitSingleTaskOrder();
 			currentOrderSession = null;
 			return submittedOrder;
 		} else {
@@ -134,7 +141,7 @@ public class OrderSingleTaskHandler {
 	 * 			If the order does not exist.
 	 */
 	public DateTime getEstimatedCompletionTime(OrderContainer order) throws  OrderDoesNotExistException {
-		return getManufacturer().getEstimatedCompletionTime((Order) order);
+		return getManufacturer().getEstimatedCompletionTime(order);
 	}
 	
 	/**

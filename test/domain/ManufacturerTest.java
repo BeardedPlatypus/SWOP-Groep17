@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import domain.order.Order;
 import domain.order.OrderContainer;
 
 public class ManufacturerTest {

@@ -63,10 +63,32 @@ public class AssemblyLine implements WorkPostObserver {
 	
 	/** The manufacturer that owns this AssemblyLIne. */
 	private final Manufacturer manufacturer;
+	
+	//--------------------------------------------------------------------------
+	// Order-related methods
+	//--------------------------------------------------------------------------
+	/**
+	 * Indicate whether the given Order has been put on this AssemblyLine
+	 * 
+	 * @param order
+	 * 		The order to look for
+	 * @return This AssemblyLine has the given Order
+	 */
+	public boolean contains(Order order) {
+		for (WorkPost workPost : this.getWorkPosts()) {
+			if (workPost.contains(order)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	//--------------------------------------------------------------------------
 	// WorkPost-related methods and variables.
 	//--------------------------------------------------------------------------
+	/** The {@link WorkPost}s of this assembly line, ordered by the assembly line's layout */
+	private final List<WorkPost> workPosts = new ArrayList<WorkPost>();
+	
 	/**
 	 * Ask the given {@link WorkPost} to complete {@link AssemblyTask} with given number on its current {@link AssemblyProcedure}
 	 * 
@@ -165,6 +187,32 @@ public class AssemblyLine implements WorkPostObserver {
 		return new ArrayList<WorkPostContainer>(workPosts);
 	}
 
+	/**
+	 * Get the {@link WorkPost} at the specified position in the assembly line.
+	 * 
+	 * @param workPostNumber
+	 * 		The index of the wanted WorkPost. 
+	 * 
+	 * @return The requested WorkPost
+	 * 
+	 * @throws IllegalArgumentException 
+	 * 		| workPostNumber < 0 || workPostNumber >= this.getAssemblyLineSize() 
+	 */
+	protected WorkPost getWorkPost(int workPostNumber) throws IllegalArgumentException{
+		if(!isValidWorkPost(workPostNumber))
+			throw new IllegalArgumentException("Argument is not an existing workpost.");
+		return this.getWorkPosts().get(workPostNumber);
+	}
+
+	/**
+	 * Get the {@link WorkPost}s of this AssemblyLine.
+	 * 
+	 * @return The WorkPosts of this AssLine
+	 */
+	private List<WorkPost> getWorkPosts() {
+		return new ArrayList<WorkPost>(this.workPosts);
+	}
+
 	/** 
 	 * Get the size of this AssemblyLine.
 	 * 
@@ -240,35 +288,6 @@ public class AssemblyLine implements WorkPostObserver {
 	public boolean isValidWorkPost(int workPostNumber) {
 		return workPostNumber >= 0 && workPostNumber < this.getAssemblyLineSize(); 
 	}
-	
-	/**
-	 * Get the {@link WorkPost} at the specified position in the assembly line.
-	 * 
-	 * @param workPostNumber
-	 * 		The index of the wanted WorkPost. 
-	 * 
-	 * @return The requested WorkPost
-	 * 
-	 * @throws IllegalArgumentException 
-	 * 		| workPostNumber < 0 || workPostNumber >= this.getAssemblyLineSize() 
-	 */
-	protected WorkPost getWorkPost(int workPostNumber) throws IllegalArgumentException{
-		if(!isValidWorkPost(workPostNumber))
-			throw new IllegalArgumentException("Argument is not an existing workpost.");
-		return this.getWorkPosts().get(workPostNumber);
-	}
-	
-	/**
-	 * Get the {@link WorkPost}s of this AssemblyLine.
-	 * 
-	 * @return The WorkPosts of this AssLine
-	 */
-	private List<WorkPost> getWorkPosts() {
-		return new ArrayList<WorkPost>(this.workPosts);
-	}
-		
-	/** The {@link WorkPost}s of this assembly line, ordered by the assembly line's layout */
-	private final List<WorkPost> workPosts = new ArrayList<WorkPost>();
 	
 	//--------------------------------------------------------------------------
 	// WorkPostObserver logic
@@ -375,6 +394,8 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 
 	 * @throws IllegalStateException
 	 * 		| !this.getWorkPost(0).isEmpty()
+	 * @throws IllegalStateException
+	 * 		| ! this.orderIsAvailable()
 	 */
 	private void putNextOrderOnAssemblyLine() throws IllegalStateException{
 		Order order = this.getManufacturer().popNextOrderFromSchedule();
@@ -383,6 +404,10 @@ public class AssemblyLine implements WorkPostObserver {
 		}
 		AssemblyProcedure procedure = this.makeAssemblyProcedure(order);
 		this.getWorkPost(0).setAssemblyProcedure(procedure);
+	}
+	
+	private boolean orderIsAvailable() {
+		return this.getManufacturer().
 	}
 	
 	/**
@@ -405,6 +430,13 @@ public class AssemblyLine implements WorkPostObserver {
 	//--------------------------------------------------------------------------
 	// AssemblyProcedure Factory Methods. 
 	//--------------------------------------------------------------------------
+	/**
+	 * Make an AssemblyProcedure out of the specified Order. The AssemblyProcedure
+	 * is built out of tasks 
+	 * 
+	 * @param order
+	 * @return
+	 */
 	public AssemblyProcedure makeAssemblyProcedure(Order order) {
 		List<AssemblyTask> tasks = this.generateTasksFrom(order);
 		int expectedMinutes = this.calculateExpectedTimeOnLine(order);

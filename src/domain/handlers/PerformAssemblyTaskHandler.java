@@ -1,6 +1,10 @@
-package domain;
+package domain.handlers;
 
 import java.util.List;
+
+import domain.AssemblyTaskContainer;
+import domain.Manufacturer;
+import domain.WorkPostContainer;
 
 /**
  * Coordinates with the outside world in order to complete assembly tasks of a single workpost.

@@ -7,22 +7,21 @@ import java.util.Scanner;
 
 import org.javatuples.Pair;
 
-import domain.AdvanceAssemblyLineHandler;
 import domain.AssemblyProcedureContainer;
 import domain.AssemblyTaskContainer;
-import domain.InitialisationHandler;
 import domain.Model;
-import domain.NewOrderSessionHandler;
 import domain.Option;
-import domain.PerformAssemblyTaskHandler;
 import domain.Specification;
 import domain.WorkPostContainer;
+import domain.handlers.DomainFacade;
+import domain.handlers.InitialisationHandler;
+import domain.handlers.NewOrderSessionHandler;
+import domain.handlers.PerformAssemblyTaskHandler;
 import domain.order.OrderContainer;
 
 public class UI {
-	private final AdvanceAssemblyLineHandler advanceHandler;
-	private final NewOrderSessionHandler newOrderHandler;
-	private final PerformAssemblyTaskHandler performTaskHandler;
+	
+	private final DomainFacade facade;
 	private Scanner input;
 	public static final String SEPERATOR = "-------------------------";
 	public static final String CRLF = "\r\n";
@@ -38,7 +37,7 @@ public class UI {
 	 */
 	public static void main(String[] args){
 		InitialisationHandler initHandler = new InitialisationHandler();
-		UI ui = new UI(initHandler.getAdvanceHandler(), initHandler.getNewOrderHandler(), initHandler.getTaskHandler());
+		UI ui = new UI(initHandler.getDomainFacade());
 		ui.run();
 	}
 	
@@ -53,17 +52,10 @@ public class UI {
 	 * @param performTaskHandler
 	 * 		The PerformAssemblyTaskHandler of the system
 	 */
-	public UI(AdvanceAssemblyLineHandler advanceHandler, NewOrderSessionHandler newOrderHandler,
-			PerformAssemblyTaskHandler performTaskHandler){
-		if(advanceHandler == null)
-			throw new IllegalArgumentException("AdvanceAssemblyLineHandler should not be null.");
-		if(newOrderHandler == null)
-			throw new IllegalArgumentException("NewOrderSessionHandler should not be null.");
-		if(performTaskHandler == null)
-			throw new IllegalArgumentException("PerformAssemblyTaskHandler should not be null.");
-		this.advanceHandler = advanceHandler;
-		this.newOrderHandler = newOrderHandler;
-		this.performTaskHandler = performTaskHandler;
+	public UI(DomainFacade facade){
+		if(facade == null)
+			throw new IllegalArgumentException("DomainFacade should not be null.");
+		this.facade = facade;
 		input = new Scanner(System.in);
 	}
 	
@@ -97,6 +89,21 @@ public class UI {
 		System.out.println("Shutting down the system, goodbye.");
 			
 	}
+
+	/**
+	 * Prints a basic main menu with all options.
+	 */
+	private void showMainMenu() {
+		System.out.println(SEPERATOR);
+		System.out.println("Welcome to the assembly system.");
+		System.out.println(SEPERATOR);
+		System.out.println("Choose one of the options below:");
+		System.out.println("(1) I would like to log in as Garage Holder to order a new car");
+		System.out.println("(2) I would like to log in as Mechanic to perform a task at my workpost");
+		System.out.println("(3) I would like to log in as Manager to advance the assembly line");
+		System.out.println("(4) I would like to exit and shutdown the system. !CAUTION, LOSS OF ALL DATA!");
+	}
+
 
 	/**
 	 * Runs the routine for ordering a new car.
@@ -449,21 +456,6 @@ public class UI {
 			System.out.println("----");
 		}
 	}
-
-	/**
-	 * Prints a basic main menu with all options.
-	 */
-	private void showMainMenu() {
-		System.out.println(SEPERATOR);
-		System.out.println("Welcome to the assembly system.");
-		System.out.println(SEPERATOR);
-		System.out.println("Choose one of the options below:");
-		System.out.println("(1) I would like to log in as Garage Holder to order a new car");
-		System.out.println("(2) I would like to log in as Mechanic to perform a task at my workpost");
-		System.out.println("(3) I would like to log in as Manager to advance the assembly line");
-		System.out.println("(4) I would like to exit and shutdown the system. !CAUTION, LOSS OF ALL DATA!");
-	}
-
 	/**
 	 * Getter for internal use of the advanceHandler
 	 * 

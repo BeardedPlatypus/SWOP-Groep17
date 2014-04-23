@@ -171,8 +171,19 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 	 * 
 	 * @return the Order of this AssemblyProcedure. 
 	 */
-	private Order getOrderInternal() {
+	public Order getOrder() {
 		return this.assemblyOrder;
+	}
+	
+	/**
+	 * Indicate whether this AssemblyProcedure fulfills the given Order
+	 * 
+	 * @param order
+	 * 		The order to look for
+	 * @return This AssemblyProcedure fulfills the given Order
+	 */
+	public boolean contains(Order order) {
+		return this.getOrder().equals(order);
 	}
 	
 	/** The Order that this AssemblyProcedure fulfills. */
@@ -266,8 +277,8 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 	//  AssemblyProcedureContainer immutable views.
 	//--------------------------------------------------------------------------
 	@Override
-	public Order getOrder() {
-		return this.getOrderInternal();
+	public Order getOrderContainer() {
+		return this.assemblyOrder;
 	}
 
 	@Override
