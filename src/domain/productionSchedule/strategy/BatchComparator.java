@@ -1,6 +1,8 @@
-package domain;
+package domain.productionSchedule.strategy;
 
 import java.util.Comparator;
+
+import domain.Specification;
 
 /**
  * Imposes an ordering on Order objects based on whether their Specification

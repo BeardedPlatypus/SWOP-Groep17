@@ -11,6 +11,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
+import domain.productionSchedule.strategy.AlgorithmView;
+
 public class AdaptSchedulingAlgorithmScenario extends TestCase {
 	//--------------------------------------------------------------------------
 	// Properties

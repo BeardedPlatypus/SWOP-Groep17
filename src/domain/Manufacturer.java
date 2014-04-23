@@ -11,6 +11,7 @@ import domain.order.CompletedOrderCatalog;
 import domain.order.Order;
 import domain.order.OrderContainer;
 import domain.productionSchedule.ProductionScheduleFacade;
+import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
 
 //TODO everything
 

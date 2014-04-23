@@ -2,6 +2,8 @@ package domain;
 
 import java.util.List;
 
+import domain.productionSchedule.strategy.AlgorithmView;
+
 public class AdaptSchedulingAlgorithmHandler {	
 	//--------------------------------------------------------------------------
 	// Constructor
