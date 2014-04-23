@@ -10,7 +10,6 @@ import domain.Option;
 import domain.OptionCategory;
 import domain.Specification;
 import domain.WorkPostContainer;
-import domain.order.Order;
 import domain.order.OrderContainer;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
