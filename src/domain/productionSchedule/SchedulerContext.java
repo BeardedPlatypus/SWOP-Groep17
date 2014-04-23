@@ -1,7 +1,6 @@
 package domain.productionSchedule;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,6 +9,7 @@ import domain.order.Order;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
 import domain.order.OrderContainer;
+import domain.productionSchedule.strategy.SchedulingStrategy;
 
 /**
  * The SchedulerContext handles the scheduling of all orders of this system.
@@ -36,7 +36,7 @@ public class SchedulerContext {
 	 * @throws IllegalArgumentException
 	 * 		| initTime == null
 	 */
-	public SchedulerContext(Comparator<Order> defaultStrategy,
+	public SchedulerContext(SchedulingStrategy defaultStrategy,
 			                List<TaskType> taskCategories) throws IllegalArgumentException {
 		//Scheduling variables
 		this.defaultStrategy = defaultStrategy;
@@ -56,8 +56,8 @@ public class SchedulerContext {
 	 * 
 	 * @return the current scheduling strategy of this SchedulerContext.
 	 */
-	public Comparator<Order> getSchedulingStrategy() {
-		throw new UnsupportedOperationException();
+	public SchedulingStrategy getCurrentSchedulingStrategy() {
+		return this.currentStrategy;
 	}
 	
 	/** 
@@ -69,12 +69,12 @@ public class SchedulerContext {
 	 * 
 	 * @postcondition | (new this).getSchedulingStrategy() == newStrategy
 	 */
-	public void setSchedulingStrategy(Comparator<Order> newStrategy) {
+	public void setSchedulingStrategy(SchedulingStrategy newStrategy) {
 		throw new UnsupportedOperationException();
 	}
 	
 	/** The current strategy of this SchedulerContext. */
-	private Comparator<Order> currentStrategy;
+	private SchedulingStrategy currentStrategy;
 	
 	//--------------------------------------------------------------------------
 	/**
@@ -83,12 +83,12 @@ public class SchedulerContext {
 	 *  
 	 * @return the default ordering strategy of this SchedulerContext.
 	 */
-	protected Comparator<Order> getDefaultStrategy() {
+	protected SchedulingStrategy getDefaultStrategy() {
 		return this.defaultStrategy;
 	}
 	
 	/** The default strategy of this SchedulerContext. */
-	private final Comparator<Order> defaultStrategy;
+	private final SchedulingStrategy defaultStrategy;
 	
 	//--------------------------------------------------------------------------
 	// Get StandardOrder methods.
