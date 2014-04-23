@@ -36,7 +36,7 @@ public class OptionRestrictionManager {
 			throw new IllegalArgumentException("restrictions list should not be null.");
 		if (restrictions.contains(null))
 			throw new IllegalArgumentException("restrictions list should not contain null");
-		this.restrictions = restrictions;
+		this.restrictions = new ArrayList<>(restrictions);
 	}
 	
 	//--------------------------------------------------------------------------

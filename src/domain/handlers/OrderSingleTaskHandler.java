@@ -121,9 +121,9 @@ public class OrderSingleTaskHandler {
 	 * @throws 	IllegalStateException
 	 *			If there is no active new order session.
 	 */
-	public Order submitSingleTaskOrder() throws IllegalStateException {
+	public OrderContainer submitSingleTaskOrder() throws IllegalStateException {
 		if(isRunningOrderSession()){
-			Order submittedOrder = getCurrentOrderSession().submitSingleTaskOrder();
+			OrderContainer submittedOrder = getCurrentOrderSession().submitSingleTaskOrder();
 			currentOrderSession = null;
 			return submittedOrder;
 		} else {
@@ -141,7 +141,7 @@ public class OrderSingleTaskHandler {
 	 * 			If the order does not exist.
 	 */
 	public DateTime getEstimatedCompletionTime(OrderContainer order) throws  OrderDoesNotExistException {
-		return getManufacturer().getEstimatedCompletionTime( order);
+		return getManufacturer().getEstimatedCompletionTime(order);
 	}
 	
 	/**

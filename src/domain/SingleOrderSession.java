@@ -2,7 +2,7 @@ package domain;
 
 import java.util.List;
 
-import domain.order.Order;
+import domain.order.OrderContainer;
 
 /**
  * Used to compose and submit a single task order.
@@ -170,7 +170,7 @@ public class SingleOrderSession {
 	 * @throws 	IllegalStateException
 	 * 			If the option or deadline were not yet specified upon submission.
 	 */
-	public Order submitSingleTaskOrder() throws IllegalStateException{
+	public OrderContainer submitSingleTaskOrder() throws IllegalStateException{
 		if(orderDetailsSpecified()){
 			return getManufacturer().submitSingleTaskOrder(getOption(), getDeadline());
 		} else {
