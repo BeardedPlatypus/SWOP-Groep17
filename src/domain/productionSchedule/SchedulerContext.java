@@ -2,9 +2,11 @@ package domain.productionSchedule;
 
 import domain.Model;
 import domain.Specification;
+import domain.TaskType;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import domain.DateTime;
@@ -41,7 +43,17 @@ public class SchedulerContext implements TimeObserver, OrderSubject {
 	 * @throws IllegalArgumentException
 	 * 		| initTime == null
 	 */
-	public SchedulerContext(DateTime initTime, int overTime) throws IllegalArgumentException {
+	public SchedulerContext(DateTime initTime, int overTime, 
+			                Comparator<Order> defaultStrategy,
+			                List<TaskType> taskCategories) throws IllegalArgumentException {
+		//Scheduling variables
+		this.defaultStrategy = defaultStrategy;
+		
+		// Init SingleTaskOrder queues
+		for (TaskType t: taskCategories) {
+			this.taskOrderQueue.put(t, new ArrayList<SingleTaskOrder>());
+		}
+		
 		// TimeObserver Related variables. 
 		this.setCurrentTime(initTime);
 		this.setOverTime(overTime);
@@ -97,6 +109,67 @@ public class SchedulerContext implements TimeObserver, OrderSubject {
 	
 	/** The order queue of this SchedulerContext */
 	private final List<StandardOrder> orderQueue = new ArrayList<>();
+	
+	//--------------------------------------------------------------------------	
+	//TODO add defensive style here
+	/** 
+	 * Get the next SingleTaskOrder of type TaskType to be scheduled. 
+	 * 
+	 * @param t
+	 * 		The TaskType of the next SingleTaskOrder to be scheduled.
+	 * 
+	 * @return The next SingleTaskOrder of the specified TaskType to be scheduled.
+	 */
+	protected SingleTaskOrder getNextSingleTaskOrderOfType(TaskType t) {
+		return this.getSingleTaskOrdersOfType(t).get(0);
+	}
+	
+	/**
+	 * Pop the next SingleTaskOrder to be scheduled of the specified TaskType from
+	 * its respective queue.
+	 * 
+	 * @param t
+	 * 		The TaskType of the SingleTaskOrder to be popped. 
+	 * 
+	 * @return the next SingleTaskOrder to be scheduled of the specified type
+	 * 
+	 * @postcondition | !(new this).contains(result)
+	 * @postcondition | !E (o) o.deadline && == o.TaskType == t < result.deadline
+	 */
+	protected SingleTaskOrder popNextSingleTaskOrderOfType(TaskType t) {
+		return this.taskOrderQueue.get(t).remove(0);
+	}
+	
+	/**
+	 * Get a list of all pending task orders of the specified TaskType sorted
+	 * by Deadline. 
+	 * 
+	 * @param t
+	 * 		The TaskType of which all SingleTaskOrders are requested.
+	 *  
+	 * @return A list of all pending task orders of the specified TaskType sorted
+	 * 		   by deadline.
+	 */
+	protected List<SingleTaskOrder> getSingleTaskOrdersOfType(TaskType t) {
+		return new ArrayList<SingleTaskOrder>(this.taskOrderQueue.get(t));
+	}
+	
+	/** The queues of all SingleTaskOrders sorted by their TaskType. */
+	private final HashMap<TaskType, List<SingleTaskOrder>> taskOrderQueue = new HashMap<>();
+	
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the default ordering strategy (Comparator<Order>) of this 
+	 * SchedulerContext.
+	 *  
+	 * @return the default ordering strategy of this SchedulerContext.
+	 */
+	protected Comparator<Order> getDefaultStrategy() {
+		return this.defaultStrategy;
+	}
+	
+	/** The default strategy of this SchedulerContext. */
+	private final Comparator<Order> defaultStrategy;
 	
 	//--------------------------------------------------------------------------
 	// Scheduling related methods.
@@ -367,7 +440,7 @@ public class SchedulerContext implements TimeObserver, OrderSubject {
 	}
 	
 	/** The OrderObservers that observe this OrderSubject */
-	private final List<OrderObserver> observers;
+	private final List<OrderObserver> observers = new ArrayList<>();
 
 	//--------------------------------------------------------------------------
 	@Override
