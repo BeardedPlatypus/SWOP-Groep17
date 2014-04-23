@@ -135,4 +135,13 @@ public class InteractionSimulator {
 			}
 		}
 	}
+	
+	/**
+	 * Simulates completing all pending orders.
+	 */
+	public void simulateCompleteAllOrders(){
+		while(facade.getPendingOrders().size() > 0){
+			simulateCompleteAllTasksOnAssemblyLine(1);
+		}
+	}
 }

@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import domain.handlers.AssemblyLineStatusHandler;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
 
@@ -20,7 +19,6 @@ import domain.handlers.InitialisationHandler;
  */
 public class AssemblyLineStatusScenario {
 	
-	AssemblyLineStatusHandler assemblyLineStatusHandler;
 	DomainFacade facade;
 	InteractionSimulator sim;
 	
