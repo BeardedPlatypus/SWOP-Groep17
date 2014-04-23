@@ -20,4 +20,8 @@ public class OrderDoesNotExistException extends AssemAssistException {
 	public OrderDoesNotExistException(String message) {
 		super(message);
 	}
+	
+	public OrderDoesNotExistException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

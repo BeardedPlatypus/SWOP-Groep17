@@ -432,6 +432,8 @@ public class Manufacturer {
 	 * pass it along.
 	 * 
 	 * @return The removed order
+	 * @throws IllegalStateException
+	 * 		See {@link ProductionScheduleFacade#orderAvailable() orderAvailable()}
 	 */
 	public Order popNextOrderFromSchedule() throws IllegalStateException {
 		return this.getProductionSchedule().popNextOrderFromSchedule();

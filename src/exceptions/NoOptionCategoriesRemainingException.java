@@ -20,4 +20,8 @@ public class NoOptionCategoriesRemainingException extends AssemAssistException {
 	public NoOptionCategoriesRemainingException(String message) {
 		super(message);
 	}
+	
+	public NoOptionCategoriesRemainingException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

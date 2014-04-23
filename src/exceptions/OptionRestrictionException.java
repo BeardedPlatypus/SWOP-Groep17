@@ -19,4 +19,8 @@ public class OptionRestrictionException extends AssemAssistException {
 	public OptionRestrictionException(String message) {
 		super(message);
 	}
+	
+	public OptionRestrictionException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

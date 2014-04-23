@@ -22,4 +22,8 @@ public class IllegalCarOptionCombinationException extends AssemAssistException{
 	public IllegalCarOptionCombinationException(String message) {
 		super(message);
 	}
+	
+	public IllegalCarOptionCombinationException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

@@ -5,7 +5,7 @@ package exceptions;
  * 
  * @author Frederik Goovaerts
  */
-public abstract class AssemAssistException extends Exception {
+public abstract class AssemAssistException extends RuntimeException {
 
 	/**
 	 * UID this class uses for serialisability
@@ -18,6 +18,10 @@ public abstract class AssemAssistException extends Exception {
 	
 	public AssemAssistException(String message){
 		super(message);
+	}
+	
+	public AssemAssistException(String message, Throwable cause) {
+		super(message, cause);
 	}
 	
 }

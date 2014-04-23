@@ -154,6 +154,11 @@ public class WorkPostTest {
 		workPost.contains(order);
 		Mockito.verify(order).equals(order);
 	}
+	
+	@Test
+	public void contains_isEmpty() {
+		assertFalse(emptyWorkPost.contains(order));
+	}
 
 	@Test
 	public void getAssemblyTaskInfosTest_assemblyAssigned() {
