@@ -72,18 +72,21 @@ public class DomainFacade {
 		this.newOrderSessionHandler = newOrderHandler;
 		this.orderSingleTaskHandler = singleTaskHandler;
 		this.performAssemblyTaskHandler = performHandler;
-					}
+	}
 
 	//-------------------------------------------------------------------------
 	// Properties
 	//-------------------------------------------------------------------------
 
 	/**
-	 * Get the PerformAssemblyTaskHandler for internal use.
+	 * Get the PerformAssemblyTaskHandler.
+	 * This is both for internal use, and in the case a developer wants to write
+	 * a UI based on the handlers themselves, for better specialization of the
+	 * different parts of the UI.
 	 * 
 	 * @return the performAssemblyTaskHandler
 	 */
-	private PerformAssemblyTaskHandler getPerformAssemblyTaskHandler() {
+	public PerformAssemblyTaskHandler getPerformAssemblyTaskHandler() {
 		return this.performAssemblyTaskHandler;
 	}
 
@@ -92,52 +95,67 @@ public class DomainFacade {
 	 * 
 	 * @return the newOrderSessionHandler
 	 */
-	private NewOrderSessionHandler getNewOrderSessionHandler() {
+	public NewOrderSessionHandler getNewOrderSessionHandler() {
 		return this.newOrderSessionHandler;
 	}
 
 	/**
-	 * Get the OrderSingleTaskHandler for internal use.
+	 * Get the OrderSingleTaskHandler.
+	 * This is both for internal use, and in the case a developer wants to write
+	 * a UI based on the handlers themselves, for better specialization of the
+	 * different parts of the UI.
 	 * 
 	 * @return the orderSingleTaskHandler
 	 */
-	private OrderSingleTaskHandler getOrderSingleTaskHandler() {
+	public OrderSingleTaskHandler getOrderSingleTaskHandler() {
 		return this.orderSingleTaskHandler;
 	}
 
 	/**
-	 * Get the OrderDetailsHandler for internal use.
+	 * Get the OrderDetailsHandler.
+	 * This is both for internal use, and in the case a developer wants to write
+	 * a UI based on the handlers themselves, for better specialization of the
+	 * different parts of the UI.
 	 * 
 	 * @return the orderDetailsHandler
 	 */
-	private CheckOrderDetailsHandler getCheckOrderDetailsHandler() {
+	public CheckOrderDetailsHandler getCheckOrderDetailsHandler() {
 		return this.orderDetailsHandler;
 	}
 
 	/**
-	 * Get the SchedulingAlgorithmHandler for internal use.
+	 * Get the SchedulingAlgorithmHandler.
+	 * This is both for internal use, and in the case a developer wants to write
+	 * a UI based on the handlers themselves, for better specialization of the
+	 * different parts of the UI.
 	 * 
 	 * @return the schedulingAlgorithmHandler
 	 */
-	private AdaptSchedulingAlgorithmHandler getAdaptSchedulingAlgorithmHandler() {
+	public AdaptSchedulingAlgorithmHandler getAdaptSchedulingAlgorithmHandler() {
 		return this.schedulingAlgorithmHandler;
 	}	
 	
 	/**
-	 * Get the CheckProductionStatisticsHandler for internal use.
+	 * Get the CheckProductionStatisticsHandler.
+	 * This is both for internal use, and in the case a developer wants to write
+	 * a UI based on the handlers themselves, for better specialization of the
+	 * different parts of the UI.
 	 * 
 	 * @return the CheckProductionStatisticsHandler
 	 */
-	private CheckProductionStatisticsHandler getCheckProductionStatisticsHandler() {
+	public CheckProductionStatisticsHandler getCheckProductionStatisticsHandler() {
 		return this.productionStatisticsHandler;
 	}
 	
 	/**
-	 * Get the AssemblyLineStatusHandler for internal use.
+	 * Get the AssemblyLineStatusHandler.
+	 * This is both for internal use, and in the case a developer wants to write
+	 * a UI based on the handlers themselves, for better specialization of the
+	 * different parts of the UI.
 	 * 
 	 * @return the AssemblyLineStatusHandlerHandler
 	 */
-	private AssemblyLineStatusHandler getAssemblyLineStatusHandler() {
+	public AssemblyLineStatusHandler getAssemblyLineStatusHandler() {
 		return this.assemblyLineStatusHandler;
 	}
 
@@ -371,6 +389,8 @@ public class DomainFacade {
 	public List<OrderContainer> getCompletedOrders(){
 		return this.getNewOrderSessionHandler().getCompletedOrders();
 	}
+	
+	
 
 	/**
 	 * Start a new orderSession in the newOrderSessionHandler, so a user can
