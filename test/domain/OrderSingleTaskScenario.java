@@ -8,10 +8,13 @@ import org.junit.Test;
 
 import exceptions.OrderDoesNotExistException;
 
+/**
+ * Use case scenario test: Order Single Task
+ * 
+ * @author Simon Slangen
+ *
+ */
 public class OrderSingleTaskScenario {
-	//@Rule public ExpectedException exception = ExpectedException.none();
-	
-	//NewOrderSessionHandler orderHandler;
 	OrderSingleTaskHandler orderSingleTaskHandler;
 	
 	@Before
