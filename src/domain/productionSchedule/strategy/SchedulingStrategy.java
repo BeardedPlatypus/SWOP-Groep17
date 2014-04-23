@@ -48,6 +48,8 @@ public abstract class SchedulingStrategy implements SchedulingStrategyView {
 	 * @param orderQueue
 	 * 		the orderQueue to which the specified Order should be added.
 	 * 
+	 * @precondition the list is sorted with this SchedulingStrategy sort.
+	 * 
 	 * @postcondition | FORALL order p: ((new orderQueue).indexOf(p) < (new orderQueue).indexOf(order) ->
 	 * 										SchedulingStrategy.compare(p, order) <= 0) &&
 	 * 									((new orderQueue).indexOf(p) > (new orderQueue).indexOf(order) ->
