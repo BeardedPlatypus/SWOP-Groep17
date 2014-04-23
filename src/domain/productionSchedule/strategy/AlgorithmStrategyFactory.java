@@ -10,10 +10,11 @@ import domain.Specification;
  * The AlgorithmStrategyFactory methods provides methods for getting each specific
  * SchedulingStrategy, as well as a list of their respective views.
  * 
- * @author Martinus Wilhelmus Tegelaers
+ * @author Martinus Wilhelmus Tegelaers, Thomas Vochten
  *
  */
 public class AlgorithmStrategyFactory {
+	
 	/** 
 	 * Get a list of all SchedulingStrategyViews that can be constructed with this
 	 * AlgorithmStrategyFactory

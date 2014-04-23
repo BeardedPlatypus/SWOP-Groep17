@@ -6,10 +6,9 @@ import java.util.List;
 import domain.Specification;
 import domain.order.Order;
 
-//TODO
 /**
  * 
- * @author Martinus Wilhelmus Tegelaers
+ * @author Martinus Wilhelmus Tegelaers, Thomas Vochten
  *
  */
 public class BatchStrategy extends SchedulingStrategy {

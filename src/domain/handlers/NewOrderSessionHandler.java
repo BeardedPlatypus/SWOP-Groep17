@@ -78,7 +78,7 @@ public class NewOrderSessionHandler {
 	//--------------------------------------------------------------------------
 	/**
 	 * Get the system's pending orders. This includes the orders in the production
-	 * schedule, queueing to be assembled, as well as the orders which are active
+	 * schedule, queuing to be assembled, as well as the orders which are active
 	 * on the assembly line.
 	 * 
 	 * @return the list of pending orders in the system

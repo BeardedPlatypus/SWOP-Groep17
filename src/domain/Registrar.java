@@ -1,6 +1,12 @@
 package domain;
 
-//TODO new in iteration 2
+/**
+ * Interface for statistical bookkeeping. A Registrar is passed an event in the form
+ * of ProcedureStatistics so that it can record relevant information.
+ * 
+ * @author Thomas Vochten
+ *
+ */
 public interface Registrar {
 
 	/**

@@ -5,7 +5,6 @@ import java.util.List;
 
 import domain.order.Order;
 
-//TODO
 /**
  * 
  * @author Martinus Wilhelmus Tegelaers, Thomas Vochten

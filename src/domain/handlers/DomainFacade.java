@@ -11,6 +11,7 @@ import domain.OptionCategory;
 import domain.Specification;
 import domain.WorkPostContainer;
 import domain.order.OrderContainer;
+import domain.productionSchedule.strategy.SchedulingStrategyView;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;

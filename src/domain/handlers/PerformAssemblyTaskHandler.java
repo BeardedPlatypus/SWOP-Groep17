@@ -45,7 +45,6 @@ public class PerformAssemblyTaskHandler {
 	/** The Manufacturer that is used by this PerformAssemblyTaskHandler. */
 	private final Manufacturer manufacturer;
 
-	//FIXME: old functionality
 	/**
 	 * Get the WorkPostContainrs AssemblyLine's WorkPosts.
 	 * 
