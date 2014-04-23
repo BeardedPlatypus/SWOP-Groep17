@@ -3,24 +3,14 @@ package domain;
 import static org.junit.Assert.*;
 
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import domain.handlers.AssemblyLineStatusHandler;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
-import domain.handlers.NewOrderSessionHandler;
-import domain.order.OrderContainer;
-import exceptions.IllegalCarOptionCombinationException;
-import exceptions.NoOptionCategoriesRemainingException;
-import exceptions.OptionRestrictionException;
-import exceptions.OrderDoesNotExistException;
 
 /**
  * Use case scenario test: Check Assembly Line Status
@@ -142,9 +132,5 @@ public class AssemblyLineStatusScenario {
 		assertEquals(completedTasks,unfinishedTasks-1);
 		
 	}
-	
-	
-	
-	
 
 }
