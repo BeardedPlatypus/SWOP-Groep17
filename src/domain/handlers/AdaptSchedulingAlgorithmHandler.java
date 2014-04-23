@@ -2,10 +2,12 @@ package domain.handlers;
 
 import java.util.List;
 
-import domain.AlgorithmView;
 import domain.Manufacturer;
 import domain.Specification;
-
+import domain.productionSchedule.strategy.SchedulingStrategyView;
+//TODO
+//TODO
+//TODO
 public class AdaptSchedulingAlgorithmHandler {	
 	//--------------------------------------------------------------------------
 	// Constructor

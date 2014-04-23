@@ -2,7 +2,6 @@ package domain.handlers;
 
 import java.util.List;
 
-import domain.AlgorithmView;
 import domain.AssemblyTaskContainer;
 import domain.DateTime;
 import domain.Model;
@@ -11,6 +10,7 @@ import domain.OptionCategory;
 import domain.Specification;
 import domain.WorkPostContainer;
 import domain.order.OrderContainer;
+import domain.productionSchedule.strategy.SchedulingStrategyView;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
