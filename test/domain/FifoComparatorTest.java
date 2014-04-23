@@ -9,6 +9,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import domain.order.Order;
+
 public class FifoComparatorTest {
 	
 	@Mock Order order1;

@@ -74,14 +74,6 @@ public class Manufacturer {
 		this.optionRestrictionManager = optionRestMan;
 		this.productionScheduleFacade = prodSched;
 	}
-
-	public void getTaskContainersAtWorkPost(Object parameter) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void completeTask(Object parameter, Object parameter2, Object parameter3) {
-		throw new UnsupportedOperationException();
-	}
 	
 	/** The AlgorithmStrategyFactory of this Manufacturer. */
 	private final AlgorithmStrategyFactory algorithmStrategyFactory;
@@ -434,8 +426,23 @@ public class Manufacturer {
 		this.productionScheduleFacade = productionScheduleFacade;
 	}
 
-	public Order popNextOrderFromSchedule() {
+	/**
+	 * Remove an Order from this Manufacturer's ProductionSchedule and
+	 * pass it along.
+	 * 
+	 * @return The removed order
+	 */
+	public Order popNextOrderFromSchedule() throws IllegalStateException {
 		return this.getProductionSchedule().popNextOrderFromSchedule();
+	}
+	
+	/**
+	 * Ask this Manufacturer's ProductionSchedule if an order is available
+	 * 
+	 * @return Whether an order is available
+	 */
+	public boolean orderAvailable() {
+		return this.getProductionSchedule().orderAvailable();
 	}
 
 	/**
@@ -507,6 +514,12 @@ public class Manufacturer {
 	//--------------------------------------------------------------------------
 	// Querying the statistics
 	//--------------------------------------------------------------------------
+	/**
+	 * Ask this Manufacturer's AssemblyLine for a report of statistics concerning its
+	 * production activities.
+	 * 
+	 * @return The report
+	 */
 	public String getStatisticsReport() {
 		return this.getAssemblyLine().getStatisticsReport();
 	}

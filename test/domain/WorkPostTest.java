@@ -21,6 +21,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import domain.order.Order;
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(WorkPost.class)
 public class WorkPostTest {
@@ -234,7 +236,7 @@ public class WorkPostTest {
 			PowerMockito.verifyPrivate(workPost, Mockito.times(2)).invoke("incrementTime", 60);
 			PowerMockito.verifyPrivate(workPost).invoke("notifyWorkComplete");
 			Mockito.verify(observer).notifyWorkComplete(120);
-			assertTrue((int) Whitebox.getInternalState(workPost, "minutesOfWork") == 0);
+			assertTrue((int) Whitebox.getInternalState(this.workPost, "minutesOfWork") == 0);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import domain.handlers.PerformAssemblyTaskHandler;
+import domain.order.Order;
 
 public class PerformAssemblyTaskScenario {
 	

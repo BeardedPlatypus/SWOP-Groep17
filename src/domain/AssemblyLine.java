@@ -394,6 +394,8 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 
 	 * @throws IllegalStateException
 	 * 		| !this.getWorkPost(0).isEmpty()
+	 * @throws IllegalStateException
+	 * 		| ! this.orderIsAvailable()
 	 */
 	private void putNextOrderOnAssemblyLine() throws IllegalStateException{
 		Order order = this.getManufacturer().popNextOrderFromSchedule();
@@ -402,6 +404,10 @@ public class AssemblyLine implements WorkPostObserver {
 		}
 		AssemblyProcedure procedure = this.makeAssemblyProcedure(order);
 		this.getWorkPost(0).setAssemblyProcedure(procedure);
+	}
+	
+	private boolean orderIsAvailable() {
+		return this.getManufacturer().
 	}
 	
 	/**
