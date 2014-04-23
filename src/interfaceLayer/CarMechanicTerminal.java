@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import domain.AssemblyTaskContainer;
-import domain.PerformAssemblyTaskHandler;
 import domain.WorkPostContainer;
+import domain.handlers.PerformAssemblyTaskHandler;
 
 /**
  * Specialized interface for the car mechanic. Used to poll for tasks and instructions

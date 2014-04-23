@@ -10,14 +10,14 @@ import org.javatuples.Pair;
 import domain.AdvanceAssemblyLineHandler;
 import domain.AssemblyProcedureContainer;
 import domain.AssemblyTaskContainer;
-import domain.InitialisationHandler;
 import domain.Model;
-import domain.NewOrderSessionHandler;
 import domain.Option;
-import domain.OrderContainer;
-import domain.PerformAssemblyTaskHandler;
 import domain.Specification;
 import domain.WorkPostContainer;
+import domain.handlers.InitialisationHandler;
+import domain.handlers.NewOrderSessionHandler;
+import domain.handlers.PerformAssemblyTaskHandler;
+import domain.order.OrderContainer;
 
 public class UI {
 	private final AdvanceAssemblyLineHandler advanceHandler;

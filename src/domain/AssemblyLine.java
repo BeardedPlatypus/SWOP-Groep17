@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import domain.WorkPost;
+import domain.order.Order;
+import domain.order.OrderContainer;
 
 /**
  * A class depicting an AssemblyLine in the system. An AssemblyLine is composed 
@@ -88,7 +90,7 @@ public class AssemblyLine implements WorkPostObserver {
 	private final List<WorkPost> workPosts = new ArrayList<WorkPost>();
 	
 	/**
-	 * Asks the given {@link WorkPost} to complete {@link AssemblyTask} with given number on its current {@link AssemblyProcedure}
+	 * Ask the given {@link WorkPost} to complete {@link AssemblyTask} with given number on its current {@link AssemblyProcedure}
 	 * 
 	 * @param workPostNumber
 	 * 		The number of the {@link WorkPost} we want to address

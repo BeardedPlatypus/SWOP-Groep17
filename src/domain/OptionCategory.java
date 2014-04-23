@@ -2,7 +2,6 @@ package domain;
 
 //TODO new, original option, but now uses option object
 import java.util.ArrayList;
-
 import domain.Option;
 
 public class OptionCategory {
@@ -15,8 +14,15 @@ public class OptionCategory {
 	 * arguments.
 	 * 
 	 * @param options
+	 * 		The list of options the new optionCategory should contain
+	 * @throws IllegalArgumentException
+	 * 		When the list or an element in the list is null
 	 */
-	public OptionCategory(ArrayList<Option> options){
+	public OptionCategory(ArrayList<Option> options) throws IllegalArgumentException{
+		if(options == null)
+			throw new IllegalArgumentException("Given list of options is null.");
+		if(options.contains(null))
+			throw new IllegalArgumentException("One of given options is null.");
 		this.options = options;
 	}
 	

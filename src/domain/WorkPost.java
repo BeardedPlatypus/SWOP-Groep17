@@ -3,6 +3,8 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import domain.order.OrderContainer;
+
 /**
  * A class for workposts that are part of an assembly line.
  * A workpost has a type, and a name, derived from its type.

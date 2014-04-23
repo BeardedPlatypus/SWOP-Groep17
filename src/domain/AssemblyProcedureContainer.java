@@ -2,6 +2,8 @@ package domain;
 
 import java.util.List;
 
+import domain.order.OrderContainer;
+
 /**
  * AssemblyProcedureContainer is a view object that provides an immutable interface
  * for accessing AssemblyProcedures. 

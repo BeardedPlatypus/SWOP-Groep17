@@ -10,36 +10,61 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import domain.ModelCatalog;
 
 /**
- * @author Month
- *
+ * @author Frederik Goovaerts
  */
 public class ModelCatalogTest {
-	ModelCatalog modelCatalog;
+	@Rule public ExpectedException exception = ExpectedException.none();
 	
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
+	ModelCatalog testModelCatalog;
+	@Mock Model mockModel1;
+	@Mock Model mockModel2;
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		List<Model> list = new ArrayList<Model>(); 
-		this.modelCatalog = new ModelCatalog(list);
+		MockitoAnnotations.initMocks(this);
+		List<Model> list = new ArrayList<Model>();
+		list.add(mockModel1);
+		list.add(mockModel2);
+		this.testModelCatalog = new ModelCatalog(list);
 	}
 
 	@Test
-	public void test_getModels() {
-		//fail();
+	public void testConstructor() {
+		assertTrue(testModelCatalog.getModels().contains(mockModel1));
+		assertTrue(testModelCatalog.getModels().contains(mockModel2));
+		assertTrue(testModelCatalog.getModels().size() == 2);
+	}
+	
+	@Test
+	public void testConstructorNullList() {
+		exception.expect(IllegalArgumentException.class);
+		testModelCatalog = new ModelCatalog(null);
+	}
+	
+	@Test
+	public void testConstructorNullInList() {
+		exception.expect(IllegalArgumentException.class);
+		List<Model> list = new ArrayList<Model>();
+		list.add(null);
+		testModelCatalog = new ModelCatalog(list);
+	}
+
+	@Test
+	public void testContains() {
+		assertTrue(testModelCatalog.contains(mockModel1));
+		assertTrue(testModelCatalog.contains(mockModel2));
 	}
 
 }

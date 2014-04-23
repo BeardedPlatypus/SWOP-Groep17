@@ -2,6 +2,8 @@ package domain;
 
 import java.util.Comparator;
 
+import domain.order.Order;
+
 /**
  * Imposes an ordering on Order objects based on the time they were submitted to
  * the system.
