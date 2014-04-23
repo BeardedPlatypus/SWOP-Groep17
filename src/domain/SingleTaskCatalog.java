@@ -32,4 +32,9 @@ public class SingleTaskCatalog {
 	public ArrayList<OptionCategory> getPossibleTasks() {
 		return new ArrayList<OptionCategory>(this.optionCategories);
 	}
+
+	public boolean contains(Option option) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

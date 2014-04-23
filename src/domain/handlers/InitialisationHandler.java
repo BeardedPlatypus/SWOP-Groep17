@@ -361,7 +361,6 @@ public class InitialisationHandler {
 				modelCatalog,
 				restrictionsMan,
 				//TODO Fix this
-				new AssemblyLine(),
 				new ProductionScheduleFacade());
 		//--------------------------------------------------------------------------
 
