@@ -10,8 +10,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
-import domain.handlers.NewOrderSessionHandler;
 import domain.order.OrderContainer;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
@@ -27,12 +27,12 @@ import exceptions.OrderDoesNotExistException;
 public class NewOrderSessionScenario {
 	@Rule public ExpectedException exception = ExpectedException.none();
 	
-	NewOrderSessionHandler orderHandler;
+	DomainFacade facade;
 	
 	@Before
 	public void setUp() throws Exception {
 		InitialisationHandler init = new InitialisationHandler();
-		orderHandler = init.getNewOrderHandler();
+		facade = init.getDomainFacade();
 	}
 
 	@Test
@@ -41,17 +41,19 @@ public class NewOrderSessionScenario {
 		//1. The system presents an overview of the orders placed by the user, divided into two parts. The first part shows a list of pending orders, 
 		// with estimated completion times, and the second part shows a history	of completed orders, sorted most recent first.
 		// System is currently empty
-		List<OrderContainer> initPending = orderHandler.getPendingOrders();
-		List<OrderContainer> initComplete = orderHandler.getCompletedOrders();
+		List<OrderContainer> initPending = facade.getPendingOrders();
+		List<OrderContainer> initComplete = facade.getCompletedOrders();
 		
-		//2. The user indicates he wants to place a new car order. ==HAPPENS IN UI==
+		//2. The user indicates he wants to place a new car order.
+		facade.startNewOrderSession();
+		
 		//3. The system shows a list of available car models.
-		List<Model> models = orderHandler.getCarModels();	
+		List<Model> models = facade.getCarModels();	
 		assertTrue(!models.isEmpty());
 		
 		//4. The user indicates the car model he wishes to order.
 		Model chosenModel = models.get(0);
-		orderHandler.chooseModel(chosenModel);
+		facade.chooseModel(chosenModel);
 		
 		//5. The system displays the ordering form. ==HAPPENS IN UI==
 		int amountOfOptionCategories = chosenModel.getAmountOfOptionCategories();
@@ -67,10 +69,10 @@ public class NewOrderSessionScenario {
 		
 		//6. The user completes the ordering form.
 		LinkedList<Option> options = new LinkedList<Option>();
-		while(orderHandler.hasUnfilledOptions()){
+		while(facade.orderHasUnfilledOptions()){
 			OptionCategory optCat = null;
 			try {
-				optCat = orderHandler.getNextOptionCategory();
+				optCat = facade.getNextOptionCategory();
 			} catch (IllegalStateException
 					| NoOptionCategoriesRemainingException e1) {
 				fail();
@@ -87,7 +89,7 @@ public class NewOrderSessionScenario {
 				
 				if(chosenModel.checkOptionsValidity(options)){
 					try {
-						orderHandler.selectOption(opt);
+						facade.selectOption(opt);
 					} catch (IllegalStateException
 							| NoOptionCategoriesRemainingException e) {
 						fail();
@@ -102,7 +104,7 @@ public class NewOrderSessionScenario {
 		
 		//7. The system stores the new order and updates the production schedule.
 		try {
-			orderHandler.submitOrder();
+			facade.submitOrder();
 		} catch (IllegalStateException | IllegalArgumentException
 				| IllegalCarOptionCombinationException
 				| OptionRestrictionException e) {
@@ -110,15 +112,15 @@ public class NewOrderSessionScenario {
 		}
 		DateTime eta = null;
 		try {
-			eta = orderHandler.getNewOrderETA();
+			eta = facade.getNewOrderETA();
 		} catch (IllegalStateException | OrderDoesNotExistException e) {
 			fail();
 		}
 		assertNotNull(eta);
 		
 		//8. The system presents an estimated completion date for the new order.
-		initPending = orderHandler.getPendingOrders();
-		initComplete = orderHandler.getCompletedOrders();
+		initPending = facade.getPendingOrders();
+		initComplete = facade.getCompletedOrders();
 		assertTrue(initPending.size() == 1);
 		assertTrue(initComplete.isEmpty());
 	}
@@ -127,8 +129,8 @@ public class NewOrderSessionScenario {
 	public void alternateFlow1Initial_test() {
 		//1. The system presents an overview of the orders placed by the user, divided into two parts. The first part shows a list of pending orders, 
 		// with estimated completion times, and the second part shows a history	of completed orders, sorted most recent first.
-		List<OrderContainer> initPending = orderHandler.getPendingOrders();
-		List<OrderContainer> initComplete = orderHandler.getCompletedOrders();
+		List<OrderContainer> initPending = facade.getPendingOrders();
+		List<OrderContainer> initComplete = facade.getCompletedOrders();
 		assertTrue(initPending.isEmpty());
 		assertTrue(initComplete.isEmpty());
 		//1. (a) The user indicates he wants to leave the overview. ==HAPPENS IN UI==
@@ -140,17 +142,17 @@ public class NewOrderSessionScenario {
 		//1. The system presents an overview of the orders placed by the user, divided into two parts. The first part shows a list of pending orders, 
 		// with estimated completion times, and the second part shows a history	of completed orders, sorted most recent first.
 		// System is currently empty
-		List<OrderContainer> initPending = orderHandler.getPendingOrders();
-		List<OrderContainer> initComplete = orderHandler.getCompletedOrders();
+		List<OrderContainer> initPending = facade.getPendingOrders();
+		List<OrderContainer> initComplete = facade.getCompletedOrders();
 		
 		//2. The user indicates he wants to place a new car order. ==HAPPENS IN UI==
 		//3. The system shows a list of available car models.
-		List<Model> models = orderHandler.getCarModels();	
+		List<Model> models = facade.getCarModels();	
 		assertTrue(!models.isEmpty());
 		
 		//4. The user indicates the car model he wishes to order.
 		Model chosenModel = models.get(0);
-		orderHandler.chooseModel(chosenModel);
+		facade.chooseModel(chosenModel);
 		
 		//5. The system displays the ordering form. ==HAPPENS IN UI==
 		int amountOfOptionCategories = chosenModel.getAmountOfOptionCategories();
@@ -166,8 +168,8 @@ public class NewOrderSessionScenario {
 		
 		//6. (a) The user indicates he wants to cancel placing the order. ==HAPPENS IN UI==
 		//7. The use case returns to step 1.
-		initPending = orderHandler.getPendingOrders();
-		initComplete = orderHandler.getCompletedOrders();
+		initPending = facade.getPendingOrders();
+		initComplete = facade.getCompletedOrders();
 		assertTrue(initPending.isEmpty());
 		assertTrue(initComplete.isEmpty());
 	}
