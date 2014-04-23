@@ -3,16 +3,18 @@ package domain.productionSchedule.strategy;
 import java.util.ArrayList;
 import java.util.List;
 
+import domain.Option;
 import domain.Specification;
 
 /**
  * The AlgorithmStrategyFactory methods provides methods for getting each specific
  * SchedulingStrategy, as well as a list of their respective views.
  * 
- * @author Martinus Wilhelmus Tegelaers
+ * @author Martinus Wilhelmus Tegelaers, Thomas Vochten
  *
  */
 public class AlgorithmStrategyFactory {
+	
 	/** 
 	 * Get a list of all SchedulingStrategyViews that can be constructed with this
 	 * AlgorithmStrategyFactory
@@ -21,9 +23,15 @@ public class AlgorithmStrategyFactory {
 	 * 		   AlgorithmStrategyFactory.
 	 */
 	public List<SchedulingStrategyView> getAlgorithmViews() {
-		List<SchedulingStrategyView> result = new ArrayList<>() ;
+		List<SchedulingStrategyView> result = new ArrayList<>();
 		result.add(this.getFifoStrategy());
-		result.add(this.getBatchStrategy());
+		
+		List<Option> emptyOptions = new ArrayList<Option>();
+		Specification emptySpec = new Specification(emptyOptions);
+		
+		result.add(new BatchStrategy(emptySpec));
+		
+		return result;
 	}
 
 	/**
@@ -32,7 +40,7 @@ public class AlgorithmStrategyFactory {
 	 * @return a FIFO SchedulingStrategy
 	 */
 	public SchedulingStrategy getFifoStrategy() {
-		throw new UnsupportedOperationException();
+		return new FifoStrategy();
 	}
 	
 	/**
@@ -40,10 +48,11 @@ public class AlgorithmStrategyFactory {
 	 * Specification first until all are done. 
 	 * 
 	 * @return A BatchSchedulingStrategy.
+	 * @throws IllegalArgumentException
+	 * 		spec is null
 	 */
-	public SchedulingStrategy getBatchStrategy(Specification spec) {
-		throw new UnsupportedOperationException();
+	public SchedulingStrategy getBatchStrategy(Specification spec) throws IllegalArgumentException {
+		return new BatchStrategy(spec);
 	}
-	//TODO create an prototype BatchStrategy field.
 
 }

@@ -65,7 +65,7 @@ public class SchedulerContext {
 	 * SchedulingStrategy.
 	 * 
 	 * @param newStrategy 
-	 * 		The new stratgey of this SchedulerContext;
+	 * 		The new strategy of this SchedulerContext;
 	 * 
 	 * @postcondition | (new this).getSchedulingStrategy() == newStrategy
 	 */

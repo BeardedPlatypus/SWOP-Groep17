@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import domain.BatchComparator;
 import domain.DateTime;
 import domain.Option;
 import domain.Specification;

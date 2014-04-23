@@ -7,9 +7,9 @@ import domain.order.Order;
 import domain.order.OrderContainer;
 
 /**
- * A class for workposts that are part of an assembly line.
- * A workpost has a type, and a name, derived from its type.
- * It also has a number, which depicts it's relative order in the assemblyline.
+ * A class for WorkPosts that are part of an assembly line.
+ * A WorkPost has a type, and a name, derived from its type.
+ * It also has a number, which depicts it's relative order in the AssemblyLine.
  */
 public class WorkPost implements WorkPostContainer {
 	//--------------------------------------------------------------------------
@@ -132,7 +132,7 @@ public class WorkPost implements WorkPostContainer {
 	/**
 	 * Get the AssemblyProcedure of this WorkPost. 
 	 * 
-	 * @return the ASsemblyProcedure of this WorkPost, null if it does not exist.
+	 * @return the AssemblyProcedure of this WorkPost, null if it does not exist.
 	 */
 	protected AssemblyProcedure getAssemblyProcedure(){
 		return activeAssembly;

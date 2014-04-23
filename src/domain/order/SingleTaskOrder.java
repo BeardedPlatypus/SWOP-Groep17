@@ -5,7 +5,7 @@ import domain.Model;
 import domain.Specification;
 
 /** 
- * The SingleTaskOrder provides the interface for a costumo order consisting of
+ * The SingleTaskOrder provides the interface for a custom order consisting of
  * just a single Task in the specification. 
  * It extends the abstract Order class. 
  * 

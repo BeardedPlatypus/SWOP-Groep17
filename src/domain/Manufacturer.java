@@ -513,6 +513,10 @@ public class Manufacturer {
 	public void setNewSchedulingAlgorithm(Comparator<Order> comparator) {
 		throw new UnsupportedOperationException();
 	}
+	
+	public List<Specification> getCurrentBatches() {
+		
+	}
 
 	//--------------------------------------------------------------------------
 	// Querying the statistics

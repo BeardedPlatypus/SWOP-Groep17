@@ -5,9 +5,14 @@ import java.util.List;
 import domain.Manufacturer;
 import domain.Specification;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
-//TODO
-//TODO
-//TODO
+
+/**
+ * Class responsible for viewing the current scheduling algorithm and changing
+ * that algorithm whenever the user desires.
+ * 
+ * @author Thomas Vochten
+ *
+ */
 public class AdaptSchedulingAlgorithmHandler {	
 	//--------------------------------------------------------------------------
 	// Constructor
@@ -36,29 +41,55 @@ public class AdaptSchedulingAlgorithmHandler {
 	// Interaction methods.
 	//--------------------------------------------------------------------------
 	// All flows
+	/**
+	 * Get a list of SchedulingStrategyViews of all available SchedulingAlgorithms
+	 * 
+	 * @return The SchedulingStrategyViews
+	 */
 	public List<SchedulingStrategyView> getAlgorithms() {
-		throw new UnsupportedOperationException();
+		return this.getManufacturer().getAlgorithms();
 	}
 	
+	/**
+	 * Get a view of the currently used SchedulingAlgorithm
+	 * 
+	 * @return The SchedulingAlgorithm
+	 */
 	public SchedulingStrategyView getCurrentAlgorithm() {
-		throw new UnsupportedOperationException();
+		return this.getManufacturer().getCurrentAlgorithm();
 	}
 	
 	//--------------------------------------------------------------------------
 	// Fifo flow
+	/**
+	 * Set the currently used SchedulingAlgorithm to the FIFO algorithm
+	 */
 	public void setFifoAlgorithm() {
-		throw new UnsupportedOperationException();
+		this.getManufacturer().setFifoAlgorithm();
 	}
 	
 	//--------------------------------------------------------------------------
 	// Batch flow
-	//FIXME check which datatype batch should be. 
+	/**
+	 * Get the batches that are currently eligible for use in batch strategies.
+	 * 
+	 * @return The batches
+	 */
 	public List<Specification> getCurrentBatches() {
-		throw new UnsupportedOperationException();
+		return this.getManufacturer().getCurrentBatches();
 	}
 	
+	/**
+	 * Set the currently used SchedulingAlgorithm to a batch strategy that
+	 * uses the specified Specification.
+	 * 
+	 * @param batch
+	 * 		The batch used to compare Orders
+	 * @throws IllegalArgumentException
+	 * 		batch is null
+	 */
 	public void setBatchAlgorithm(Specification batch) throws IllegalArgumentException {
-		throw new UnsupportedOperationException();
+		this.getManufacturer().setBatchAlgorithm(batch);
 	}
 	
 	//--------------------------------------------------------------------------

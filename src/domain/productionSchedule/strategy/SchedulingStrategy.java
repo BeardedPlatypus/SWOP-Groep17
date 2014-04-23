@@ -21,6 +21,7 @@ import domain.order.Order;
  *
  */
 public abstract class SchedulingStrategy implements SchedulingStrategyView {
+	
 	/**
 	 * Given an OrderQueue, check if this SchedulingStrategy has finished its
 	 * sorting.
@@ -55,7 +56,13 @@ public abstract class SchedulingStrategy implements SchedulingStrategyView {
 	 * 									((new orderQueue).indexOf(p) > (new orderQueue).indexOf(order) ->
 	 * 										SchedulingStrategy.compare(p, order) >= 0) 
 	 */
-	public abstract void addTo(Order order, List<Order> orderQueue);
+	public void addTo(Order order, List<Order> orderQueue) {
+		int index = this.binarySearch(order, orderQueue);
+		if (index == orderQueue.size() - 1) {
+			orderQueue.add(order);
+		}
+		else orderQueue.add(index, order);
+	}
 	
 	/**
 	 * Compare the two specified orders according to the specified internal SchedulingStrategy
@@ -70,4 +77,26 @@ public abstract class SchedulingStrategy implements SchedulingStrategyView {
 	 * 		   | o > p -> +1
 	 */
 	public abstract int compare(Order o, Order p);
+	
+	@Override
+	public abstract String getName();
+	
+	private int binarySearch(Order order, List<Order> orderList) {
+		int left = 0;
+		int right = orderList.size() - 1;
+		while (left != right) {
+			int mid = (left + right) / 2;
+			int compare = this.compare(order, orderList.get(mid));
+			if (compare == 0) {
+				return mid;
+			}
+			else if (compare < 0) {
+				right = mid;
+			}
+			else {
+				left = mid + 1;
+			}
+		}
+		return left;
+	}
 }

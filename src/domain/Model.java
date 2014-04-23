@@ -24,7 +24,7 @@ public class Model {
 	//-------------------------------------------------------------------------
 	/**  
 	 * Instantiate a new Model with the specified name, OptionCategories and
-	 * estimated time spent per workpost. 
+	 * estimated time spent per WorkPost. 
 	 * 
 	 * @param modelName
 	 * 		Name this model receives
