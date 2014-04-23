@@ -11,6 +11,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import domain.handlers.CheckOrderDetailsHandler;
+import domain.order.Order;
+import domain.order.OrderContainer;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
@@ -40,7 +43,7 @@ public class OrderDetailsScenario {
 	@Mock Specification spec4;
 	@Mock Specification spec5;
 	
-	OrderDetailsHandler orderDetailsHandler;
+	CheckOrderDetailsHandler orderDetailsHandler;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -79,7 +82,7 @@ public class OrderDetailsScenario {
 		Mockito.when(mockManufacturer.getPendingOrderContainers()).thenReturn(pendList);
 		
 		//Creating order details handler with mock manufacturer.
-		OrderDetailsHandler orderDetailsHandler = new orderDetailsHandler(mockManufacturer);
+		orderDetailsHandler = new CheckOrderDetailsHandler(mockManufacturer);
 	}
 
 	@Test
@@ -89,12 +92,12 @@ public class OrderDetailsScenario {
 		//   divided into two parts. The first part shows a list of pending orders,
 		//   with estimated completion times, and the second part shows a history
 		//   of completed orders, sorted most recent first.
-		List<OrderContainer> initPending = orderDetailsHandler.getPendingOrders();
-		List<OrderContainer> initComplete = orderDetailsHandler.getCompletedOrders();
+		List<OrderContainer> initPending = orderDetailsHandler.getPendingOrdersContainers();
+		List<OrderContainer> initComplete = orderDetailsHandler.getCompletedOrdersContainers();
 		
 		for(OrderContainer oc : initPending){
 			assertTrue(!oc.isCompleted());
-			DateTime eta = orderDetailsHandler.getEstimatedCompletionTime(oc);
+			DateTime eta = orderDetailsHandler.ge;
 			assertNotNull(eta);
 		}
 		

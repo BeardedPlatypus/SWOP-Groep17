@@ -20,8 +20,6 @@ public class AssemblyLine implements WorkPostObserver {
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
-	//TODO: Raw method, add annotation
-	//TODO: Add additional throws of exceptions. 	
 	/**
 	 * Instantiate a new AssemblyLine with the specified {@link Manufacturer}.
 	 * 
