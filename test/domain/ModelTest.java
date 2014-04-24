@@ -33,13 +33,13 @@ public class ModelTest {
 		ArrayList<Option> options1 = new ArrayList<>();
 		options1.add(option1a);
 		options1.add(option1b);
-		optionCat1 = new OptionCategory(options1);
+		optionCat1 = new OptionCategory(options1, "Options1");
 		option2a = new Option(TaskType.DRIVETRAIN, "2a", "2a desc");
 		option2b = new Option(TaskType.DRIVETRAIN, "2b", "2b desc");
 		ArrayList<Option> options2 = new ArrayList<>();
 		options2.add(option2a);
 		options2.add(option2b);
-		optionCat2 = new OptionCategory(options2);
+		optionCat2 = new OptionCategory(options2, "Options2");
 		ArrayList<OptionCategory> cats = new ArrayList<>();
 		cats.add(optionCat1);
 		cats.add(optionCat2);
