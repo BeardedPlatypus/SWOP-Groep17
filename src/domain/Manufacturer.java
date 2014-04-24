@@ -10,8 +10,10 @@ import exceptions.OrderDoesNotExistException;
 import domain.order.CompletedOrderCatalog;
 import domain.order.Order;
 import domain.order.OrderContainer;
+import domain.order.OrderFactory;
 import domain.productionSchedule.ProductionScheduleFacade;
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
+import domain.productionSchedule.strategy.SchedulingStrategy;
 
 //TODO everything
 
@@ -23,7 +25,6 @@ import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
  * @author Martinus Wilhelmus Tegelaers, Frederik Goovaerts
  */
 public class Manufacturer {
-	
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -53,7 +54,8 @@ public class Manufacturer {
 						CompletedOrderCatalog completedCat,
 						ModelCatalog modelCat,
 						OptionRestrictionManager optionRestMan,
-						ProductionScheduleFacade prodSched)
+						ProductionScheduleFacade prodSched,
+						OrderFactory orderFactory)
 						throws IllegalArgumentException
 	{
 		if(stratFact == null)
@@ -68,18 +70,45 @@ public class Manufacturer {
 			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
 		if(prodSched == null)
 			throw new IllegalArgumentException("ProductionScheduleFacade should not be null.");
+		
 		this.algorithmStrategyFactory = stratFact;
 		this.singleTaskCatalog = singleCat;
 		this.completedOrderCatalog = completedCat;
 		this.modelCatalog = modelCat;
 		this.optionRestrictionManager = optionRestMan;
 		this.productionScheduleFacade = prodSched;
+		this.orderFactory = orderFactory;
 	}
+	
+	/** The SingleTaskCatalog of this Manufacturer. */
+	private final SingleTaskCatalog singleTaskCatalog;
+	
+	//--------------------------------------------------------------------------
+	// AlgorithStrategyFactory methods.
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the AlgorithmFactory of this Manufacturer
+	 * 
+	 * @return the AlogorithmFactory of this Manufacturer. 
+	 */
+	public AlgorithmStrategyFactory getAlgorithmFactory() {
+		return this.algorithmStrategyFactory;
+	}
+	
+	/**
+	 * Set a new SchedulingStrategy of the ProductionSchedule subsystem.
+	 * 
+	 * @param strat
+	 * 		The new SchedulingStrategy of this Manufacturer's ProductionSchedule subsystem.
+	 */
+	public void setNewSchedulingAlgorithm(SchedulingStrategy strat) {
+		this.getProductionSchedule().setNewSchedulingAlgorithm(strat);
+	}
+
 	
 	/** The AlgorithmStrategyFactory of this Manufacturer. */
 	private final AlgorithmStrategyFactory algorithmStrategyFactory;
-	/** The SingleTaskCatalog of this Manufacturer. */
-	private final SingleTaskCatalog singleTaskCatalog;
+	
 	
 	//--------------------------------------------------------------------------
 	// Methods concerning multiple subsystems
@@ -168,12 +197,6 @@ public class Manufacturer {
 	 * 		If either of the arguments is null
 	 */
 	public OrderContainer submitSingleTaskOrder(Option option, DateTime deadline) {
-		if(option == null)
-			throw new IllegalArgumentException("Option should not be null.");
-		if(deadline == null)
-			throw new IllegalArgumentException("Option should not be null.");
-		if(!this.singleTaskCatalogContains(option))
-			throw new IllegalArgumentException("Option is not a singleTaskOption.");
 		this.getProductionSchedule().submitSingleTaskOrder(option, deadline);
 	}
 	
@@ -186,11 +209,9 @@ public class Manufacturer {
 	 * @return whether or not given option is present in the singleTaskCatalog
 	 * 
 	 * @throws IllegalArgumentException
-	 * 		If given option is not present in the singelTaskCatalog
+	 * 		| option == null
 	 */
-	private boolean singleTaskCatalogContains(Option option) throws IllegalArgumentException{
-		if(option == null)
-			throw new IllegalArgumentException("Option can not be null.");
+	public boolean singleTaskCatalogContains(Option option) throws IllegalArgumentException{
 		return this.singleTaskCatalog.contains(option);
 	}
 	
@@ -213,6 +234,15 @@ public class Manufacturer {
 	 */
 	public List<Model> getCarModels() {
 		return this.getModelCatalog().getModels();
+	}
+	
+	/** 
+	 * Get the model of a SingleTaskOrder.
+	 * 
+	 * @return the model of a SingleTaskOrder
+	 */
+	public Model getSingleTaskModel() {
+		return this.getModelCatalog().getSingleTaskModel();
 	}
 	
 	/**
@@ -250,7 +280,7 @@ public class Manufacturer {
 	//TODO Is dit systeem van booleans en exceptions acceptabel?
 	// Exceptions voor abnormale cases: Null, en illegale model-option-combo
 	// Boolean return voor restrictions al dan niet ok.
-	private boolean checkOrderValidity(Model model, List<Option> options)
+	public boolean checkOrderValidity(Model model, List<Option> options)
 			throws IllegalArgumentException, IllegalCarOptionCombinationException
 	{
 		if(model == null)
@@ -317,6 +347,18 @@ public class Manufacturer {
 		return this.getModelCatalog().contains(model);
 	}
 
+	/**
+	 * Get the OrderFactory of this Manufacturer.
+	 * 
+	 * @return the OrderFactory of this Manufacturer.
+	 */
+	public OrderFactory getOrderFactory() {
+		return this.orderFactory;
+	}
+	
+	/** The OrderFactory of this Manufacturer. */
+	private final OrderFactory orderFactory;
+	
 	//--------------------------------------------------------------------------
 	// AssemblyLine-related variables and methods
 	//--------------------------------------------------------------------------
@@ -403,30 +445,19 @@ public class Manufacturer {
 	//--------------------------------------------------------------------------
 	// ProductionScheduleFacade related variables and methods. 
 	//--------------------------------------------------------------------------
-	/** Interface into production schedule functionality. */
-	private ProductionScheduleFacade productionScheduleFacade;
-
 	/**
 	 * Get the ProductionSchedule of this Manufacturer.
 	 * 
 	 * @return The ProductionSchedule of this Manufacturer. 
 	 */
-	ProductionScheduleFacade getProductionSchedule() {
+	public ProductionScheduleFacade getProductionSchedule() {
 		return this.productionScheduleFacade;
 	}
+	
+	/** Interface into production schedule functionality. */
+	private final ProductionScheduleFacade productionScheduleFacade;
 
-	/**
-	 * Set the association with the ProductionSchedule. 
-	 * 
-	 * @param productionSchedule
-	 * 		The new ProductionSchedule of this Manufacturer. 
-	 * 
-	 * @post | (new this).getProductionSchedule == productionSchedule
-	 */
-	void setProductionSchedule(ProductionScheduleFacade productionScheduleFacade) {
-		this.productionScheduleFacade = productionScheduleFacade;
-	}
-
+	//--------------------------------------------------------------------------
 	/**
 	 * Remove an Order from this Manufacturer's ProductionSchedule and
 	 * pass it along.
@@ -529,5 +560,17 @@ public class Manufacturer {
 	 */
 	public String getStatisticsReport() {
 		return this.getAssemblyLine().getStatisticsReport();
+	}
+
+
+	public boolean modelCatalogContains(Model model) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	public boolean checkSpecificationRestrictions(Model model,
+			Specification specification) {
+		return false;
 	}
 }

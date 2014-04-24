@@ -50,7 +50,6 @@ public class SchedulerContext {
 	//--------------------------------------------------------------------------
 	// Strategy-related methods
 	//--------------------------------------------------------------------------
-	//TODO
 	/**
 	 * Get the current scheduling strategy of this SchedulerContext. 
 	 * 
@@ -68,9 +67,28 @@ public class SchedulerContext {
 	 * 		The new strategy of this SchedulerContext;
 	 * 
 	 * @postcondition | (new this).getSchedulingStrategy() == newStrategy
+	 * @postcondition orders sorted according to newStrategy.
+	 * @throws IllegalArgumentException
+	 * 		| newStrategy == null
 	 */
-	public void setSchedulingStrategy(SchedulingStrategy newStrategy) {
-		throw new UnsupportedOperationException();
+	public void setSchedulingStrategy(SchedulingStrategy newStrategy) throws IllegalArgumentException{
+		if (newStrategy == null)
+			throw new IllegalArgumentException();
+		this.setSchedulingStrategyRaw(newStrategy);
+		newStrategy.sort(this.orderQueue);
+	}
+	
+	/**
+	 * Set the current SchedulingStrategy of this SchedulerContext to newStrategy
+	 * without anymore side effects.
+	 * 
+	 * @param newStrategy
+	 * 		The new SchedulingStrategy of this SchedulerContext.
+	 * 
+	 * @postcondition | (new this).getCurrentSchedulingStrategy() == newStrategy
+	 */
+	private void setSchedulingStrategyRaw(SchedulingStrategy newStrategy) {
+		this.currentStrategy = newStrategy;
 	}
 	
 	/** The current strategy of this SchedulerContext. */
@@ -91,7 +109,7 @@ public class SchedulerContext {
 	private final SchedulingStrategy defaultStrategy;
 	
 	//--------------------------------------------------------------------------
-	// Get StandardOrder methods.
+	// Order related methods.
 	//--------------------------------------------------------------------------
 	/**
 	 * Check if the specified OrderContainer is currently in this SchedulerContext.
@@ -102,9 +120,24 @@ public class SchedulerContext {
 	 * @return | order in this.
 	 */
 	public boolean containsOrder(OrderContainer order) {
-		throw new UnsupportedOperationException();
+		return this.getAllPendingOrders().contains(order);
+	}
+
+	/**
+	 * Get all pending Orders in this SchedulerContext. This list is unordered.
+	 * 
+	 * @return a list of all pending Orders in this SchedulerContext.
+	 */
+	public List<OrderContainer> getAllPendingOrders() {
+		List<OrderContainer> result = new ArrayList<>();
+		result.addAll(this.getPendingStandardOrders());
+		result.addAll(this.getPendingSingleTaskOrders());
+		return result;
 	}
 	
+	//--------------------------------------------------------------------------
+	// Get StandardOrder methods.
+	//--------------------------------------------------------------------------	
 	/** 
 	 * Get the next OrderContainer that will be scheduled by this SchedulerContext.
 	 * 
@@ -123,12 +156,60 @@ public class SchedulerContext {
 		return this.orderQueue.get(0);
 	}
 	
+	//--------------------------------------------------------------------------
+	/**
+	 * Get all pending StandardOrders of this SchedulerContext.
+	 * 
+	 * @return all pending StandardOrders of this SchedulerContext.
+	 */
+	public List<OrderContainer> getPendingStandardOrders() {
+		List<OrderContainer> result = new ArrayList<>();
+		for (OrderContainer o : this.getOrderQueue()) {
+			result.add(o);
+		}
+		return result;
+	}
+	
+	/**
+	 * Return the orderQueue of this SchedulerContext.
+	 * 
+	 * @return the orderQueue of this SchedulerContext
+	 */
+	public List<StandardOrder> getOrderQueue() {
+		return new ArrayList<>(this.getOrderQueueRaw());
+	}
+	
+	/**
+	 * Return the interal OrderQueue of this SchedulerContext;
+	 * 
+	 * @return the internal OrderQueue of this SchedulerContext
+	 */
+	private List<StandardOrder> getOrderQueueRaw() {
+		return this.orderQueue;
+	}
+	
 	/** The order queue of this SchedulerContext */
 	private final List<StandardOrder> orderQueue = new ArrayList<>();
 	
 	//--------------------------------------------------------------------------
 	// Get SingleTaskOrder methods
 	//--------------------------------------------------------------------------
+	/**
+	 * Get all pending SingleTaskOrders of this SchedulerContext
+	 * 
+	 * @return all pending SingleTaskOrders of this SchedulerContext.
+	 */
+	public List<OrderContainer> getPendingSingleTaskOrders() {
+		List<OrderContainer> result = new ArrayList<>();
+		
+		for (List<SingleTaskOrder> l : this.taskOrderQueue.values()) {
+			for (OrderContainer o : l) {
+				result.add(o);
+			}
+		}
+		return result;
+	}
+	
 	/** 
 	 * Get the next SingleTaskOrder of type TaskType to be scheduled. 
 	 * 
@@ -192,7 +273,7 @@ public class SchedulerContext {
 		if (!isValidPendingOrder(order)) {
 			throw new IllegalArgumentException("Order is not a valid pending order.");
 		}
-		//TODO	
+		this.getCurrentSchedulingStrategy().addTo(order, this.getOrderQueueRaw());
 	}
 	
 	/**
