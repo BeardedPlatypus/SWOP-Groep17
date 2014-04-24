@@ -21,11 +21,12 @@ import domain.order.OrderFactory;
 import domain.order.OrderSession;
 import domain.order.SingleOrderSession;
 import domain.order.SingleTaskCatalog;
+import domain.order.SingleTaskOrder;
+import domain.order.StandardOrder;
 import domain.productionSchedule.ProductionScheduleFacade;
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
 import domain.productionSchedule.strategy.SchedulingStrategy;
-
-//TODO everything
+import domain.productionSchedule.strategy.SchedulingStrategyView;
 
 /**
  * A class which represents the book-keeping body of the system.
@@ -92,33 +93,7 @@ public class Manufacturer {
 	
 	/** The SingleTaskCatalog of this Manufacturer. */
 	private final SingleTaskCatalog singleTaskCatalog;
-	
-	//--------------------------------------------------------------------------
-	// AlgorithStrategyFactory methods.
-	//--------------------------------------------------------------------------
-	/**
-	 * Get the AlgorithmFactory of this Manufacturer
-	 * 
-	 * @return the AlogorithmFactory of this Manufacturer. 
-	 */
-	public AlgorithmStrategyFactory getAlgorithmFactory() {
-		return this.algorithmStrategyFactory;
-	}
-	
-	/**
-	 * Set a new SchedulingStrategy of the ProductionSchedule subsystem.
-	 * 
-	 * @param strat
-	 * 		The new SchedulingStrategy of this Manufacturer's ProductionSchedule subsystem.
-	 */
-	public void setNewSchedulingAlgorithm(SchedulingStrategy strat) {
-		this.getProductionSchedule().setNewSchedulingAlgorithm(strat);
-	}
 
-	
-	/** The AlgorithmStrategyFactory of this Manufacturer. */
-	private final AlgorithmStrategyFactory algorithmStrategyFactory;
-	
 	
 	//--------------------------------------------------------------------------
 	// Methods concerning multiple subsystems
@@ -165,9 +140,102 @@ public class Manufacturer {
 		throw new OrderDoesNotExistException("Order was not found in the system.");
 	}
 	
+	
 	//--------------------------------------------------------------------------
-	// Model and new order related methods and variables
+	// AlgorithStrategyFactory methods.
 	//--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
+	// Algorithm methods.
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the AlgorithmFactory of this Manufacturer
+	 * 
+	 * @return the AlogorithmFactory of this Manufacturer. 
+	 */
+	public AlgorithmStrategyFactory getAlgorithmFactory() {
+		return this.algorithmStrategyFactory;
+	}
+	
+	/**
+	 * Set a new SchedulingStrategy of the ProductionSchedule subsystem.
+	 * 
+	 * @param strat
+	 * 		The new SchedulingStrategy of this Manufacturer's ProductionSchedule subsystem.
+	 */
+	public void setNewSchedulingAlgorithm(SchedulingStrategy strat) {
+		this.getProductionSchedule().setNewSchedulingAlgorithm(strat);
+	}
+	
+	/**
+	 * Get a list of SchedulingStrategyViews of all available SchedulingAlgorithms
+	 * 
+	 * @return The SchedulingStrategyViews
+	 */
+	public List<SchedulingStrategyView> getAlgorithms() {
+		return this.getAlgorithmFactory().getAlgorithmViews();
+	}
+	
+	/**
+	 * Get a view of the currently used SchedulingAlgorithm
+	 * 
+	 * @return The SchedulingAlgorithm
+	 */
+	public SchedulingStrategyView getCurrentAlgorithm() {
+		return this.getProductionSchedule().getCurrentSchedulingAlgorithm();
+	}
+	
+	/**
+	 * Set the currently used SchedulingAlgorithm to the FIFO algorithm
+	 */
+	public void setFifoAlgorithm() {
+		this.getProductionSchedule().setNewSchedulingAlgorithm(
+				this.getAlgorithmFactory().getFifoStrategy());
+	}
+	
+	/**
+	 * Get the batches that are currently eligible for use in batch strategies.
+	 * 
+	 * @return The batches
+	 */
+	public List<Specification> getCurrentBatches() {
+		return this.getProductionSchedule().getEligibleBatches();
+	}
+	
+	/**
+	 * Set the currently used SchedulingAlgorithm to a batch strategy that
+	 * uses the specified Specification.
+	 * 
+	 * @param batch
+	 * 		The batch used to compare Orders
+	 * @throws IllegalArgumentException
+	 * 		batch is null
+	 */
+	public void setBatchAlgorithm(Specification batch) throws IllegalArgumentException {
+		this.getProductionSchedule().setNewSchedulingAlgorithm(
+				this.getAlgorithmFactory().getBatchStrategy(batch));
+	}
+
+	
+	/** The AlgorithmStrategyFactory of this Manufacturer. */
+	private final AlgorithmStrategyFactory algorithmStrategyFactory;
+
+
+	//--------------------------------------------------------------------------
+	// OrderFactory
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * Get the OrderFactory of this Manufacturer.
+	 * 
+	 * @return the OrderFactory of this Manufacturer.
+	 */
+	public OrderFactory getOrderFactory() {
+		return this.orderFactory;
+	}
+	
+	/** The OrderFactory of this Manufacturer. */
+	private final OrderFactory orderFactory;
+	
 	/**
 	 * Create and return a new order session.
 	 * 
@@ -207,7 +275,9 @@ public class Manufacturer {
 	 * 		If either of the arguments is null
 	 */
 	public OrderContainer submitSingleTaskOrder(Option option, DateTime deadline) {
-		this.getProductionSchedule().submitSingleTaskOrder(option, deadline);
+		SingleTaskOrder order = this.getOrderFactory().makeNewSingleTaskOrder(deadline, option);
+		this.getProductionSchedule().submitSingleTaskOrder(order);
+		return order;
 	}
 	
 	/**
@@ -225,6 +295,10 @@ public class Manufacturer {
 		return this.singleTaskCatalog.contains(option);
 	}
 	
+	//--------------------------------------------------------------------------
+	// ModelCatalog
+	//--------------------------------------------------------------------------
+		
 	/**
 	 * Get the modelCatalog for internal use
 	 * 
@@ -254,6 +328,25 @@ public class Manufacturer {
 	public Model getSingleTaskModel() {
 		return this.getModelCatalog().getSingleTaskModel();
 	}
+
+	/**
+	 * Check whether or not given model is a model of this system.
+	 * 
+	 * @param model
+	 * 		The model to check for.
+	 * 
+	 * @return whether or not given model is part of the system
+	 */
+	public boolean isValidModel(Model model){
+		if(model == null)
+			throw new IllegalArgumentException("Null is not a valid model.");
+		return this.getModelCatalog().contains(model);
+	}
+	
+	//--------------------------------------------------------------------------
+	// Restrictions Manager
+	//--------------------------------------------------------------------------
+	
 	
 	/**
 	 * Get the optionRestrictionManager for internal use
@@ -287,9 +380,6 @@ public class Manufacturer {
 	 * @throws IllegalCarOptionCombinationException 
 	 * 		When the list of options is not valid with given model
 	 */
-	//TODO Is dit systeem van booleans en exceptions acceptabel?
-	// Exceptions voor abnormale cases: Null, en illegale model-option-combo
-	// Boolean return voor restrictions al dan niet ok.
 	public boolean checkOrderValidity(Model model, List<Option> options)
 			throws IllegalArgumentException, IllegalCarOptionCombinationException
 	{
@@ -305,7 +395,54 @@ public class Manufacturer {
 			return false;
 		return true;
 	}
+	
 
+	//--------------------------------------------------------------------------
+	// ProductionScheduleFacade related variables and methods. 
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the ProductionSchedule of this Manufacturer.
+	 * 
+	 * @return The ProductionSchedule of this Manufacturer. 
+	 */
+	public ProductionScheduleFacade getProductionSchedule() {
+		return this.productionScheduleFacade;
+	}
+	
+	/** Interface into production schedule functionality. */
+	private final ProductionScheduleFacade productionScheduleFacade;
+
+	//--------------------------------------------------------------------------
+	/**
+	 * Remove an Order from this Manufacturer's ProductionSchedule and
+	 * pass it along.
+	 * 
+	 * @return The removed order
+	 * @throws IllegalStateException
+	 * 		See {@link ProductionScheduleFacade#orderAvailable() orderAvailable()}
+	 */
+	public Order popNextOrderFromSchedule() throws IllegalStateException {
+		return this.getProductionSchedule().popNextOrderFromSchedule();
+	}
+	
+	/**
+	 * Ask this Manufacturer's ProductionSchedule if an order is available
+	 * 
+	 * @return Whether an order is available
+	 */
+	public boolean orderAvailable() {
+		return this.getProductionSchedule().orderAvailable();
+	}
+
+	/**
+	 * Get a list of pending {@link OrderContainer}s in the productionSchedule.
+	 * 
+	 * @return List of pending order containers in the productionSchedule.
+	 */
+	private List<OrderContainer> getSchedulePendingOrderContainers() {
+		return this.getProductionSchedule().getPendingStandardOrderContainers();
+	}
+	
 	/**
 	 * Submit given model and list of options to the system to form a new order.
 	 * An order is formed if the model and options form a valid model, concerning
@@ -325,7 +462,7 @@ public class Manufacturer {
 	 * @throws OptionRestrictionException
 	 * 		When the set of options does not meet the system's restrictions
 	 */
-	public Order submitStandardOrder(Model model, List<Option> options)
+	public OrderContainer submitStandardOrder(Model model, List<Option> options)
 			throws IllegalArgumentException,
 			IllegalCarOptionCombinationException,
 			OptionRestrictionException
@@ -339,35 +476,11 @@ public class Manufacturer {
 		if(!checkOrderValidity(model, options))
 			throw new OptionRestrictionException("Options do not meet Restriction criteria.");
 		Specification orderSpecs = model.makeSpecification(options);
-		return this.getProductionSchedule().submitStandardOrder(model, orderSpecs);
-	}
-	
-
-	/**
-	 * Check whether or not given model is a model of this system.
-	 * 
-	 * @param model
-	 * 		The model to check for.
-	 * 
-	 * @return whether or not given model is part of the system
-	 */
-	public boolean isValidModel(Model model){
-		if(model == null)
-			throw new IllegalArgumentException("Null is not a valid model.");
-		return this.getModelCatalog().contains(model);
+		StandardOrder newOrder = this.getOrderFactory().makeNewStandardOrder(model, orderSpecs);
+		this.getProductionSchedule().submitStandardOrder(newOrder);
+		return newOrder;
 	}
 
-	/**
-	 * Get the OrderFactory of this Manufacturer.
-	 * 
-	 * @return the OrderFactory of this Manufacturer.
-	 */
-	public OrderFactory getOrderFactory() {
-		return this.orderFactory;
-	}
-	
-	/** The OrderFactory of this Manufacturer. */
-	private final OrderFactory orderFactory;
 	
 	//--------------------------------------------------------------------------
 	// AssemblyLine-related variables and methods
@@ -453,51 +566,6 @@ public class Manufacturer {
 	}
 
 	//--------------------------------------------------------------------------
-	// ProductionScheduleFacade related variables and methods. 
-	//--------------------------------------------------------------------------
-	/**
-	 * Get the ProductionSchedule of this Manufacturer.
-	 * 
-	 * @return The ProductionSchedule of this Manufacturer. 
-	 */
-	public ProductionScheduleFacade getProductionSchedule() {
-		return this.productionScheduleFacade;
-	}
-	
-	/** Interface into production schedule functionality. */
-	private final ProductionScheduleFacade productionScheduleFacade;
-
-	//--------------------------------------------------------------------------
-	/**
-	 * Remove an Order from this Manufacturer's ProductionSchedule and
-	 * pass it along.
-	 * 
-	 * @return The removed order
-	 * @throws IllegalStateException
-	 * 		See {@link ProductionScheduleFacade#orderAvailable() orderAvailable()}
-	 */
-	public Order popNextOrderFromSchedule() throws IllegalStateException {
-		return this.getProductionSchedule().popNextOrderFromSchedule();
-	}
-	
-	/**
-	 * Ask this Manufacturer's ProductionSchedule if an order is available
-	 * 
-	 * @return Whether an order is available
-	 */
-	public boolean orderAvailable() {
-		return this.getProductionSchedule().orderAvailable();
-	}
-
-	/**
-	 * Get a list of pending {@link OrderContainer}s in the productionSchedule.
-	 * 
-	 * @return List of pending order containers in the productionSchedule.
-	 */
-	private List<OrderContainer> getSchedulePendingOrderContainers() {
-		return this.getProductionSchedule().getPendingStandardOrderContainers();
-	}
-	//--------------------------------------------------------------------------
 	// Completed Order Methods
 	//--------------------------------------------------------------------------
 	/** Registers the Orders that have been completed */
@@ -540,23 +608,18 @@ public class Manufacturer {
 	public List<OrderContainer> getCompletedOrderContainers() {
 		return this.getCompletedOrderCatalog().getCompletedOrderContainers();
 	}
-
+	
+	//--------------------------------------------------------------------------
+	// Time-related methods
 	//--------------------------------------------------------------------------
 	/**
-	 * Get the AlgorithmFactory of this Manufacturer
+	 * Increments the time with the specified DateTime
 	 * 
-	 * @return the AlogorithmFactory of this Manufacturer. 
+	 * @param dt
+	 * 		The time to increment with
 	 */
-	public AlgorithmStrategyFactory getAlgorithmFactory() {
-		throw new UnsupportedOperationException();
-	}
-
-	public void setNewSchedulingAlgorithm(Comparator<Order> comparator) {
-		throw new UnsupportedOperationException();
-	}
-	
-	public List<Specification> getCurrentBatches() {
-		
+	public void incrementTime(DateTime dt) {
+		this.getProductionSchedule().incrementTime(dt);
 	}
 
 	//--------------------------------------------------------------------------

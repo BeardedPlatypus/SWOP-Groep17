@@ -42,7 +42,8 @@ public class SpecificationTest {
 	@Test
 	public void constructorTestNullList() {
 		exception.expect(IllegalArgumentException.class);
-		testSpec = new Specification(null);
+		List<Option> options = null;
+		testSpec = new Specification(options);
 	}
 
 	@Test
@@ -52,6 +53,19 @@ public class SpecificationTest {
 		opts.add(option1);
 		opts.add(null);
 		testSpec = new Specification(opts);
+	}
+	
+	@Test
+	public void constructor_nullOption() {
+		exception.expect(IllegalArgumentException.class);
+		Option option = null;
+		new Specification(option);
+	}
+	
+	@Test
+	public void constructor_optionValid() {
+		Specification spec = new Specification(option1);
+		assertEquals(spec.getAmountOfOptions(), 1);
 	}
 	
 	@Test

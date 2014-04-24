@@ -1,6 +1,7 @@
 package domain.order;
 
 import domain.DateTime;
+import domain.assemblyLine.TaskType;
 import domain.car.Model;
 import domain.car.Specification;
 
@@ -65,4 +66,15 @@ public class SingleTaskOrder extends Order {
 	
 	/** The Deadline of this SingleTaskOrder. */
 	private final DateTime deadline;
+	
+	/**
+	 * Get the tasktype of this singleTaskOrder
+	 * 
+	 * @return the tasktype of this order
+	 */
+	public TaskType getSingleTaskOrderType(){
+		if(this.getSpecifications().getAmountOfOptions()<1)
+			throw new IllegalStateException("This order has no option!");
+		return this.getSpecifications().getOption(0).getType();
+	}
 }

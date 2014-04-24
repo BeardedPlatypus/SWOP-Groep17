@@ -1,6 +1,7 @@
 package domain.car;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.collections4.*;
@@ -31,6 +32,22 @@ public class Specification {
 			throw new IllegalArgumentException("Given list of options is null.");
 		if(options.contains(null))
 			throw new IllegalArgumentException("One of given options is null.");
+		this.options = options;
+	}
+	
+	/**
+	 * Create a specification object from the specified option.
+	 * 
+	 * @param option
+	 * 		The option for the new specification object
+	 * @throws IllegalArgumentException
+	 * 		option is null
+	 */
+	public Specification(Option option) throws IllegalArgumentException {
+		if (option == null) {
+			throw new IllegalArgumentException("option is null.");
+		}
+		List<Option> options = new ArrayList<Option>(Arrays.asList(option));
 		this.options = options;
 	}
 	

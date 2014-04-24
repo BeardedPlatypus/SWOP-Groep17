@@ -1,4 +1,4 @@
-package domain;
+package domain.assemblyLine;
 
 import static org.junit.Assert.*;
 
@@ -20,6 +20,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import domain.DateTime;
+import domain.Manufacturer;
 import domain.assemblyLine.AssemblyLine;
 import domain.assemblyLine.AssemblyProcedure;
 import domain.assemblyLine.AssemblyProcedureContainer;
@@ -108,13 +110,14 @@ public class AssemblyLineTest {
 		
 		for (int i = 0; i < assemblyLine.getAssemblyLineSize(); i++)
 		{
-			assemblyLine.getWorkPost(i).setAssemblyProcedure(procedures.get(i));
+			WorkPost wp = (WorkPost) assemblyLine.getWorkPostContainers().get(i);
+			Whitebox.invokeMethod(wp, "setAssemblyProcedure", procedures.get(i));
 		}
 		
 		workPosts = new ArrayList<WorkPost>();
 		
 		for (int i = 0; i < assemblyLine.getAssemblyLineSize(); i++) {
-			workPosts.add(assemblyLine.getWorkPost(i));
+			workPosts.add((WorkPost) assemblyLine.getWorkPostContainers().get(i));
 		}
 	}
 
@@ -131,7 +134,7 @@ public class AssemblyLineTest {
 		
 		List<WorkPost> workPosts = new ArrayList<WorkPost>();
 		for (int i = 0; i < spiedAssemblyLine.getAssemblyLineSize(); i++) {
-			workPosts.add(PowerMockito.spy(spiedAssemblyLine.getWorkPost(i)));
+			workPosts.add((WorkPost) PowerMockito.spy(spiedAssemblyLine.getWorkPostContainers().get(i)));
 		}
 		
 		int counter = 0;
@@ -140,6 +143,7 @@ public class AssemblyLineTest {
 			counter++;
 		}
 		assertEquals(manufacturer, Whitebox.getInternalState(spiedAssemblyLine, Manufacturer.class));
+		@SuppressWarnings("unchecked")
 		List<WorkPostObserver> observers = (ArrayList<WorkPostObserver>) Whitebox.getInternalState(workPosts.get(0), "observers");
 		assertEquals(assemblyLine, observers.get(0));
 	}
@@ -312,9 +316,9 @@ public class AssemblyLineTest {
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(0), "minutesOfWork"));
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(1), "minutesOfWork"));
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(2), "minutesOfWork"));
-			assertEquals(procedure1, workPosts.get(1).getAssemblyProcedure());
-			assertEquals(procedure2, workPosts.get(2).getAssemblyProcedure());
-			assertEquals(newOrder, workPosts.get(0).getAssemblyProcedure().getOrder());
+			assertEquals(procedure1, workPosts.get(1).getAssemblyProcedureContainer());
+			assertEquals(procedure2, workPosts.get(2).getAssemblyProcedureContainer());
+			assertEquals(newOrder, workPosts.get(0).getAssemblyProcedureContainer().getOrderContainer());
 			assertEquals(-120, procedure3.makeStatisticsEvent().getDelay());
 			assertEquals(2, Whitebox.getInternalState(assemblyLine, "finishedAssemblyCounter"));
 			Mockito.verify(logger).addStatistics(Matchers.isA(ProcedureStatistics.class));

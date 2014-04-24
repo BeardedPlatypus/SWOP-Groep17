@@ -99,6 +99,43 @@ public class OrderFactory implements TimeObserver {
 				                   this.getCurrentTime(), 
 				                   deadline);	
 	}
+	
+	/**
+	 * Construct a new SingleTaskOrder with the specified deadline, and option,
+	 * the current time of the domain, and an unique order identifier and a 
+	 * UnspecifiedModel model. A Specification is generated from the specified Option,
+	 * then all input is passed to makeNewSingleTaskOrder(DateTime, Specification)
+	 * 
+	 * @param deadline
+	 * 		The deadline of this new SingleTaskOrder.
+	 * @param option
+	 * 		The option of this new SingleTaskOrder.
+	 * 
+	 * @return a new SingleTaskOrder with the specified deadline, specification 
+	 * 		   and the current time, unique order identifier, and a UnspecifiedModel.
+	 * 
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		| !this.isValidInputSingleTaskOrder()
+	 */
+	public SingleTaskOrder makeNewSingleTaskOrder(DateTime deadline, 
+			                                      Option option) 
+			                                    		  throws IllegalArgumentException{
+		
+		Specification spec = new Specification(option);
+		if(!isValidInputSingleTaskOrder(deadline, spec)) {
+			throw new IllegalArgumentException("Input parameters are not valid.");
+		}
+		
+		int orderId = this.getCurrentOrderIdentifier();
+		this.incrementOrderIdentifier();
+		
+		return new SingleTaskOrder(this.getManufacturer().getSingleTaskModel(), 
+				                   spec, 
+				                   orderId, 
+				                   this.getCurrentTime(), 
+				                   deadline);	
+	}
 
 	/**
 	 * Check whether the specified SingleTaskOrder parameters are valid parameters

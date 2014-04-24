@@ -31,7 +31,7 @@ public class OptionCategoryTest {
 		ArrayList<Option> options1 = new ArrayList<>();
 		options1.add(option1a);
 		options1.add(option1b);
-		optionCat = new OptionCategory(options1);
+		optionCat = new OptionCategory(options1,"test category");
 		nonCatOption = new Option(TaskType.ACCESSORIES, "BadOption", "BadOptionInfo");
 	}
 
@@ -42,12 +42,13 @@ public class OptionCategoryTest {
 				optionCat.getOption(0).equals(option1b));
 		assertTrue(optionCat.getOption(1).equals(option1a)||
 				optionCat.getOption(1).equals(option1b));
+		assertEquals(optionCat.getName(), "test category");
 	}
 	
 	@Test
 	public void testConstructorNullList() {
 		exception.expect(IllegalArgumentException.class);
-		optionCat = new OptionCategory(null);
+		optionCat = new OptionCategory(null, "null category");
 	}
 	
 	@Test
@@ -68,7 +69,7 @@ public class OptionCategoryTest {
 		ArrayList<Option> options1 = new ArrayList<>();
 		options1.add(option1a);
 		options1.add(null);
-		optionCat = new OptionCategory(options1);
+		optionCat = new OptionCategory(options1, "null in list category");
 	}
 	
 	@Test

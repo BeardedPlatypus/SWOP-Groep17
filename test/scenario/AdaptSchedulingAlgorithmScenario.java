@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import domain.Manufacturer;
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
 import domain.car.Specification;
@@ -19,6 +20,7 @@ public class AdaptSchedulingAlgorithmScenario extends TestCase {
 	//--------------------------------------------------------------------------
 	AdaptSchedulingAlgorithmHandler handler;
 	AlgorithmStrategyFactory algFac;
+	Manufacturer manufacturer;
 	
 	//--------------------------------------------------------------------------
 	// Setup
