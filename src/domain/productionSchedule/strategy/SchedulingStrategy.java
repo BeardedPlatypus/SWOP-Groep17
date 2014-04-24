@@ -20,7 +20,7 @@ import domain.order.Order;
  * @author Martinus Wilhelmus Tegelaers
  *
  */
-public abstract class SchedulingStrategy implements SchedulingStrategyView {
+public abstract class SchedulingStrategy<O extends Order> implements SchedulingStrategyView {
 	
 	/**
 	 * Given an OrderQueue, check if this SchedulingStrategy has finished its
