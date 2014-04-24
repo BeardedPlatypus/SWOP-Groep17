@@ -1,4 +1,4 @@
-package domain;
+package scenario;
 
 import static org.junit.Assert.*;
 
@@ -8,6 +8,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import domain.InteractionSimulator;
+import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.WorkPostContainer;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
 
@@ -17,7 +20,7 @@ import domain.handlers.InitialisationHandler;
  * @author Simon Slangen
  *
  */
-public class AssemblyLineStatusScenario {
+public class CheckAssemblyLineStatusScenario_Alternate {
 	
 	DomainFacade facade;
 	InteractionSimulator sim;

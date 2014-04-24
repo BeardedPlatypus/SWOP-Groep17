@@ -1,4 +1,4 @@
-package domain;
+package scenario;
 
 import static org.junit.Assert.*;
 
@@ -7,10 +7,11 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import domain.DateTime;
+import domain.InteractionSimulator;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
 import domain.order.OrderContainer;
-
 import exceptions.OrderDoesNotExistException;
 
 /**
@@ -19,7 +20,7 @@ import exceptions.OrderDoesNotExistException;
  * @author Simon Slangen
  *
  */
-public class OrderDetailsScenario {
+public class OrderDetailsScenario_Alternate {
 	
 	DomainFacade facade;
 	InteractionSimulator sim;

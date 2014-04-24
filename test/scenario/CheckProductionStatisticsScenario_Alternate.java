@@ -1,10 +1,11 @@
-package domain;
+package scenario;
 
 import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import domain.InteractionSimulator;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
 
@@ -14,7 +15,7 @@ import domain.handlers.InitialisationHandler;
  * @author Simon Slangen
  *
  */
-public class CheckProductionStatisticsScenario {
+public class CheckProductionStatisticsScenario_Alternate {
 	
 	DomainFacade facade;
 	InteractionSimulator sim;
