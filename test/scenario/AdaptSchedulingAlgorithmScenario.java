@@ -3,13 +3,10 @@ package scenario;
 import junit.framework.TestCase;
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
