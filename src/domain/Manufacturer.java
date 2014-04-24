@@ -21,9 +21,11 @@ import domain.order.OrderFactory;
 import domain.order.OrderSession;
 import domain.order.SingleOrderSession;
 import domain.order.SingleTaskCatalog;
+import domain.order.SingleTaskOrder;
 import domain.productionSchedule.ProductionScheduleFacade;
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
 import domain.productionSchedule.strategy.SchedulingStrategy;
+import domain.productionSchedule.strategy.SchedulingStrategyView;
 
 //TODO everything
 
@@ -94,7 +96,7 @@ public class Manufacturer {
 	private final SingleTaskCatalog singleTaskCatalog;
 	
 	//--------------------------------------------------------------------------
-	// AlgorithStrategyFactory methods.
+	// Algorithm methods.
 	//--------------------------------------------------------------------------
 	/**
 	 * Get the AlgorithmFactory of this Manufacturer
@@ -113,6 +115,55 @@ public class Manufacturer {
 	 */
 	public void setNewSchedulingAlgorithm(SchedulingStrategy strat) {
 		this.getProductionSchedule().setNewSchedulingAlgorithm(strat);
+	}
+	
+	/**
+	 * Get a list of SchedulingStrategyViews of all available SchedulingAlgorithms
+	 * 
+	 * @return The SchedulingStrategyViews
+	 */
+	public List<SchedulingStrategyView> getAlgorithms() {
+		return this.getAlgorithmFactory().getAlgorithmViews();
+	}
+	
+	/**
+	 * Get a view of the currently used SchedulingAlgorithm
+	 * 
+	 * @return The SchedulingAlgorithm
+	 */
+	public SchedulingStrategyView getCurrentAlgorithm() {
+		return this.getProductionSchedule().getCurrentSchedulingAlgorithm();
+	}
+	
+	/**
+	 * Set the currently used SchedulingAlgorithm to the FIFO algorithm
+	 */
+	public void setFifoAlgorithm() {
+		this.getProductionSchedule().setNewSchedulingAlgorithm(
+				this.getAlgorithmFactory().getFifoStrategy());
+	}
+	
+	/**
+	 * Get the batches that are currently eligible for use in batch strategies.
+	 * 
+	 * @return The batches
+	 */
+	public List<Specification> getCurrentBatches() {
+		return this.getProductionSchedule().getEligibleBatches();
+	}
+	
+	/**
+	 * Set the currently used SchedulingAlgorithm to a batch strategy that
+	 * uses the specified Specification.
+	 * 
+	 * @param batch
+	 * 		The batch used to compare Orders
+	 * @throws IllegalArgumentException
+	 * 		batch is null
+	 */
+	public void setBatchAlgorithm(Specification batch) throws IllegalArgumentException {
+		this.getProductionSchedule().setNewSchedulingAlgorithm(
+				this.getAlgorithmFactory().getBatchStrategy(batch));
 	}
 
 	
@@ -207,7 +258,8 @@ public class Manufacturer {
 	 * 		If either of the arguments is null
 	 */
 	public OrderContainer submitSingleTaskOrder(Option option, DateTime deadline) {
-		this.getProductionSchedule().submitSingleTaskOrder(option, deadline);
+		SingleTaskOrder order = this.getOrderFactory().makeNewSingleTaskOrder(deadline, option)
+		this.getProductionSchedule().submitSingleTaskOrder(order);
 	}
 	
 	/**
@@ -539,24 +591,6 @@ public class Manufacturer {
 	 */
 	public List<OrderContainer> getCompletedOrderContainers() {
 		return this.getCompletedOrderCatalog().getCompletedOrderContainers();
-	}
-
-	//--------------------------------------------------------------------------
-	/**
-	 * Get the AlgorithmFactory of this Manufacturer
-	 * 
-	 * @return the AlogorithmFactory of this Manufacturer. 
-	 */
-	public AlgorithmStrategyFactory getAlgorithmFactory() {
-		throw new UnsupportedOperationException();
-	}
-
-	public void setNewSchedulingAlgorithm(Comparator<Order> comparator) {
-		throw new UnsupportedOperationException();
-	}
-	
-	public List<Specification> getCurrentBatches() {
-		
 	}
 
 	//--------------------------------------------------------------------------

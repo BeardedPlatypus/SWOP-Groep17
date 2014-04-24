@@ -1,4 +1,4 @@
-package domain;
+package domain.assemblyLine;
 
 import static org.junit.Assert.*;
 

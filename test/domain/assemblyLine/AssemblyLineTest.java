@@ -1,4 +1,4 @@
-package domain;
+package domain.assemblyLine;
 
 import static org.junit.Assert.*;
 
@@ -20,6 +20,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import domain.DateTime;
+import domain.Manufacturer;
 import domain.assemblyLine.AssemblyLine;
 import domain.assemblyLine.AssemblyProcedure;
 import domain.assemblyLine.AssemblyProcedureContainer;

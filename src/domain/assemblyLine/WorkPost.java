@@ -138,6 +138,27 @@ public class WorkPost implements WorkPostContainer {
 		return activeAssembly;
 	}
 	
+	
+	/**
+	 * Get the amount of minutes that the specified AssemblyProcedure is expected
+	 * to spend at this WorkPost
+	 * 
+	 * @param procedure
+	 * 		The procedure of interest
+	 * @return The amount of minutes
+	 * @throws IllegalArgumentException
+	 * 		procedure is null
+	 */
+	public int getTimeOnWorkPost(AssemblyProcedure procedure) throws IllegalArgumentException {
+		if (procedure == null) {
+			throw new IllegalArgumentException("procedure is null");
+		}
+		if (procedure.getAssemblyTasks(this.getTaskType()).isEmpty()) {
+			return 0;
+		}
+		return procedure.getExpectedMinutes();
+	}
+	
 	/**
 	 * Add the specified amount of minutes to this WorkPost's AssemblyProcedure's
 	 * elapsed amount of minutes
@@ -168,7 +189,7 @@ public class WorkPost implements WorkPostContainer {
 		return this.getAssemblyProcedure().getOrder();
 	}
 	
-	public boolean contains(Order order) {
+	public boolean contains(OrderContainer order) {
 		if (this.getAssemblyProcedure() == null) {
 			return false;
 		}
