@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import domain.DateTime;
+import domain.order.OrderContainer;
 
 /**
  * The ClockManager is the object that manages the internal Clock of the whole
@@ -70,6 +71,7 @@ public class ClockManager implements TimeSubject, IncrementTimeObserver {
 	 * @postcondition | (new this).getCurrentTime() = this.getCurrentTime.add(t)
 	 * 
 	 * @throws IllegalArgumentException
+	 * 		t is null
 	 */
 	protected void incrementTime(DateTime t) throws IllegalArgumentException {
 		if (t == null) {
@@ -99,6 +101,110 @@ public class ClockManager implements TimeSubject, IncrementTimeObserver {
 	
 	/** The current time of this ClockManager. */
 	private DateTime currentTime;
+	
+	//--------------------------------------------------------------------------
+	// Completion Time Methods and properties
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the estimated completion of the specified OrderContainer calculated 
+	 * by the ClockManager, while given orders are to be scheduled.
+	 *  
+	 * @param order
+	 * 		The order of which the estimated completion time is calculated.
+	 * 
+	 * @precondition | order != null
+	 * 
+	 * @return | order.isCompleted() -> order.getEstimatedCompletionTime
+	 * @return a DateTime of the estimated completion time of the Order. 
+	 * 
+	 * @throws IllegalArgumentException
+	 *		If either of the arguments is or contains null
+	 */
+	public DateTime getEstimatedCompletionTime(
+			OrderContainer order, List<OrderContainer> allPendingOrders) {
+		int indexInList;
+		if(allPendingOrders.contains(order)){
+			indexInList = allPendingOrders.indexOf(order);
+		} else{
+			indexInList = allPendingOrders.size() + 1;
+		}
+		return getEstimatedCompletionTime(order, indexInList);
+	}
+	
+	/**
+	 * Get the estimated completion based on the current position of the order
+	 * in the assembly process. 
+	 * The first n positions refer to the n workstations on the assembly line,
+	 * The n+m positions, with m > 0, refer to the pending order list. 
+	 * 
+	 * @param positionOrder
+	 * 		The position of the order in the assembly process. 
+	 * 
+	 * @return a DateTime of the estimated completion time of the Order. 
+	 * 
+	 * @throws IllegalArgumentException | positionOrder < 0
+	 */
+	public DateTime getEstimatedCompletionTime(OrderContainer order, int positionOrder) {
+		if (positionOrder < 0) {										            // Invalid Argument
+			throw new IllegalArgumentException("position smaller than 0");			//
+		}																			//
+		                                                                            //
+		int amountOfTasksOnAssemblyLine = order.getSpecifications().getAmountOfOptions();      //
+		int estHoursForCompletion = N_HOURS_MOVE * (positionOrder + 1);    		    // add one for the actions that are currently being executed to complete.	
+		DateTime timeToReturn = this.getCurrentTime();
+																					//        
+		if (positionOrder < amountOfTasksOnAssemblyLine) {                                     // order is on the assembly line
+			return timeToReturn.addTime(0, estHoursForCompletion, 0);
+		} else {                                                                    // order is in pending orders
+			int timeLeft = this.timeLeftMinutes(); 
+					
+			if (estHoursForCompletion * 60 <= timeLeft) {                     		// Task can be finished today.
+				return timeToReturn.addTime(0, estHoursForCompletion, 0);
+				
+			} else {								                                // Task can't be finished today.
+				estHoursForCompletion -= N_HOURS_MOVE;								// We're moving to the next day, so there is no current action.
+				timeToReturn = new DateTime(timeToReturn.getDays() + 1, STARTHOUR, 0);         											// Set to return time to the next day, since we cannot finish it today.
+
+				if (timeLeft < 0) {                                                 // there is left overtime after today, which is specified by a neg timeLeftToday
+					 timeLeft = WORKHOURS * 60 + timeLeft;
+					
+					if(estHoursForCompletion * 60 <= timeLeft) {                    // The order can be finished within the workday of tomorrow.
+						return timeToReturn.addTime(0, estHoursForCompletion, 0); 
+					} else {                                                        // The order cannot be finished within the workday of tomorrow
+						timeToReturn = timeToReturn.addTime(1, 0, 0);			    // We cannot finish the task tomorrow, so we will move to the day after tomorrow. 
+					}
+				}
+				
+				int nCarsMoved = Math.max(0, ((timeLeft - 60 * N_HOURS_MOVE * amountOfTasksOnAssemblyLine) / 60 * N_HOURS_MOVE) + 1); // We do not let cars be moved in a negative direction.
+				int newPos =  positionOrder - nCarsMoved;                  // The position after tomorrow has ended. 
+				
+				int carsPerDay = (WORKHOURS - N_HOURS_MOVE * amountOfTasksOnAssemblyLine) / N_HOURS_MOVE + 1; // number of cars that can be produced on a day. + 1 is from the first car.                  
+				int extraDays = newPos / carsPerDay; 					   // Number of days that need to pass before order can be executed.
+				int extraHours = (newPos % carsPerDay) * N_HOURS_MOVE;     // Number of hours before car can be finished on a day.   
+				
+				return timeToReturn.addTime(extraDays, extraHours, 0);
+			}
+		}	
+	}
+	
+	/** 
+	 * Calculate the time in minutes left today. 
+	 * 
+	 * @return the time left today. 
+	 */
+	private int timeLeftMinutes() {
+		return FINISHHOUR * 60 - this.getCurrentTime().getHours() * 60 
+				               - this.getCurrentTime().getMinutes();
+	}
+	
+	/** Number of workhours in a shift. */
+	private final static int WORKHOURS = 16;
+	/** Start of a workday. */
+	private final static int STARTHOUR = 6;
+	/** End of a workday. */
+	private final static int FINISHHOUR = 22;
+	/** Estimated number of hours to move to next station. */
+	private final static int N_HOURS_MOVE = 1;
 	
 	//--------------------------------------------------------------------------
 	// TimeSubject Methods.
@@ -148,4 +254,5 @@ public class ClockManager implements TimeSubject, IncrementTimeObserver {
 	public void update(DateTime time) throws IllegalArgumentException {
 		this.incrementTime(time);
 	}
+
 }

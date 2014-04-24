@@ -1,15 +1,9 @@
 package domain.productionSchedule;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.assemblyLine.TaskType;
-import domain.car.Model;
-import domain.car.Option;
 import domain.car.Specification;
 import domain.order.Order;
 import domain.order.OrderContainer;
@@ -152,6 +146,21 @@ public class ProductionScheduleFacade {
 	public SingleTaskOrder getNextScheduledSingleTaskOrder(TaskType t) {
 		return this.getSchedulerContext().getNextSingleTaskOrderOfType(t);
 	}
+
+	/** 
+	 * Get the estimated completion time of the specified order in this ProductionSchedule.
+	 * 
+	 * @param order
+	 * 		The specified order of which the estimated completion time is requested.
+	 * 
+	 * @return The estimated completion time of the specified order.
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		| order == null || !this.contains(order)
+	 */
+	public DateTime getEstimatedCompletionTime(OrderContainer order) throws IllegalArgumentException {
+		return this.getClockManager().getEstimatedCompletionTime(order, this.getSchedulerContext().getAllPendingOrders());
+	}
 	
 	//--------------------------------------------------------------------------
 	// Adding orders
@@ -247,24 +256,6 @@ public class ProductionScheduleFacade {
 		return this.getSchedulerContext().getEligibleBatches();
 	}
 	
-	//--------------------------------------------------------------------------
-	// Intermediate methods
-	//--------------------------------------------------------------------------
-	/** 
-	 * Get the estimated completion time of the specified order in this ProductionSchedule.
-	 * 
-	 * @param order
-	 * 		The specified order of which the estimated completion time is requested.
-	 * 
-	 * @return The estimated completion time of the specified order.
-	 * 
-	 * @throws IllegalArgumentException
-	 * 		| order == null || !this.contains(order)
-	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order) throws IllegalArgumentException {
-		throw new UnsupportedOperationException();
-	}
-	
 	//==========================================================================
 	// Clock Methods
 	//==========================================================================
@@ -296,6 +287,16 @@ public class ProductionScheduleFacade {
 	 */
 	ClockManager getClockManager() {
 		return this.clockManager;
+	}
+	
+	/**
+	 * Increments the time with the specified DateTime
+	 * 
+	 * @param dt
+	 * 		The time to increment with
+	 */
+	public void incrementTime(DateTime dt) {
+		this.getClockManager().incrementTime(dt);
 	}
 	
 	/** The ClockManager of this ProductionScheduleFacade. */
