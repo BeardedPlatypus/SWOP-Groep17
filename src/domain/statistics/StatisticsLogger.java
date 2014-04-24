@@ -5,6 +5,7 @@ import java.util.List;
 
 import domain.DateTime;
 import domain.statistics.Registrar;
+import domain.productionSchedule.TimeObserver;
 
 /**
  * Class responsible for registering relevant events for statistical bookkeeping.
