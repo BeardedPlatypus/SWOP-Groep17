@@ -357,8 +357,17 @@ public class SchedulerIntermediate implements TimeObserver{
 
 
 	public DateTime getEstimatedCompletionTime(OrderContainer order) {
-		// TODO Auto-generated method stub
-		return null;
+		AssemblyLine line = this.getAssemblyLine();
+		List<WorkPostContainer> posts = line.getWorkPostContainers();
+		for (int i = 0; i < posts.size(); i++) {
+			if(!posts.get(i).isEmpty()){
+				if (posts.get(i).getAssemblyProcedureContainer().getOrderContainer().equals(order)) {
+					int hours = line.getAssemblyLineSize() - (i);
+					return this.getCurrentTime().addTime(0, hours, 0);
+				}
+			}
+		}
+		throw new IllegalStateException("Order was not found on AssemblyLine.");
 	}
 
 }
