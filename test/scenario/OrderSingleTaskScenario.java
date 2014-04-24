@@ -10,6 +10,7 @@ import org.junit.Test;
 import domain.DateTime;
 import domain.car.Option;
 import domain.car.OptionCategory;
+import domain.handlers.InitialisationHandler;
 import domain.handlers.OrderSingleTaskHandler;
 import domain.order.OrderContainer;
 import exceptions.OrderDoesNotExistException;
@@ -26,7 +27,7 @@ public class OrderSingleTaskScenario {
 	@Before
 	public void setUp() throws Exception {
 		InitialisationHandler init = new InitialisationHandler();
-		orderSingleTaskHandler = init.getNewOrderSingleTaskHandler();
+		orderSingleTaskHandler = init.getDomainFacade().getOrderSingleTaskHandler();
 	}
 
 	@Test

@@ -11,6 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import domain.Manufacturer;
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
 import domain.car.Specification;
@@ -22,6 +23,7 @@ public class AdaptSchedulingAlgorithmScenario extends TestCase {
 	//--------------------------------------------------------------------------
 	AdaptSchedulingAlgorithmHandler handler;
 	AlgorithmStrategyFactory algFac;
+	Manufacturer manufacturer;
 	
 	//--------------------------------------------------------------------------
 	// Setup

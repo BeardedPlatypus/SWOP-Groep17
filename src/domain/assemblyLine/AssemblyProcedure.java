@@ -182,7 +182,7 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 	 * 		The order to look for
 	 * @return This AssemblyProcedure fulfills the given Order
 	 */
-	public boolean contains(Order order) {
+	public boolean contains(OrderContainer order) {
 		return this.getOrder().equals(order);
 	}
 	

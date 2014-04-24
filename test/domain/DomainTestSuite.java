@@ -5,6 +5,10 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import deprecated.AdvanceAssemblyLineHandlerTest;
+import domain.assemblyLine.AssemblyLineTest;
+import domain.assemblyLine.AssemblyProcedureTest;
+import domain.assemblyLine.AssemblyTaskTest;
+import domain.assemblyLine.WorkPostTest;
 import domain.handlers.NewOrderSessionHandlerTest;
 import domain.handlers.PerformAssemblyTaskHandlerTest;
 import domain.order.StandardOrderTest;

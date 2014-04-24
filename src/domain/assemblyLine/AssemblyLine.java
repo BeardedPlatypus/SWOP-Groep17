@@ -76,7 +76,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 		The order to look for
 	 * @return This AssemblyLine has the given Order
 	 */
-	public boolean contains(Order order) {
+	public boolean contains(OrderContainer order) {
 		for (WorkPost workPost : this.getWorkPosts()) {
 			if (workPost.contains(order)) {
 				return true;
@@ -167,6 +167,21 @@ public class AssemblyLine implements WorkPostObserver {
 	}
 	
 	/**
+	 * Get a list of the AssemblyProcedures that are on this AssemblyLine's
+	 * WorkPosts. It is padded with nulls for those WorkPosts that are not working
+	 * on an AssemblyProcedure
+	 * 
+	 * @return
+	 */
+	public List<AssemblyProcedure> getAssemblyProcedures() {
+		List<AssemblyProcedure> toReturn = new ArrayList<AssemblyProcedure>();
+		for (WorkPost workPost : this.getWorkPosts()) {
+			toReturn.add(workPost.getAssemblyProcedure());
+		}
+		return toReturn;
+	}
+	
+	/**
 	 * Indicate whether the specified WorkPost number is valid.
 	 * 
 	 * @param workPostNum
@@ -222,6 +237,26 @@ public class AssemblyLine implements WorkPostObserver {
 	 */
 	public int getAssemblyLineSize() {
 		return this.workPosts.size();
+	}
+	
+	/**
+	 * Calculate the time the specified AssemblyProcedure would spend on the specified
+	 * 
+	 * @param procedure
+	 * @param workPost
+	 * @throws IllegalArgumentException
+	 * 		workPostNum is not a valid WorkPost number
+	 * @return
+	 */
+	public int getTimeOnWorkPost(AssemblyProcedure procedure, int workPostNum)
+		throws IllegalArgumentException{
+		if (! this.isValidWorkPostNum(workPostNum)) {
+			throw new IllegalArgumentException("workPostNum is not valid");
+		}
+		if (procedure == null) {
+			return 0;
+		}
+		return this.getWorkPost(workPostNum).getTimeOnWorkPost(procedure);
 	}
 	
 
