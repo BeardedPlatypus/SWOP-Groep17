@@ -17,8 +17,8 @@ import org.powermock.modules.junit4.*;
 import org.powermock.reflect.Whitebox;
 
 import domain.DateTime;
-import domain.Model;
-import domain.Specification;
+import domain.car.Model;
+import domain.car.Specification;
 import domain.order.Order;
 import domain.order.StandardOrder;
 

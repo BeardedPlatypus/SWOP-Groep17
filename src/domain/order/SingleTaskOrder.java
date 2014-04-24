@@ -1,9 +1,9 @@
 package domain.order;
 
 import domain.DateTime;
-import domain.Model;
-import domain.Specification;
-import domain.TaskType;
+import domain.assemblyLine.TaskType;
+import domain.car.Model;
+import domain.car.Specification;
 
 /** 
  * The SingleTaskOrder provides the interface for a custom order consisting of

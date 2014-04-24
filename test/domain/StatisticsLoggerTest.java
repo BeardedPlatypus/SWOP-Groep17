@@ -9,6 +9,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import domain.statistics.CarsProducedRegistrar;
+import domain.statistics.DelayRegistrar;
+import domain.statistics.ProcedureStatistics;
+import domain.statistics.StatisticsLogger;
+
 public class StatisticsLoggerTest {
 	
 	StatisticsLogger logger = new StatisticsLogger();

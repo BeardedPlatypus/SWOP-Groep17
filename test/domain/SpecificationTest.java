@@ -10,6 +10,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import domain.assemblyLine.TaskType;
+import domain.car.Option;
+import domain.car.Specification;
+
 public class SpecificationTest {
 	@Rule public ExpectedException exception = ExpectedException.none();
 

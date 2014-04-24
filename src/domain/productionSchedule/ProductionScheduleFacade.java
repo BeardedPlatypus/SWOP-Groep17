@@ -1,11 +1,15 @@
 package domain.productionSchedule;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import domain.DateTime;
 import domain.Manufacturer;
-import domain.Model;
-import domain.Option;
+import domain.car.Model;
+import domain.car.Option;
+import domain.car.Specification;
 import domain.order.Order;
 import domain.order.OrderContainer;
 import domain.order.SingleTaskOrder;
@@ -109,7 +113,7 @@ public class ProductionScheduleFacade {
 	 */
 	public List<OrderContainer> getPendingStandardOrderContainers() {
 		return this.getSchedulerContext().getPendingStandardOrders();
-	}	
+	}
 	
 	/**
 	 * Check if the specified order is an element of this ProductionSchedule.
@@ -124,6 +128,24 @@ public class ProductionScheduleFacade {
 	 */
 	public boolean contains(OrderContainer order) throws IllegalArgumentException {
 		return this.getSchedulerContext().containsOrder(order);
+	}
+	
+	/** 
+	 * Get the next OrderContainer that will be scheduled by this SchedulerContext.
+	 * 
+	 * @return The next OrderContainer that will be scheduled by this SchedulerContext.
+	 */
+	public OrderContainer getNextScheduledOrderContainer() {
+		return this.getSchedulerContext().getNextScheduledOrder();
+	}
+	
+	/**
+	 * Get the next Order that will be scheduled by this SchedulerContext.
+	 * 
+	 * @return The next Order that will be scheduled by this SchedulerContext.
+	 */
+	public Order getNextScheduledOrder() {
+		return this.getSchedulerContext().getNextScheduledOrder();
 	}
 
 	//--------------------------------------------------------------------------
@@ -208,6 +230,17 @@ public class ProductionScheduleFacade {
 	
 	/** The SchedulerContext of this ProductionScheduleFacade. */
 	private final SchedulerContext schedulerContext;
+	
+	/**
+	 * Build a list of all Specification batches that are currently eligible
+	 * for use in a batch strategy. All batches that are shared by at least three
+	 * Orders are included.
+	 * 
+	 * @return The list of batches
+	 */
+	public List<Specification> getEligibleBatches() {
+		return this.getSchedulerContext().getEligibleBatches();
+	}
 	
 	//--------------------------------------------------------------------------
 	// Intermediate methods

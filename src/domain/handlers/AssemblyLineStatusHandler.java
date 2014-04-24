@@ -2,9 +2,9 @@ package domain.handlers;
 
 import java.util.List;
 
-import domain.AssemblyTaskContainer;
 import domain.Manufacturer;
-import domain.WorkPostContainer;
+import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.WorkPostContainer;
 
 /**
  * Coordinates with the outside world in order to view the assembly line status.
@@ -78,10 +78,9 @@ public class AssemblyLineStatusHandler {
 	 * 
 	 * @param 	workPostNumber
 	 * 			The index of the work post.
-	 * @pre		workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts()
 	 * @return	The work post situated at the given index.
 	 * @throws	IllegalArgumentException
-	 * 			If the given index does not satisfy the preconditions.
+	 * 			| workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts()
 	 */
 	public WorkPostContainer getWorkPost(int workPostNumber) throws IllegalArgumentException {
 		if(!isValidWorkPostNumber(workPostNumber)){
@@ -97,10 +96,9 @@ public class AssemblyLineStatusHandler {
 	 * 
 	 * @param 	workPostNumber
 	 * 			The index of the work post.
-	 * @pre		workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts()
 	 * @return	List of tasks at that work post.
 	 * @throws	IllegalArgumentException
-	 * 			If the given index does not satisfy the preconditions.
+	 * 			| workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts()
 	 */
 	public List<AssemblyTaskContainer> getTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
 		if(!isValidWorkPostNumber(workPostNumber)){

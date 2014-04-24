@@ -5,6 +5,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import domain.statistics.ProcedureStatistics;
+
 
 public class ProcedureStatisticsTest {
 

@@ -10,6 +10,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import domain.statistics.MedianSelector;
+import domain.statistics.WorkingDay;
+
 public class MedianSelectorTest {
 	
 	MedianSelector select = new MedianSelector();

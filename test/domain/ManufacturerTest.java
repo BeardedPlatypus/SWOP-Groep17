@@ -14,6 +14,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import domain.car.Model;
+import domain.car.ModelCatalog;
+import domain.car.Specification;
 import domain.order.Order;
 import domain.order.OrderContainer;
 

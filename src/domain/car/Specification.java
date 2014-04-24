@@ -1,11 +1,9 @@
-package domain;
+package domain.car;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections4.*;
-
-import domain.Option;
 
 /**
  * Class representing the choice in options for a single order.

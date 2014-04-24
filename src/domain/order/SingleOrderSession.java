@@ -1,8 +1,11 @@
-package domain;
+package domain.order;
 
 import java.util.List;
 
-import domain.order.OrderContainer;
+import domain.DateTime;
+import domain.Manufacturer;
+import domain.car.Option;
+import domain.car.OptionCategory;
 
 /**
  * Used to compose and submit a single task order.

@@ -8,8 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import domain.DateTime;
-import domain.Option;
-import domain.OptionCategory;
+import domain.car.Option;
+import domain.car.OptionCategory;
+import domain.handlers.OrderSingleTaskHandler;
+import domain.order.OrderContainer;
 import exceptions.OrderDoesNotExistException;
 
 /**

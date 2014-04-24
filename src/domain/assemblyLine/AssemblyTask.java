@@ -1,4 +1,6 @@
-package domain;
+package domain.assemblyLine;
+
+import domain.car.Option;
 
 //TODO: update class documentation
 /**

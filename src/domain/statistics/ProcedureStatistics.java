@@ -1,4 +1,4 @@
-package domain;
+package domain.statistics;
 
 import util.annotations.Immutable;
 

@@ -12,7 +12,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.modules.junit4.*;
 
 import domain.Manufacturer;
-import domain.Specification;
+import domain.car.Specification;
 
 @RunWith(PowerMockRunner.class)
 public class AdaptSchedulingAlgorithmHandlerTest {

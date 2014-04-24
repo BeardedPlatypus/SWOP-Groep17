@@ -9,6 +9,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import domain.assemblyLine.TaskType;
+import domain.car.Model;
+import domain.car.Option;
+import domain.car.OptionCategory;
+import domain.car.Specification;
 import exceptions.NoOptionCategoriesRemainingException;
 
 /**

@@ -2,7 +2,7 @@ package domain.productionSchedule.strategy;
 
 import java.util.Comparator;
 
-import domain.Specification;
+import domain.car.Specification;
 import domain.order.Order;
 
 /**

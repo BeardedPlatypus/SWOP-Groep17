@@ -11,6 +11,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import domain.assemblyLine.AssemblyTask;
+import domain.assemblyLine.TaskType;
+import domain.car.Option;
+
 public class AssemblyTaskTest {
 	
 	@Rule public ExpectedException exception = ExpectedException.none();

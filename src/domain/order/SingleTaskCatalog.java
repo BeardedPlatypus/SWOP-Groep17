@@ -1,10 +1,11 @@
-package domain;
+package domain.order;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import util.annotations.Immutable;
-import domain.OptionCategory;
+import domain.car.Option;
+import domain.car.OptionCategory;
 
 /**
  * Provides an overview of the tasks that can be ordered

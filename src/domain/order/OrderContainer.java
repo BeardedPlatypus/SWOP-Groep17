@@ -1,8 +1,8 @@
 package domain.order;
 
 import domain.DateTime;
-import domain.Model;
-import domain.Specification;
+import domain.car.Model;
+import domain.car.Specification;
 
 /**
  * Container Interface that provides get methods of the container, for inspection

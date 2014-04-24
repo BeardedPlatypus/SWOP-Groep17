@@ -1,9 +1,11 @@
-package domain;
+package domain.statistics;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.Registrar;
+import domain.DateTime;
+import domain.statistics.Registrar;
+import domain.productionSchedule.TimeObserver;
 
 /**
  * Class responsible for registering relevant events for statistical bookkeeping.

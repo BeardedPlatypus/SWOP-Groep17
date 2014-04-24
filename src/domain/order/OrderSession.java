@@ -1,9 +1,13 @@
-package domain;
+package domain.order;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.order.Order;
+import domain.DateTime;
+import domain.Manufacturer;
+import domain.car.Model;
+import domain.car.Option;
+import domain.car.OptionCategory;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;

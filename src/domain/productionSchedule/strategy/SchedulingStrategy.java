@@ -87,6 +87,16 @@ public abstract class SchedulingStrategy<O extends Order> implements SchedulingS
 	@Override
 	public abstract String getName();
 	
+	/**
+	 * Search for the position at which the specified Order should be added
+	 * to the specified list of Orders.
+	 * 
+	 * @param order
+	 * 		The Order to place
+	 * @param orderList
+	 * 		The list of Orders to place order in
+	 * @return	The position in the list at which the order should be added
+	 */
 	private int binarySearch(O order, List<O> orderList) {
 		int left = 0;
 		int right = orderList.size() - 1;

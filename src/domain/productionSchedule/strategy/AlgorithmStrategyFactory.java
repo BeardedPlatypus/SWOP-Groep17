@@ -3,8 +3,8 @@ package domain.productionSchedule.strategy;
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.Option;
-import domain.Specification;
+import domain.car.Option;
+import domain.car.Specification;
 
 /**
  * The AlgorithmStrategyFactory methods provides methods for getting each specific

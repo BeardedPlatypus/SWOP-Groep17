@@ -21,6 +21,13 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import domain.assemblyLine.AssemblyProcedure;
+import domain.assemblyLine.AssemblyTask;
+import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.TaskType;
+import domain.assemblyLine.WorkPost;
+import domain.assemblyLine.WorkPostObserver;
+import domain.car.Option;
 import domain.order.Order;
 
 @RunWith(PowerMockRunner.class)

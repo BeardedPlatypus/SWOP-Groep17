@@ -3,8 +3,8 @@ package domain.restrictions;
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.Model;
-import domain.Option;
+import domain.car.Model;
+import domain.car.Option;
 
 
 /**

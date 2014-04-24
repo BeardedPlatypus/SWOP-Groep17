@@ -16,15 +16,15 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-import domain.AssemblyLine;
-import domain.AssemblyProcedure;
-import domain.AssemblyTask;
-import domain.AssemblyTaskContainer;
 import domain.Manufacturer;
-import domain.Option;
-import domain.TaskType;
-import domain.WorkPost;
-import domain.WorkPostContainer;
+import domain.assemblyLine.AssemblyLine;
+import domain.assemblyLine.AssemblyProcedure;
+import domain.assemblyLine.AssemblyTask;
+import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.TaskType;
+import domain.assemblyLine.WorkPost;
+import domain.assemblyLine.WorkPostContainer;
+import domain.car.Option;
 import domain.handlers.AssemblyLineStatusHandler;
 import domain.order.Order;
 

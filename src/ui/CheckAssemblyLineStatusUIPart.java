@@ -2,8 +2,8 @@ package ui;
 
 import java.util.List;
 
-import domain.AssemblyTaskContainer;
-import domain.WorkPostContainer;
+import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.WorkPostContainer;
 import domain.handlers.AssemblyLineStatusHandler;
 
 public class CheckAssemblyLineStatusUIPart {

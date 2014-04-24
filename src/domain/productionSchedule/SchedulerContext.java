@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import domain.TaskType;
+
+import domain.car.Specification;
+import domain.assemblyLine.TaskType;
 import domain.order.Order;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
@@ -171,6 +173,36 @@ public class SchedulerContext {
 		return this.orderQueue.get(0);
 	}
 	
+	/**
+	 * Build a list of all Specification batches that are currently eligible
+	 * for use in a batch strategy. All batches that are shared by at least three
+	 * Orders are included.
+	 * 
+	 * @return The list of batches
+	 */
+	public List<Specification> getEligibleBatches() {
+		Map<Specification, Integer> tally = new HashMap<Specification, Integer>();
+		
+		for (StandardOrder order : this.getOrderQueueRaw()) {
+			Specification spec = order.getSpecifications();
+			if (tally.containsKey(spec)) {
+				tally.put(spec, tally.get(spec) + 1);
+			} else {
+				tally.put(spec, 1);
+			}
+		}
+		
+		List<Specification> toReturn = new ArrayList<Specification>();
+		
+		for (Map.Entry<Specification, Integer> candidate : tally.entrySet()) {
+			if (candidate.getValue() >= 3) {
+				toReturn.add(candidate.getKey());
+			}
+		}
+		
+		return toReturn;
+	}
+	
 	//--------------------------------------------------------------------------
 	/**
 	 * Get all pending StandardOrders of this SchedulerContext.
@@ -183,6 +215,59 @@ public class SchedulerContext {
 			result.add(o);
 		}
 		return result;
+	}
+	
+	/**
+	 * Pop the next SingleTaskOrder to be scheduled of the specified TaskType from
+	 * its respective queue.
+	 * If the scheduling algorithm is done after popping, it will be set to the 
+	 * default algorithm.
+	 * 
+	 * @param t
+	 * 		The TaskType of the SingleTaskOrder to be popped. 
+	 * 
+	 * @return the next SingleTaskOrder to be scheduled of the specified type
+	 * 
+	 * @postcondition | !(new this).contains(result)
+	 * @postcondition | !E (o) o.deadline && == o.TaskType == t < result.deadline
+	 * @postcondition | currentSchedulingAlgorithm.isDone() -> (new this).getCurrentSchedulingAlgorithm() == this.getDefaultAlgorithm
+	 * 
+	 * @throws IllegalStateException
+	 * 		| !this.hasSingleTaskOrdersOfType(t)
+	 */
+	StandardOrder popNextStandardOrder() throws IllegalStateException {
+		if (!this.hasStandardOrders())
+			throw new IllegalStateException();
+		StandardOrder result = this.getOrderQueueRaw().remove(0);
+
+		if (this.getCurrentSchedulingStrategy().isDone(this.getOrderQueueRaw()))
+			this.setSchedulingStrategy(this.getDefaultStrategy());
+		return result;
+	}
+
+	
+	/**
+	 * Get the next StandardOrder to be scheduled (does not modify the queue).
+	 * 
+	 * @return the next StandardOrder to be scheduled.
+	 * 
+	 * @throws IllegalStateException
+	 * 		| !this.hasStandardOrders()
+	 */
+	public StandardOrder getNextStandardOrder() {
+		if (!this.hasStandardOrders())
+			throw new IllegalStateException();
+		
+		return this.getOrderQueue().get(0);
+	}
+	
+	/**
+	 * Check if the StandardOrders queue is not empty.
+	 *  
+	 * @return true if queue not empty, else false.
+     */
+	boolean hasStandardOrders() {
+		return !this.getOrderQueue().isEmpty();
 	}
 	
 	/**
@@ -232,8 +317,15 @@ public class SchedulerContext {
 	 * 		The TaskType of the next SingleTaskOrder to be scheduled.
 	 * 
 	 * @return The next SingleTaskOrder of the specified TaskType to be scheduled.
+	 * 
+	 * @throws IllegalStateException
+	 * 		| !this.hasSingleTaskOrdersOfType(t)
+
 	 */
-	protected SingleTaskOrder getNextSingleTaskOrderOfType(TaskType t) {
+	SingleTaskOrder getNextSingleTaskOrderOfType(TaskType t) {
+		if (!this.hasSingleTaskOrdersOfType(t))
+			throw new IllegalStateException();
+		
 		return this.getSingleTaskOrdersOfType(t).get(0);
 	}
 	
@@ -248,9 +340,27 @@ public class SchedulerContext {
 	 * 
 	 * @postcondition | !(new this).contains(result)
 	 * @postcondition | !E (o) o.deadline && == o.TaskType == t < result.deadline
+	 * 
+	 * @throws IllegalStateException
+	 * 		| !this.hasSingleTaskOrdersOfType(t)
 	 */
-	protected SingleTaskOrder popNextSingleTaskOrderOfType(TaskType t) {
+	SingleTaskOrder popNextSingleTaskOrderOfType(TaskType t) throws IllegalStateException {
+		if (!this.hasSingleTaskOrdersOfType(t))
+			throw new IllegalStateException();
+
 		return this.taskOrderQueue.get(t).remove(0);
+	}
+	
+	/**
+	 * check if the queue of the specified Tasktype SingleTaskOrders is not empty.
+	 * 
+	 * @param t
+	 * 		The TaskType of the SingleTaskOrder queue that h
+	 * 
+	 * @return true if queue not empty, else false.
+	 */
+	boolean hasSingleTaskOrdersOfType(TaskType t) {
+		return !this.getSingleTaskOrdersOfType(t).isEmpty();
 	}
 	
 	/**

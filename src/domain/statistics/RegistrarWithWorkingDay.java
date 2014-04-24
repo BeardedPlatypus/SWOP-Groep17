@@ -1,4 +1,4 @@
-package domain;
+package domain.statistics;
 
 /**
  * Class for the subset of Registrar objects that must know what day it is.

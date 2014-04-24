@@ -7,10 +7,20 @@ import domain.restrictions.OptionRestrictionManager;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
+import domain.assemblyLine.AssemblyLine;
+import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.WorkPostContainer;
+import domain.car.Model;
+import domain.car.ModelCatalog;
+import domain.car.Option;
+import domain.car.Specification;
 import domain.order.CompletedOrderCatalog;
 import domain.order.Order;
 import domain.order.OrderContainer;
 import domain.order.OrderFactory;
+import domain.order.OrderSession;
+import domain.order.SingleOrderSession;
+import domain.order.SingleTaskCatalog;
 import domain.productionSchedule.ProductionScheduleFacade;
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
 import domain.productionSchedule.strategy.SchedulingStrategy;
@@ -485,7 +495,7 @@ public class Manufacturer {
 	 * @return List of pending order containers in the productionSchedule.
 	 */
 	private List<OrderContainer> getSchedulePendingOrderContainers() {
-		return this.getProductionSchedule().getPendingOrdersContainers();
+		return this.getProductionSchedule().getPendingStandardOrderContainers();
 	}
 	//--------------------------------------------------------------------------
 	// Completed Order Methods

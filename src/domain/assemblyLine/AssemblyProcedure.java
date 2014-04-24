@@ -1,10 +1,10 @@
-package domain;
+package domain.assemblyLine;
 
 import java.util.ArrayList;
 import java.util.List;
-import domain.order.*;
 
-import domain.AssemblyTask;
+import domain.order.*;
+import domain.statistics.ProcedureStatistics;
 
 /**
  * An assembly procedure specifies a sequence of tasks that must be completed in order to fulfil an order.
