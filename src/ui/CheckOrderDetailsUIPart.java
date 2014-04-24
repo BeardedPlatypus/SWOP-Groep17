@@ -88,27 +88,30 @@ public class CheckOrderDetailsUIPart {
 	 * Displays the contents of given completed order list as desired
 	 */
 	private void chooseAndDisplayComplete(List<OrderContainer> orders) {
-		System.out.println("Which complete order would you like to check?");
+		System.out.println("Which complete order would you like to check? (" 
+				+ (orders.size()+1) + " to exit)");
 		//Get order choice
 		int choice = helper.getIntFromUser(1, orders.size()+1);
-		OrderContainer chosenOrder = orders.get(choice);
-		//Print order number
-		System.out.println("Pending Order Nb. " + choice);
-		//Print order Model
-		Model currentOrderModel = chosenOrder.getModel();
-		System.out.println("Model Name:" + currentOrderModel.getName());
-		//Print specs
-		Specification orderSpec = chosenOrder.getSpecifications();
-		int amountOfOptionsInOrder = orderSpec.getAmountOfOptions();
-		System.out.println("Model Name:" + currentOrderModel.getName());
-		for(int i = 0; i < amountOfOptionsInOrder; i++){
-			Option currentOption = orderSpec.getOption(i);
-			System.out.println("\tOption: " + currentOption.getName());
+		if(choice<orders.size()+1){
+			OrderContainer chosenOrder = orders.get(choice);
+			//Print order number
+			System.out.println("Pending Order Nb. " + choice);
+			//Print order Model
+			Model currentOrderModel = chosenOrder.getModel();
+			System.out.println("Model Name:" + currentOrderModel.getName());
+			//Print specs
+			Specification orderSpec = chosenOrder.getSpecifications();
+			int amountOfOptionsInOrder = orderSpec.getAmountOfOptions();
+			System.out.println("Model Name:" + currentOrderModel.getName());
+			for(int i = 0; i < amountOfOptionsInOrder; i++){
+				Option currentOption = orderSpec.getOption(i);
+				System.out.println("\tOption: " + currentOption.getName());
+			}
+			//Print submission time
+			System.out.println("Submission Time: " + chosenOrder.getSubmissionTime().toString());
+			//Print ETA
+			System.out.println("Completion Time: " + chosenOrder.getCompletionTime().toString());
 		}
-		//Print submission time
-		System.out.println("Submission Time: " + chosenOrder.getSubmissionTime().toString());
-		//Print ETA
-		System.out.println("Completion Time: " + chosenOrder.getCompletionTime().toString());
 		System.out.println(helper.SEPERATOR);
 	}
 
@@ -116,28 +119,31 @@ public class CheckOrderDetailsUIPart {
 	 * Displays the contents of given pending order list as desired
 	 */
 	private void chooseAndDisplayPending(List<OrderContainer> orders) {
-		System.out.println("Which pending order would you like to check?");
+		System.out.println("Which pending order would you like to check? (" 
+					+ (orders.size()+1) + " to exit)");
 		//Get order choice
 		int choice = helper.getIntFromUser(1, orders.size()+1);
-		OrderContainer chosenOrder = orders.get(choice);
-		//Print order number
-		System.out.println("Pending Order Nb. " + choice);
-		//Print order Model
-		Model currentOrderModel = chosenOrder.getModel();
-		System.out.println("Model Name:" + currentOrderModel.getName());
-		//Print specs
-		Specification orderSpec = chosenOrder.getSpecifications();
-		int amountOfOptionsInOrder = orderSpec.getAmountOfOptions();
-		System.out.println("Model Name:" + currentOrderModel.getName());
-		for(int i = 0; i < amountOfOptionsInOrder; i++){
-			Option currentOption = orderSpec.getOption(i);
-			System.out.println("\tOption: " + currentOption.getName());
+		if(choice<orders.size()+1){
+			OrderContainer chosenOrder = orders.get(choice);
+			//Print order number
+			System.out.println("Pending Order Nb. " + choice);
+			//Print order Model
+			Model currentOrderModel = chosenOrder.getModel();
+			System.out.println("Model Name:" + currentOrderModel.getName());
+			//Print specs
+			Specification orderSpec = chosenOrder.getSpecifications();
+			int amountOfOptionsInOrder = orderSpec.getAmountOfOptions();
+			System.out.println("Model Name:" + currentOrderModel.getName());
+			for(int i = 0; i < amountOfOptionsInOrder; i++){
+				Option currentOption = orderSpec.getOption(i);
+				System.out.println("\tOption: " + currentOption.getName());
+			}
+			//Print submission time
+			System.out.println("Submission Time: " + chosenOrder.getSubmissionTime().toString());
+			//Print ETA
+			System.out.println("Estimated Completion Time: " +
+					this.getHandler().getEstimatedCompletionTime(chosenOrder).toString());
 		}
-		//Print submission time
-		System.out.println("Submission Time: " + chosenOrder.getSubmissionTime().toString());
-		//Print ETA
-		System.out.println("Estimated Completion Time: " +
-				this.getHandler().getEstimatedCompletionTime(chosenOrder).toString());
 		System.out.println(helper.SEPERATOR);
 		
 	}

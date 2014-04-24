@@ -218,6 +218,7 @@ public class ClockManager implements TimeSubject, IncrementTimeObserver {
 		if (!this.observers.contains(t)) { 
 			this.observers.add(t); 
 		}
+		t.update(this.getCurrentTime());
 	}
 
 	@Override

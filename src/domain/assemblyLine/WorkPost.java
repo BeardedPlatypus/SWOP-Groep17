@@ -78,7 +78,7 @@ public class WorkPost implements WorkPostContainer {
 	@Override
 	public List<AssemblyTaskContainer> getMatchingAssemblyTasks() {
 		if (this.isEmpty()) {
-			throw new IllegalStateException();
+			return new ArrayList<>();
 		}
 		return this.activeAssembly.getAssemblyTasks(this.getTaskType());
 	}

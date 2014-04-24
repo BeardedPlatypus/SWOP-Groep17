@@ -8,6 +8,7 @@ import java.util.List;
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.order.Order;
+import domain.order.OrderContainer;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
 import domain.productionSchedule.ProductionScheduleFacade;
@@ -353,5 +354,11 @@ public class SchedulerIntermediate implements TimeObserver{
 	private final static int FINISHHOUR = 22;
 	/** Number of workhours in a shift. */
 	private final static int WORKHOURS = FINISHHOUR - STARTHOUR;
+
+
+	public DateTime getEstimatedCompletionTime(OrderContainer order) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

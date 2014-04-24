@@ -82,6 +82,5 @@ public class UIHelper {
 	public void getEnter(){
 		System.out.println(CRLF + "Press enter to continue" + CRLF);
 		input.nextLine();
-		input.nextLine();
 	}
 }

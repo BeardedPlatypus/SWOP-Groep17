@@ -65,11 +65,16 @@ public class CheckAssemblyLineStatusUIPart {
 		List<WorkPostContainer> posts = getHandler().getWorkPosts();
 		for(WorkPostContainer post : posts){
 			System.out.println("Workpost " + post.getName() + " with tasks:");
-			List<AssemblyTaskContainer> tasks = post.getAssemblyProcedureContainer().getAssemblyTasks();
-			for(AssemblyTaskContainer task : tasks){
-				System.out.println("\t" + task.getOptionName() + "(" + task.isCompleted() + ")");
+			try{
+				List<AssemblyTaskContainer> tasks = post.getAssemblyProcedureContainer().getAssemblyTasks();
+				for(AssemblyTaskContainer task : tasks){
+					System.out.println("\t" + task.getOptionName() + "(" + task.isCompleted() + ")");
+				}
+			}catch(IllegalStateException e){
+				System.out.println("\tNone");
 			}
 			System.out.println(helper.SEPERATOR);
 		}
+		helper.getEnter();
 	}
 }
