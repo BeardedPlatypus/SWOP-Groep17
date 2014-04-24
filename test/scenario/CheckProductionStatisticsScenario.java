@@ -12,14 +12,14 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.*;
 
-import domain.AssemblyLine;
-import domain.CarsProducedRegistrar;
 import domain.DateTime;
-import domain.DelayRegistrar;
 import domain.Manufacturer;
-import domain.ProcedureStatistics;
-import domain.StatisticsLogger;
+import domain.assemblyLine.AssemblyLine;
 import domain.handlers.CheckProductionStatisticsHandler;
+import domain.statistics.CarsProducedRegistrar;
+import domain.statistics.DelayRegistrar;
+import domain.statistics.ProcedureStatistics;
+import domain.statistics.StatisticsLogger;
 
 @RunWith(PowerMockRunner.class)
 public class CheckProductionStatisticsScenario {

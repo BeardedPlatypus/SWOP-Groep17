@@ -12,8 +12,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import domain.DateTime;
-import domain.Model;
-import domain.Specification;
+import domain.car.Model;
+import domain.car.Specification;
 
 public class SingleTaskOrderTest {
 	//--------------------------------------------------------------------------

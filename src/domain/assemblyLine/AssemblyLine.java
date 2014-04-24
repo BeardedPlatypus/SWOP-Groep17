@@ -1,11 +1,15 @@
-package domain;
+package domain.assemblyLine;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.WorkPost;
+import domain.DateTime;
+import domain.Manufacturer;
+import domain.car.Specification;
 import domain.order.Order;
 import domain.order.OrderContainer;
+import domain.statistics.ProcedureStatistics;
+import domain.statistics.StatisticsLogger;
 
 /**
  * A class depicting an AssemblyLine in the system. An AssemblyLine is composed 

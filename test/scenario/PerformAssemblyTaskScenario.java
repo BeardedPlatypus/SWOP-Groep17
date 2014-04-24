@@ -20,23 +20,23 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-import domain.AssemblyLine;
-import domain.AssemblyProcedure;
-import domain.AssemblyTask;
-import domain.AssemblyTaskContainer;
 import domain.DateTime;
 import domain.Manufacturer;
-import domain.Model;
-import domain.Option;
-import domain.OptionCategory;
-import domain.ProcedureStatistics;
-import domain.Specification;
-import domain.StatisticsLogger;
-import domain.TaskType;
-import domain.WorkPost;
+import domain.assemblyLine.AssemblyLine;
+import domain.assemblyLine.AssemblyProcedure;
+import domain.assemblyLine.AssemblyTask;
+import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.TaskType;
+import domain.assemblyLine.WorkPost;
+import domain.car.Model;
+import domain.car.Option;
+import domain.car.OptionCategory;
+import domain.car.Specification;
 import domain.handlers.PerformAssemblyTaskHandler;
 import domain.order.Order;
 import domain.order.StandardOrder;
+import domain.statistics.ProcedureStatistics;
+import domain.statistics.StatisticsLogger;
 
 @RunWith(PowerMockRunner.class)
 public class PerformAssemblyTaskScenario {

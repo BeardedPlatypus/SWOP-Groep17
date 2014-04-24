@@ -15,9 +15,9 @@ import org.mockito.Mockito;
 
 import domain.DateTime;
 import domain.Manufacturer;
-import domain.Model;
-import domain.Option;
-import domain.Specification;
+import domain.car.Model;
+import domain.car.Option;
+import domain.car.Specification;
 
 public class OrderFactoryTest {
 	//--------------------------------------------------------------------------

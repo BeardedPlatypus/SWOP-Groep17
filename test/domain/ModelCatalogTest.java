@@ -16,7 +16,8 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import domain.ModelCatalog;
+import domain.car.Model;
+import domain.car.ModelCatalog;
 
 /**
  * @author Frederik Goovaerts

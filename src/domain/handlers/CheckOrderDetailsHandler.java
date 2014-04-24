@@ -5,7 +5,7 @@ import java.util.List;
 
 import domain.DateTime;
 import domain.Manufacturer;
-import domain.Specification;
+import domain.car.Specification;
 import domain.order.OrderContainer;
 import exceptions.OrderDoesNotExistException;
 

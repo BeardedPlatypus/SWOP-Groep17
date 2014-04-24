@@ -1,4 +1,4 @@
-package domain;
+package domain.statistics;
 /**
  * Class to help statistics registrar keep track of the passage of days.
  * 

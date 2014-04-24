@@ -7,6 +7,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import domain.statistics.CarsProducedRegistrar;
+import domain.statistics.ProcedureStatistics;
+import domain.statistics.WorkingDay;
+
 public class CarsProducedRegistrarTest {
 	
 	CarsProducedRegistrar registrar;

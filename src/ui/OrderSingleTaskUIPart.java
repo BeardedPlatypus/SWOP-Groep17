@@ -2,7 +2,7 @@ package ui;
 
 import java.util.List;
 
-import domain.OptionCategory;
+import domain.car.OptionCategory;
 import domain.handlers.OrderSingleTaskHandler;
 import domain.order.OrderContainer;
 

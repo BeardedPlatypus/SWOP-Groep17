@@ -11,9 +11,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import domain.DateTime;
-import domain.Model;
-import domain.Option;
-import domain.OptionCategory;
+import domain.car.Model;
+import domain.car.Option;
+import domain.car.OptionCategory;
 import domain.handlers.InitialisationHandler;
 import domain.handlers.NewOrderSessionHandler;
 import domain.order.OrderContainer;

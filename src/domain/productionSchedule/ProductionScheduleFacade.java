@@ -5,8 +5,8 @@ import java.util.List;
 
 import domain.DateTime;
 import domain.Manufacturer;
-import domain.Model;
-import domain.Option;
+import domain.car.Model;
+import domain.car.Option;
 import domain.order.Order;
 import domain.order.OrderContainer;
 import domain.order.SingleTaskOrder;

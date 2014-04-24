@@ -7,6 +7,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import domain.statistics.WorkingDay;
+
 
 public class WorkingDayTest {
 

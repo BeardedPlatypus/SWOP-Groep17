@@ -1,4 +1,4 @@
-package domain;
+package domain.assemblyLine;
 
 /**
  * A representation of all possible types of work posts.

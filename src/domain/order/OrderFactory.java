@@ -4,9 +4,9 @@ import java.util.List;
 
 import domain.DateTime;
 import domain.Manufacturer;
-import domain.Model;
-import domain.Option;
-import domain.Specification;
+import domain.car.Model;
+import domain.car.Option;
+import domain.car.Specification;
 import domain.productionSchedule.TimeObserver;
 
 /** 

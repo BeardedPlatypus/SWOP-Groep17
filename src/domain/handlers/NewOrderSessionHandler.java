@@ -4,11 +4,11 @@ import java.util.List;
 
 import domain.DateTime;
 import domain.Manufacturer;
-import domain.Model;
-import domain.Option;
-import domain.OptionCategory;
-import domain.OrderSession;
+import domain.car.Model;
+import domain.car.Option;
+import domain.car.OptionCategory;
 import domain.order.OrderContainer;
+import domain.order.OrderSession;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;

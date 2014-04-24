@@ -5,8 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import domain.Specification;
-import domain.TaskType;
+
+import domain.car.Specification;
+import domain.assemblyLine.TaskType;
 import domain.order.Order;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;

@@ -16,6 +16,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import domain.assemblyLine.AssemblyLine;
+import domain.car.Model;
+import domain.car.Specification;
 import domain.order.OrderContainer;
 
 @RunWith(PowerMockRunner.class)

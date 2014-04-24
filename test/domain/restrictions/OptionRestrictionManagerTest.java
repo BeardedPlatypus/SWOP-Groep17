@@ -13,8 +13,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import domain.Model;
-import domain.Option;
+import domain.car.Model;
+import domain.car.Option;
 
 public class OptionRestrictionManagerTest {
 	@Rule public ExpectedException exception = ExpectedException.none();
