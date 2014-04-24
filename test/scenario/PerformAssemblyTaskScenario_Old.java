@@ -39,7 +39,7 @@ import domain.statistics.ProcedureStatistics;
 import domain.statistics.StatisticsLogger;
 
 @RunWith(PowerMockRunner.class)
-public class PerformAssemblyTaskScenario {
+public class PerformAssemblyTaskScenario_Old {
 	
 	@Rule public ExpectedException exception = ExpectedException.none();
 	

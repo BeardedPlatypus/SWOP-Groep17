@@ -3,22 +3,18 @@ package domain;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.order.SingleOrderSession;
 import domain.order.SingleTaskCatalog;
-import exceptions.OrderDoesNotExistException;
 /**
  * @author Simon Slangen
  *
