@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+import domain.DateTime;
 import domain.car.Specification;
 import domain.assemblyLine.TaskType;
 import domain.order.Order;
@@ -151,28 +151,11 @@ public class SchedulerContext {
 		result.addAll(this.getPendingSingleTaskOrders());
 		return result;
 	}
+
 	
 	//--------------------------------------------------------------------------
 	// Get StandardOrder methods.
 	//--------------------------------------------------------------------------	
-	/** 
-	 * Get the next OrderContainer that will be scheduled by this SchedulerContext.
-	 * 
-	 * @return The next OrderContainer that will be scheduled by this SchedulerContext.
-	 */
-	public OrderContainer getNextScheduledOrderContainer() {
-		return this.getNextScheduledOrder();
-	}
-	
-	/**
-	 * Get the next Order that will be scheduled by this SchedulerContext.
-	 * 
-	 * @return The next Order that will be scheduled by this SchedulerContext.
-	 */
-	public Order getNextScheduledOrder() {
-		return this.orderQueue.get(0);
-	}
-	
 	/**
 	 * Build a list of all Specification batches that are currently eligible
 	 * for use in a batch strategy. All batches that are shared by at least three

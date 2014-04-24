@@ -1,14 +1,9 @@
 package domain.productionSchedule;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import domain.DateTime;
 import domain.Manufacturer;
-import domain.car.Model;
-import domain.car.Option;
+import domain.assemblyLine.TaskType;
 import domain.car.Specification;
 import domain.order.Order;
 import domain.order.OrderContainer;
@@ -135,8 +130,8 @@ public class ProductionScheduleFacade {
 	 * 
 	 * @return The next OrderContainer that will be scheduled by this SchedulerContext.
 	 */
-	public OrderContainer getNextScheduledOrderContainer() {
-		return this.getSchedulerContext().getNextScheduledOrder();
+	public OrderContainer getNextScheduledStandardOrderContainer() {
+		return this.getNextScheduledStandardOrder();
 	}
 	
 	/**
@@ -144,10 +139,29 @@ public class ProductionScheduleFacade {
 	 * 
 	 * @return The next Order that will be scheduled by this SchedulerContext.
 	 */
-	public Order getNextScheduledOrder() {
-		return this.getSchedulerContext().getNextScheduledOrder();
+	public StandardOrder getNextScheduledStandardOrder() {
+		return this.getSchedulerContext().getNextStandardOrder();
 	}
 
+	public SingleTaskOrder getNextScheduledSingleTaskOrder(TaskType t) {
+		return this.getSchedulerContext().getNextSingleTaskOrderOfType(t);
+	}
+
+	/** 
+	 * Get the estimated completion time of the specified order in this ProductionSchedule.
+	 * 
+	 * @param order
+	 * 		The specified order of which the estimated completion time is requested.
+	 * 
+	 * @return The estimated completion time of the specified order.
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		| order == null || !this.contains(order)
+	 */
+	public DateTime getEstimatedCompletionTime(OrderContainer order) throws IllegalArgumentException {
+		return this.getClockManager().getEstimatedCompletionTime(order, this.getSchedulerContext().getAllPendingOrders());
+	}
+	
 	//--------------------------------------------------------------------------
 	// Adding orders
 	//--------------------------------------------------------------------------
@@ -203,7 +217,7 @@ public class ProductionScheduleFacade {
 	 * 
 	 * @postcondition | (new this).getSchedulingStrategy() == newStrategy
 	 */
-	public void setNewSchedulingAlgorithm(SchedulingStrategy strat) {
+	public void setNewSchedulingAlgorithm(SchedulingStrategy<StandardOrder> strat) {
 		this.getSchedulerContext().setSchedulingStrategy(strat);
 	}
 	
@@ -212,7 +226,7 @@ public class ProductionScheduleFacade {
 	 * 
 	 * @return the current scheduling strategy of this SchedulerContext.
 	 */
-	public SchedulingStrategy getCurrentSchedulingAlgorithm() {
+	public SchedulingStrategy<StandardOrder> getCurrentSchedulingAlgorithm() {
 		return this.getSchedulerContext().getCurrentSchedulingStrategy();
 	}
 	
@@ -240,24 +254,6 @@ public class ProductionScheduleFacade {
 	 */
 	public List<Specification> getEligibleBatches() {
 		return this.getSchedulerContext().getEligibleBatches();
-	}
-	
-	//--------------------------------------------------------------------------
-	// Intermediate methods
-	//--------------------------------------------------------------------------
-	/** 
-	 * Get the estimated completion time of the specified order in this ProductionSchedule.
-	 * 
-	 * @param order
-	 * 		The specified order of which the estimated completion time is requested.
-	 * 
-	 * @return The estimated completion time of the specified order.
-	 * 
-	 * @throws IllegalArgumentException
-	 * 		| order == null || !this.contains(order)
-	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order) throws IllegalArgumentException {
-		throw new UnsupportedOperationException();
 	}
 	
 	//==========================================================================
