@@ -9,6 +9,7 @@ import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
 import domain.assemblyLine.AssemblyLine;
 import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.SchedulerIntermediate;
 import domain.assemblyLine.WorkPostContainer;
 import domain.car.Model;
 import domain.car.ModelCatalog;
@@ -342,11 +343,36 @@ public class Manufacturer {
 			throw new IllegalArgumentException("Null is not a valid model.");
 		return this.getModelCatalog().contains(model);
 	}
+
+	/**
+	 * Check whether the modelcatalog contains given model
+	 * 
+	 * @param model
+	 * 		The model to check for
+	 * @return whether or not the catalog contains the model
+	 */
+	public boolean modelCatalogContains(Model model) {
+		return this.getModelCatalog().contains(model);
+	}
 	
 	//--------------------------------------------------------------------------
 	// Restrictions Manager
 	//--------------------------------------------------------------------------
-	
+
+	/**
+	 * Check whether given model and given specs match all restrictions
+	 * 
+	 * @param model
+	 * 		The model to check
+	 * @param specification
+	 * 		The specification to check
+	 * 
+	 * @return whether given model and given specs match all restrictions
+	 */
+	public boolean checkSpecificationRestrictions(Model model,
+			Specification specification) {
+		return this.getOptionRestrictionManager().checkValidity(model, specification.getOptions());
+	}
 	
 	/**
 	 * Get the optionRestrictionManager for internal use
@@ -413,26 +439,7 @@ public class Manufacturer {
 	private final ProductionScheduleFacade productionScheduleFacade;
 
 	//--------------------------------------------------------------------------
-	/**
-	 * Remove an Order from this Manufacturer's ProductionSchedule and
-	 * pass it along.
-	 * 
-	 * @return The removed order
-	 * @throws IllegalStateException
-	 * 		See {@link ProductionScheduleFacade#orderAvailable() orderAvailable()}
-	 */
-	public Order popNextOrderFromSchedule() throws IllegalStateException {
-		return this.getProductionSchedule().popNextOrderFromSchedule();
-	}
-	
-	/**
-	 * Ask this Manufacturer's ProductionSchedule if an order is available
-	 * 
-	 * @return Whether an order is available
-	 */
-	public boolean orderAvailable() {
-		return this.getProductionSchedule().orderAvailable();
-	}
+
 
 	/**
 	 * Get a list of pending {@link OrderContainer}s in the productionSchedule.
@@ -510,6 +517,34 @@ public class Manufacturer {
 			throw new IllegalArgumentException("Cannot set AssemblyLine in Manufacturer to null");
 		}
 		this.assemblyLine = assemblyLine;
+	}
+	
+	/** This Manufacturer's AssemblyLine */
+	private SchedulerIntermediate lineIntermediate;
+
+	/**
+	 * Get the AssemblyLine of this Manufacturer.
+	 * 
+	 * @return The AssemblyLine
+	 */
+	public SchedulerIntermediate getSchedulerIntermediate() {
+		return this.lineIntermediate;
+	}
+
+	/**
+	 * Set this Manufacturer's AssemblyLine to the specified AssemblyLine
+	 * 
+	 * @param assemblyLine
+	 * 		The AssemblyLine
+	 * @throws IllegalArgumentException
+	 * 		assemblyLine is null
+	 */
+	public void setSchedulerIntermediate(SchedulerIntermediate schedulerIntermediate)
+			throws IllegalArgumentException {
+		if (schedulerIntermediate == null) {
+			throw new IllegalArgumentException("Cannot set SchedulerIntermediate in Manufacturer to null");
+		}
+		this.lineIntermediate = schedulerIntermediate;
 	}
 
 	/**
@@ -635,15 +670,4 @@ public class Manufacturer {
 		return this.getAssemblyLine().getStatisticsReport();
 	}
 
-
-	public boolean modelCatalogContains(Model model) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-	public boolean checkSpecificationRestrictions(Model model,
-			Specification specification) {
-		return false;
-	}
 }
