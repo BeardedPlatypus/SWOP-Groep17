@@ -314,6 +314,7 @@ public class AssemblyLineTest {
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(0), "minutesOfWork"));
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(1), "minutesOfWork"));
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(2), "minutesOfWork"));
+			assemblyLine.advance(newOrder);
 			assertEquals(procedure1, workPosts.get(1).getAssemblyProcedure());
 			assertEquals(procedure2, workPosts.get(2).getAssemblyProcedure());
 			assertEquals(newOrder, workPosts.get(0).getAssemblyProcedure().getOrder());
