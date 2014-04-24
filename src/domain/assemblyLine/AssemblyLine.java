@@ -400,7 +400,17 @@ public class AssemblyLine implements WorkPostObserver {
 		this.shiftWorkPosts();
 		this.getManufacturer().incrementTime(elapsedTime);
 		this.setElapsedTime(new DateTime(0, 0, 0));
-		this.putNextOrderOnAssemblyLine();
+	}
+	
+	/**
+	 * Explicitly tell this AssemblyLine to advance, thereby putting the specified
+	 * Order on the AssemblyLine
+	 * 
+	 * @param order
+	 * 		The order to schedule
+	 */
+	public void advance(Order order) {
+		this.putNextOrderOnAssemblyLine(order);
 		this.resetFinishedAssemblyCounter();
 	}
 
@@ -435,8 +445,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @throws IllegalStateException
 	 * 		| ! this.orderIsAvailable()
 	 */
-	private void putNextOrderOnAssemblyLine() throws IllegalStateException{
-		Order order = this.getManufacturer().popNextOrderFromSchedule();
+	private void putNextOrderOnAssemblyLine(Order order) throws IllegalStateException{
 		if (order == null) {
 			return;
 		}

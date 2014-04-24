@@ -316,9 +316,11 @@ public class AssemblyLineTest {
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(0), "minutesOfWork"));
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(1), "minutesOfWork"));
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(2), "minutesOfWork"));
-			assertEquals(procedure1, workPosts.get(1).getAssemblyProcedureContainer());
-			assertEquals(procedure2, workPosts.get(2).getAssemblyProcedureContainer());
-			assertEquals(newOrder, workPosts.get(0).getAssemblyProcedureContainer().getOrderContainer());
+
+			assemblyLine.advance(newOrder);
+			assertEquals(procedure1, workPosts.get(1).getAssemblyProcedure());
+			assertEquals(procedure2, workPosts.get(2).getAssemblyProcedure());
+			assertEquals(newOrder, workPosts.get(0).getAssemblyProcedure().getOrder());
 			assertEquals(-120, procedure3.makeStatisticsEvent().getDelay());
 			assertEquals(2, Whitebox.getInternalState(assemblyLine, "finishedAssemblyCounter"));
 			Mockito.verify(logger).addStatistics(Matchers.isA(ProcedureStatistics.class));
