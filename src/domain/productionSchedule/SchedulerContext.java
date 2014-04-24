@@ -36,7 +36,7 @@ public class SchedulerContext {
 	 * @throws IllegalArgumentException
 	 * 		| initTime == null
 	 */
-	public SchedulerContext(SchedulingStrategy defaultStrategy,
+	public SchedulerContext(SchedulingStrategy<StandardOrder> defaultStrategy,
 			                List<TaskType> taskCategories) throws IllegalArgumentException {
 		//Scheduling variables
 		this.defaultStrategy = defaultStrategy;
@@ -55,7 +55,7 @@ public class SchedulerContext {
 	 * 
 	 * @return the current scheduling strategy of this SchedulerContext.
 	 */
-	public SchedulingStrategy getCurrentSchedulingStrategy() {
+	public SchedulingStrategy<StandardOrder> getCurrentSchedulingStrategy() {
 		return this.currentStrategy;
 	}
 	
@@ -71,7 +71,7 @@ public class SchedulerContext {
 	 * @throws IllegalArgumentException
 	 * 		| newStrategy == null
 	 */
-	public void setSchedulingStrategy(SchedulingStrategy newStrategy) throws IllegalArgumentException{
+	public void setSchedulingStrategy(SchedulingStrategy<StandardOrder> newStrategy) throws IllegalArgumentException{
 		if (newStrategy == null)
 			throw new IllegalArgumentException();
 		this.setSchedulingStrategyRaw(newStrategy);
@@ -87,12 +87,12 @@ public class SchedulerContext {
 	 * 
 	 * @postcondition | (new this).getCurrentSchedulingStrategy() == newStrategy
 	 */
-	private void setSchedulingStrategyRaw(SchedulingStrategy newStrategy) {
+	private void setSchedulingStrategyRaw(SchedulingStrategy<StandardOrder> newStrategy) {
 		this.currentStrategy = newStrategy;
 	}
 	
 	/** The current strategy of this SchedulerContext. */
-	private SchedulingStrategy currentStrategy;
+	private SchedulingStrategy<StandardOrder> currentStrategy;
 	
 	//--------------------------------------------------------------------------
 	/**
@@ -101,12 +101,12 @@ public class SchedulerContext {
 	 *  
 	 * @return the default ordering strategy of this SchedulerContext.
 	 */
-	protected SchedulingStrategy getDefaultStrategy() {
+	protected SchedulingStrategy<StandardOrder> getDefaultStrategy() {
 		return this.defaultStrategy;
 	}
 	
 	/** The default strategy of this SchedulerContext. */
-	private final SchedulingStrategy defaultStrategy;
+	private final SchedulingStrategy<StandardOrder> defaultStrategy;
 	
 	//--------------------------------------------------------------------------
 	// Order related methods.
