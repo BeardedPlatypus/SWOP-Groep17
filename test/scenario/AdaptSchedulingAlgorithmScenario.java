@@ -1,8 +1,8 @@
 package scenario;
 
 import junit.framework.TestCase;
-import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -11,14 +11,18 @@ import org.junit.Test;
 import domain.Manufacturer;
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
+import domain.car.Option;
 import domain.car.Specification;
 import domain.handlers.AdaptSchedulingAlgorithmHandler;
+import domain.handlers.DomainFacade;
+import domain.handlers.InitialisationHandler;
 
 public class AdaptSchedulingAlgorithmScenario extends TestCase {
 	//--------------------------------------------------------------------------
 	// Properties
 	//--------------------------------------------------------------------------
 	AdaptSchedulingAlgorithmHandler handler;
+	DomainFacade facade;
 	AlgorithmStrategyFactory algFac;
 	Manufacturer manufacturer;
 	
@@ -27,6 +31,8 @@ public class AdaptSchedulingAlgorithmScenario extends TestCase {
 	//--------------------------------------------------------------------------
 	@Before
 	public void setUp() throws Exception {
+		InitialisationHandler init = new InitialisationHandler();
+		facade = init.getDomainFacade();
 		
 	}
 	
@@ -40,21 +46,28 @@ public class AdaptSchedulingAlgorithmScenario extends TestCase {
 		//   selected algorithm.
 		
 		// test the getting of the algorithms. 
-		List<SchedulingStrategyView> algorithms = handler.getAlgorithms();
+		List<SchedulingStrategyView> algorithms = facade.getAlgorithms();
+		boolean hasFifo = false;
+		boolean hasBatch = false;
+		for(SchedulingStrategyView algorithm : algorithms){
+			assertNotNull(algorithm);
+			if(algorithm.getName().equals("Batch strategy")) hasBatch = true;
+			if(algorithm.getName().equals("First-in first-out strategy")) hasFifo = true;
+		}
+		assertTrue(hasFifo && hasBatch);
 		
 		// test the current algorithm.
-		SchedulingStrategyView curAlg = handler.getCurrentAlgorithm();
+		SchedulingStrategyView curAlg = facade.getCurrentAlgorithm();
+		assertNotNull(curAlg);
 		
 		//3. The user selects the new scheduling algorithm to be used.
 		//4. The system applies the new scheduling algorithm5 and updates its
 		//   state accordingly
-		handler.setFifoAlgorithm();
+		facade.setFifoAlgorithm();
 		
 		// Check if fifo algorithm is indeed used. 
-		SchedulingStrategyView setAlg = handler.getCurrentAlgorithm();
-		assertEquals(null, setAlg); //FIXME change this fifo algorithm view.
-		
-		// Check if orders are indeed ordered by the fifo algorithm
+		SchedulingStrategyView setAlg = facade.getCurrentAlgorithm();
+		assertEquals(setAlg.getName(), "First-in first-out strategy");
 
 	}
 	
@@ -65,31 +78,30 @@ public class AdaptSchedulingAlgorithmScenario extends TestCase {
 		//   selected algorithm.
 		
 		// test the getting of the algorithms. 
-		List<SchedulingStrategyView> algorithms = handler.getAlgorithms();
+		List<SchedulingStrategyView> algorithms = facade.getAlgorithms();
+		boolean hasFifo = false;
+		boolean hasBatch = false;
+		for(SchedulingStrategyView algorithm : algorithms){
+			assertNotNull(algorithm);
+			if(algorithm.getName().equals("Batch strategy")) hasBatch = true;
+			if(algorithm.getName().equals("First-in first-out strategy")) hasFifo = true;
+		}
+		assertTrue(hasFifo && hasBatch);
 		
 		// test the current algorithm.
-		SchedulingStrategyView curAlg = handler.getCurrentAlgorithm();
+		SchedulingStrategyView curAlg = facade.getCurrentAlgorithm();
+		assertNotNull(curAlg);
 		
-		//3. (a) The user indicates he wants to use the Specifcation Batch al-
-		//       gorithm.
-		//4. The system shows a list of the sets of car options for which more
-		//   than 3 orders are pending in the production queue
-		List<Specification> batches = handler.getCurrentBatches();
-		
-		// Check if all batches that should be in there are there
-		assertEquals(null, batches); //FIXME
-		
-		
-		//5. The user selects one of these sets for batch processing
-		Specification batch = null; //FIXME 
-		
+		//3. The user selects the new scheduling algorithm to be used.
 		//4. The system applies the new scheduling algorithm5 and updates its
 		//   state accordingly
-		handler.setBatchAlgorithm(batch);
+		List<Option> emptyOptions = new ArrayList<Option>();
+		Specification emptySpec = new Specification(emptyOptions);
+		facade.setBatchAlgorithm(emptySpec);;
 		
 		// Check if batch algorithm is indeed used. 
-		SchedulingStrategyView setAlg = handler.getCurrentAlgorithm();
-		assertEquals(null, setAlg); //FIXME change this batch algorithm view.
+		SchedulingStrategyView setAlg = facade.getCurrentAlgorithm();
+		assertEquals(setAlg.getName(), "Batch strategy");
 		
 		// Check if orders are indeed ordered by the batch algorithm
 	}
