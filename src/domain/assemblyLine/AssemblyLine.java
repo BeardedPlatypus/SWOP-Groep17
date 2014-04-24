@@ -26,6 +26,7 @@ public class AssemblyLine implements WorkPostObserver {
 	//--------------------------------------------------------------------------
 	/**
 	 * Instantiate a new AssemblyLine with the specified {@link Manufacturer}.
+	 * Also links the manufacturer to itself.
 	 * 
 	 * @param manufacturer
 	 * 		manufacturer that owns this AssemblyLine

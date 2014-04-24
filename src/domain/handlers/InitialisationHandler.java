@@ -13,13 +13,22 @@ import domain.car.ModelCatalog;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.order.CompletedOrderCatalog;
+import domain.order.OrderFactory;
 import domain.order.SingleTaskCatalog;
+import domain.order.StandardOrder;
+import domain.productionSchedule.ClockManager;
 import domain.productionSchedule.ProductionScheduleFacade;
+import domain.productionSchedule.SchedulerContext;
+import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
+import domain.productionSchedule.strategy.FifoStrategy;
 import domain.restrictions.OptionProhibitsOtherSetRestriction;
 import domain.restrictions.OptionRequiresOtherSetRestriction;
 import domain.restrictions.OptionRestrictionManager;
 import domain.restrictions.RequiredOptionSetRestriction;
 import domain.restrictions.Restriction;
+import domain.statistics.CarsProducedRegistrar;
+import domain.statistics.DelayRegistrar;
+import domain.statistics.StatisticsLogger;
 
 /**
  * The InitialisationHandler is responsible for initialising the system. This
@@ -346,24 +355,64 @@ public class InitialisationHandler {
 		////--------------------------------------------------------------------------
 		// Initialise AlgorithmStrategyFactory
 		
-		//TODO
+		AlgorithmStrategyFactory stratFact = new AlgorithmStrategyFactory();
 
 		//--------------------------------------------------------------------------
+		
+		//--------------------------------------------------------------------------
+		// Initialise CompletedOrderCatalog
+		
+		CompletedOrderCatalog  complCat = new CompletedOrderCatalog();
 
+		//--------------------------------------------------------------------------
+		// Initialise the ProductionSchedule
+		ClockManager clockMan = new ClockManager();
+		List<TaskType> types = new ArrayList<>();
+		types.add(TaskType.BODY);
+		types.add(TaskType.ACCESSORIES);
+		SchedulerContext schedCont = new SchedulerContext(new FifoStrategy<StandardOrder>(), types);
+		ProductionScheduleFacade schedFacade = new ProductionScheduleFacade(clockMan, schedCont);
+
+		//--------------------------------------------------------------------------
+		
+		//--------------------------------------------------------------------------
+		// Initialise the orderfactory
+		
+		OrderFactory orderFact = new OrderFactory();
 		
 		//--------------------------------------------------------------------------
 		// Initialise Manufacturer
 
 		Manufacturer manufacturer = new Manufacturer(
-				//TODO
-				null,
+				stratFact,
 				singleCatalog,
-				new CompletedOrderCatalog(),
+				complCat,
 				modelCatalog,
 				restrictionsMan,
-				//TODO Fix this
-				new ProductionScheduleFacade());
+				schedFacade,
+				orderFact);
+		
 		//--------------------------------------------------------------------------
+		// Initialise AssemblyLine
+		
+		AssemblyLine line = new AssemblyLine(manufacturer);
+		StatisticsLogger logger = new StatisticsLogger();
+		CarsProducedRegistrar prodRegistrar = new CarsProducedRegistrar();
+		logger.addRegistrar(prodRegistrar);
+		DelayRegistrar delayRegistrar = new DelayRegistrar();
+		logger.addRegistrar(delayRegistrar);
+		line.setStatisticsLogger(logger);
+		
+		clockMan.attachTimeObserver(logger);
+		clockMan.attachTimeObserver(orderFact);
+		clockMan.attachTimeObserver(complCat);
+
+		
+		//--------------------------------------------------------------------------
+		// Setters afterwards
+		
+		orderFact.setManufacturer(manufacturer);
+		
 
 		
 		//--------------------------------------------------------------------------
