@@ -453,10 +453,6 @@ public class AssemblyLine implements WorkPostObserver {
 		this.getWorkPost(0).setAssemblyProcedure(procedure);
 	}
 	
-	private boolean orderIsAvailable() {
-		return this.getManufacturer().orderAvailable();
-	}
-	
 	/**
 	 * Call this method when advancing to handle the AssemblyProcedure that
 	 * is rolling off this AssemblyLine, if any. Concretely, submit the
