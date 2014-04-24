@@ -8,6 +8,7 @@ import domain.Option;
 
 public class OptionCategory {
 	
+
 	//-------------------------------------------------------------------------
 	// Constructor
 	//-------------------------------------------------------------------------
@@ -18,20 +19,35 @@ public class OptionCategory {
 	 * @param options
 	 * 		The list of options the new optionCategory should contain
 	 * @throws IllegalArgumentException
-	 * 		When the list or an element in the list is null
+	 * 		When the name, the list or an element in the list is null
 	 */
-	public OptionCategory(List<Option> options) throws IllegalArgumentException{
+	public OptionCategory(List<Option> options, String categoryName) throws IllegalArgumentException{
+		if(categoryName == null)
+			throw new IllegalArgumentException("Name can not be null");
 		if(options == null)
 			throw new IllegalArgumentException("Given list of options is null.");
 		if(options.contains(null))
 			throw new IllegalArgumentException("One of given options is null.");
 		this.options = new ArrayList<>(options);
+		this.name = categoryName;
 	}
 	
 	//-------------------------------------------------------------------------
 	// Properties
 	//-------------------------------------------------------------------------
 
+	/**
+	 * Get the name of this category
+	 * 
+	 * @return the name of this category
+	 */
+	public String getName(){
+		return this.name;
+	}
+	
+	/** name of this category */
+	private final String name;
+	
 	
 	/** The list of options this OptionCategory encompasses  */
 	private final ArrayList<Option> options;

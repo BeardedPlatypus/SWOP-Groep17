@@ -1,23 +1,9 @@
 package ui;
 
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
 
-import org.javatuples.Pair;
-
-import domain.AssemblyProcedureContainer;
-import domain.AssemblyTaskContainer;
-import domain.Model;
-import domain.Option;
-import domain.Specification;
-import domain.WorkPostContainer;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
-import domain.handlers.NewOrderSessionHandler;
-import domain.handlers.PerformAssemblyTaskHandler;
-import domain.order.OrderContainer;
 
 public class UI {
 	
@@ -142,38 +128,45 @@ public class UI {
 	//--------------------------------------------------------------------------
 
 	private void orderNewCarRoutine() {
-		OrderNewCarUIPart uiPart = new OrderNewCarUIPart(this.facade.getNewOrderSessionHandler(),this.helper);
+		OrderNewCarUIPart uiPart = new OrderNewCarUIPart(
+				this.facade.getNewOrderSessionHandler(),this.helper);
 		uiPart.run();
 	}
 
 	private void checkOrderRoutine() {
-		// TODO Auto-generated method stub
-		
+		CheckOrderDetailsUIPart uiPart = new CheckOrderDetailsUIPart(
+				this.facade.getCheckOrderDetailsHandler(),this.helper);
+		uiPart.run();
 	}
 
 	private void performAssemblyTaskRoutine() {
-		// TODO Auto-generated method stub
-		
+		PerformAssemblyTasksUIPart uiPart = new PerformAssemblyTasksUIPart(
+				this.facade.getPerformAssemblyTaskHandler(),this.helper);
+		uiPart.run();
 	}
 
 	private void checkAssemblyLineStatusRoutine() {
-		// TODO Auto-generated method stub
-		
+		CheckAssemblyLineStatusUIPart uiPart = new CheckAssemblyLineStatusUIPart(
+				this.facade.getAssemblyLineStatusHandler(),this.helper);
+		uiPart.run();
 	}
 
 	private void checkProductionStatisticsRoutine() {
-		// TODO Auto-generated method stub
-		
+		CheckProductionStatisticsUIPart uiPart = new CheckProductionStatisticsUIPart(
+				this.facade.getCheckProductionStatisticsHandler(),this.helper);
+		uiPart.run();
 	}
 
 	private void adaptSchedulingAgorithmRoutine() {
-		// TODO Auto-generated method stub
-		
+		AdaptSchedulingAlgorithmUIPart uiPart = new AdaptSchedulingAlgorithmUIPart(
+				this.facade.getAdaptSchedulingAlgorithmHandler(),this.helper);
+		uiPart.run();
 	}
 
 	private void orderSingleTaskRoutine() {
-		// TODO Auto-generated method stub
-		
+		OrderSingleTaskUIPart uiPart = new OrderSingleTaskUIPart(
+				this.facade.getOrderSingleTaskHandler(),this.helper);
+		uiPart.run();
 	}
 
 }

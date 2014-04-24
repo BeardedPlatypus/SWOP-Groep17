@@ -2,7 +2,6 @@ package domain.handlers;
 
 import java.util.List;
 
-import domain.AlgorithmView;
 import domain.AssemblyTaskContainer;
 import domain.DateTime;
 import domain.Model;

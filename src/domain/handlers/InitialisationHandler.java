@@ -112,9 +112,9 @@ public class InitialisationHandler {
 		modelBBodyList.add(bodyBreakOption);
 		modelBBodyList.add(bodySportOption);
 		modelCBodyList.add(bodySportOption);
-		OptionCategory modelABodyCategory = new OptionCategory(modelABodyList);
-		OptionCategory modelBBodyCategory = new OptionCategory(modelBBodyList);
-		OptionCategory modelCBodyCategory = new OptionCategory(modelCBodyList);
+		OptionCategory modelABodyCategory = new OptionCategory(modelABodyList, "Car Body");
+		OptionCategory modelBBodyCategory = new OptionCategory(modelBBodyList, "Car Body");
+		OptionCategory modelCBodyCategory = new OptionCategory(modelCBodyList, "Car Body");
 
 		List<Option> modelAPaintList = new ArrayList<>();
 		List<Option> modelBPaintList = new ArrayList<>();
@@ -129,9 +129,9 @@ public class InitialisationHandler {
 		modelBPaintList.add(paintYellowOption);
 		modelCPaintList.add(paintBlackOption);
 		modelCPaintList.add(paintWhiteOption);
-		OptionCategory modelAPaintCategory = new OptionCategory(modelAPaintList);
-		OptionCategory modelBPaintCategory = new OptionCategory(modelBPaintList);
-		OptionCategory modelCPaintCategory = new OptionCategory(modelCPaintList);
+		OptionCategory modelAPaintCategory = new OptionCategory(modelAPaintList, "Car Paint");
+		OptionCategory modelBPaintCategory = new OptionCategory(modelBPaintList, "Car Paint");
+		OptionCategory modelCPaintCategory = new OptionCategory(modelCPaintList, "Car Paint");
 		
 		List<Option> modelAEngineList = new ArrayList<>();
 		List<Option> modelBEngineList = new ArrayList<>();
@@ -143,9 +143,9 @@ public class InitialisationHandler {
 		modelBEngineList.add(engineUltraOption);
 		modelCEngineList.add(enginePerformanceOption);
 		modelCEngineList.add(engineUltraOption);
-		OptionCategory modelAEngineCategory = new OptionCategory(modelAEngineList);
-		OptionCategory modelBEngineCategory = new OptionCategory(modelBEngineList);
-		OptionCategory modelCEngineCategory = new OptionCategory(modelCEngineList);
+		OptionCategory modelAEngineCategory = new OptionCategory(modelAEngineList, "Engine");
+		OptionCategory modelBEngineCategory = new OptionCategory(modelBEngineList, "Engine");
+		OptionCategory modelCEngineCategory = new OptionCategory(modelCEngineList, "Engine");
 		
 		List<Option> modelAGearboxList = new ArrayList<>();
 		List<Option> modelBGearboxList = new ArrayList<>();
@@ -156,9 +156,9 @@ public class InitialisationHandler {
 		modelBGearboxList.add(gearbox6ManOption);
 		modelBGearboxList.add(gearbox5AutoOption);
 		modelCGearboxList.add(gearbox6ManOption);
-		OptionCategory modelAGearboxCategory = new OptionCategory(modelAGearboxList);
-		OptionCategory modelBGearboxCategory = new OptionCategory(modelBGearboxList);
-		OptionCategory modelCGearboxCategory = new OptionCategory(modelCGearboxList);
+		OptionCategory modelAGearboxCategory = new OptionCategory(modelAGearboxList, "Gearbox");
+		OptionCategory modelBGearboxCategory = new OptionCategory(modelBGearboxList, "Gearbox");
+		OptionCategory modelCGearboxCategory = new OptionCategory(modelCGearboxList, "Gearbox");
 
 		List<Option> modelASeatsList = new ArrayList<>();
 		List<Option> modelBSeatsList = new ArrayList<>();
@@ -171,9 +171,9 @@ public class InitialisationHandler {
 		modelBSeatsList.add(seatLeatherWhiteOption);
 		modelCSeatsList.add(seatLeatherBlackOption);
 		modelCSeatsList.add(seatLeatherWhiteOption);
-		OptionCategory modelASeatsCategory = new OptionCategory(modelASeatsList);
-		OptionCategory modelBSeatsCategory = new OptionCategory(modelBSeatsList);
-		OptionCategory modelCSeatsCategory = new OptionCategory(modelCSeatsList);
+		OptionCategory modelASeatsCategory = new OptionCategory(modelASeatsList, "Seats");
+		OptionCategory modelBSeatsCategory = new OptionCategory(modelBSeatsList, "Seats");
+		OptionCategory modelCSeatsCategory = new OptionCategory(modelCSeatsList, "Seats");
 
 		List<Option> modelAAircoList = new ArrayList<>();
 		List<Option> modelBAircoList = new ArrayList<>();
@@ -187,9 +187,9 @@ public class InitialisationHandler {
 		modelCAircoList.add(aircoAutoOption);
 		modelCAircoList.add(aircoManOption);
 		modelCAircoList.add(aircoNoneOption);
-		OptionCategory modelAAircoCategory = new OptionCategory(modelAAircoList);
-		OptionCategory modelBAircoCategory = new OptionCategory(modelBAircoList);
-		OptionCategory modelCAircoCategory = new OptionCategory(modelCAircoList);
+		OptionCategory modelAAircoCategory = new OptionCategory(modelAAircoList, "Airco");
+		OptionCategory modelBAircoCategory = new OptionCategory(modelBAircoList, "Airco");
+		OptionCategory modelCAircoCategory = new OptionCategory(modelCAircoList, "Airco");
 
 		List<Option> modelAWheelsList = new ArrayList<>();
 		List<Option> modelBWheelsList = new ArrayList<>();
@@ -202,9 +202,9 @@ public class InitialisationHandler {
 		modelBWheelsList.add(wheelsComfortOption);
 		modelCWheelsList.add(wheelsSportOption);
 		modelCWheelsList.add(wheelsWinterOption);
-		OptionCategory modelAWheelsCategory = new OptionCategory(modelAWheelsList);
-		OptionCategory modelBWheelsCategory = new OptionCategory(modelBWheelsList);
-		OptionCategory modelCWheelsCategory = new OptionCategory(modelCWheelsList);
+		OptionCategory modelAWheelsCategory = new OptionCategory(modelAWheelsList, "Wheels");
+		OptionCategory modelBWheelsCategory = new OptionCategory(modelBWheelsList, "Wheels");
+		OptionCategory modelCWheelsCategory = new OptionCategory(modelCWheelsList, "Wheels");
 
 		List<Option> modelASpoilerList = new ArrayList<>();
 		List<Option> modelBSpoilerList = new ArrayList<>();
@@ -215,9 +215,9 @@ public class InitialisationHandler {
 		modelCSpoilerList.add(spoilerNoneOption);
 		modelCSpoilerList.add(spoilerLowOption);
 		modelCSpoilerList.add(spoilerHighOption);
-		OptionCategory modelASpoilerCategory = new OptionCategory(modelASpoilerList);
-		OptionCategory modelBSpoilerCategory = new OptionCategory(modelBSpoilerList);
-		OptionCategory modelCSpoilerCategory = new OptionCategory(modelCSpoilerList);
+		OptionCategory modelASpoilerCategory = new OptionCategory(modelASpoilerList, "Spoiler");
+		OptionCategory modelBSpoilerCategory = new OptionCategory(modelBSpoilerList, "Spoiler");
+		OptionCategory modelCSpoilerCategory = new OptionCategory(modelCSpoilerList, "Spoiler");
 		//----------------------------------------------------------------------
 		
 		//--------------------------------------------------------------------------
@@ -330,10 +330,10 @@ public class InitialisationHandler {
 		//Necessary OptionCategories:
 		// All Paint options
 		List<Option> allPaintOptionsList = new ArrayList<Option>(allPaintOptionsSet);
-		OptionCategory allPaintCategory = new OptionCategory(allPaintOptionsList);
+		OptionCategory allPaintCategory = new OptionCategory(allPaintOptionsList, "Custom Paint");
 		// All Seats options
 		List<Option> allSeatsOptionsList = new ArrayList<>(allSeatsOptionsSet);
-		OptionCategory allSeatsCategory = new OptionCategory(allSeatsOptionsList);
+		OptionCategory allSeatsCategory = new OptionCategory(allSeatsOptionsList, "Custom Seats");
 		
 		List<OptionCategory> singleTaskCategories = new ArrayList<>();
 		singleTaskCategories.add(allSeatsCategory);
