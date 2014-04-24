@@ -485,7 +485,7 @@ public class Manufacturer {
 	 * @return List of pending order containers in the productionSchedule.
 	 */
 	private List<OrderContainer> getSchedulePendingOrderContainers() {
-		return this.getProductionSchedule().getPendingOrdersContainers();
+		return this.getProductionSchedule().getPendingStandardOrderContainers();
 	}
 	//--------------------------------------------------------------------------
 	// Completed Order Methods
