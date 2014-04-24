@@ -20,9 +20,6 @@ public class OrderFactory implements TimeObserver {
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
-	public OrderFactory() {
-		
-	}
 	
 	/**
 	 * Set the Manufacturer of this OrderFactory to the specified manufacturer. 
@@ -32,12 +29,16 @@ public class OrderFactory implements TimeObserver {
 	 * 
 	 * @postcondition | (new this).getManufacturer() == manufacturer.
 	 * 
+	 * @throws IllegalArgumentException
+	 * 		| manufacturer == null
 	 * @throws IllegalStateException 
 	 * 		| manufacturer.getOrderFactory() == this 
 	 * @throws IllegalStateException
 	 * 		manufacturer has already been set.
 	 */
 	public void setManufacturer(Manufacturer manufacturer) throws IllegalStateException {
+		if (manufacturer == null)
+			throw new IllegalArgumentException("Manufacturer cannot be null.");
 		if (manufacturer.getOrderFactory() != this)
 			throw new IllegalStateException("manufacturer.getOrderFactory() does not match this.");
 		if (this.manufacturer != null) 
@@ -165,7 +166,11 @@ public class OrderFactory implements TimeObserver {
 	 * @param specification
 	 * 		The specification of the specified StandardOrder
 	 * 
-	 * @return
+	 * @return | model == null || spec == null -> False
+	 * 		   | !this.manufacturer.modelCatalogContains(model)
+	 *         | specification.options == null || contains(null) || size == 0 -> False
+	 *         | else: model.checkOptionsValidity(options) && 
+	 *         | this.manufacturer.checkSpecificationRestriction(model, spec)
 	 */
 	public boolean isValidInputStandardOrder(Model model, Specification specification) {
 		// Check not null.
@@ -223,7 +228,7 @@ public class OrderFactory implements TimeObserver {
 	}
 	
 	/** The next unused order identifier issued by this ProductionSchedule. */
-	private int currentIdentifier;
+	private int currentIdentifier = 0;
 	
 	//--------------------------------------------------------------------------
 	// TimeObserver methods
@@ -244,7 +249,7 @@ public class OrderFactory implements TimeObserver {
 	 * @throws IllegalStateException
 	 * 		Time has not been set (it has not been attached to a TimeSubject yet).
 	 */
-	private DateTime getCurrentTime() throws IllegalStateException{
+	protected DateTime getCurrentTime() throws IllegalStateException{
 		if (this.currentTime == null)
 			throw new IllegalStateException("Time has not been set.");
 		
