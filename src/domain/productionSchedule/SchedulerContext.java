@@ -3,7 +3,9 @@ package domain.productionSchedule;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import domain.Specification;
 import domain.TaskType;
 import domain.order.Order;
 import domain.order.SingleTaskOrder;
@@ -154,6 +156,36 @@ public class SchedulerContext {
 	 */
 	public Order getNextScheduledOrder() {
 		return this.orderQueue.get(0);
+	}
+	
+	/**
+	 * Build a list of all Specification batches that are currently eligible
+	 * for use in a batch strategy. All batches that are shared by at least three
+	 * Orders are included.
+	 * 
+	 * @return The list of batches
+	 */
+	public List<Specification> getEligibleBatches() {
+		Map<Specification, Integer> tally = new HashMap<Specification, Integer>();
+		
+		for (StandardOrder order : this.getOrderQueueRaw()) {
+			Specification spec = order.getSpecifications();
+			if (tally.containsKey(spec)) {
+				tally.put(spec, tally.get(spec) + 1);
+			} else {
+				tally.put(spec, 1);
+			}
+		}
+		
+		List<Specification> toReturn = new ArrayList<Specification>();
+		
+		for (Map.Entry<Specification, Integer> candidate : tally.entrySet()) {
+			if (candidate.getValue() >= 3) {
+				toReturn.add(candidate.getKey());
+			}
+		}
+		
+		return toReturn;
 	}
 	
 	//--------------------------------------------------------------------------
