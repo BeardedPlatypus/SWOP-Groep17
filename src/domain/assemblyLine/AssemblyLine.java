@@ -576,4 +576,5 @@ public class AssemblyLine implements WorkPostObserver {
 		}
 		this.getStatisticsLogger().addStatistics(stats);
 	}
+
 }

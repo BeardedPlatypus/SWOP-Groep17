@@ -133,6 +133,9 @@ public class CarsProducedRegistrar extends RegistrarWithWorkingDay {
 	 * @return The median
 	 */
 	protected double getMedian() {
+		if(this.getCarsProducedNumbers().isEmpty()){
+			return 0;
+		}
 		return this.getMedianSelector().findMedian(this.getCarsProducedNumbers());
 	}
 	

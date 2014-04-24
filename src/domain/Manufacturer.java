@@ -135,7 +135,7 @@ public class Manufacturer {
 		if(this.getProductionSchedule().contains(order))
 			return this.getProductionSchedule().getEstimatedCompletionTime(order);
 		if(this.getAssemblyLine().contains(order))
-			return this.getAssemblyLine().getEstimatedCompletionTime(order);
+			return this.getSchedulerIntermediate().getEstimatedCompletionTime(order);
 		if(this.getCompletedOrderCatalog().contains(order))
 			return this.getCompletedOrderCatalog().getCompletionTime(order);
 		throw new OrderDoesNotExistException("Order was not found in the system.");

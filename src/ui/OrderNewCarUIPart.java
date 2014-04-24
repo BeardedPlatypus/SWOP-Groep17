@@ -181,10 +181,10 @@ public class OrderNewCarUIPart {
 			}
 			System.out.println((cat.getAmountOfOptions() + 1 ) + ") Cancel placing an order");
 			int choice = helper.getIntFromUser(1, cat.getAmountOfOptions() + 1);
-			if(choice == cat.getAmountOfOptions()){
+			if(choice == cat.getAmountOfOptions()+1){
 				cancelOrder = true;
 			} else {
-				this.getHandler().selectOption(cat.getOption(choice));
+				this.getHandler().selectOption(cat.getOption(choice-1));
 			}
 		}
 		if(cancelOrder)
