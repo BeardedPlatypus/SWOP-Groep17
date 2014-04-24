@@ -17,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 
 import domain.DateTime;
+import domain.order.Order;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
 import domain.productionSchedule.strategy.BatchStrategy;
@@ -44,6 +45,8 @@ public class SchedulerContextTest {
 	@Mock StandardOrder order2;
 	@Mock SingleTaskOrder order3;
 	@Mock SingleTaskOrder order4;
+	@Mock SingleTaskOrder order5;
+	@Mock Order completedOrder;
 	
 	List<TaskType> types= new ArrayList<TaskType>(Arrays.asList(TaskType.ACCESSORIES, TaskType.BODY));
 	
@@ -64,6 +67,10 @@ public class SchedulerContextTest {
 		Mockito.when(order3.getSingleTaskOrderType()).thenReturn(TaskType.BODY);
 		Mockito.when(order4.getDeadline()).thenReturn(new DateTime(0, 3, 3));
 		Mockito.when(order4.getSingleTaskOrderType()).thenReturn(TaskType.ACCESSORIES);
+		Mockito.when(order5.getDeadline()).thenReturn(new DateTime(0, 4, 3));
+		Mockito.when(order5.getSingleTaskOrderType()).thenReturn(TaskType.ACCESSORIES);
+		Mockito.when(order5.isCompleted()).thenReturn(false);
+		Mockito.when(completedOrder.isCompleted()).thenReturn(true);
 		schedCon = new SchedulerContext(strat, types);		
 	}
 
@@ -155,7 +162,19 @@ public class SchedulerContextTest {
 		schedCon.addNewStandardOrder(order1);
 		schedCon.addNewStandardOrder(order2);
 		assertEquals(order1, schedCon.getNextScheduledOrder());
+		assertEquals(order1, schedCon.getNextScheduledOrder());
 	}
+	
+	@Test
+	public void testPopNextStandardOrder() {
+		FifoStrategy<StandardOrder> realStrat = new FifoStrategy<>();
+		schedCon.setSchedulingStrategy(realStrat);
+		schedCon.addNewStandardOrder(order1);
+		schedCon.addNewStandardOrder(order2);
+		assertEquals(order1, schedCon.popNextStandardOrder());
+		assertEquals(order2, schedCon.popNextStandardOrder());
+	}
+
 
 	@Test
 	public void testGetPendingStandardOrders() {
@@ -194,32 +213,80 @@ public class SchedulerContextTest {
 		schedCon.addNewSingleTaskOrder(order3);
 		schedCon.addNewSingleTaskOrder(order4);
 		assertEquals(order3,schedCon.getNextSingleTaskOrderOfType(TaskType.BODY));
+		assertEquals(order3,schedCon.getNextSingleTaskOrderOfType(TaskType.BODY));
+		assertEquals(order4,schedCon.getNextSingleTaskOrderOfType(TaskType.ACCESSORIES));
 		assertEquals(order4,schedCon.getNextSingleTaskOrderOfType(TaskType.ACCESSORIES));
 	}
 
 	@Test
+	public void testgetNextSingleTaskOrderOfTypeNoOrders() {
+		exception.expect(IllegalStateException.class);
+		schedCon.getNextSingleTaskOrderOfType(TaskType.BODY);
+	}
+	
+	@Test
 	public void testPopNextSingleTaskOrderOfType() {
-		fail("Not yet implemented");
+		FifoStrategy<StandardOrder> realStrat = new FifoStrategy<>();
+		schedCon.setSchedulingStrategy(realStrat);
+		schedCon.addNewSingleTaskOrder(order3);
+		schedCon.addNewSingleTaskOrder(order4);
+		assertEquals(order3,schedCon.popNextSingleTaskOrderOfType(TaskType.BODY));
+		assertEquals(order4,schedCon.popNextSingleTaskOrderOfType(TaskType.ACCESSORIES));
+	}
+
+
+	@Test
+	public void testPopNextSingleTaskOrderOfTypeNoMoreOrders() {
+		exception.expect(IllegalStateException.class);
+		FifoStrategy<StandardOrder> realStrat = new FifoStrategy<>();
+		schedCon.setSchedulingStrategy(realStrat);
+		schedCon.addNewSingleTaskOrder(order3);
+		schedCon.addNewSingleTaskOrder(order4);
+		assertEquals(order3,schedCon.popNextSingleTaskOrderOfType(TaskType.BODY));
+		schedCon.popNextSingleTaskOrderOfType(TaskType.BODY);
+		assertEquals(order4,schedCon.popNextSingleTaskOrderOfType(TaskType.ACCESSORIES));
+	}
+	
+	@Test
+	public void testPopNextSingleTaskOrderOfTypeNoOrders() {
+		exception.expect(IllegalStateException.class);
+		schedCon.popNextSingleTaskOrderOfType(TaskType.BODY);
 	}
 
 	@Test
 	public void testGetSingleTaskOrdersOfType() {
-		fail("Not yet implemented");
+		FifoStrategy<StandardOrder> realStrat = new FifoStrategy<>();
+		schedCon.setSchedulingStrategy(realStrat);
+		schedCon.addNewSingleTaskOrder(order3);
+		schedCon.addNewSingleTaskOrder(order5);
+		schedCon.addNewSingleTaskOrder(order4);
+		assertTrue(schedCon.getSingleTaskOrdersOfType(TaskType.ACCESSORIES).contains(order4));
+		assertTrue(schedCon.getSingleTaskOrdersOfType(TaskType.ACCESSORIES).contains(order5));
+		assertFalse(schedCon.getSingleTaskOrdersOfType(TaskType.ACCESSORIES).contains(order3));
 	}
 
 	@Test
 	public void testAddNewStandardOrder() {
-		fail("Not yet implemented");
+		FifoStrategy<StandardOrder> realStrat = new FifoStrategy<>();
+		schedCon.setSchedulingStrategy(realStrat);
+		assertFalse(schedCon.containsOrder(order1));
+		schedCon.addNewStandardOrder(order1);
+		assertTrue(schedCon.containsOrder(order1));
+		assertEquals(1, schedCon.getPendingStandardOrders().size());
 	}
 
 	@Test
 	public void testAddNewSingleTaskOrder() {
-		fail("Not yet implemented");
+		assertFalse(schedCon.containsOrder(order3));
+		schedCon.addNewSingleTaskOrder(order3);
+		assertTrue(schedCon.containsOrder(order3));
 	}
 
 	@Test
 	public void testIsValidPendingOrder() {
-		fail("Not yet implemented");
+		assertFalse(schedCon.isValidPendingOrder(completedOrder));
+		assertFalse(schedCon.isValidPendingOrder(null));
+		assertTrue(schedCon.isValidPendingOrder(order5));
 	}
 	
 	//--------------------------------------------------------------------------

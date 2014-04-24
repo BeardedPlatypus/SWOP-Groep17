@@ -374,6 +374,9 @@ public class SchedulerContext {
 	 * 		   by deadline.
 	 */
 	protected List<SingleTaskOrder> getSingleTaskOrdersOfType(TaskType t) {
+		if(!taskOrderQueue.containsKey(t)){
+			throw new IllegalArgumentException("Single task type is not correct for this system.");
+		}
 		return new ArrayList<SingleTaskOrder>(this.taskOrderQueue.get(t));
 	}
 	
