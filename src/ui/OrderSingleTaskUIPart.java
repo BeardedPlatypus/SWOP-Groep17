@@ -94,6 +94,9 @@ public class OrderSingleTaskUIPart {
 	}
 
 
+	/**
+	 * return the index of choice from the category the user wants
+	 */
 	private int getCategoryChoice(List<OptionCategory> categories) {
 		System.out.println("Please choose the type of task you want to order:");
 		for(int i = 0; i<categories.size(); i++){
@@ -103,6 +106,10 @@ public class OrderSingleTaskUIPart {
 	}
 	
 
+	/**
+	 * Add an option to the ordersession.
+	 * Return true if an option was added, else false.
+	 */
 	private boolean selectOption(OptionCategory optionCategory) {
 		System.out.println("Please choose the option you want to order:");
 		for(int i = 0; i<optionCategory.getAmountOfOptions(); i++){
