@@ -59,15 +59,13 @@ public abstract class SchedulingStrategy<O extends Order> implements SchedulingS
 	public void addTo(O order, List<O> orderQueue) {
 		if (orderQueue.size() == 0) {
 			orderQueue.add(order);
-		}
-		if (orderQueue.size() == 1) {
+		} else if (orderQueue.size() == 1) {
 			this.handleSingleElement(order, orderQueue);
-		}
-		int index = this.binarySearch(order, orderQueue);
-		if (index == orderQueue.size() - 1) {
+		} else if (this.binarySearch(order, orderQueue) == orderQueue.size() - 1) {
 			this.handleLastIndex(order, orderQueue);
+		} else{
+			orderQueue.add(this.binarySearch(order, orderQueue), order);
 		}
-		else orderQueue.add(index, order);
 	}
 	
 	/**

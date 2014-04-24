@@ -12,6 +12,7 @@ import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.handlers.InitialisationHandler;
 import domain.handlers.OrderSingleTaskHandler;
+import domain.handlers.DomainFacade;
 import domain.order.OrderContainer;
 import exceptions.OrderDoesNotExistException;
 
@@ -22,23 +23,23 @@ import exceptions.OrderDoesNotExistException;
  *
  */
 public class OrderSingleTaskScenario {
-	OrderSingleTaskHandler orderSingleTaskHandler;
+	DomainFacade facade;
 	
 	@Before
 	public void setUp() throws Exception {
 		InitialisationHandler init = new InitialisationHandler();
-		orderSingleTaskHandler = init.getDomainFacade().getOrderSingleTaskHandler();
+		facade = init.getDomainFacade();
 	}
 
 	@Test
 	public void normalFlowInitial_test() {
 		
 		//1. The user wants to order a single task.
-		orderSingleTaskHandler.startNewOrderSession();
-		assertTrue(orderSingleTaskHandler.isRunningOrderSession());
+		facade.startNewSingleTaskOrderSession();
+		assertTrue(facade.isRunningOrderSession());
 		
 		//2. The system shows the list of available tasks.
-		List<OptionCategory> possibleTasks = orderSingleTaskHandler.getPossibleTasks();
+		List<OptionCategory> possibleTasks = facade.getPossibleTasks();
 		assertTrue(!possibleTasks.isEmpty());
 		
 		//3. The user selects the task he wants to order.
@@ -47,17 +48,17 @@ public class OrderSingleTaskScenario {
 		
 		//4. The system asks the user for a deadline, as well as the required task options (e.g. color). ==HAPPENS IN UI==
 		//5. The user enters the required details.
-		orderSingleTaskHandler.selectOption(selectedOption);
-		orderSingleTaskHandler.specifyDeadline(1, 2, 3);
+		facade.selectSingleTaskOption(selectedOption);
+		facade.specifyDeadline(1, 2, 3);
 		
 		//6. The system stores the new order and updates the production schedule.
-		OrderContainer submittedOrder = orderSingleTaskHandler.submitSingleTaskOrder();
+		OrderContainer submittedOrder = facade.submitSingleTaskOrder();
 		assertNotNull(submittedOrder);
 		
 		//7. The system presents an estimated completion date for the new order.
 		DateTime eta = null;
 		try {
-			eta = orderSingleTaskHandler.getEstimatedCompletionTime(submittedOrder);
+			eta = facade.getEstimatedCompletionTime(submittedOrder);
 		} catch (OrderDoesNotExistException e) {
 			fail();
 		}
@@ -68,11 +69,11 @@ public class OrderSingleTaskScenario {
 	public void alternateFlow1Initial_test() {
 		
 		//1. The user wants to order a single task.
-		orderSingleTaskHandler.startNewOrderSession();
-		assertTrue(orderSingleTaskHandler.isRunningOrderSession());
+		facade.startNewSingleTaskOrderSession();
+		assertTrue(facade.isRunningOrderSession());
 		
 		//2. The system shows the list of available tasks.
-		List<OptionCategory> possibleTasks = orderSingleTaskHandler.getPossibleTasks();
+		List<OptionCategory> possibleTasks = facade.getPossibleTasks();
 		assertTrue(!possibleTasks.isEmpty());
 		
 		//3. The user selects the task he wants to order.
@@ -82,8 +83,8 @@ public class OrderSingleTaskScenario {
 		//4. The system asks the user for a deadline, as well as the required task options (e.g. color). ==HAPPENS IN UI==
 		//5. The user indicates he wants to cancel placing the order.
 		//6. The use case returns to step 1. ==SEE MAIN SCENARIO TEST==
-		orderSingleTaskHandler.startNewOrderSession();
-		assertTrue(orderSingleTaskHandler.isRunningOrderSession());
+		facade.startNewSingleTaskOrderSession();
+		assertTrue(facade.isRunningOrderSession());
 	}
 
 }
