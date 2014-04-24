@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import domain.assemblyLine.AssemblyLine;
+import domain.assemblyLine.SchedulerIntermediate;
 import domain.Manufacturer;
 import domain.assemblyLine.TaskType;
 import domain.car.Model;
@@ -406,6 +407,9 @@ public class InitialisationHandler {
 		clockMan.attachTimeObserver(logger);
 		clockMan.attachTimeObserver(orderFact);
 		clockMan.attachTimeObserver(complCat);
+		
+		SchedulerIntermediate inter = new SchedulerIntermediate(line);
+		manufacturer.setSchedulerIntermediate(inter);
 
 		
 		//--------------------------------------------------------------------------
