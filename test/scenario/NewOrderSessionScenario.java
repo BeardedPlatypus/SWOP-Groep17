@@ -1,4 +1,4 @@
-package domain;
+package scenario;
 
 import static org.junit.Assert.*;
 
@@ -10,6 +10,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import domain.DateTime;
+import domain.Model;
+import domain.Option;
+import domain.OptionCategory;
 import domain.handlers.InitialisationHandler;
 import domain.handlers.NewOrderSessionHandler;
 import domain.order.OrderContainer;
@@ -32,7 +36,7 @@ public class NewOrderSessionScenario {
 	@Before
 	public void setUp() throws Exception {
 		InitialisationHandler init = new InitialisationHandler();
-		orderHandler = init.getNewOrderHandler();
+		orderHandler = init.getDomainFacade().getNewOrderSessionHandler();
 	}
 
 	@Test

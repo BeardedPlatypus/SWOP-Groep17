@@ -1,11 +1,15 @@
-package domain;
+package scenario;
 
 import static org.junit.Assert.*;
+
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import domain.DateTime;
+import domain.Option;
+import domain.OptionCategory;
 import exceptions.OrderDoesNotExistException;
 
 /**
