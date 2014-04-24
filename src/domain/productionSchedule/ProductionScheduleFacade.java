@@ -285,6 +285,16 @@ public class ProductionScheduleFacade {
 		return this.clockManager;
 	}
 	
+	/**
+	 * Increments the time with the specified DateTime
+	 * 
+	 * @param dt
+	 * 		The time to increment with
+	 */
+	public void incrementTime(DateTime dt) {
+		this.getClockManager().incrementTime(dt);
+	}
+	
 	/** The ClockManager of this ProductionScheduleFacade. */
 	private final ClockManager clockManager;
 

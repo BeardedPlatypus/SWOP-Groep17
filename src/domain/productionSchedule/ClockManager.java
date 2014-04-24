@@ -71,6 +71,7 @@ public class ClockManager implements TimeSubject, IncrementTimeObserver {
 	 * @postcondition | (new this).getCurrentTime() = this.getCurrentTime.add(t)
 	 * 
 	 * @throws IllegalArgumentException
+	 * 		t is null
 	 */
 	protected void incrementTime(DateTime t) throws IllegalArgumentException {
 		if (t == null) {

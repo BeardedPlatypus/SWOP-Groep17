@@ -397,8 +397,9 @@ public class AssemblyLine implements WorkPostObserver {
 	 */
 	private void tryAdvance(DateTime elapsedTime) throws IllegalStateException{
 		this.shiftWorkPosts();
-		this.putNextOrderOnAssemblyLine();
+		this.getManufacturer().incrementTime(elapsedTime);
 		this.setElapsedTime(new DateTime(0, 0, 0));
+		this.putNextOrderOnAssemblyLine();
 		this.resetFinishedAssemblyCounter();
 	}
 
@@ -424,7 +425,6 @@ public class AssemblyLine implements WorkPostObserver {
 		this.handleFinishedAssemblyProcedure(finishedProcedure);
 	}
 
-	//TODO
 	/**
 	 * Request a new Order from the Manufacturer, convert this to an AssemblyProcedure
 	 * and add this AssemblyProcedure to the first WorkPost. 

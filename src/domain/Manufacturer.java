@@ -608,6 +608,19 @@ public class Manufacturer {
 	public List<OrderContainer> getCompletedOrderContainers() {
 		return this.getCompletedOrderCatalog().getCompletedOrderContainers();
 	}
+	
+	//--------------------------------------------------------------------------
+	// Time-related methods
+	//--------------------------------------------------------------------------
+	/**
+	 * Increments the time with the specified DateTime
+	 * 
+	 * @param dt
+	 * 		The time to increment with
+	 */
+	public void incrementTime(DateTime dt) {
+		this.getProductionSchedule().incrementTime(dt);
+	}
 
 	//--------------------------------------------------------------------------
 	// Querying the statistics
