@@ -4,13 +4,10 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import domain.DateTime;
 import domain.Manufacturer;
@@ -23,15 +20,6 @@ import domain.handlers.CheckOrderDetailsHandler;
 import domain.order.Order;
 import domain.order.OrderContainer;
 import domain.order.StandardOrder;
-import exceptions.IllegalCarOptionCombinationException;
-import exceptions.NoOptionCategoriesRemainingException;
-import exceptions.OptionRestrictionException;
-import exceptions.OrderDoesNotExistException;
-
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.reflect.Whitebox;
 
 /**
  * Use case scenario test: Check Order Details
