@@ -396,7 +396,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 		the shifting of the WorkPosts.
 	 */
 	private void tryAdvance(DateTime elapsedTime) throws IllegalStateException{
-		this.shiftWorkPosts();
+		this.shiftWorkPosts();		
 		this.putNextOrderOnAssemblyLine();
 		this.setElapsedTime(new DateTime(0, 0, 0));
 		this.resetFinishedAssemblyCounter();

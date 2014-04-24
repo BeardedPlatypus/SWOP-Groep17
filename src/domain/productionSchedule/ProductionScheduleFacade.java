@@ -7,6 +7,7 @@ import java.util.Map;
 
 import domain.DateTime;
 import domain.Manufacturer;
+import domain.assemblyLine.TaskType;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.Specification;
@@ -135,8 +136,8 @@ public class ProductionScheduleFacade {
 	 * 
 	 * @return The next OrderContainer that will be scheduled by this SchedulerContext.
 	 */
-	public OrderContainer getNextScheduledOrderContainer() {
-		return this.getSchedulerContext().getNextScheduledOrder();
+	public OrderContainer getNextScheduledStandardOrderContainer() {
+		return this.getNextScheduledStandardOrder();
 	}
 	
 	/**
@@ -144,10 +145,14 @@ public class ProductionScheduleFacade {
 	 * 
 	 * @return The next Order that will be scheduled by this SchedulerContext.
 	 */
-	public Order getNextScheduledOrder() {
-		return this.getSchedulerContext().getNextScheduledOrder();
+	public StandardOrder getNextScheduledStandardOrder() {
+		return this.getSchedulerContext().getNextStandardOrder();
 	}
 
+	public SingleTaskOrder getNextScheduledSingleTaskOrder(TaskType t) {
+		return this.getSchedulerContext().getNextSingleTaskOrderOfType(t);
+	}
+	
 	//--------------------------------------------------------------------------
 	// Adding orders
 	//--------------------------------------------------------------------------
@@ -203,7 +208,7 @@ public class ProductionScheduleFacade {
 	 * 
 	 * @postcondition | (new this).getSchedulingStrategy() == newStrategy
 	 */
-	public void setNewSchedulingAlgorithm(SchedulingStrategy strat) {
+	public void setNewSchedulingAlgorithm(SchedulingStrategy<StandardOrder> strat) {
 		this.getSchedulerContext().setSchedulingStrategy(strat);
 	}
 	
@@ -212,7 +217,7 @@ public class ProductionScheduleFacade {
 	 * 
 	 * @return the current scheduling strategy of this SchedulerContext.
 	 */
-	public SchedulingStrategy getCurrentSchedulingAlgorithm() {
+	public SchedulingStrategy<StandardOrder> getCurrentSchedulingAlgorithm() {
 		return this.getSchedulerContext().getCurrentSchedulingStrategy();
 	}
 	

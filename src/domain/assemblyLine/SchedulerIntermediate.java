@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import domain.DateTime;
+import domain.Manufacturer;
+import domain.order.StandardOrder;
 import domain.productionSchedule.TimeObserver;
 
 /**
@@ -23,6 +25,51 @@ public class SchedulerIntermediate implements TimeObserver{
 	public SchedulerIntermediate(AssemblyLine assemblyLine) {
 		this.assemblyLine = assemblyLine;
 	}
+	
+	/**
+	 * Set the Manufacturer of this SchedulerIntermediate to the specified manufacturer. 
+	 * 
+	 * @param manufacturer
+	 * 		The new manufacturer of this SchedulerIntermediate. 
+	 * 
+	 * @postcondition | (new this).getManufacturer() == manufacturer.
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		| manufacturer == null
+	 * @throws IllegalStateException 
+	 * 		| manufacturer.getSchedulerIntermediate() == this 
+	 * @throws IllegalStateException
+	 * 		manufacturer has already been set.
+	 */
+	public void setManufacturer(Manufacturer manufacturer) throws IllegalStateException {
+		if (manufacturer == null)
+			throw new IllegalArgumentException("Manufacturer cannot be null.");
+		if (manufacturer.getSchedulerIntermediate() != this)
+			throw new IllegalStateException("manufacturer.getOrderFactory() does not match this.");
+		if (this.manufacturer != null) 
+			throw new IllegalStateException("manufacturer has already been set.");
+		
+		this.manufacturer = manufacturer;
+	}
+	
+	/**
+	 * Get the Manufacturer of this SchedulerIntermediate. 
+	 * 
+	 * @return The Manufacturer of this SchedulerIntermediate.
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		Manufacturer has not been set.
+	 */
+	public Manufacturer getManufacturer() {
+		if (this.manufacturer == null)
+			throw new IllegalStateException();
+		
+		return this.manufacturer;
+	}
+
+	/** The Manufacturer of this OrderFactory. */
+	private Manufacturer manufacturer = null;
+
 	
 	//--------------------------------------------------------------------------
 	// AssemblyLine related functions
@@ -51,11 +98,40 @@ public class SchedulerIntermediate implements TimeObserver{
 		int totalTime = 0;
 		
 		for (int i = 0; i < assemblyLine.getAssemblyLineSize() + 1; i++) {
-			for (AssemblyProcedure proc : virtAss) {
-				
+			int stepTimeMax = 0;
+			for (int j = 0; j < assemblyLine.getAssemblyLineSize(); j++) {
+				int timeWorkPost = assemblyLine.getTimeOnWorkPost(virtAss.get(j), j);
+				stepTimeMax = Math.max(stepTimeMax, timeWorkPost);
 			}
-			
+			totalTime += stepTimeMax;
+			virtAss.addFirst(null);
+			virtAss.removeLast();
 		}
+		return totalTime;
+	}
+	
+	boolean canScheduleStandardOrderToday(StandardOrder order) {
+		AssemblyLine assLine = this.getAssemblyLine();
+		int currentDayMinutes = this.getCurrentTime().hours * 60 + 
+                this.getCurrentTime().minutes;
+
+		int timeLeft = FINISHHOUR * 60 - this.getOverTime() - currentDayMinutes; 
+		
+		if (timeLeft <= 0)
+			return false;
+
+		//Test if a full order can still be scheduled. 
+		AssemblyProcedure virtProc = assLine.makeAssemblyProcedure(order);
+		List<AssemblyProcedure> virtAss = assLine.getAssemblyProcedures();
+		virtAss.set(0, virtProc);
+		
+		int timeToScheduleOrder = calculateTimeToFinishVirtual(virtAss);
+		
+		return  timeLeft >= timeToScheduleOrder;
+	}
+	
+	boolean canScheduleNextOrderToday() {
+		return this.canScheduleStandardOrderToday(this.getManufacturer().getProductionSchedule().getNextScheduledStandardOrder());
 	}
 	
    	//--------------------------------------------------------------------------
