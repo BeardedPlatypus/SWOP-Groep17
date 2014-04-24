@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ PerformAssemblyTaskScenario.class,
+@SuiteClasses({ PerformAssemblyTaskScenario_Old.class,
 				NewOrderSessionScenario.class,
 				AdaptSchedulingAlgorithmScenario.class,
 				CheckAssemblyLineStatusScenario.class,

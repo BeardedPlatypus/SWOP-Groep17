@@ -9,13 +9,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import domain.productionSchedule.ClockManager;
+import domain.productionSchedule.TimeObserver;
 import domain.statistics.StatisticsLogger;
 
-public class TimeManagerTest {
-
-	TimeManager timeManager;
+public class ClockManagerTest {
+	
+	ClockManager clockManager;
 	
 	@Mock StatisticsLogger statisticsLogger;
+	@Mock TimeObserver timeObserver;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -25,19 +28,19 @@ public class TimeManagerTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		
-		timeManager = new TimeManager();
-		timeManager.register(statisticsLogger);
+		clockManager = new ClockManager();
+		clockManager.attachTimeObserver(timeObserver);
 	}
 
 	@Test
 	public void addTimeTest() {
-		DateTime current = timeManager.getCurrentTime();
+		DateTime current = clockManager.getCurrentTime();
 		DateTime later = current.addTime(1, 1, 1);
 		
-		timeManager.addTime(new DateTime(1, 1, 1));
-		assertEquals(later, timeManager.getCurrentTime());
+		clockManager.update(new DateTime(1,1,1));
+		assertEquals(later, clockManager.getCurrentTime());
 		
-		Mockito.verify(statisticsLogger).update(later);
+		Mockito.verify(timeObserver).update(later);
 	}
 
 }

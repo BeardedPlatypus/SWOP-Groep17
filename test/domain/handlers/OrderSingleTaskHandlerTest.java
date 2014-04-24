@@ -3,7 +3,6 @@ package domain.handlers;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -17,6 +16,8 @@ import domain.Manufacturer;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.handlers.OrderSingleTaskHandler;
+import domain.order.Order;
+import domain.order.OrderContainer;
 import domain.order.SingleOrderSession;
 import exceptions.OrderDoesNotExistException;
 /**

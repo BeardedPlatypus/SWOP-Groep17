@@ -135,7 +135,7 @@ public class DelayRegistrarTest {
 		// Using whitebox, because these methods are protected.
 		try {
 			double median = Whitebox.<Double> invokeMethod(registrar,"getMedian");
-			assertEquals(25, median, epsilon);
+			assertEquals(0, median, epsilon);
 		} catch (Exception e) {
 			// Whitebox reserves the right to rethrow an exception. This method doesn't have the ability to throw
 			// an exception, so this catch should never be reached.

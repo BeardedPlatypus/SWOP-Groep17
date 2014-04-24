@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -28,6 +27,7 @@ public class ModelCatalogTest {
 	ModelCatalog testModelCatalog;
 	@Mock Model mockModel1;
 	@Mock Model mockModel2;
+	Model singleTaskModel;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -38,7 +38,7 @@ public class ModelCatalogTest {
 		List<Model> list = new ArrayList<Model>();
 		list.add(mockModel1);
 		list.add(mockModel2);
-		this.testModelCatalog = new ModelCatalog(list);
+		this.testModelCatalog = new ModelCatalog(list, singleTaskModel);
 	}
 
 	@Test
@@ -46,12 +46,13 @@ public class ModelCatalogTest {
 		assertTrue(testModelCatalog.getModels().contains(mockModel1));
 		assertTrue(testModelCatalog.getModels().contains(mockModel2));
 		assertTrue(testModelCatalog.getModels().size() == 2);
+		assertEquals(testModelCatalog.getSingleTaskModel(), singleTaskModel);
 	}
 	
 	@Test
 	public void testConstructorNullList() {
 		exception.expect(IllegalArgumentException.class);
-		testModelCatalog = new ModelCatalog(null);
+		testModelCatalog = new ModelCatalog(null, null);
 	}
 	
 	@Test
@@ -59,7 +60,7 @@ public class ModelCatalogTest {
 		exception.expect(IllegalArgumentException.class);
 		List<Model> list = new ArrayList<Model>();
 		list.add(null);
-		testModelCatalog = new ModelCatalog(list);
+		testModelCatalog = new ModelCatalog(list, singleTaskModel);
 	}
 
 	@Test
