@@ -278,6 +278,10 @@ public class Manufacturer {
 	public OrderContainer submitSingleTaskOrder(Option option, DateTime deadline) {
 		SingleTaskOrder order = this.getOrderFactory().makeNewSingleTaskOrder(deadline, option);
 		this.getProductionSchedule().submitSingleTaskOrder(order);
+		
+		if (this.getSchedulerIntermediate().isIdle()) 
+			this.getSchedulerIntermediate().unIdle();
+		
 		return order;
 	}
 	
@@ -485,6 +489,10 @@ public class Manufacturer {
 		Specification orderSpecs = model.makeSpecification(options);
 		StandardOrder newOrder = this.getOrderFactory().makeNewStandardOrder(model, orderSpecs);
 		this.getProductionSchedule().submitStandardOrder(newOrder);
+		
+		if (this.getSchedulerIntermediate().isIdle()) 
+			this.getSchedulerIntermediate().unIdle();
+		
 		return newOrder;
 	}
 

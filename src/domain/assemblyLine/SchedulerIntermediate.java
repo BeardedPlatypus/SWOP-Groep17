@@ -170,8 +170,17 @@ public class SchedulerIntermediate implements TimeObserver{
 		return this.isIdle;
 	}
 
-	private void setIdle(boolean newIsIdle) {
+	public void unIdle() {
+		if (this.isIdle) {
+			this.setIdle(false);
+			this.advance();
+		}
+	}
+	
+	private void setIdle(boolean newIsIdle) { 
+		
 		this.isIdle = newIsIdle;
+		
 	}
 
 	/** If this AssemblyLine is idle. */
