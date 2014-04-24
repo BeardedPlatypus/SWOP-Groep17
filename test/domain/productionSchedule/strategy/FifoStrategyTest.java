@@ -34,6 +34,7 @@ public class FifoStrategyTest {
 	
 	Order newOrder1;
 	Order newOrder2;
+	Order newOrder3;
 	
 	@Mock Model model;
 	@Mock Specification spec;
@@ -57,6 +58,7 @@ public class FifoStrategyTest {
 		
 		newOrder1 = new StandardOrder(model, spec, 4, new DateTime(0, 0, 0));
 		newOrder2 = new StandardOrder(model, spec, 5, new DateTime(5, 0, 0));
+		newOrder3 = new StandardOrder(model, spec, 6, new DateTime(3, 12, 0));
 		
 		orderQueue = new ArrayList<Order>(Arrays.asList(order1, order2, order3, order4));
 	}
@@ -96,6 +98,24 @@ public class FifoStrategyTest {
 	}
 	
 	@Test
+	public void addToTest_emptyList() {
+		List<Order> orderQueue = new ArrayList<Order>();
+		strat.addTo(order1, orderQueue);
+		assertEquals(order1, orderQueue.get(0));
+	}
+	
+	@Test
+	public void addToTest_singleElement() {
+		List<Order> orderQueue = new ArrayList<Order>(Arrays.asList(order2));
+		strat.addTo(order1, orderQueue);
+		assertEquals(orderQueue.get(0), order1);
+		
+		orderQueue = new ArrayList<Order>(Arrays.asList(order2));
+		strat.addTo(order3, orderQueue);
+		assertEquals(orderQueue.get(0), order2);
+	}
+	
+	@Test
 	public void addToTest_beginning() {
 		strat.addTo(newOrder1, orderQueue);
 		assertEquals(newOrder1, orderQueue.get(0));
@@ -112,6 +132,11 @@ public class FifoStrategyTest {
 	public void addToTest_end() {
 		strat.addTo(newOrder2, orderQueue);
 		assertEquals(newOrder2, orderQueue.get(orderQueue.size() - 1));
+		
+		orderQueue = new ArrayList<Order>(Arrays.asList(order1, order2, order3, order4));
+		strat.addTo(newOrder3, orderQueue);
+		assertEquals(newOrder3, orderQueue.get(orderQueue.size() - 2));
+		assertEquals(order4, orderQueue.get(orderQueue.size() - 1));
 	}
 	
 	@Test

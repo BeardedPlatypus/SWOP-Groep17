@@ -57,9 +57,15 @@ public abstract class SchedulingStrategy implements SchedulingStrategyView {
 	 * 										SchedulingStrategy.compare(p, order) >= 0) 
 	 */
 	public void addTo(Order order, List<Order> orderQueue) {
+		if (orderQueue.size() == 0) {
+			orderQueue.add(order);
+		}
+		if (orderQueue.size() == 1) {
+			this.handleSingleElement(order, orderQueue);
+		}
 		int index = this.binarySearch(order, orderQueue);
 		if (index == orderQueue.size() - 1) {
-			orderQueue.add(order);
+			this.handleLastIndex(order, orderQueue);
 		}
 		else orderQueue.add(index, order);
 	}
@@ -98,5 +104,40 @@ public abstract class SchedulingStrategy implements SchedulingStrategyView {
 			}
 		}
 		return left;
+	}
+	
+	/**
+	 * When adding, handle the case that there is a single element in the list.
+	 * 
+	 * @param order
+	 * 		The order to be added
+	 * @param orderQueue
+	 * 		The list to add the order to
+	 */
+	private void handleSingleElement(Order order, List<Order> orderQueue) {
+		int compare = this.compare(order, orderQueue.get(0));
+		if (compare <= 0) {
+			orderQueue.add(0, order);
+		} else {
+			orderQueue.add(order);
+		}
+	}
+	
+	/**
+	 * When adding, handle the case that binary search returned the largest index
+	 * possible.
+	 * 
+	 * @param order
+	 * 		The order to be added
+	 * @param orderQueue
+	 * 		The list to add the order to
+	 */
+	private void handleLastIndex(Order order, List<Order> orderQueue) {
+		int compare = this.compare(order, orderQueue.get(orderQueue.size() - 1));
+		if (compare <= 0) {
+			orderQueue.add(orderQueue.size() - 1, order);
+		} else {
+			orderQueue.add(order);
+		}
 	}
 }
