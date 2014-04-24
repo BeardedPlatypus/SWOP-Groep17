@@ -143,6 +143,14 @@ public class ProductionScheduleFacade {
 		return this.getSchedulerContext().getNextStandardOrder();
 	}
 	
+	public StandardOrder popNextScheduledStandardOrder() {
+		return this.getSchedulerContext().popNextStandardOrder();
+	}
+	
+	public SingleTaskOrder popNextScheSingleTaskOrder(TaskType t) {
+		return this.getSchedulerContext().popNextSingleTaskOrderOfType(t);
+	}
+	
 	public boolean hasStandardOrders() {
 		return this.getSchedulerContext().hasStandardOrders();
 	}

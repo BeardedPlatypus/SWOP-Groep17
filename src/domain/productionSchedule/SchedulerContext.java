@@ -358,7 +358,8 @@ public class SchedulerContext {
 		List<SingleTaskOrder> res = new ArrayList<>();
 		
 		for (List<SingleTaskOrder> l: this.taskOrderQueue.values()) {
-			res.add(l.get(0));
+			if (!l.isEmpty())
+				res.add(l.get(0));
 		}
 		
 		return res;

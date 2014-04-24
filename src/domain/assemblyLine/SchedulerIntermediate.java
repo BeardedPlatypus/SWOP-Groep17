@@ -1,5 +1,6 @@
 package domain.assemblyLine;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -93,39 +94,105 @@ public class SchedulerIntermediate implements TimeObserver{
 	// Logic Related to calculating stuff.
 	//--------------------------------------------------------------------------
 	void advance() {
+		//FIXME refactor to make prettier.
 		ProductionScheduleFacade prodSched = this.getManufacturer().getProductionSchedule();
 		AssemblyLine assLine = this.getAssemblyLine(); 
 		
-		if (prodSched.hasStandardOrders()) {
-		
+		if (prodSched.hasStandardOrders() && canScheduleNextOrderToday()) {
+			// can a singletask be ordered without time increase
+			List<SingleTaskOrder> taskOrders = prodSched.getNextSingleTasks();
+			StandardOrder so = prodSched.getNextScheduledStandardOrder();
+			List<SingleTaskOrder> canBeAdded = new ArrayList<>();
+			
+			for(SingleTaskOrder o: taskOrders) {
+				if (canScheduleWithoutTimeIncrease(so, o))
+					canBeAdded.add(o);
+			}
+			
+			if (!canBeAdded.isEmpty()) {
+				SingleTaskOrder mostUrgent = canBeAdded.remove(0);
+				
+				for (SingleTaskOrder o : canBeAdded) {
+					if (o.getDeadline().compareTo(mostUrgent.getDeadline()) == -1) {
+						mostUrgent = o;
+					}
+				}
+				assLine.advance(prodSched.popNextScheSingleTaskOrder(mostUrgent.getSingleTaskOrderType()));
+			} else {
+				assLine.advance(prodSched.popNextScheduledStandardOrder());
+			}						
 		} else {
 			if (prodSched.hasSingleTaskOrders()) {
+				List<SingleTaskOrder> taskOrders = prodSched.getNextSingleTasks();
+				List<SingleTaskOrder> canBeAdded = new ArrayList<>();
+				
+				for (SingleTaskOrder o : taskOrders) {
+					if (this.canScheduleOrderToday(o))
+						canBeAdded.add(o);
+				}
+					
+				if (canBeAdded.isEmpty()) {
+					if (assLine.isEmpty()) {
+						//increment to next day
+						DateTime nextDay = new DateTime(this.getCurrentTime().getDays() + 1, 
+								                        STARTHOUR, 0);
+						
+						prodSched.incrementTime(nextDay.subtractTime(this.getCurrentTime()));
+						this.advance();
+					} else {
+						//put nothing on the assembly just continue.
+						assLine.advance(null);
+					}
+				} else {
+					SingleTaskOrder mostUrgent = canBeAdded.remove(0);
+					
+					for (SingleTaskOrder o : canBeAdded) {
+						if (o.getDeadline().compareTo(mostUrgent.getDeadline()) == -1) {
+							mostUrgent = o;
+						}
+					}
+					assLine.advance(prodSched.popNextScheSingleTaskOrder(mostUrgent.getSingleTaskOrderType()));
+				}
+				
+				
 			} else if (!assLine.isEmpty()) {
-				assLine.
+				// put nothing on the assembly just continue
+				assLine.advance(null);
+			} else {
+				this.setIdle(true);				
 			}
 				
 		}
+			
+	}	
 		
-		
-		
-		
-					
-					
-					
-		} else {
-			if (this.canScheduleNextOrderToday()) {
-				// Schedule else
-			} else {
-				if (this.canScheduleOrderToday(order))
-			}
-		}
-		
+	public boolean isIdle() {
+		return this.isIdle;
 	}
 
-	
+	private void setIdle(boolean newIsIdle) {
+		this.isIdle = newIsIdle;
+	}
 
 	/** If this AssemblyLine is idle. */
 	private boolean isIdle = false;
+	
+	private boolean canScheduleWithoutTimeIncrease(StandardOrder so, SingleTaskOrder to) {
+		AssemblyLine assLine = this.getAssemblyLine();
+		AssemblyProcedure procSo = assLine.makeAssemblyProcedure(so);
+		AssemblyProcedure procTo = assLine.makeAssemblyProcedure(to);
+		
+		List<AssemblyProcedure> virtAss = assLine.getAssemblyProcedures();
+		
+		LinkedList<AssemblyProcedure> withoutTask = new LinkedList<>(virtAss);
+		LinkedList<AssemblyProcedure> withTask = new LinkedList<>(virtAss);
+		
+		withoutTask.set(0, procSo);
+		withTask.set(0, procTo);
+		withTask.addFirst(procSo);
+		
+		return calculateTimeToFinishVirtual(withTask) == calculateTimeToFinishVirtual(withoutTask);
+	}
 	
 	/**
 	 * The number of minutes to finish the specified virtual AssemblyLine.
