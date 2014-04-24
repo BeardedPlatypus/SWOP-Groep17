@@ -17,11 +17,11 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 
 import domain.DateTime;
-import domain.Model;
-import domain.Option;
-import domain.OptionCategory;
-import domain.Specification;
-import domain.TaskType;
+import domain.car.Model;
+import domain.car.Option;
+import domain.car.OptionCategory;
+import domain.car.Specification;
+import domain.assemblyLine.TaskType;
 import domain.order.Order;
 import domain.order.StandardOrder;
 import domain.productionSchedule.strategy.FifoStrategy;

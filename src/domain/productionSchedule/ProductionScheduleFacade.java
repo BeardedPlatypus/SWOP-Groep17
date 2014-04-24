@@ -1,12 +1,15 @@
 package domain.productionSchedule;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.car.Model;
 import domain.car.Option;
+import domain.car.Specification;
 import domain.order.Order;
 import domain.order.OrderContainer;
 import domain.order.SingleTaskOrder;
@@ -227,6 +230,17 @@ public class ProductionScheduleFacade {
 	
 	/** The SchedulerContext of this ProductionScheduleFacade. */
 	private final SchedulerContext schedulerContext;
+	
+	/**
+	 * Build a list of all Specification batches that are currently eligible
+	 * for use in a batch strategy. All batches that are shared by at least three
+	 * Orders are included.
+	 * 
+	 * @return The list of batches
+	 */
+	public List<Specification> getEligibleBatches() {
+		return this.getSchedulerContext().getEligibleBatches();
+	}
 	
 	//--------------------------------------------------------------------------
 	// Intermediate methods
