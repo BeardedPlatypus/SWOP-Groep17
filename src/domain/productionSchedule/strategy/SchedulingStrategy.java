@@ -36,7 +36,7 @@ public abstract class SchedulingStrategy implements SchedulingStrategyView {
 	 * @param orderQueue
 	 * 		the queue of orders that should be sorted according to this SchedulingStrategy.
 	 * 
-	 * @postcondition | FORALL order o, order p: (new orderQueue).indexOff(o) < (new orderQueue).indexOff(p) ->
+	 * @postcondition | FORALL order o, order p: (new orderQueue).indexOf(o) < (new orderQueue).indexOf(p) ->
 	 * 				  |                          SchedulingStrategy.compare(o, p) <= 0; 
 	 */
 	public abstract void sort(List<Order> orderQueue);
