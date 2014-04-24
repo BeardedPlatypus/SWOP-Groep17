@@ -1,8 +1,10 @@
 package domain.productionSchedule;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import domain.TaskType;
 import domain.order.Order;
@@ -25,26 +27,39 @@ public class SchedulerContext {
 	// Constructor
 	//--------------------------------------------------------------------------
 	/**
-	 * Construct a new SchedulerContext with the given starting DateTime and 
-	 * overtime in minutes. 
+	 * //TODO fix doc
+	 * Construct a new SchedulerContext with the given default Strategy and the
+	 * TaskTypes this context should have a queue for
 	 * 
-	 * @param initTime
-	 * 		The starting time of this new SchedulerContext
-	 * @param overTime
-	 * 		The overtime of this new SchedulerContext in minutes. 
+	 * @param defaultStrategy
+	 * 		The default strategy of this new SchedulerContext
+	 * @param taskCategories
+	 * 		The supported tasktypes of the new context 
+	 * @post this.getCurrentStrategy == defaultStrategy
+	 * 
 	 * 
 	 * @throws IllegalArgumentException
-	 * 		| initTime == null
+	 * 		if either of the parameters is or contains null
 	 */
 	public SchedulerContext(SchedulingStrategy<StandardOrder> defaultStrategy,
 			                List<TaskType> taskCategories) throws IllegalArgumentException {
+		if(defaultStrategy == null)
+			throw new IllegalArgumentException("Strategy should not be null.");
+		if (taskCategories == null)
+			throw new IllegalArgumentException(
+					"taskCategories list should not be null.");
+		if (taskCategories.contains(null))
+			throw new IllegalArgumentException(
+					"taskCategories list should not contain null");
 		//Scheduling variables
 		this.defaultStrategy = defaultStrategy;
 		
 		// Init SingleTaskOrder queues
 		for (TaskType t: taskCategories) {
 			this.taskOrderQueue.put(t, new ArrayList<SingleTaskOrder>());
-		}		
+		}
+		
+		this.setSchedulingStrategy(this.getDefaultStrategy());
 	}
 	
 	//--------------------------------------------------------------------------
@@ -253,7 +268,7 @@ public class SchedulerContext {
 	}
 	
 	/** The queues of all SingleTaskOrders sorted by their TaskType. */
-	private final HashMap<TaskType, List<SingleTaskOrder>> taskOrderQueue = new HashMap<>();
+	private final Map<TaskType, List<SingleTaskOrder>> taskOrderQueue = new EnumMap<>(TaskType.class);
 
 	//--------------------------------------------------------------------------
 	// Adding orders
@@ -291,7 +306,20 @@ public class SchedulerContext {
 		if (!isValidPendingOrder(order)) {
 			throw new IllegalArgumentException("Order is not a valid pending order.");
 		}
-		//TODO
+		if(!taskOrderQueue.containsKey(order.getSingleTaskOrderType())){
+			throw new IllegalArgumentException("Single task type is not correct for this system.");
+		}
+		List<SingleTaskOrder> queue = taskOrderQueue.get(order.getSingleTaskOrderType());
+		boolean added = false;
+		for (int i = 0; i < queue.size(); i++) {
+			if(!added && order.getDeadline().compareTo(queue.get(i).getDeadline())==-1){
+				queue.add(i, order);
+				added = true;
+				break;
+			}
+		}
+		if(!added)
+			queue.add(order);
 	}
 	
 	/**

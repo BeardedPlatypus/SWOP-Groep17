@@ -3,6 +3,7 @@ package domain.order;
 import domain.DateTime;
 import domain.Model;
 import domain.Specification;
+import domain.TaskType;
 
 /** 
  * The SingleTaskOrder provides the interface for a custom order consisting of
@@ -65,4 +66,15 @@ public class SingleTaskOrder extends Order {
 	
 	/** The Deadline of this SingleTaskOrder. */
 	private final DateTime deadline;
+	
+	/**
+	 * Get the tasktype of this singleTaskOrder
+	 * 
+	 * @return the tasktype of this order
+	 */
+	public TaskType getSingleTaskOrderType(){
+		if(this.getSpecifications().getAmountOfOptions()<1)
+			throw new IllegalStateException("This order has no option!");
+		return this.getSpecifications().getOption(0).getType();
+	}
 }
