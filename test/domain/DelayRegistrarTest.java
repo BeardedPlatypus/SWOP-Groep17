@@ -2,12 +2,15 @@ package domain;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
+
 import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.powermock.reflect.Whitebox;
 
 import domain.statistics.DelayRegistrar;
 import domain.statistics.ProcedureStatistics;
@@ -51,9 +54,20 @@ public class DelayRegistrarTest {
 		ProcedureStatistics stats = new ProcedureStatistics(1000);
 		int dayNumber = registrar.getActiveDay().getDayNumber();
 		registrar.addStatistics(stats);
-		Pair<Integer, WorkingDay> lastDelay = registrar.getDelays().get(registrar.getDelays().size());
+		
+		// Using whitebox, because these methods are protected.
+		List<Pair<Integer, WorkingDay>> delays = null;
+		try {
+			delays = Whitebox.invokeMethod(registrar, "getDelays");
+		} catch (Exception e) {
+			// Whitebox reserves the right to re-throw an exception. This method doesn't have the ability to throw
+			// an exception, so this catch should never be reached.
+			e.printStackTrace();
+		}
+		Pair<Integer, WorkingDay> lastDelay = delays.get(delays.size() - 1);
 		assertTrue(1000 == lastDelay.getValue0());
-		assertEquals(dayNumber, registrar.getDelays().get(registrar.getDelays().size() - 1).getValue1().getDayNumber());
+		assertEquals(dayNumber, lastDelay.getValue1().getDayNumber());
+		assertEquals(dayNumber, lastDelay.getValue1().getDayNumber());
 	}
 
 	@Test
@@ -77,33 +91,71 @@ public class DelayRegistrarTest {
 	
 	@Test
 	public void getAverageTest() {
-		double average = registrar.getAverage();
-		assertEquals(80d/3d, average, epsilon);
+		// Using whitebox, because these methods are protected.
+		try {
+			double average = Whitebox.<Double> invokeMethod(registrar,"getAverage");
+			assertEquals(80d/3d, average, epsilon);
+		} catch (Exception e) {
+			// Whitebox reserves the right to rethrow an exception. This method doesn't have the ability to throw
+			// an exception, so this catch should never be reached.
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
 	public void getAverageTest_noStats() {
 		DelayRegistrar registrar = new DelayRegistrar();
-		assertEquals(0, registrar.getAverage(), epsilon);
+		// Using whitebox, because these methods are protected.
+		try {
+			double average = Whitebox.<Double> invokeMethod(registrar,"getAverage");
+			assertEquals(0, average, epsilon);
+		} catch (Exception e) {
+			// Whitebox reserves the right to rethrow an exception. This method doesn't have the ability to throw
+			// an exception, so this catch should never be reached.
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
 	public void getMedianTest() {
-		double median = registrar.getMedian();
-		assertEquals(25, median, epsilon);
+		// Using whitebox, because these methods are protected.
+		try {
+			double median = Whitebox.<Double> invokeMethod(registrar,"getMedian");
+			assertEquals(25, median, epsilon);
+		} catch (Exception e) {
+			// Whitebox reserves the right to rethrow an exception. This method doesn't have the ability to throw
+			// an exception, so this catch should never be reached.
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
 	public void getMedianTest_noStats() {
 		DelayRegistrar registrar = new DelayRegistrar();
-		assertEquals(0, registrar.getMedian(), epsilon);
+		// Using whitebox, because these methods are protected.
+		try {
+			double median = Whitebox.<Double> invokeMethod(registrar,"getMedian");
+			assertEquals(25, median, epsilon);
+		} catch (Exception e) {
+			// Whitebox reserves the right to rethrow an exception. This method doesn't have the ability to throw
+			// an exception, so this catch should never be reached.
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
 	public void getMedianTest_oneStat() {
 		DelayRegistrar registrar = new DelayRegistrar();
 		registrar.addStatistics(new ProcedureStatistics(100));
-		assertEquals(100, registrar.getMedian(), epsilon);
+		// Using whitebox, because these methods are protected.
+		try {
+			double median = Whitebox.<Double> invokeMethod(registrar,"getMedian");
+			assertEquals(100, median, epsilon);
+		} catch (Exception e) {
+			// Whitebox reserves the right to rethrow an exception. This method doesn't have the ability to throw
+			// an exception, so this catch should never be reached.
+			e.printStackTrace();
+		}
 	}
 	
 	@Test

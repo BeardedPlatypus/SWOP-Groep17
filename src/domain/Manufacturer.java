@@ -162,7 +162,7 @@ public class Manufacturer {
 	 * @param strat
 	 * 		The new SchedulingStrategy of this Manufacturer's ProductionSchedule subsystem.
 	 */
-	public void setNewSchedulingAlgorithm(SchedulingStrategy<StandardOrder> strat) {
+	public void setNewSchedulingAlgorithm(SchedulingStrategy strat) {
 		this.getProductionSchedule().setNewSchedulingAlgorithm(strat);
 	}
 	
