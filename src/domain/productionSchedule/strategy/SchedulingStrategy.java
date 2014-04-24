@@ -28,7 +28,7 @@ public abstract class SchedulingStrategy<O extends Order> implements SchedulingS
 	 * 
 	 * @return True if done, false otherwise.
 	 */
-	public abstract boolean isDone(List<Order> orderQueue);
+	public abstract boolean isDone(List<O> orderQueue);
 	
 	/**
 	 * Sort the specified orderQueue according to the internal SchedulingStrategy.
@@ -39,7 +39,7 @@ public abstract class SchedulingStrategy<O extends Order> implements SchedulingS
 	 * @postcondition | FORALL order o, order p: (new orderQueue).indexOf(o) < (new orderQueue).indexOf(p) ->
 	 * 				  |                          SchedulingStrategy.compare(o, p) <= 0; 
 	 */
-	public abstract void sort(List<Order> orderQueue);
+	public abstract void sort(List<O> orderQueue);
 	
 	/**
 	 * Add the specified order to the specified orderQueue according to the internal SchedulingStrategy.
@@ -56,7 +56,7 @@ public abstract class SchedulingStrategy<O extends Order> implements SchedulingS
 	 * 									((new orderQueue).indexOf(p) > (new orderQueue).indexOf(order) ->
 	 * 										SchedulingStrategy.compare(p, order) >= 0) 
 	 */
-	public void addTo(Order order, List<Order> orderQueue) {
+	public void addTo(O order, List<O> orderQueue) {
 		if (orderQueue.size() == 0) {
 			orderQueue.add(order);
 		}
@@ -82,12 +82,12 @@ public abstract class SchedulingStrategy<O extends Order> implements SchedulingS
 	 * 		   | o = p ->  0
 	 * 		   | o > p -> +1
 	 */
-	public abstract int compare(Order o, Order p);
+	public abstract int compare(O o, O p);
 	
 	@Override
 	public abstract String getName();
 	
-	private int binarySearch(Order order, List<Order> orderList) {
+	private int binarySearch(O order, List<O> orderList) {
 		int left = 0;
 		int right = orderList.size() - 1;
 		while (left != right) {
@@ -114,7 +114,7 @@ public abstract class SchedulingStrategy<O extends Order> implements SchedulingS
 	 * @param orderQueue
 	 * 		The list to add the order to
 	 */
-	private void handleSingleElement(Order order, List<Order> orderQueue) {
+	private void handleSingleElement(O order, List<O> orderQueue) {
 		int compare = this.compare(order, orderQueue.get(0));
 		if (compare <= 0) {
 			orderQueue.add(0, order);
@@ -132,7 +132,7 @@ public abstract class SchedulingStrategy<O extends Order> implements SchedulingS
 	 * @param orderQueue
 	 * 		The list to add the order to
 	 */
-	private void handleLastIndex(Order order, List<Order> orderQueue) {
+	private void handleLastIndex(O order, List<O> orderQueue) {
 		int compare = this.compare(order, orderQueue.get(orderQueue.size() - 1));
 		if (compare <= 0) {
 			orderQueue.add(orderQueue.size() - 1, order);

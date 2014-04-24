@@ -10,7 +10,7 @@ import domain.order.Order;
  * @author Martinus Wilhelmus Tegelaers, Thomas Vochten
  *
  */
-public class FifoStrategy extends SchedulingStrategy {
+public class FifoStrategy<O extends Order> extends SchedulingStrategy<O> {
 	
 	//--------------------------------------------------------------------------
 	// Constructor
@@ -32,17 +32,17 @@ public class FifoStrategy extends SchedulingStrategy {
 	}
 	
 	@Override
-	public int compare(Order o, Order p) {
+	public int compare(O o, O p) {
 		return this.getComparator().compare(o, p);
 	}
 	
 	@Override
-	public void sort(List<Order> orderQueue) {
+	public void sort(List<O> orderQueue) {
 		Collections.sort(orderQueue, this.getComparator());
 	}
 
 	@Override
-	public boolean isDone(List<Order> orderQueue) {
+	public boolean isDone(List<O> orderQueue) {
 		return false;
 	}
 	

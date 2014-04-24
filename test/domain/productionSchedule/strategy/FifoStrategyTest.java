@@ -25,21 +25,21 @@ import domain.order.StandardOrder;
 @RunWith(PowerMockRunner.class)
 public class FifoStrategyTest {
 	
-	FifoStrategy strat = new FifoStrategy();
+	FifoStrategy<StandardOrder> strat = new FifoStrategy<>();
 	
-	Order order1;
-	Order order2;
-	Order order3;
-	Order order4;
+	StandardOrder order1;
+	StandardOrder order2;
+	StandardOrder order3;
+	StandardOrder order4;
 	
-	Order newOrder1;
-	Order newOrder2;
-	Order newOrder3;
+	StandardOrder newOrder1;
+	StandardOrder newOrder2;
+	StandardOrder newOrder3;
 	
 	@Mock Model model;
 	@Mock Specification spec;
 	
-	List<Order> orderQueue;
+	List<StandardOrder> orderQueue;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -49,7 +49,7 @@ public class FifoStrategyTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		
-		strat = new FifoStrategy();
+		strat = new FifoStrategy<StandardOrder>();
 		
 		order1 = new StandardOrder(model, spec, 0, new DateTime(1, 0, 0));
 		order2 = new StandardOrder(model, spec, 1, new DateTime(2, 0, 0));
@@ -60,7 +60,7 @@ public class FifoStrategyTest {
 		newOrder2 = new StandardOrder(model, spec, 5, new DateTime(5, 0, 0));
 		newOrder3 = new StandardOrder(model, spec, 6, new DateTime(3, 12, 0));
 		
-		orderQueue = new ArrayList<Order>(Arrays.asList(order1, order2, order3, order4));
+		orderQueue = new ArrayList<StandardOrder>(Arrays.asList(order1, order2, order3, order4));
 	}
 
 	@Test
@@ -91,7 +91,7 @@ public class FifoStrategyTest {
 	
 	@Test
 	public void sortTest() {
-		List<Order> otherQueue = new ArrayList<Order>(Arrays.asList(order3, order1, order2, order4));
+		List<StandardOrder> otherQueue = new ArrayList<>(Arrays.asList(order3, order1, order2, order4));
 		assertFalse(this.orderQueue.equals(otherQueue));
 		strat.sort(otherQueue);
 		assertEquals(otherQueue, this.orderQueue);
@@ -99,18 +99,18 @@ public class FifoStrategyTest {
 	
 	@Test
 	public void addToTest_emptyList() {
-		List<Order> orderQueue = new ArrayList<Order>();
+		List<StandardOrder> orderQueue = new ArrayList<StandardOrder>();
 		strat.addTo(order1, orderQueue);
 		assertEquals(order1, orderQueue.get(0));
 	}
 	
 	@Test
 	public void addToTest_singleElement() {
-		List<Order> orderQueue = new ArrayList<Order>(Arrays.asList(order2));
+		List<StandardOrder> orderQueue = new ArrayList<StandardOrder>(Arrays.asList(order2));
 		strat.addTo(order1, orderQueue);
 		assertEquals(orderQueue.get(0), order1);
 		
-		orderQueue = new ArrayList<Order>(Arrays.asList(order2));
+		orderQueue = new ArrayList<StandardOrder>(Arrays.asList(order2));
 		strat.addTo(order3, orderQueue);
 		assertEquals(orderQueue.get(0), order2);
 	}
@@ -123,7 +123,7 @@ public class FifoStrategyTest {
 	
 	@Test
 	public void addToTest_middle() {
-		Order order = new StandardOrder(model, spec, 6, new DateTime(3, 0, 0));
+		StandardOrder order = new StandardOrder(model, spec, 6, new DateTime(3, 0, 0));
 		strat.addTo(order, orderQueue);
 		assertEquals(order, orderQueue.get(2));
 	}
@@ -133,7 +133,7 @@ public class FifoStrategyTest {
 		strat.addTo(newOrder2, orderQueue);
 		assertEquals(newOrder2, orderQueue.get(orderQueue.size() - 1));
 		
-		orderQueue = new ArrayList<Order>(Arrays.asList(order1, order2, order3, order4));
+		orderQueue = new ArrayList<StandardOrder>(Arrays.asList(order1, order2, order3, order4));
 		strat.addTo(newOrder3, orderQueue);
 		assertEquals(newOrder3, orderQueue.get(orderQueue.size() - 2));
 		assertEquals(order4, orderQueue.get(orderQueue.size() - 1));

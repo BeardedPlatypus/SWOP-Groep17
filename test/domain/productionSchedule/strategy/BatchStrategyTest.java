@@ -27,7 +27,7 @@ public class BatchStrategyTest {
 	
 	@Rule public ExpectedException expected = ExpectedException.none();
 	
-	BatchStrategy strat;
+	BatchStrategy<Order> strat;
 	Specification spec;
 	Specification otherSpec;
 	
@@ -71,18 +71,18 @@ public class BatchStrategyTest {
 		
 		orderQueue = new ArrayList<Order>(Arrays.asList(order1, order2, order3, order4));
 		
-		strat = new BatchStrategy(spec);
+		strat = new BatchStrategy<Order>(spec);
 	}
 	
 	@Test
 	public void constructor_nullSpec() {
 		expected.expect(IllegalArgumentException.class);
-		new BatchStrategy(null);
+		new BatchStrategy<Order>(null);
 	}
 	
 	@Test
 	public void constructor_valid() {
-		BatchStrategy strat = new BatchStrategy(spec);
+		BatchStrategy<Order> strat = new BatchStrategy<Order>(spec);
 		BatchComparator comp = Whitebox.getInternalState(strat, "comparator");
 		BatchComparator otherComp = new BatchComparator(spec);
 		assertEquals(Whitebox.getInternalState(comp, Specification.class),
