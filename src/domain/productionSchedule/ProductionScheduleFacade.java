@@ -1,5 +1,6 @@
 package domain.productionSchedule;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import domain.DateTime;
@@ -109,7 +110,7 @@ public class ProductionScheduleFacade {
 	 */
 	public List<OrderContainer> getPendingStandardOrderContainers() {
 		return this.getSchedulerContext().getPendingStandardOrders();
-	}	
+	}
 	
 	/**
 	 * Check if the specified order is an element of this ProductionSchedule.
@@ -124,6 +125,24 @@ public class ProductionScheduleFacade {
 	 */
 	public boolean contains(OrderContainer order) throws IllegalArgumentException {
 		return this.getSchedulerContext().containsOrder(order);
+	}
+	
+	/** 
+	 * Get the next OrderContainer that will be scheduled by this SchedulerContext.
+	 * 
+	 * @return The next OrderContainer that will be scheduled by this SchedulerContext.
+	 */
+	public OrderContainer getNextScheduledOrderContainer() {
+		return this.getSchedulerContext().getNextScheduledOrder();
+	}
+	
+	/**
+	 * Get the next Order that will be scheduled by this SchedulerContext.
+	 * 
+	 * @return The next Order that will be scheduled by this SchedulerContext.
+	 */
+	public Order getNextScheduledOrder() {
+		return this.getSchedulerContext().getNextScheduledOrder();
 	}
 
 	//--------------------------------------------------------------------------
