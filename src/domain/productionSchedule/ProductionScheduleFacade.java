@@ -3,6 +3,7 @@ package domain.productionSchedule;
 import java.util.List;
 import domain.DateTime;
 import domain.Manufacturer;
+import domain.assemblyLine.TaskType;
 import domain.car.Specification;
 import domain.order.Order;
 import domain.order.OrderContainer;
@@ -129,8 +130,8 @@ public class ProductionScheduleFacade {
 	 * 
 	 * @return The next OrderContainer that will be scheduled by this SchedulerContext.
 	 */
-	public OrderContainer getNextScheduledOrderContainer() {
-		return this.getSchedulerContext().getNextScheduledOrder();
+	public OrderContainer getNextScheduledStandardOrderContainer() {
+		return this.getNextScheduledStandardOrder();
 	}
 	
 	/**
@@ -138,11 +139,34 @@ public class ProductionScheduleFacade {
 	 * 
 	 * @return The next Order that will be scheduled by this SchedulerContext.
 	 */
-	public Order getNextScheduledOrder() {
-		return this.getSchedulerContext().getNextScheduledOrder();
+	public StandardOrder getNextScheduledStandardOrder() {
+		return this.getSchedulerContext().getNextStandardOrder();
+	}
+	
+	public StandardOrder popNextScheduledStandardOrder() {
+		return this.getSchedulerContext().popNextStandardOrder();
+	}
+	
+	public SingleTaskOrder popNextScheSingleTaskOrder(TaskType t) {
+		return this.getSchedulerContext().popNextSingleTaskOrderOfType(t);
+	}
+	
+	public boolean hasStandardOrders() {
+		return this.getSchedulerContext().hasStandardOrders();
 	}
 
+	public List<SingleTaskOrder> getNextSingleTasks() {
+		return this.getSchedulerContext().getNextSingleTaskOrders();
+	}
+	
+	public SingleTaskOrder getNextScheduledSingleTaskOrder(TaskType t) {
+		return this.getSchedulerContext().getNextSingleTaskOrderOfType(t);
+	}
 
+	public boolean hasSingleTaskOrders() {
+		return this.getSchedulerContext().hasSingleTaskOrders();
+	}
+	
 	/** 
 	 * Get the estimated completion time of the specified order in this ProductionSchedule.
 	 * 

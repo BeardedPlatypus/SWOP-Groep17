@@ -1,10 +1,16 @@
 package domain.assemblyLine;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
 import domain.DateTime;
+import domain.Manufacturer;
+import domain.order.Order;
+import domain.order.SingleTaskOrder;
+import domain.order.StandardOrder;
+import domain.productionSchedule.ProductionScheduleFacade;
 import domain.productionSchedule.TimeObserver;
 
 /**
@@ -24,6 +30,51 @@ public class SchedulerIntermediate implements TimeObserver{
 		this.assemblyLine = assemblyLine;
 	}
 	
+	/**
+	 * Set the Manufacturer of this SchedulerIntermediate to the specified manufacturer. 
+	 * 
+	 * @param manufacturer
+	 * 		The new manufacturer of this SchedulerIntermediate. 
+	 * 
+	 * @postcondition | (new this).getManufacturer() == manufacturer.
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		| manufacturer == null
+	 * @throws IllegalStateException 
+	 * 		| manufacturer.getSchedulerIntermediate() == this 
+	 * @throws IllegalStateException
+	 * 		manufacturer has already been set.
+	 */
+	public void setManufacturer(Manufacturer manufacturer) throws IllegalStateException {
+		if (manufacturer == null)
+			throw new IllegalArgumentException("Manufacturer cannot be null.");
+		if (manufacturer.getSchedulerIntermediate() != this)
+			throw new IllegalStateException("manufacturer.getOrderFactory() does not match this.");
+		if (this.manufacturer != null) 
+			throw new IllegalStateException("manufacturer has already been set.");
+		
+		this.manufacturer = manufacturer;
+	}
+	
+	/**
+	 * Get the Manufacturer of this SchedulerIntermediate. 
+	 * 
+	 * @return The Manufacturer of this SchedulerIntermediate.
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		Manufacturer has not been set.
+	 */
+	public Manufacturer getManufacturer() {
+		if (this.manufacturer == null)
+			throw new IllegalStateException();
+		
+		return this.manufacturer;
+	}
+
+	/** The Manufacturer of this OrderFactory. */
+	private Manufacturer manufacturer = null;
+
+	
 	//--------------------------------------------------------------------------
 	// AssemblyLine related functions
 	//--------------------------------------------------------------------------
@@ -42,21 +93,157 @@ public class SchedulerIntermediate implements TimeObserver{
 	//--------------------------------------------------------------------------
 	// Logic Related to calculating stuff.
 	//--------------------------------------------------------------------------
+	void advance() {
+		//FIXME refactor to make prettier.
+		ProductionScheduleFacade prodSched = this.getManufacturer().getProductionSchedule();
+		AssemblyLine assLine = this.getAssemblyLine(); 
+		
+		if (prodSched.hasStandardOrders() && canScheduleNextOrderToday()) {
+			// can a singletask be ordered without time increase
+			List<SingleTaskOrder> taskOrders = prodSched.getNextSingleTasks();
+			StandardOrder so = prodSched.getNextScheduledStandardOrder();
+			List<SingleTaskOrder> canBeAdded = new ArrayList<>();
+			
+			for(SingleTaskOrder o: taskOrders) {
+				if (canScheduleWithoutTimeIncrease(so, o))
+					canBeAdded.add(o);
+			}
+			
+			if (!canBeAdded.isEmpty()) {
+				SingleTaskOrder mostUrgent = canBeAdded.remove(0);
+				
+				for (SingleTaskOrder o : canBeAdded) {
+					if (o.getDeadline().compareTo(mostUrgent.getDeadline()) == -1) {
+						mostUrgent = o;
+					}
+				}
+				assLine.advance(prodSched.popNextScheSingleTaskOrder(mostUrgent.getSingleTaskOrderType()));
+			} else {
+				assLine.advance(prodSched.popNextScheduledStandardOrder());
+			}						
+		} else {
+			if (prodSched.hasSingleTaskOrders()) {
+				List<SingleTaskOrder> taskOrders = prodSched.getNextSingleTasks();
+				List<SingleTaskOrder> canBeAdded = new ArrayList<>();
+				
+				for (SingleTaskOrder o : taskOrders) {
+					if (this.canScheduleOrderToday(o))
+						canBeAdded.add(o);
+				}
+					
+				if (canBeAdded.isEmpty()) {
+					if (assLine.isEmpty()) {
+						//increment to next day
+						DateTime nextDay = new DateTime(this.getCurrentTime().getDays() + 1, 
+								                        STARTHOUR, 0);
+						
+						prodSched.incrementTime(nextDay.subtractTime(this.getCurrentTime()));
+						this.advance();
+					} else {
+						//put nothing on the assembly just continue.
+						assLine.advance(null);
+					}
+				} else {
+					SingleTaskOrder mostUrgent = canBeAdded.remove(0);
+					
+					for (SingleTaskOrder o : canBeAdded) {
+						if (o.getDeadline().compareTo(mostUrgent.getDeadline()) == -1) {
+							mostUrgent = o;
+						}
+					}
+					assLine.advance(prodSched.popNextScheSingleTaskOrder(mostUrgent.getSingleTaskOrderType()));
+				}
+				
+				
+			} else if (!assLine.isEmpty()) {
+				// put nothing on the assembly just continue
+				assLine.advance(null);
+			} else {
+				this.setIdle(true);				
+			}
+				
+		}
+			
+	}	
+		
+	public boolean isIdle() {
+		return this.isIdle;
+	}
+
+	private void setIdle(boolean newIsIdle) {
+		this.isIdle = newIsIdle;
+	}
+
+	/** If this AssemblyLine is idle. */
+	private boolean isIdle = false;
+	
+	private boolean canScheduleWithoutTimeIncrease(StandardOrder so, SingleTaskOrder to) {
+		AssemblyLine assLine = this.getAssemblyLine();
+		AssemblyProcedure procSo = assLine.makeAssemblyProcedure(so);
+		AssemblyProcedure procTo = assLine.makeAssemblyProcedure(to);
+		
+		List<AssemblyProcedure> virtAss = assLine.getAssemblyProcedures();
+		
+		LinkedList<AssemblyProcedure> withoutTask = new LinkedList<>(virtAss);
+		LinkedList<AssemblyProcedure> withTask = new LinkedList<>(virtAss);
+		
+		withoutTask.set(0, procSo);
+		withTask.set(0, procTo);
+		withTask.addFirst(procSo);
+		
+		return calculateTimeToFinishVirtual(withTask) == calculateTimeToFinishVirtual(withoutTask);
+	}
+	
 	/**
 	 * The number of minutes to finish the specified virtual AssemblyLine.
 	 */
 	int calculateTimeToFinishVirtual(List<AssemblyProcedure> virtualAss) {
 		AssemblyLine assemblyLine = this.getAssemblyLine();
 		LinkedList<AssemblyProcedure> virtAss = new LinkedList<>(virtualAss);
+		int virtAssSize = virtAss.size();
+		int assLineSize = assemblyLine.getAssemblyLineSize();
+		int dif = virtAssSize - assLineSize;
+		
 		int totalTime = 0;
 		
-		for (int i = 0; i < assemblyLine.getAssemblyLineSize() + 1; i++) {
-			for (AssemblyProcedure proc : virtAss) {
-				
+		for (int i = 0; i < virtAssSize + 1; i++) {
+			int stepTimeMax = 0;
+			for (int j = 0; j < assemblyLine.getAssemblyLineSize(); j++) {
+				int timeWorkPost = assemblyLine.getTimeOnWorkPost(virtAss.get(dif + j), j);
+				stepTimeMax = Math.max(stepTimeMax, timeWorkPost);
 			}
-			
+			totalTime += stepTimeMax;
+			virtAss.addFirst(null);
+			virtAss.removeLast();
 		}
+		return totalTime;
 	}
+	
+	boolean canScheduleOrderToday(Order order) {
+		AssemblyLine assLine = this.getAssemblyLine();
+		int currentDayMinutes = this.getCurrentTime().hours * 60 + 
+                this.getCurrentTime().minutes;
+
+		int timeLeft = FINISHHOUR * 60 - this.getOverTime() - currentDayMinutes; 
+		
+		if (timeLeft <= 0)
+			return false;
+
+		//Test if a full order can still be scheduled. 
+		AssemblyProcedure virtProc = assLine.makeAssemblyProcedure(order);
+		List<AssemblyProcedure> virtAss = assLine.getAssemblyProcedures();
+		virtAss.set(0, virtProc);
+		
+		int timeToScheduleOrder = calculateTimeToFinishVirtual(virtAss);
+		
+		return  timeLeft >= timeToScheduleOrder;
+	}
+	
+	
+	boolean canScheduleNextOrderToday() {
+		return this.canScheduleOrderToday(this.getManufacturer().getProductionSchedule().getNextScheduledStandardOrder());
+	}
+	
 	
    	//--------------------------------------------------------------------------
 	// TimeObserver related methods.

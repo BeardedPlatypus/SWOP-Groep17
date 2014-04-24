@@ -225,9 +225,8 @@ public class OrderFactory implements TimeObserver {
 			return false;
 		}
 		
-		return model.checkOptionsValidity(options) && 
-			   this.getManufacturer().checkSpecificationRestrictions(model, 
-					                                                 specification);
+		return model.checkOptionsValidity(options) &&
+				this.getManufacturer().checkSpecificationRestrictions(model, specification);
 	}
 	
 	//--------------------------------------------------------------------------
