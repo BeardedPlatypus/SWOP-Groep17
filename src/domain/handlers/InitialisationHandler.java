@@ -84,6 +84,7 @@ public class InitialisationHandler {
 				"Put automatic airco in the car");
 		Option aircoNoneOption = new Option(TaskType.ACCESSORIES, "No Airco",
 				"Put no airco in the car");
+		aircoNoneOption.setNeedsAssemblyTask(false);
 		// -- Wheels Options
 		Option wheelsWinterOption = new Option(TaskType.ACCESSORIES, "Winter tires",
 				"Put winter tires on the car.");
@@ -98,6 +99,7 @@ public class InitialisationHandler {
 				"Mount low spoiler on the car.");
 		Option spoilerNoneOption = new Option(TaskType.ACCESSORIES, "No Spoiler",
 				"Mount no spoiler on the car.");
+		spoilerNoneOption.setNeedsAssemblyTask(false);
 		//----------------------------------------------------------------------
 		
 		//----------------------------------------------------------------------

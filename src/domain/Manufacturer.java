@@ -13,6 +13,7 @@ import domain.order.OrderContainer;
 import domain.order.OrderFactory;
 import domain.productionSchedule.ProductionScheduleFacade;
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
+import domain.productionSchedule.strategy.SchedulingStrategy;
 
 //TODO everything
 
@@ -24,7 +25,6 @@ import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
  * @author Martinus Wilhelmus Tegelaers, Frederik Goovaerts
  */
 public class Manufacturer {
-	
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -54,7 +54,8 @@ public class Manufacturer {
 						CompletedOrderCatalog completedCat,
 						ModelCatalog modelCat,
 						OptionRestrictionManager optionRestMan,
-						ProductionScheduleFacade prodSched)
+						ProductionScheduleFacade prodSched,
+						OrderFactory orderFactory)
 						throws IllegalArgumentException
 	{
 		if(stratFact == null)
@@ -69,18 +70,45 @@ public class Manufacturer {
 			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
 		if(prodSched == null)
 			throw new IllegalArgumentException("ProductionScheduleFacade should not be null.");
+		
 		this.algorithmStrategyFactory = stratFact;
 		this.singleTaskCatalog = singleCat;
 		this.completedOrderCatalog = completedCat;
 		this.modelCatalog = modelCat;
 		this.optionRestrictionManager = optionRestMan;
 		this.productionScheduleFacade = prodSched;
+		this.orderFactory = orderFactory;
 	}
+	
+	/** The SingleTaskCatalog of this Manufacturer. */
+	private final SingleTaskCatalog singleTaskCatalog;
+	
+	//--------------------------------------------------------------------------
+	// AlgorithStrategyFactory methods.
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the AlgorithmFactory of this Manufacturer
+	 * 
+	 * @return the AlogorithmFactory of this Manufacturer. 
+	 */
+	public AlgorithmStrategyFactory getAlgorithmFactory() {
+		return this.algorithmStrategyFactory;
+	}
+	
+	/**
+	 * Set a new SchedulingStrategy of the ProductionSchedule subsystem.
+	 * 
+	 * @param strat
+	 * 		The new SchedulingStrategy of this Manufacturer's ProductionSchedule subsystem.
+	 */
+	public void setNewSchedulingAlgorithm(SchedulingStrategy strat) {
+		this.getProductionSchedule().setNewSchedulingAlgorithm(strat);
+	}
+
 	
 	/** The AlgorithmStrategyFactory of this Manufacturer. */
 	private final AlgorithmStrategyFactory algorithmStrategyFactory;
-	/** The SingleTaskCatalog of this Manufacturer. */
-	private final SingleTaskCatalog singleTaskCatalog;
+	
 	
 	//--------------------------------------------------------------------------
 	// Methods concerning multiple subsystems
@@ -417,30 +445,19 @@ public class Manufacturer {
 	//--------------------------------------------------------------------------
 	// ProductionScheduleFacade related variables and methods. 
 	//--------------------------------------------------------------------------
-	/** Interface into production schedule functionality. */
-	private ProductionScheduleFacade productionScheduleFacade;
-
 	/**
 	 * Get the ProductionSchedule of this Manufacturer.
 	 * 
 	 * @return The ProductionSchedule of this Manufacturer. 
 	 */
-	ProductionScheduleFacade getProductionSchedule() {
+	public ProductionScheduleFacade getProductionSchedule() {
 		return this.productionScheduleFacade;
 	}
+	
+	/** Interface into production schedule functionality. */
+	private final ProductionScheduleFacade productionScheduleFacade;
 
-	/**
-	 * Set the association with the ProductionSchedule. 
-	 * 
-	 * @param productionSchedule
-	 * 		The new ProductionSchedule of this Manufacturer. 
-	 * 
-	 * @post | (new this).getProductionSchedule == productionSchedule
-	 */
-	void setProductionSchedule(ProductionScheduleFacade productionScheduleFacade) {
-		this.productionScheduleFacade = productionScheduleFacade;
-	}
-
+	//--------------------------------------------------------------------------
 	/**
 	 * Remove an Order from this Manufacturer's ProductionSchedule and
 	 * pass it along.
