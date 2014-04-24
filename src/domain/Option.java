@@ -22,6 +22,9 @@ public class Option {
 	 * 		The name of the new Option
 	 * @param optionActionInfo
 	 * 		The description of the new Option
+	 * 
+	 * @post this.needsAssemblyTask == true
+	 * 
 	 * @throws IllegalArgumentException
 	 * 		If one of the arguments is null
 	 */
@@ -77,6 +80,32 @@ public class Option {
 
 	/** The TaskType of this option */
 	private final TaskType optionType;
+	
+	/**
+	 * Check whether or not this option needs an AssemblyTask
+	 * 
+	 * @return whether or not this option needs an AssemblyTask
+	 */
+	public boolean needsAssemblyTask(){
+		return this.needsTask;
+	}
+	
+	/**
+	 * Set whether or not this option needs an AssemblyTask
+	 * 
+	 * @param state
+	 * 		The new state of this Option, regarding the necessity of a task
+	 */
+	public void setNeedsAssemblyTask(boolean state){
+		
+	}
+	
+	/** 
+	 * Boolean that decides whether or not a task should be generated for this
+	 * option.
+	 * The default value for all options is true.
+	 */
+	private boolean needsTask = true;
 	
 	//-------------------------------------------------------------------------
 	// Class Methods
