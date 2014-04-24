@@ -176,8 +176,8 @@ public class CheckOrderDetailsHandler {
 	
 	/**
 	 * Select order with given index from the Completed Orders snapshot.
-	 * Both snapshots are then deprecated and can not be used anymore.
-	 * This method can not be used until the snapshots are refreshed.
+	 * Both snapshots are then deprecated and cannot be used anymore.
+	 * This method cannot be used until the snapshots are refreshed.
 	 * 
 	 * @param orderIndex
 	 * 		The index of the wanted order in the list of completed orders
@@ -202,7 +202,7 @@ public class CheckOrderDetailsHandler {
 	/**
 	 * Select order with given index from the Pending Orders snapshot.
 	 * Both snapshots are then deprecated and can not be used anymore.
-	 * This method can not be used until the snapshots are refreshed.
+	 * This method cannot be used until the snapshots are refreshed.
 	 * 
 	 * @param orderIndex
 	 * 		The index of the wanted order in the list of completed orders
@@ -329,7 +329,7 @@ public class CheckOrderDetailsHandler {
 			OrderDoesNotExistException
 	{
 		if(order == null)
-			throw new IllegalArgumentException("Order can not be null.");
+			throw new IllegalArgumentException("Order cannot be null.");
 		return this.getManufacturer().getEstimatedCompletionTime(order);
 	}
 }

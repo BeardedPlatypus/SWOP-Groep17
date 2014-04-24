@@ -7,7 +7,7 @@ import domain.Manufacturer;
 import domain.WorkPostContainer;
 
 /**
- * Coordinates with the outside world in order to complete assembly tasks of a single workpost.
+ * Coordinates with the outside world in order to complete assembly tasks of a single WorkPost.
  */
 public class PerformAssemblyTaskHandler {
 	//--------------------------------------------------------------------------

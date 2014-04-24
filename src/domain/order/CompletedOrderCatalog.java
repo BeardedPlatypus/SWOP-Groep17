@@ -127,7 +127,7 @@ public class CompletedOrderCatalog implements TimeObserver{
 	}
 
 	/**
-	 * Get the current observed DateTime for interal use.
+	 * Get the current observed DateTime for internal use.
 	 * 
 	 * @return the current observed DateTime
 	 */
