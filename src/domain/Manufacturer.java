@@ -22,12 +22,11 @@ import domain.order.OrderSession;
 import domain.order.SingleOrderSession;
 import domain.order.SingleTaskCatalog;
 import domain.order.SingleTaskOrder;
+import domain.order.StandardOrder;
 import domain.productionSchedule.ProductionScheduleFacade;
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
 import domain.productionSchedule.strategy.SchedulingStrategy;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
-
-//TODO everything
 
 /**
  * A class which represents the book-keeping body of the system.
@@ -463,7 +462,7 @@ public class Manufacturer {
 	 * @throws OptionRestrictionException
 	 * 		When the set of options does not meet the system's restrictions
 	 */
-	public Order submitStandardOrder(Model model, List<Option> options)
+	public OrderContainer submitStandardOrder(Model model, List<Option> options)
 			throws IllegalArgumentException,
 			IllegalCarOptionCombinationException,
 			OptionRestrictionException
@@ -477,7 +476,9 @@ public class Manufacturer {
 		if(!checkOrderValidity(model, options))
 			throw new OptionRestrictionException("Options do not meet Restriction criteria.");
 		Specification orderSpecs = model.makeSpecification(options);
-		return this.getProductionSchedule().submitStandardOrder(model, orderSpecs);
+		StandardOrder newOrder = this.getOrderFactory().makeNewStandardOrder(model, orderSpecs);
+		this.getProductionSchedule().submitStandardOrder(newOrder);
+		return newOrder;
 	}
 
 	
