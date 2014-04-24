@@ -334,6 +334,14 @@ public class SchedulerContext {
 		return this.taskOrderQueue.get(t).remove(0);
 	}
 	
+	boolean hasSingleTaskOrders() {
+		for (TaskType t : this.taskOrderQueue.keySet()) {
+			if (this.hasSingleTaskOrdersOfType(t))
+				return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * check if the queue of the specified Tasktype SingleTaskOrders is not empty.
 	 * 
@@ -345,6 +353,17 @@ public class SchedulerContext {
 	boolean hasSingleTaskOrdersOfType(TaskType t) {
 		return !this.getSingleTaskOrdersOfType(t).isEmpty();
 	}
+	
+	public List<SingleTaskOrder> getNextSingleTaskOrders() {
+		List<SingleTaskOrder> res = new ArrayList<>();
+		
+		for (List<SingleTaskOrder> l: this.taskOrderQueue.values()) {
+			res.add(l.get(0));
+		}
+		
+		return res;
+	}
+
 	
 	/**
 	 * Get a list of all pending task orders of the specified TaskType sorted
@@ -426,4 +445,5 @@ public class SchedulerContext {
 	public boolean isValidPendingOrder(Order order) {
 		return order != null && !order.isCompleted();
 	}
+
 }

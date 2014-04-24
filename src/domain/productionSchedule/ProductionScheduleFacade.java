@@ -142,11 +142,23 @@ public class ProductionScheduleFacade {
 	public StandardOrder getNextScheduledStandardOrder() {
 		return this.getSchedulerContext().getNextStandardOrder();
 	}
+	
+	public boolean hasStandardOrders() {
+		return this.getSchedulerContext().hasStandardOrders();
+	}
 
+	public List<SingleTaskOrder> getNextSingleTasks() {
+		return this.getSchedulerContext().getNextSingleTaskOrders();
+	}
+	
 	public SingleTaskOrder getNextScheduledSingleTaskOrder(TaskType t) {
 		return this.getSchedulerContext().getNextSingleTaskOrderOfType(t);
 	}
 
+	public boolean hasSingleTaskOrders() {
+		return this.getSchedulerContext().hasSingleTaskOrders();
+	}
+	
 	/** 
 	 * Get the estimated completion time of the specified order in this ProductionSchedule.
 	 * 

@@ -6,7 +6,10 @@ import java.util.List;
 
 import domain.DateTime;
 import domain.Manufacturer;
+import domain.order.Order;
+import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
+import domain.productionSchedule.ProductionScheduleFacade;
 import domain.productionSchedule.TimeObserver;
 
 /**
@@ -89,18 +92,57 @@ public class SchedulerIntermediate implements TimeObserver{
 	//--------------------------------------------------------------------------
 	// Logic Related to calculating stuff.
 	//--------------------------------------------------------------------------
+	void advance() {
+		ProductionScheduleFacade prodSched = this.getManufacturer().getProductionSchedule();
+		AssemblyLine assLine = this.getAssemblyLine(); 
+		
+		if (prodSched.hasStandardOrders()) {
+		
+		} else {
+			if (prodSched.hasSingleTaskOrders()) {
+			} else if (!assLine.isEmpty()) {
+				assLine.
+			}
+				
+		}
+		
+		
+		
+		
+					
+					
+					
+		} else {
+			if (this.canScheduleNextOrderToday()) {
+				// Schedule else
+			} else {
+				if (this.canScheduleOrderToday(order))
+			}
+		}
+		
+	}
+
+	
+
+	/** If this AssemblyLine is idle. */
+	private boolean isIdle = false;
+	
 	/**
 	 * The number of minutes to finish the specified virtual AssemblyLine.
 	 */
 	int calculateTimeToFinishVirtual(List<AssemblyProcedure> virtualAss) {
 		AssemblyLine assemblyLine = this.getAssemblyLine();
 		LinkedList<AssemblyProcedure> virtAss = new LinkedList<>(virtualAss);
+		int virtAssSize = virtAss.size();
+		int assLineSize = assemblyLine.getAssemblyLineSize();
+		int dif = virtAssSize - assLineSize;
+		
 		int totalTime = 0;
 		
-		for (int i = 0; i < assemblyLine.getAssemblyLineSize() + 1; i++) {
+		for (int i = 0; i < virtAssSize + 1; i++) {
 			int stepTimeMax = 0;
 			for (int j = 0; j < assemblyLine.getAssemblyLineSize(); j++) {
-				int timeWorkPost = assemblyLine.getTimeOnWorkPost(virtAss.get(j), j);
+				int timeWorkPost = assemblyLine.getTimeOnWorkPost(virtAss.get(dif + j), j);
 				stepTimeMax = Math.max(stepTimeMax, timeWorkPost);
 			}
 			totalTime += stepTimeMax;
@@ -110,7 +152,7 @@ public class SchedulerIntermediate implements TimeObserver{
 		return totalTime;
 	}
 	
-	boolean canScheduleStandardOrderToday(StandardOrder order) {
+	boolean canScheduleOrderToday(Order order) {
 		AssemblyLine assLine = this.getAssemblyLine();
 		int currentDayMinutes = this.getCurrentTime().hours * 60 + 
                 this.getCurrentTime().minutes;
@@ -130,9 +172,11 @@ public class SchedulerIntermediate implements TimeObserver{
 		return  timeLeft >= timeToScheduleOrder;
 	}
 	
+	
 	boolean canScheduleNextOrderToday() {
-		return this.canScheduleStandardOrderToday(this.getManufacturer().getProductionSchedule().getNextScheduledStandardOrder());
+		return this.canScheduleOrderToday(this.getManufacturer().getProductionSchedule().getNextScheduledStandardOrder());
 	}
+	
 	
    	//--------------------------------------------------------------------------
 	// TimeObserver related methods.
