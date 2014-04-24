@@ -13,9 +13,9 @@ import org.junit.runner.RunWith;
 import org.powermock.reflect.Whitebox;
 import org.powermock.modules.junit4.*;
 
-import domain.Option;
-import domain.Specification;
-import domain.TaskType;
+import domain.assemblyLine.TaskType;
+import domain.car.Option;
+import domain.car.Specification;
 
 @RunWith(PowerMockRunner.class)
 public class AlgorithmStrategyFactoryTest {

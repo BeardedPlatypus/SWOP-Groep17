@@ -9,6 +9,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import domain.statistics.DelayRegistrar;
+import domain.statistics.ProcedureStatistics;
+import domain.statistics.WorkingDay;
+
 public class DelayRegistrarTest {
 	
 	@Rule public ExpectedException exception = ExpectedException.none();

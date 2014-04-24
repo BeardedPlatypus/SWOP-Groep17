@@ -3,7 +3,7 @@ package domain.productionSchedule.strategy;
 import java.util.Collections;
 import java.util.List;
 
-import domain.Specification;
+import domain.car.Specification;
 import domain.order.Order;
 
 /**

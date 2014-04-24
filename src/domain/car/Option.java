@@ -1,4 +1,6 @@
-package domain;
+package domain.car;
+
+import domain.assemblyLine.TaskType;
 
 /**
  * An Option object represents a choice a user can make when placing an order.

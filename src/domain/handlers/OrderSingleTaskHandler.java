@@ -4,11 +4,11 @@ import java.util.List;
 
 import domain.DateTime;
 import domain.Manufacturer;
-import domain.Option;
-import domain.OptionCategory;
-import domain.SingleOrderSession;
+import domain.car.Option;
+import domain.car.OptionCategory;
 import domain.order.Order;
 import domain.order.OrderContainer;
+import domain.order.SingleOrderSession;
 import exceptions.OrderDoesNotExistException;
 
 /**

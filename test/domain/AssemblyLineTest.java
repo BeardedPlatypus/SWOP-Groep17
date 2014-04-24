@@ -20,8 +20,21 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import domain.assemblyLine.AssemblyLine;
+import domain.assemblyLine.AssemblyProcedure;
+import domain.assemblyLine.AssemblyProcedureContainer;
+import domain.assemblyLine.AssemblyTask;
+import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.TaskType;
+import domain.assemblyLine.WorkPost;
+import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.WorkPostObserver;
+import domain.car.Option;
+import domain.car.Specification;
 import domain.order.Order;
 import domain.order.OrderContainer;
+import domain.statistics.ProcedureStatistics;
+import domain.statistics.StatisticsLogger;
 
 @RunWith(PowerMockRunner.class)
 public class AssemblyLineTest {

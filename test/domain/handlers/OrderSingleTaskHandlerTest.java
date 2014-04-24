@@ -14,10 +14,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import domain.DateTime;
 import domain.Manufacturer;
-import domain.Option;
-import domain.OptionCategory;
-import domain.SingleOrderSession;
+import domain.car.Option;
+import domain.car.OptionCategory;
 import domain.handlers.OrderSingleTaskHandler;
+import domain.order.SingleOrderSession;
 import exceptions.OrderDoesNotExistException;
 /**
  * @author Simon Slangen

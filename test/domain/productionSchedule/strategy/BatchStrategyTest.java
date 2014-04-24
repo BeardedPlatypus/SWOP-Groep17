@@ -16,10 +16,10 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 
 import domain.DateTime;
-import domain.Model;
-import domain.Option;
-import domain.Specification;
-import domain.TaskType;
+import domain.assemblyLine.TaskType;
+import domain.car.Model;
+import domain.car.Option;
+import domain.car.Specification;
 import domain.order.Order;
 import domain.order.StandardOrder;
 

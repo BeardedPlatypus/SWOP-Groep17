@@ -2,8 +2,8 @@ package ui;
 
 import java.util.List;
 
-import domain.Option;
-import domain.Specification;
+import domain.car.Option;
+import domain.car.Specification;
 import domain.handlers.AdaptSchedulingAlgorithmHandler;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
 

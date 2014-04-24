@@ -1,10 +1,10 @@
-package domain;
+package domain.car;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import util.annotations.Immutable;
-import domain.Model;
+import domain.car.Model;
 
 /**
  * The ModelCatalog provides an overview of the Models that a Manufacturer 

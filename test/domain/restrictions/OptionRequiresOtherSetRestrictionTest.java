@@ -11,8 +11,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import domain.Option;
-import domain.TaskType;
+import domain.assemblyLine.TaskType;
+import domain.car.Option;
 
 public class OptionRequiresOtherSetRestrictionTest {
 	@Rule public ExpectedException exception = ExpectedException.none();

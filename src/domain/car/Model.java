@@ -1,12 +1,11 @@
-package domain;
+package domain.car;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import util.annotations.Immutable;
-import domain.Option;
-import domain.OptionCategory;
+import domain.car.OptionCategory;
 import exceptions.NoOptionCategoriesRemainingException;
 
 /**

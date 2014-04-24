@@ -14,9 +14,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import domain.DateTime;
-import domain.Option;
-import domain.Specification;
-import domain.TaskType;
+import domain.assemblyLine.TaskType;
+import domain.car.Option;
+import domain.car.Specification;
 import domain.order.Order;
 
 /**

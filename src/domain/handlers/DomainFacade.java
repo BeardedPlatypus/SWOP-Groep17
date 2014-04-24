@@ -2,13 +2,13 @@ package domain.handlers;
 
 import java.util.List;
 
-import domain.AssemblyTaskContainer;
 import domain.DateTime;
-import domain.Model;
-import domain.Option;
-import domain.OptionCategory;
-import domain.Specification;
-import domain.WorkPostContainer;
+import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.WorkPostContainer;
+import domain.car.Model;
+import domain.car.Option;
+import domain.car.OptionCategory;
+import domain.car.Specification;
 import domain.order.OrderContainer;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
 import exceptions.IllegalCarOptionCombinationException;

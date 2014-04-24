@@ -3,7 +3,7 @@ package domain.restrictions;
 import java.util.List;
 import java.util.Set;
 
-import domain.Option;
+import domain.car.Option;
 
 /**
  * Restriction which requires the checked set of options to contain ONE OR MORE

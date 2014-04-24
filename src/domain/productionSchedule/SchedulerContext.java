@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import domain.TaskType;
+import domain.assemblyLine.TaskType;
 import domain.order.Order;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;

@@ -1,4 +1,4 @@
-package domain;
+package domain.statistics;
 
 /**
  * Interface for statistical bookkeeping. A Registrar is passed an event in the form

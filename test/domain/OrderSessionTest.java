@@ -13,7 +13,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import domain.car.Model;
+import domain.car.Option;
+import domain.car.OptionCategory;
 import domain.order.Order;
+import domain.order.OrderSession;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;

@@ -9,6 +9,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import domain.statistics.StatisticsLogger;
+
 public class TimeManagerTest {
 
 	TimeManager timeManager;

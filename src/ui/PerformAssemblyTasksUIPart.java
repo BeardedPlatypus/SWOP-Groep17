@@ -3,8 +3,8 @@ package ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.AssemblyTaskContainer;
-import domain.WorkPostContainer;
+import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.WorkPostContainer;
 import domain.handlers.PerformAssemblyTaskHandler;
 
 public class PerformAssemblyTasksUIPart {

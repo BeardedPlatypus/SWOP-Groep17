@@ -2,10 +2,10 @@ package ui;
 
 import java.util.List;
 
-import domain.Model;
-import domain.Option;
-import domain.OptionCategory;
-import domain.Specification;
+import domain.car.Model;
+import domain.car.Option;
+import domain.car.OptionCategory;
+import domain.car.Specification;
 import domain.handlers.NewOrderSessionHandler;
 import domain.order.OrderContainer;
 import exceptions.OptionRestrictionException;
