@@ -296,7 +296,7 @@ public class AssemblyLineTest {
 		assertEquals(new DateTime(0, 0, 60), Whitebox.getInternalState(assemblyLine, "elapsedTime"));
 	}
 	
-	@Test
+	/*@Test
 	public void completeWorkPostTask_simulateAdvance() {
 		Mockito.when(manufacturer.popNextOrderFromSchedule()).thenReturn(newOrder);
 		Mockito.when(newOrder.getMinutesPerPost()).thenReturn(60);
@@ -328,7 +328,7 @@ public class AssemblyLineTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	@Test
 	public void containsTest() {

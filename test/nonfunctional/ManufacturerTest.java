@@ -1,4 +1,4 @@
-package domain;
+package nonfunctional;
 
 import static org.junit.Assert.*;
 
@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import domain.Manufacturer;
 import domain.car.Model;
 import domain.car.ModelCatalog;
 import domain.car.Specification;

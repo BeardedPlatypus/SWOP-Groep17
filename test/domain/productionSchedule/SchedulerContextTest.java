@@ -152,7 +152,7 @@ public class SchedulerContextTest {
 		schedCon.setSchedulingStrategy(realStrat);
 		schedCon.addNewStandardOrder(order1);
 		schedCon.addNewStandardOrder(order2);
-		assertEquals(order1, schedCon.getNextScheduledOrderContainer());
+		assertEquals(order1, schedCon.getNextStandardOrder());
 	}
 
 	@Test
@@ -161,8 +161,8 @@ public class SchedulerContextTest {
 		schedCon.setSchedulingStrategy(realStrat);
 		schedCon.addNewStandardOrder(order1);
 		schedCon.addNewStandardOrder(order2);
-		assertEquals(order1, schedCon.getNextScheduledOrder());
-		assertEquals(order1, schedCon.getNextScheduledOrder());
+		assertEquals(order1, schedCon.getNextStandardOrder());
+		assertEquals(order1, schedCon.getNextStandardOrder());
 	}
 	
 	@Test
