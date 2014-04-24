@@ -94,7 +94,57 @@ public class Manufacturer {
 	
 	/** The SingleTaskCatalog of this Manufacturer. */
 	private final SingleTaskCatalog singleTaskCatalog;
+
 	
+	//--------------------------------------------------------------------------
+	// Methods concerning multiple subsystems
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the system's pending orders. This includes the orders in the production
+	 * schedule, queuing to be assembled, as well as the orders which are active
+	 * on the assembly line.
+	 * 
+	 * @return the list of pending orders in the system
+	 */
+	public List<OrderContainer> getPendingOrderContainers() {
+		List<OrderContainer> pending = this.getAssemblingPendingOrderContainers();
+		pending.addAll(this.getSchedulePendingOrderContainers());
+		return pending;
+	}
+	
+	
+	/**
+	 * Query the system for estimated completion time of given order.
+	 * Checks sequentially if the order is found in the ProductionSchedule, the
+	 * AssemblyLine and the CompletedOrdersCatalog.
+	 * If the order is found, it queries the respective component for the ECT.
+	 * If the order is not present in the system, the system throws an
+	 * OrderDoesNotExistException.
+	 * 
+	 * @param order
+	 * 		The order to find in the system and return the ECT for
+	 * 
+	 * @return the ECT of given order
+	 * 
+	 * @throws OrderDoesNotExistException
+	 * 		When the order is not found in the system.
+	 */
+	//TODO Aan elkaar knopen
+	//FIXME FIX EVERYTHING
+	public DateTime getEstimatedCompletionTime(OrderContainer order) throws OrderDoesNotExistException{
+		if(this.getProductionSchedule().contains(order))
+			return this.getProductionSchedule().getEstimatedCompletionTime(order);
+		if(this.getAssemblyLine().contains(order))
+			return this.getAssemblyLine().getEstimatedCompletionTime(order);
+		if(this.getCompletedOrderCatalog().contains(order))
+			return this.getCompletedOrderCatalog().getCompletionTime(order);
+		throw new OrderDoesNotExistException("Order was not found in the system.");
+	}
+	
+	
+	//--------------------------------------------------------------------------
+	// AlgorithStrategyFactory methods.
+	//--------------------------------------------------------------------------
 	//--------------------------------------------------------------------------
 	// Algorithm methods.
 	//--------------------------------------------------------------------------
@@ -169,56 +219,24 @@ public class Manufacturer {
 	
 	/** The AlgorithmStrategyFactory of this Manufacturer. */
 	private final AlgorithmStrategyFactory algorithmStrategyFactory;
-	
-	
+
+
 	//--------------------------------------------------------------------------
-	// Methods concerning multiple subsystems
+	// OrderFactory
 	//--------------------------------------------------------------------------
-	/**
-	 * Get the system's pending orders. This includes the orders in the production
-	 * schedule, queuing to be assembled, as well as the orders which are active
-	 * on the assembly line.
-	 * 
-	 * @return the list of pending orders in the system
-	 */
-	public List<OrderContainer> getPendingOrderContainers() {
-		List<OrderContainer> pending = this.getAssemblingPendingOrderContainers();
-		pending.addAll(this.getSchedulePendingOrderContainers());
-		return pending;
-	}
-	
 	
 	/**
-	 * Query the system for estimated completion time of given order.
-	 * Checks sequentially if the order is found in the ProductionSchedule, the
-	 * AssemblyLine and the CompletedOrdersCatalog.
-	 * If the order is found, it queries the respective component for the ECT.
-	 * If the order is not present in the system, the system throws an
-	 * OrderDoesNotExistException.
+	 * Get the OrderFactory of this Manufacturer.
 	 * 
-	 * @param order
-	 * 		The order to find in the system and return the ECT for
-	 * 
-	 * @return the ECT of given order
-	 * 
-	 * @throws OrderDoesNotExistException
-	 * 		When the order is not found in the system.
+	 * @return the OrderFactory of this Manufacturer.
 	 */
-	//TODO Aan elkaar knopen
-	//FIXME FIX EVERYTHING
-	public DateTime getEstimatedCompletionTime(OrderContainer order) throws OrderDoesNotExistException{
-		if(this.getProductionSchedule().contains(order))
-			return this.getProductionSchedule().getEstimatedCompletionTime(order);
-		if(this.getAssemblyLine().contains(order))
-			return this.getAssemblyLine().getEstimatedCompletionTime(order);
-		if(this.getCompletedOrderCatalog().contains(order))
-			return this.getCompletedOrderCatalog().getCompletionTime(order);
-		throw new OrderDoesNotExistException("Order was not found in the system.");
+	public OrderFactory getOrderFactory() {
+		return this.orderFactory;
 	}
 	
-	//--------------------------------------------------------------------------
-	// Model and new order related methods and variables
-	//--------------------------------------------------------------------------
+	/** The OrderFactory of this Manufacturer. */
+	private final OrderFactory orderFactory;
+	
 	/**
 	 * Create and return a new order session.
 	 * 
@@ -258,8 +276,9 @@ public class Manufacturer {
 	 * 		If either of the arguments is null
 	 */
 	public OrderContainer submitSingleTaskOrder(Option option, DateTime deadline) {
-		SingleTaskOrder order = this.getOrderFactory().makeNewSingleTaskOrder(deadline, option)
+		SingleTaskOrder order = this.getOrderFactory().makeNewSingleTaskOrder(deadline, option);
 		this.getProductionSchedule().submitSingleTaskOrder(order);
+		return order;
 	}
 	
 	/**
@@ -277,6 +296,10 @@ public class Manufacturer {
 		return this.singleTaskCatalog.contains(option);
 	}
 	
+	//--------------------------------------------------------------------------
+	// ModelCatalog
+	//--------------------------------------------------------------------------
+		
 	/**
 	 * Get the modelCatalog for internal use
 	 * 
@@ -306,6 +329,25 @@ public class Manufacturer {
 	public Model getSingleTaskModel() {
 		return this.getModelCatalog().getSingleTaskModel();
 	}
+
+	/**
+	 * Check whether or not given model is a model of this system.
+	 * 
+	 * @param model
+	 * 		The model to check for.
+	 * 
+	 * @return whether or not given model is part of the system
+	 */
+	public boolean isValidModel(Model model){
+		if(model == null)
+			throw new IllegalArgumentException("Null is not a valid model.");
+		return this.getModelCatalog().contains(model);
+	}
+	
+	//--------------------------------------------------------------------------
+	// Restrictions Manager
+	//--------------------------------------------------------------------------
+	
 	
 	/**
 	 * Get the optionRestrictionManager for internal use
@@ -339,9 +381,6 @@ public class Manufacturer {
 	 * @throws IllegalCarOptionCombinationException 
 	 * 		When the list of options is not valid with given model
 	 */
-	//TODO Is dit systeem van booleans en exceptions acceptabel?
-	// Exceptions voor abnormale cases: Null, en illegale model-option-combo
-	// Boolean return voor restrictions al dan niet ok.
 	public boolean checkOrderValidity(Model model, List<Option> options)
 			throws IllegalArgumentException, IllegalCarOptionCombinationException
 	{
@@ -357,7 +396,54 @@ public class Manufacturer {
 			return false;
 		return true;
 	}
+	
 
+	//--------------------------------------------------------------------------
+	// ProductionScheduleFacade related variables and methods. 
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the ProductionSchedule of this Manufacturer.
+	 * 
+	 * @return The ProductionSchedule of this Manufacturer. 
+	 */
+	public ProductionScheduleFacade getProductionSchedule() {
+		return this.productionScheduleFacade;
+	}
+	
+	/** Interface into production schedule functionality. */
+	private final ProductionScheduleFacade productionScheduleFacade;
+
+	//--------------------------------------------------------------------------
+	/**
+	 * Remove an Order from this Manufacturer's ProductionSchedule and
+	 * pass it along.
+	 * 
+	 * @return The removed order
+	 * @throws IllegalStateException
+	 * 		See {@link ProductionScheduleFacade#orderAvailable() orderAvailable()}
+	 */
+	public Order popNextOrderFromSchedule() throws IllegalStateException {
+		return this.getProductionSchedule().popNextOrderFromSchedule();
+	}
+	
+	/**
+	 * Ask this Manufacturer's ProductionSchedule if an order is available
+	 * 
+	 * @return Whether an order is available
+	 */
+	public boolean orderAvailable() {
+		return this.getProductionSchedule().orderAvailable();
+	}
+
+	/**
+	 * Get a list of pending {@link OrderContainer}s in the productionSchedule.
+	 * 
+	 * @return List of pending order containers in the productionSchedule.
+	 */
+	private List<OrderContainer> getSchedulePendingOrderContainers() {
+		return this.getProductionSchedule().getPendingStandardOrderContainers();
+	}
+	
 	/**
 	 * Submit given model and list of options to the system to form a new order.
 	 * An order is formed if the model and options form a valid model, concerning
@@ -393,33 +479,7 @@ public class Manufacturer {
 		Specification orderSpecs = model.makeSpecification(options);
 		return this.getProductionSchedule().submitStandardOrder(model, orderSpecs);
 	}
-	
 
-	/**
-	 * Check whether or not given model is a model of this system.
-	 * 
-	 * @param model
-	 * 		The model to check for.
-	 * 
-	 * @return whether or not given model is part of the system
-	 */
-	public boolean isValidModel(Model model){
-		if(model == null)
-			throw new IllegalArgumentException("Null is not a valid model.");
-		return this.getModelCatalog().contains(model);
-	}
-
-	/**
-	 * Get the OrderFactory of this Manufacturer.
-	 * 
-	 * @return the OrderFactory of this Manufacturer.
-	 */
-	public OrderFactory getOrderFactory() {
-		return this.orderFactory;
-	}
-	
-	/** The OrderFactory of this Manufacturer. */
-	private final OrderFactory orderFactory;
 	
 	//--------------------------------------------------------------------------
 	// AssemblyLine-related variables and methods
@@ -504,51 +564,6 @@ public class Manufacturer {
 		return this.getAssemblyLine().getActiveOrderContainers();
 	}
 
-	//--------------------------------------------------------------------------
-	// ProductionScheduleFacade related variables and methods. 
-	//--------------------------------------------------------------------------
-	/**
-	 * Get the ProductionSchedule of this Manufacturer.
-	 * 
-	 * @return The ProductionSchedule of this Manufacturer. 
-	 */
-	public ProductionScheduleFacade getProductionSchedule() {
-		return this.productionScheduleFacade;
-	}
-	
-	/** Interface into production schedule functionality. */
-	private final ProductionScheduleFacade productionScheduleFacade;
-
-	//--------------------------------------------------------------------------
-	/**
-	 * Remove an Order from this Manufacturer's ProductionSchedule and
-	 * pass it along.
-	 * 
-	 * @return The removed order
-	 * @throws IllegalStateException
-	 * 		See {@link ProductionScheduleFacade#orderAvailable() orderAvailable()}
-	 */
-	public Order popNextOrderFromSchedule() throws IllegalStateException {
-		return this.getProductionSchedule().popNextOrderFromSchedule();
-	}
-	
-	/**
-	 * Ask this Manufacturer's ProductionSchedule if an order is available
-	 * 
-	 * @return Whether an order is available
-	 */
-	public boolean orderAvailable() {
-		return this.getProductionSchedule().orderAvailable();
-	}
-
-	/**
-	 * Get a list of pending {@link OrderContainer}s in the productionSchedule.
-	 * 
-	 * @return List of pending order containers in the productionSchedule.
-	 */
-	private List<OrderContainer> getSchedulePendingOrderContainers() {
-		return this.getProductionSchedule().getPendingStandardOrderContainers();
-	}
 	//--------------------------------------------------------------------------
 	// Completed Order Methods
 	//--------------------------------------------------------------------------
