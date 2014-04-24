@@ -19,8 +19,7 @@ import domain.productionSchedule.TimeObserver;
 public class OrderFactory implements TimeObserver {
 	//--------------------------------------------------------------------------
 	// Constructor
-	//--------------------------------------------------------------------------
-	
+	//--------------------------------------------------------------------------	
 	/**
 	 * Set the Manufacturer of this OrderFactory to the specified manufacturer. 
 	 * 
