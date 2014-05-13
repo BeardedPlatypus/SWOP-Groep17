@@ -404,18 +404,21 @@ public class InitialisationHandler {
 		logger.addRegistrar(delayRegistrar);
 		line.setStatisticsLogger(logger);
 		
+		SchedulerIntermediate inter = new SchedulerIntermediate(line);
+		manufacturer.setSchedulerIntermediate(inter);
+		inter.setManufacturer(manufacturer);
+		
 		clockMan.attachTimeObserver(logger);
 		clockMan.attachTimeObserver(orderFact);
 		clockMan.attachTimeObserver(complCat);
-		
-		SchedulerIntermediate inter = new SchedulerIntermediate(line);
-		manufacturer.setSchedulerIntermediate(inter);
+		clockMan.attachTimeObserver(inter);
 
 		
 		//--------------------------------------------------------------------------
 		// Setters afterwards
 		
 		orderFact.setManufacturer(manufacturer);
+		
 		
 
 		

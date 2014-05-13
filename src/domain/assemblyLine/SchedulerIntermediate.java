@@ -29,6 +29,7 @@ import domain.productionSchedule.TimeObserver;
 public class SchedulerIntermediate implements TimeObserver{
 	public SchedulerIntermediate(AssemblyLine assemblyLine) {
 		this.assemblyLine = assemblyLine;
+		this.setCurrentTime(new DateTime(0, 0, 0));
 	}
 	
 	/**
@@ -50,7 +51,7 @@ public class SchedulerIntermediate implements TimeObserver{
 		if (manufacturer == null)
 			throw new IllegalArgumentException("Manufacturer cannot be null.");
 		if (manufacturer.getSchedulerIntermediate() != this)
-			throw new IllegalStateException("manufacturer.getOrderFactory() does not match this.");
+			throw new IllegalStateException("manufacturer.getSchedulerIntermediate() does not match this.");
 		if (this.manufacturer != null) 
 			throw new IllegalStateException("manufacturer has already been set.");
 		
@@ -185,7 +186,7 @@ public class SchedulerIntermediate implements TimeObserver{
 	}
 
 	/** If this AssemblyLine is idle. */
-	private boolean isIdle = false;
+	private boolean isIdle = true;
 	
 	private boolean canScheduleWithoutTimeIncrease(StandardOrder so, SingleTaskOrder to) {
 		AssemblyLine assLine = this.getAssemblyLine();
