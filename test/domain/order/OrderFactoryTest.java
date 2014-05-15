@@ -18,6 +18,7 @@ import domain.Manufacturer;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.Specification;
+import domain.car.Model;
 
 public class OrderFactoryTest {
 	//--------------------------------------------------------------------------

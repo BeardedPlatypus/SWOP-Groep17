@@ -5,8 +5,10 @@ package domain.assemblyLine;
  */
 public enum TaskType {
 	BODY("Body Post"),
+	CARGO("Cargo Post"),
 	DRIVETRAIN("Drivetrain Post"),
-	ACCESSORIES("Accessories Post");
+	ACCESSORIES("Accessories Post"),
+	CERTIFICATION("Certification Post");
 	
 	private final String name;
 	

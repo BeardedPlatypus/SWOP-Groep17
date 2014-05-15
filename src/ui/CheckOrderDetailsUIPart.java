@@ -2,9 +2,9 @@ package ui;
 
 import java.util.List;
 
-import domain.car.Model;
 import domain.car.Option;
 import domain.car.Specification;
+import domain.car.Model;
 import domain.handlers.CheckOrderDetailsHandler;
 import domain.order.OrderContainer;
 

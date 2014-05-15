@@ -14,8 +14,8 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import domain.DateTime;
-import domain.car.Model;
 import domain.car.Specification;
+import domain.car.Model;
 
 public class StandardOrderTest {
 	//--------------------------------------------------------------------------

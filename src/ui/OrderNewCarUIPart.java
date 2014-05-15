@@ -6,6 +6,7 @@ import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.car.Specification;
+import domain.car.Model;
 import domain.handlers.NewOrderSessionHandler;
 import domain.order.OrderContainer;
 import exceptions.OptionRestrictionException;
