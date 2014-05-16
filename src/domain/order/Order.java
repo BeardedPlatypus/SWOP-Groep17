@@ -1,8 +1,8 @@
 package domain.order;
 
 import domain.DateTime;
-import domain.car.Model;
 import domain.car.Specification;
+import domain.car.Model;
 
 
 /** 

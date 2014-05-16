@@ -68,6 +68,7 @@ public class AssemblyLineTest {
 	
 	@Mock Order newOrder;
 	@Mock StatisticsLogger logger;
+	@Mock OrderAcceptanceChecker orderSelector;
 	
 	List<WorkPost> workPosts;
 	
@@ -105,7 +106,12 @@ public class AssemblyLineTest {
 		procedures.add(procedure2);
 		procedures.add(procedure3);
 		
-		assemblyLine = new AssemblyLine(manufacturer);
+		workPosts = new ArrayList<WorkPost>();
+		workPosts.add(new WorkPost(TaskType.BODY, 0));
+		workPosts.add(new WorkPost(TaskType.DRIVETRAIN, 0));
+		workPosts.add(new WorkPost(TaskType.ACCESSORIES, 0));
+		
+		assemblyLine = new AssemblyLine(manufacturer, workPosts, orderSelector);
 		assemblyLine.setStatisticsLogger(logger);
 		
 		for (int i = 0; i < assemblyLine.getAssemblyLineSize(); i++)
@@ -113,23 +119,35 @@ public class AssemblyLineTest {
 			WorkPost wp = (WorkPost) assemblyLine.getWorkPostContainers().get(i);
 			Whitebox.invokeMethod(wp, "setAssemblyProcedure", procedures.get(i));
 		}
-		
-		workPosts = new ArrayList<WorkPost>();
-		
-		for (int i = 0; i < assemblyLine.getAssemblyLineSize(); i++) {
-			workPosts.add((WorkPost) assemblyLine.getWorkPostContainers().get(i));
-		}
 	}
 
 	@Test
 	public void constructor_NullManufacturer() {
 		expected.expect(IllegalArgumentException.class);
-		new AssemblyLine(null);
+		new AssemblyLine(null, workPosts, orderSelector);
+	}
+	
+	@Test
+	public void constructor_nullWorkPosts() {
+		expected.expect(IllegalArgumentException.class);
+		new AssemblyLine(manufacturer, null, orderSelector);
+	}
+	
+	@Test
+	public void constructor_emptyWorkPosts() {
+		expected.expect(IllegalArgumentException.class);
+		new AssemblyLine(manufacturer, new ArrayList<WorkPost>(), orderSelector);
+	}
+	
+	@Test
+	public void constructor_nullOrderSelector() {
+		expected.expect(IllegalArgumentException.class);
+		new AssemblyLine(manufacturer, workPosts, null);
 	}
 	
 	@Test
 	public void constructor_CheckWorkpostsInitialised() {
-		AssemblyLine assemblyLine = new AssemblyLine(manufacturer);
+		AssemblyLine assemblyLine = new AssemblyLine(manufacturer, workPosts, orderSelector);
 		AssemblyLine spiedAssemblyLine = PowerMockito.spy(assemblyLine);
 		
 		List<WorkPost> workPosts = new ArrayList<WorkPost>();
@@ -137,15 +155,10 @@ public class AssemblyLineTest {
 			workPosts.add((WorkPost) PowerMockito.spy(spiedAssemblyLine.getWorkPostContainers().get(i)));
 		}
 		
-		int counter = 0;
-		for (TaskType type : TaskType.values()) {
-			assertEquals(workPosts.get(counter).getTaskType(), type);
-			counter++;
-		}
 		assertEquals(manufacturer, Whitebox.getInternalState(spiedAssemblyLine, Manufacturer.class));
 		@SuppressWarnings("unchecked")
 		List<WorkPostObserver> observers = (ArrayList<WorkPostObserver>) Whitebox.getInternalState(workPosts.get(0), "observers");
-		assertEquals(assemblyLine, observers.get(0));
+		assertEquals(assemblyLine, observers.get(1));
 	}
 	
 	@Test
@@ -220,7 +233,9 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void isEmpty_true() {
-		assertTrue(new AssemblyLine(manufacturer).isEmpty());
+		List<WorkPost> workPosts = new ArrayList<WorkPost>();
+		workPosts.add(new WorkPost(TaskType.BODY, 0));
+		assertTrue(new AssemblyLine(manufacturer, workPosts, orderSelector).isEmpty());
 	}
 	
 	@Test
@@ -342,14 +357,14 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void setLogger_null() {
-		AssemblyLine line = new AssemblyLine(manufacturer);
+		AssemblyLine line = new AssemblyLine(manufacturer, workPosts, orderSelector);
 		expected.expect(IllegalArgumentException.class);
 		line.setStatisticsLogger(null);
 	}
 	
 	@Test
 	public void setLogger_valid() {
-		AssemblyLine line = new AssemblyLine(manufacturer);
+		AssemblyLine line = new AssemblyLine(manufacturer, workPosts, orderSelector);
 		line.setStatisticsLogger(logger);
 		assertEquals(logger, Whitebox.getInternalState(line, StatisticsLogger.class));
 	}
