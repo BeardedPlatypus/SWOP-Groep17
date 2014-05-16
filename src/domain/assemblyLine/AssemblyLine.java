@@ -221,13 +221,31 @@ public class AssemblyLine implements WorkPostObserver {
 			throw new IllegalArgumentException("Argument is not an existing workpost.");
 		return this.getWorkPosts().get(workPostNumber);
 	}
+	
+	/**
+	 * Get the first WorkPost of this AssemblyLine.
+	 * 
+	 * @return The first WorkPost
+	 */
+	WorkPost getFirstWorkPost() {
+		return this.getWorkPosts().get(0);
+	}
+	
+	/**
+	 * Get the last WorkPost of this AssemblyLine.
+	 * 
+	 * @return The last WorkPost
+	 */
+	WorkPost getLastWorkPost() {
+		return this.getWorkPosts().get(this.getWorkPosts().size() - 1);
+	}
 
 	/**
 	 * Get the {@link WorkPost}s of this AssemblyLine.
 	 * 
 	 * @return The WorkPosts of this AssLine
 	 */
-	private List<WorkPost> getWorkPosts() {
+	List<WorkPost> getWorkPosts() {
 		return new ArrayList<WorkPost>(this.workPosts);
 	}
 
@@ -285,7 +303,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 
 	 * @return the elapsed time since the last advancement of the AssemblyLine
 	 */
-	private DateTime getElapsedTime() throws IllegalStateException{
+	DateTime getElapsedTime() throws IllegalStateException{
 		return this.elapsedTime;
 	}
 	
@@ -453,13 +471,21 @@ public class AssemblyLine implements WorkPostObserver {
 		this.getWorkPost(0).setAssemblyProcedure(procedure);
 	}
 	
+	Order popNextOrderFromSchedule() {
+		return this.getSchedulerIntermediate().popNextOrderFromSchedule();
+	}
+	
+	Order peekNextOrderFromSchedule() {
+		return this.getSchedulerIntermediate().peekNextOrderFromSchedule();
+	}
+	
 	/**
 	 * Call this method when advancing to handle the AssemblyProcedure that
 	 * is rolling off this AssemblyLine, if any. Concretely, submit the
 	 * AssemblyProcedure's Order to the Manufacturer as a completed Order, record
 	 * statistical information and give that information to the StatisticsLogger.
 	 */
-	private void handleFinishedAssemblyProcedure(AssemblyProcedure finishedProcedure) {
+	void handleFinishedAssemblyProcedure(AssemblyProcedure finishedProcedure) {
 		if (finishedProcedure == null) {
 			return;
 		}
@@ -468,6 +494,32 @@ public class AssemblyLine implements WorkPostObserver {
 		this.addStatistics(stats);
 		
 		this.getManufacturer().addToCompleteOrders(finishedProcedure.getOrder());
+	}
+	
+	//--------------------------------------------------------------------------
+	// State management
+	//--------------------------------------------------------------------------
+	/** The current state of this AssemblyLine */
+	private AssemblyLineState state;
+	
+	/**
+	 * Get the current state of this AssemblyLine.
+	 * 
+	 * @return The current state
+	 */
+	AssemblyLineState getCurrentState() {
+		return this.state;
+	}
+	
+	/**
+	 * Set the current state of this AssemblyLine to the specified state.
+	 * 
+	 * @param state
+	 * 		The new state
+	 */
+	void setCurrentState(AssemblyLineState state) {
+		this.state = state;
+		this.getCurrentState().finaliseSetState();
 	}
 
 	//--------------------------------------------------------------------------
