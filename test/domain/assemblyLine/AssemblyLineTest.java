@@ -68,7 +68,7 @@ public class AssemblyLineTest {
 	
 	@Mock Order newOrder;
 	@Mock StatisticsLogger logger;
-	@Mock OrderSelector orderSelector;
+	@Mock OrderAcceptanceChecker orderSelector;
 	
 	List<WorkPost> workPosts;
 	

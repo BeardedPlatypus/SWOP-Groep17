@@ -95,7 +95,7 @@ public class AssemblyLineBuilderTest {
 		AssemblyLine line = builder.buildAssemblyLine();
 		assertEquals(manufacturer, Whitebox.getInternalState(line, Manufacturer.class));
 		
-		OrderSelector selector = line.getOrderSelector();
+		OrderAcceptanceChecker selector = line.getOrderSelector();
 		List<Model> allowedModels = Whitebox.getInternalState(selector, "allowedModels");
 		assertTrue(allowedModels.contains(carModel1));
 		assertTrue(allowedModels.contains(truckModel));

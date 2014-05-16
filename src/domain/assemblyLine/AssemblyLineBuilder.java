@@ -107,7 +107,7 @@ public class AssemblyLineBuilder {
 		
 		LayoutFactory layoutFactory = new LayoutFactory();
 		
-		OrderSelector orderSelector = new OrderSelector(this.getDesiredModels());
+		OrderAcceptanceChecker orderSelector = new OrderAcceptanceChecker(this.getDesiredModels());
 		List<WorkPost> workPosts = layoutFactory.makeLayout(this.getDesiredModels());
 		
 		return new AssemblyLine(this.getManufacturer(), workPosts, orderSelector);

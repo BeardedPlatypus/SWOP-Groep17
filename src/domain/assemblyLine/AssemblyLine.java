@@ -38,7 +38,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 		manufacturer == null
 	 */
 	public AssemblyLine(Manufacturer manufacturer, List<WorkPost> workPosts,
-			OrderSelector orderSelector) throws IllegalArgumentException {
+			OrderAcceptanceChecker orderSelector) throws IllegalArgumentException {
 		if (manufacturer == null) {
 			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
 					+ "with null manufacturer");
@@ -527,7 +527,7 @@ public class AssemblyLine implements WorkPostObserver {
 	// OrderSelector variables and methods
 	//--------------------------------------------------------------------------
 	/** Determines which Orders this AssemblyLine can handle */
-	private final OrderSelector orderSelector;
+	private final OrderAcceptanceChecker orderSelector;
 	
 	/**
 	 * Get this AssemblyLine's OrderSelector,
@@ -535,7 +535,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 
 	 * @return The order selector.
 	 */
-	public OrderSelector getOrderSelector() {
+	public OrderAcceptanceChecker getOrderSelector() {
 		return this.orderSelector;
 	}
 	

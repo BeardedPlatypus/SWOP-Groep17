@@ -24,9 +24,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 @RunWith(PowerMockRunner.class)
-public class OrderSelectorTest {
+public class OrderAcceptanceCheckerTest {
 	
-	OrderSelector selector;
+	OrderAcceptanceChecker selector;
 	
 	CarModel carModel1;
 	CarModel carModel2;
@@ -46,12 +46,12 @@ public class OrderSelectorTest {
 		carModel2 = new CarModel("before", new ArrayList<OptionCategory>(), 70);
 		truckModel = new TruckModel("Zod", new ArrayList<OptionCategory>(), 60, 90, 45);
 		
-		selector = new OrderSelector(carModel1, truckModel);
+		selector = new OrderAcceptanceChecker(carModel1, truckModel);
 	}
 
 	@Test
 	public void constructor_test() {
-		OrderSelector selector = new OrderSelector(carModel1, truckModel);
+		OrderAcceptanceChecker selector = new OrderAcceptanceChecker(carModel1, truckModel);
 		List<Model> models = Whitebox.getInternalState(selector, "allowedModels");
 		assertTrue(models.contains(carModel1));
 		assertTrue(models.contains(truckModel));

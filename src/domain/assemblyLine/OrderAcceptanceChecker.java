@@ -13,7 +13,7 @@ import domain.order.Order;
  * @author Thomas Vochten
  *
  */
-public class OrderSelector {
+public class OrderAcceptanceChecker {
 	
 	/**
 	 * Initialise a new OrderSelector.
@@ -21,7 +21,7 @@ public class OrderSelector {
 	 * @param models
 	 * 		The models the new OrderSelector must accept.
 	 */
-	public OrderSelector(List<Model> models) {
+	public OrderAcceptanceChecker(List<Model> models) {
 		this.allowedModels = models;
 	}
 	
@@ -31,7 +31,7 @@ public class OrderSelector {
 	 * @param models
 	 * 		The models the new OrderSelector must accept.
 	 */
-	public OrderSelector(Model... models) {
+	public OrderAcceptanceChecker(Model... models) {
 		this(Arrays.asList(models));
 	}
 	
