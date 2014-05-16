@@ -118,9 +118,9 @@ public abstract class AssemblyLineState {
 				loopHadAnEffect = this.putNextOrderOnFirstWorkPost();
 			}
 			for (int i = this.getAssemblyLine().getAssemblyLineSize(); i > 0; i--) {
-				loopHadAnEffect = this.workPostShiftStep(i, i - 1);
+				loopHadAnEffect = loopHadAnEffect || this.workPostShiftStep(i, i - 1);
 			}
-		} while (! loopHadAnEffect);
+		} while (loopHadAnEffect);
 	}
 	
 	/**
