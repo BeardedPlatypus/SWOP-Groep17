@@ -9,11 +9,11 @@ import domain.assemblyLine.AssemblyLine;
 import domain.assemblyLine.SchedulerIntermediate;
 import domain.Manufacturer;
 import domain.assemblyLine.TaskType;
+import domain.car.CarModel;
 import domain.car.Model;
 import domain.car.ModelCatalog;
 import domain.car.Option;
 import domain.car.OptionCategory;
-import domain.car.Model;
 import domain.order.CompletedOrderCatalog;
 import domain.order.OrderFactory;
 import domain.order.SingleTaskCatalog;
@@ -245,7 +245,7 @@ public class InitialisationHandler {
 		modelACategories.add(modelASeatsCategory);
 		modelACategories.add(modelASpoilerCategory);
 		modelACategories.add(modelAWheelsCategory);
-		Model modelA = new Model("Model A", modelACategories, 50);
+		Model modelA = new CarModel("Model A", modelACategories, 50);
 
 		List<OptionCategory> modelBCategories = new ArrayList<>();
 		modelBCategories.add(modelBAircoCategory);
@@ -256,7 +256,7 @@ public class InitialisationHandler {
 		modelBCategories.add(modelBSeatsCategory);
 		modelBCategories.add(modelBSpoilerCategory);
 		modelBCategories.add(modelBWheelsCategory);
-		Model modelB = new Model("Model B", modelBCategories, 70);
+		Model modelB = new CarModel("Model B", modelBCategories, 70);
 
 		List<OptionCategory> modelCCategories = new ArrayList<>();
 		modelCCategories.add(modelCAircoCategory);
@@ -267,9 +267,9 @@ public class InitialisationHandler {
 		modelCCategories.add(modelCSeatsCategory);
 		modelCCategories.add(modelCSpoilerCategory);
 		modelCCategories.add(modelCWheelsCategory);
-		Model modelC = new Model("Model C", modelCCategories, 60);
+		Model modelC = new CarModel("Model C", modelCCategories, 60);
 
-		Model singleTaskModel = new Model("Single Task Order",
+		Model singleTaskModel = new CarModel("Single Task Order",
 				new ArrayList<OptionCategory>(), 60);
 
 		//----------------------------------------------------------------------
@@ -391,7 +391,8 @@ public class InitialisationHandler {
 		// Initialise AssemblyLine
 		//----------------------------------------------------------------------
 
-		AssemblyLine line = new AssemblyLine();
+		//FIXME
+		AssemblyLine line = new AssemblyLine(null, null);
 		StatisticsLogger logger = new StatisticsLogger();
 		CarsProducedRegistrar prodRegistrar = new CarsProducedRegistrar();
 		logger.addRegistrar(prodRegistrar);

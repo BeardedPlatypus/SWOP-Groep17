@@ -538,7 +538,11 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @return The expected amount of minutes
 	 */
 	private int calculateExpectedTimeOnLine(Order order) {
-		return order.getMinutesPerPost() * this.getAssemblyLineSize();
+		int total = 0;
+		for(WorkPost p : this.getWorkPosts()){
+			total += p.getExpectedTimeOnPost(order);
+		}
+		return total;
 	}
 	
 	//--------------------------------------------------------------------------

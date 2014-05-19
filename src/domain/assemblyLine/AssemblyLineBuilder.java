@@ -110,6 +110,6 @@ public class AssemblyLineBuilder {
 		OrderAcceptanceChecker orderSelector = new OrderAcceptanceChecker(this.getDesiredModels());
 		List<WorkPost> workPosts = layoutFactory.makeLayout(this.getDesiredModels());
 		
-		return new AssemblyLine(this.getManufacturer(), workPosts, orderSelector);
+		return new AssemblyLine(workPosts, orderSelector);
 	}
 }

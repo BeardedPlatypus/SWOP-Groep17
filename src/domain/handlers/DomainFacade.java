@@ -9,7 +9,6 @@ import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.car.Specification;
-import domain.car.Model;
 import domain.order.OrderContainer;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
 import exceptions.IllegalCarOptionCombinationException;

@@ -1,6 +1,7 @@
 package domain.order;
 
 import domain.DateTime;
+import domain.assemblyLine.TaskType;
 import domain.car.Specification;
 import domain.car.Model;
 
@@ -198,14 +199,27 @@ public abstract class Order implements OrderContainer {
 	/** The model of this Order. */
 	public final Model model;
 	
+	// DEPRECATED
+//	/**
+//	 * Get the amount of minutes that the ordered car is expected to spend
+//	 * at each work post.
+//	 * 
+//	 * @return The amount of minutes
+//	 */
+//	public int getMinutesPerPost() {
+//		return this.getModel().getMinsPerWorkPost();
+//	}
+
 	/**
-	 * Get the amount of minutes that the ordered car is expected to spend
-	 * at each work post.
+	 * Get the estimated time the model of this order will spend on
+	 * a workpost of given type.
 	 * 
-	 * @return The amount of minutes
+	 * @param taskType
+	 * 		The type of the hypothetical workpost
+	 * @return the estimated time spent on a workpost of given type
 	 */
-	public int getMinutesPerPost() {
-		return this.getModel().getMinsPerWorkPost();
+	public int getExpectedTimeOnPostofType(TaskType taskType) {
+		return this.getModel().getMinsOnWorkPostOfType(taskType);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -245,4 +259,5 @@ public abstract class Order implements OrderContainer {
 			return false;
 		return true;
 	}
+
 }

@@ -1,6 +1,5 @@
 package domain;
 
-import java.util.Comparator;
 import java.util.List;
 
 import domain.restrictions.OptionRestrictionManager;
@@ -99,7 +98,7 @@ public class Manufacturer {
 		this.assemblyLine = assemblyLine;
 		this.lineIntermediate = intermediate;
 
-		this.assemblyLine.setM
+
 		this.orderFactory.setManufacturer(this);
 		this.lineIntermediate.setManufacturer(this);
 
@@ -434,7 +433,7 @@ public class Manufacturer {
 	 * @throws IllegalCarOptionCombinationException 
 	 * 		When the list of options is not valid with given model
 	 */
-	public boolean checkOrderValidity(Model model, List<Option> options)
+	private boolean checkOrderRestrictionValidity(Model model, List<Option> options)
 			throws IllegalArgumentException, IllegalCarOptionCombinationException
 	{
 		if(model == null)
@@ -508,7 +507,7 @@ public class Manufacturer {
 			throw new IllegalArgumentException("Options list should not be null.");
 		if(options.contains(null))
 			throw new IllegalArgumentException("Options list should not contain null.");
-		if(!checkOrderValidity(model, options))
+		if(!checkOrderRestrictionValidity(model, options))
 			throw new OptionRestrictionException("Options do not meet Restriction criteria.");
 		Specification orderSpecs = model.makeSpecification(options);
 		StandardOrder newOrder = this.getOrderFactory().makeNewStandardOrder(model, orderSpecs);

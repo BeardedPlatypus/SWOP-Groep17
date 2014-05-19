@@ -79,13 +79,11 @@ public class InitialDataLoader {
 	}
 	
 	public void addPendingStandardOrder(StandardOrder order){
-		ProductionScheduleFacade prodSched = this.getManufacturer().getProductionSchedule();
-		prodSched.submitStandardOrder(order);
+		
 	}
 	
 	public void addPendingSingleOrder(SingleTaskOrder order){
-		ProductionScheduleFacade prodSched = this.getManufacturer().getProductionSchedule();
-		prodSched.submitSingleTaskOrder(order);
+		
 	}
 	
 	public void scheduleOnLine(int line, Order order){

@@ -7,7 +7,7 @@ import domain.Manufacturer;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
-import domain.car.Model;
+import domain.car.Specification;
 import domain.order.OrderContainer;
 import domain.order.OrderSession;
 import exceptions.IllegalCarOptionCombinationException;
@@ -190,6 +190,23 @@ public class NewOrderSessionHandler {
 		if(!isRunningNewOrderSession())
 			throw new IllegalStateException("No active order session.");
 		getCurrentOrderSession().addOption(option);
+	}
+	
+	/**
+	 * Check whether given model and options match, and the options pass the
+	 * system's restriction checks.
+	 * 
+	 * @param model
+	 * 		The model to check for
+	 * @param options
+	 * 		The options to check for
+	 * @return whether given model and options match, and the options pass the
+	 * 		system's restriction checks
+	 */
+	public boolean isFullyValidOptionSet(Model model, List<Option> options){
+		return model.checkOptionsValidity(options) && 
+				this.getManufacturer().checkSpecificationRestrictions(model,
+						new Specification(options));
 	}
 
 	/**
