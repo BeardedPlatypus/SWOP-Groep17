@@ -1,11 +1,10 @@
 package domain.car;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
+import domain.assemblyLine.TaskType;
 import util.annotations.Immutable;
-import domain.car.OptionCategory;
 import exceptions.NoOptionCategoriesRemainingException;
 
 /**
@@ -17,12 +16,13 @@ import exceptions.NoOptionCategoriesRemainingException;
  * @author Frederik Goovaerts
  */
 @Immutable
-public class Model {
-	//-------------------------------------------------------------------------
+public abstract class Model {
+
+	//--------------------------------------------------------------------------
 	// Constructor
-	//-------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	/**  
-	 * Instantiate a new Model with the specified name, OptionCategories and
+	 * Instantiate a new VehicleModel with the specified name, OptionCategories and
 	 * estimated time spent per WorkPost. 
 	 * 
 	 * @param modelName
@@ -33,19 +33,16 @@ public class Model {
 	 * 		The amount of minutes that cars of this model are expected to spend
 	 * 		on each WorkPost
 	 */
-	public Model(String modelName,
-				 List<OptionCategory> optionCategories, int minsPerWorkPost)
-	{
+	public Model(String modelName, List<OptionCategory> optionCategories,
+			int minsPerWorkPost) {
 		this.modelName = modelName;
-		this.optionCategories = new ArrayList<OptionCategory>(optionCategories);
+		this.optionCategories = optionCategories;
 		this.minsPerWorkPost = minsPerWorkPost;
 	}
 	
+	/** The name of this Model */
+	protected final String modelName;
 
-	//--------------------------------------------------------------------------
-	// Properties
-	//--------------------------------------------------------------------------
-	
 	/**
 	 * Get the name of this Model.
 	 * 
@@ -54,13 +51,14 @@ public class Model {
 	public String getName() {
 		return this.modelName;
 	}
-	
-	/** The name of this Model */
-	private final String modelName;
-	
+
 	//--------------------------------------------------------------------------
-	// OptionCategory methods
+	// OptionCategory methods and variables
+	//--------------------------------------------------------------------------
 	
+	/** The OptionCategories of this Model. */
+	protected final List<OptionCategory> optionCategories;
+
 	/**
 	 * Get the amount of OptionCategories that can be used when placing an order with
 	 * this Model. 
@@ -85,7 +83,7 @@ public class Model {
 			throw new IllegalArgumentException("The optionCategory you requested does not exist.");
 		return optionCategories.get(optionCategoryNb);
 	}
-	
+
 	/**
 	 * Get all the OptionCategories of this Model. This is not the contained list
 	 * itself, but a copy containing the same elements.
@@ -95,10 +93,7 @@ public class Model {
 	public List<OptionCategory> getOptionCategories() {
 		return new ArrayList<>(this.optionCategories);
 	}
-	
-	/** The OptionCategories of this Model. */
-	private final List<OptionCategory> optionCategories;
-	
+
 	/**
 	 * Check whether or not this model contains given options in one of its
 	 * optionCategories, and is therefore a possible choice.
@@ -110,7 +105,7 @@ public class Model {
 	 * @throws IllegalArgumentException
 	 * 		If given option is null
 	 */
-	private boolean containsOption(Option option) throws IllegalArgumentException{
+	private boolean containsOption(Option option) throws IllegalArgumentException {
 		if(option == null)
 			throw new IllegalArgumentException("Option can not be null!");
 		for(OptionCategory cat : getOptionCategories()){
@@ -120,9 +115,6 @@ public class Model {
 		}
 		return false;
 	}
-
-	//--------------------------------------------------------------------------
-	
 
 	/**
 	 * Take a list of options and make a specification containing said options
@@ -136,37 +128,24 @@ public class Model {
 	 * 		When the list of options or one of the options is null, or one of the options
 	 * 		is not contained in this model
 	 */
-	public Specification makeSpecification(List<Option> options) throws IllegalArgumentException{
-		if(options == null)
-			throw new IllegalArgumentException("Given list of options is null.");
-		for(Option listOpt : options){
-			if(listOpt == null)
-				throw new IllegalArgumentException("One of given options is null.");
-			if(!this.containsOption(listOpt))
-				throw new IllegalArgumentException("One of the options does not match this car model.");
-		}
-		Specification newSpecs = new Specification(options);
-		return newSpecs;
-	}
-	
-	/** The amount of time in minutes that cars of this model are expected to spend
-	 * on each WorkPost */
-	private final int minsPerWorkPost;
-	
-	/**
-	 * Get the amount of time in minutes that cars of this model are expected to spend
-	 * on each WorkPost.
-	 * 
-	 * @return The amount
-	 */
-	public int getMinsPerWorkPost() {
-		return this.minsPerWorkPost;
-	}
-	
-	//--------------------------------------------------------------------------
-	// Class Methods
-	//--------------------------------------------------------------------------
+	public Specification makeSpecification(List<Option> options)
+			throws IllegalArgumentException {
+				if(options == null)
+					throw new IllegalArgumentException("Given list of options is null.");
+				for(Option listOpt : options){
+					if(listOpt == null)
+						throw new IllegalArgumentException("One of given options is null.");
+					if(!this.containsOption(listOpt))
+						throw new IllegalArgumentException("One of the options does not match this car model.");
+				}
+				Specification newSpecs = new Specification(options);
+				return newSpecs;
+			}
 
+	//--------------------------------------------------------------------------
+	// Checking validity of chosen options in an order
+	//--------------------------------------------------------------------------
+	
 	/**
 	 * Check whether all options in the list are contained in one of the model's
 	 * optionCategories, and no two of them come from the same optionCategory.
@@ -179,13 +158,14 @@ public class Model {
 	 * @throws IllegalArgumentException
 	 * 		When either the list of options is or contains null
 	 */
-	public boolean checkOptionsValidity(List<Option> options) throws IllegalArgumentException{
-		if(options == null)
-			throw new IllegalArgumentException("Options list should not be null.");
-		if(options.contains(null))
-			throw new IllegalArgumentException("Options list should not contain null.");
-		return this.checkContains(options) && this.checkNoDuplicates(options);
-	}
+	public boolean checkOptionsValidity(List<Option> options)
+			throws IllegalArgumentException {
+				if(options == null)
+					throw new IllegalArgumentException("Options list should not be null.");
+				if(options.contains(null))
+					throw new IllegalArgumentException("Options list should not contain null.");
+				return this.checkContains(options) && this.checkNoDuplicates(options);
+			}
 
 	/**
 	 * Check to see if all given options are contained is this model.
@@ -204,7 +184,6 @@ public class Model {
 		}
 		return true;
 	}
-
 
 	/**
 	 * Check to see if there are two or more options in given list, stemming from
@@ -249,20 +228,18 @@ public class Model {
 	 * 		When no unfilled optionCategories remain
 	 */
 	public OptionCategory getNextOptionCategory(List<Option> options)
-			throws NoOptionCategoriesRemainingException
-	{
-		for(OptionCategory cat : this.getOptionCategories()){
-			boolean containsNone = true;
-			for(Option opt : options){
-				if(cat.containsOption(opt))
-					containsNone = false;
+			throws NoOptionCategoriesRemainingException {
+				for(OptionCategory cat : this.getOptionCategories()){
+					boolean containsNone = true;
+					for(Option opt : options){
+						if(cat.containsOption(opt))
+							containsNone = false;
+					}
+					if(containsNone)
+						return cat;
+				}
+				throw new NoOptionCategoriesRemainingException("No unfilled optionCategories remaining.");
 			}
-			if(containsNone)
-				return cat;
-		}
-		throw new NoOptionCategoriesRemainingException("No unfilled optionCategories remaining.");
-	}
-
 
 	/**
 	 * Check, based on given options, if there are optionCategories in the model
@@ -286,4 +263,25 @@ public class Model {
 		}
 		return false;
 	}
+	
+	//--------------------------------------------------------------------------
+	// Querying the amount of time that a model is expected to spend on a 
+	// work post.
+	//--------------------------------------------------------------------------
+	
+	/** The amount of time in minutes that cars of this model are expected to spend
+	 * on each WorkPost unless specified otherwise */
+	protected final int minsPerWorkPost;
+	
+	/**
+	 * Calculate the amount of minutes that vehicles of this model
+	 * are expected to spend on a work post of the given type.
+	 * 
+	 * @param workPostType
+	 * 		The type of work post to consider.
+	 * @return
+	 * 		The amount of minutes
+	 */
+	public abstract int getMinsOnWorkPostOfType(TaskType workPostType);
+
 }
