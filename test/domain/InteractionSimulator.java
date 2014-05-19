@@ -5,9 +5,9 @@ import java.util.List;
 
 import domain.assemblyLine.AssemblyTaskContainer;
 import domain.assemblyLine.WorkPostContainer;
-import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
+import domain.car.Model;
 import domain.handlers.DomainFacade;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;

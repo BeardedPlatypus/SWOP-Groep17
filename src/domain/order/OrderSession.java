@@ -8,6 +8,7 @@ import domain.Manufacturer;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
+import domain.car.Model;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;

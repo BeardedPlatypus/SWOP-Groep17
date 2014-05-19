@@ -18,6 +18,7 @@ import domain.Manufacturer;
 import domain.car.Model;
 import domain.car.ModelCatalog;
 import domain.car.Specification;
+import domain.car.Model;
 import domain.order.Order;
 import domain.order.OrderContainer;
 

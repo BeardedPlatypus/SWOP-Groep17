@@ -10,10 +10,12 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import domain.assemblyLine.TaskType;
+import domain.car.CarModel;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.car.Specification;
+import domain.car.Model;
 import exceptions.NoOptionCategoriesRemainingException;
 
 /**
@@ -48,7 +50,7 @@ public class ModelTest {
 		ArrayList<OptionCategory> cats = new ArrayList<>();
 		cats.add(optionCat1);
 		cats.add(optionCat2);
-		testModel = new Model("TestModel", cats, 30);
+		testModel = new CarModel("TestModel", cats, 30);
 		nonModelOption = new Option(TaskType.ACCESSORIES, "BadOption", "BadOptionInfo");
 	}
 
@@ -56,7 +58,7 @@ public class ModelTest {
 	public void constructorTest() {
 		assertTrue(testModel.getAmountOfOptionCategories() == 2);
 		assertTrue(testModel.getName().equals("TestModel"));
-		assertTrue(testModel.getMinsPerWorkPost() == 30);
+		assertTrue(testModel.getMinsOnWorkPostOfType(TaskType.BODY) == 30);
 	}
 
 	@Test

@@ -28,19 +28,30 @@ public class AssemblyLine implements WorkPostObserver {
 	 * Instantiate a new AssemblyLine with the specified {@link Manufacturer}.
 	 * Also links the manufacturer to itself.
 	 * 
+	 * @param workPosts
+	 * 		The WorkPosts managed by the new AssemblyLine
+	 * @param orderSelector
+	 * 		The OrderSelector of the new AssemblyLine
 	 * @throws IllegalArgumentException
 	 * 		manufacturer == null
 	 */
-	public AssemblyLine() throws IllegalArgumentException {
-		
-		int workPostNum = 0;
-		for (TaskType type : TaskType.values()) {
-			WorkPost newPost = new WorkPost(type, workPostNum);
-			workPostNum++;
-			this.workPosts.add(newPost);
-			newPost.register(this);
+	public AssemblyLine(List<WorkPost> workPosts, OrderAcceptanceChecker orderSelector)
+		throws IllegalArgumentException {
+		if (workPosts == null || workPosts.isEmpty()) {
+			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
+					+ "without any WorkPosts");
+		}
+		if (orderSelector == null) {
+			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
+					+ "with null order selector");
 		}
 		
+		this.workPosts = workPosts;
+		for (WorkPost workPost : workPosts) {
+			workPost.register(this);
+		}
+		
+		this.orderSelector = orderSelector;
 		this.elapsedTime = new DateTime(0, 0, 0);
 	}	
 	
@@ -82,7 +93,7 @@ public class AssemblyLine implements WorkPostObserver {
 	// WorkPost-related methods and variables.
 	//--------------------------------------------------------------------------
 	/** The {@link WorkPost}s of this assembly line, ordered by the assembly line's layout */
-	private final List<WorkPost> workPosts = new ArrayList<WorkPost>();
+	private final List<WorkPost> workPosts;
 	
 	/**
 	 * Ask the given {@link WorkPost} to complete {@link AssemblyTask} with given number on its current {@link AssemblyProcedure}
@@ -501,6 +512,22 @@ public class AssemblyLine implements WorkPostObserver {
 		}
 		
 		return toReturn;
+	}
+	
+	//--------------------------------------------------------------------------
+	// OrderSelector variables and methods
+	//--------------------------------------------------------------------------
+	/** Determines which Orders this AssemblyLine can handle */
+	private final OrderAcceptanceChecker orderSelector;
+	
+	/**
+	 * Get this AssemblyLine's OrderSelector,
+	 * which determines which Orders this AssemblyLine can handle
+	 * 
+	 * @return The order selector.
+	 */
+	public OrderAcceptanceChecker getOrderSelector() {
+		return this.orderSelector;
 	}
 	
 	/**

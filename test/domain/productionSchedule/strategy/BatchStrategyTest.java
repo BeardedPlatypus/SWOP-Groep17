@@ -17,9 +17,9 @@ import org.powermock.reflect.Whitebox;
 
 import domain.DateTime;
 import domain.assemblyLine.TaskType;
-import domain.car.Model;
 import domain.car.Option;
 import domain.car.Specification;
+import domain.car.Model;
 import domain.order.Order;
 import domain.order.StandardOrder;
 

@@ -13,6 +13,7 @@ import domain.car.Model;
 import domain.car.ModelCatalog;
 import domain.car.Option;
 import domain.car.OptionCategory;
+import domain.car.Model;
 import domain.order.CompletedOrderCatalog;
 import domain.order.OrderFactory;
 import domain.order.SingleTaskCatalog;
