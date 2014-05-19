@@ -532,7 +532,6 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 		The new state
 	 */
 	void setCurrentState(AssemblyLineState state) {
-		state.setAssemblyLine(null);
 		this.state = state;
 		state.setAssemblyLine(this);
 		state.finaliseSetState();

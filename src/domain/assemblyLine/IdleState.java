@@ -16,5 +16,10 @@ public class IdleState extends OperationalState {
 	protected void advanceAssemblyLine() {
 		// disallow AssemblyLine advancements if idle
 	}
+	
+	@Override
+	protected void finaliseSetState() {
+		
+	}
 
 }

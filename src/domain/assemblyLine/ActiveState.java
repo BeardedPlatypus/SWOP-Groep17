@@ -29,5 +29,10 @@ public class ActiveState extends OperationalState {
 		}
 		return other instanceof ActiveState;
 	}
+	
+	@Override
+	protected void finaliseSetState() {
+		
+	}
 
 }

@@ -55,4 +55,9 @@ public class OperationalState extends AssemblyLineState {
 		return other instanceof OperationalState;
 	}
 
+	@Override
+	protected void ensureStateConsistency() {
+		
+	}
+
 }
