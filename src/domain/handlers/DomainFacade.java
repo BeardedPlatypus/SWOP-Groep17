@@ -480,6 +480,26 @@ public class DomainFacade {
 			throw new IllegalArgumentException("Option can not be null.");
 		this.getNewOrderSessionHandler().selectOption(option);
 	}
+	
+	/**
+	 * Check whether given model and options match, and the options pass the
+	 * system's restriction checks.
+	 * 
+	 * @param model
+	 * 		The model to check for
+	 * @param options
+	 * 		The options to check for
+	 * 
+	 * @return whether given model and options match, and the options pass the
+	 * 		system's restriction checks
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		When either of the arguments is or contains null
+	 */
+	public boolean isFullyValidOptionSet(Model model, List<Option> options)
+			throws IllegalArgumentException{
+		return this.getNewOrderSessionHandler().isFullyValidOptionSet(model, options);
+	}
 
 	/**
 	 * Submit the order composed by the active OrderSession, and return

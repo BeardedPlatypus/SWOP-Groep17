@@ -1,25 +1,18 @@
 package domain.initialdata;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
-import nonfunctional.ProductionScheduleTest;
-import domain.Manufacturer;
+import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.WorkPostContainer;
 import domain.car.Model;
-import domain.car.ModelCatalog;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.handlers.DomainFacade;
 import domain.order.Order;
-import domain.order.OrderFactory;
-import domain.order.SingleTaskCatalog;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
-import domain.productionSchedule.ProductionScheduleFacade;
-import exceptions.IllegalCarOptionCombinationException;
-import exceptions.NoOptionCategoriesRemainingException;
-import exceptions.OptionRestrictionException;
 
 /**
  * Class which can manipulate the domainfacade of a system to add initial data
@@ -94,34 +87,36 @@ public class InitialDataLoader {
 	// Simulation methods
 	//--------------------------------------------------------------------------
 	
+	
+	//--------- order placement methods ---------//
+
 	/**
 	 * Generate a number of the same orders and add them to the system.
+	 * This method will generate with each choice the first possible one.
+	 * For example, the first model is always used. Out of each optioncategory,
+	 * the first option is tried first. If it doesn't fit in the current specification
+	 * the second one is tried and so on.
 	 * 
 	 * @param 	numberOfOrders
-	 * 			The number of options to be placed.
+	 * 			The number of orders to be placed.
 	 */
-	public void simulatePlaceIdenticalOrder(int numberOfOrders) {
+	public void placeIdenticalStandardOrder(int numberOfOrders) {
 		
 		//start new order session
-		domainFacade.startNewOrderSession();
-		
-		//select first car model
-		Model chosenModel = domainFacade.getCarModels().get(0);
-		domainFacade.chooseModel(chosenModel);
+		this.getDomainFacade().startNewOrderSession();
+		Model chosenModel = this.getDomainFacade().getCarModels().get(0);
+		this.getDomainFacade().chooseModel(chosenModel);
 		
 		//select compatible options
 		List<Option> options = new ArrayList<Option>();
-		while(domainFacade.orderHasUnfilledOptions()){
-			OptionCategory optCat = domainFacade.getNextOptionCategory();
-			
+		while(this.getDomainFacade().orderHasUnfilledOptions()){
+			OptionCategory optCat = this.getDomainFacade().getNextOptionCategory();
 			boolean validSelection = false;
 			for(int i = 0; i < optCat.getAmountOfOptions() && validSelection; i++){
 				Option opt = optCat.getOption(i);
-				
 				options.add(opt);
-				
-				if(chosenModel.checkOptionsValidity(options)){
-					domainFacade.selectOption(opt);
+				if(this.getDomainFacade().isFullyValidOptionSet(chosenModel, options)){
+					this.getDomainFacade().selectOption(opt);
 					validSelection = true;
 				} else {
 					options.remove(opt);
@@ -129,22 +124,127 @@ public class InitialDataLoader {
 			}
 		}
 		//submit composed order
-		domainFacade.submitOrder();
+		this.getDomainFacade().submitOrder();
 
-		
-		//submit order n-1 times
+		//submit order n-1 times again
 		for(int i = 1; i < numberOfOrders;i++){
-
-			//prepare next order
-			domainFacade.startNewOrderSession();
-			domainFacade.chooseModel(chosenModel);
+			this.getDomainFacade().startNewOrderSession();
+			this.getDomainFacade().chooseModel(chosenModel);
 			for(Option opt : options){
-				domainFacade.selectOption(opt);
+				this.getDomainFacade().selectOption(opt);
 			}
-			//submit composed order
-			domainFacade.submitOrder();
+			this.getDomainFacade().submitOrder();
 		}
 
 	}
+	
+	/**
+	 * Generate a number of the random, probably different, orders and add them
+	 * to the system.
+	 * 
+	 * @param 	numberOfOrders
+	 * 			The number of orders to be placed.
+	 */
+	public void placeRandomStandardOrder(int numberOfOrders) {
+		Random rand = new Random();
+		
+		for(int i=0;i<numberOfOrders;i++){
+			List<Model> models = this.getDomainFacade().getCarModels();
+			Model chosenModel = models.get(rand.nextInt(models.size()));
+			placeRandomStandardOrderOfModel(1, chosenModel);
+		}
+
+	}
+	
+	/**
+	 * Generate a number of the random, probably different, orders and add them
+	 * to the system.
+	 * 
+	 * @param 	numberOfOrders
+	 * 			The number of orders to be placed.
+	 */
+	public void placeRandomStandardOrderOfModel(int numberOfOrders, Model model) {
+		Random rand = new Random();
+		
+		for(int i = 0; i<numberOfOrders; i++){
+			//start new order session
+			this.getDomainFacade().startNewOrderSession();
+
+			//select first car model
+			this.getDomainFacade().chooseModel(model);
+
+			//select compatible options
+			List<Option> options = new ArrayList<Option>();
+			while(this.getDomainFacade().orderHasUnfilledOptions()){
+				OptionCategory optCat = this.getDomainFacade().getNextOptionCategory();
+
+				boolean validSelection = false;
+				while(!validSelection){
+					Option opt = optCat.getOption(rand.nextInt(optCat.getAmountOfOptions()));
+
+					options.add(opt);
+
+					if(this.getDomainFacade().isFullyValidOptionSet(model, options)){
+						this.getDomainFacade().selectOption(opt);
+						validSelection = true;
+					} else {
+						options.remove(opt);
+					}
+				}
+			}
+			//submit composed order
+			this.getDomainFacade().submitOrder();
+		}
+
+	}
+
+	//----- end of order placement methods -----//
+
+	//--------- Assembly line advancement methods ---------//
+
+	
+	/**
+	 * Simulates completing all pending orders.
+	 */
+	public void simulateCompleteAllOrders(){
+		while(this.getDomainFacade().getPendingOrders().size() > 0){
+			simulateCompleteAllTasksOnAssemblyLine(1);
+		}
+	}
+	
+	/**
+	 * Simulates the completion of all tasks at each work post, for a given number of iterations.
+	 * Tasks are set to have been completed in 40 minutes each.
+	 * 
+	 * @param numberOfTimes
+	 */
+	public void simulateCompleteAllTasksOnAssemblyLine(int numberOfTimes) {
+		simulateCompleteAllTasksOnAssemblyLine(numberOfTimes, 40);
+	}
+	
+	/**
+	 * Simulates the completion of all tasks at each work post, for a given number of iterations.
+	 * Tasks are set to have been completed in the given number of minutes.
+	 * 
+	 * @param numberOfTimes
+	 */
+	public void simulateCompleteAllTasksOnAssemblyLine(int numberOfTimes,
+			int timeSpentPerTask) {
+		for(int i = 0; i < numberOfTimes; i++){
+			for(WorkPostContainer wp : this.getDomainFacade().getWorkPosts()){
+				for(AssemblyTaskContainer task : wp.getMatchingAssemblyTasks()){
+					if(!task.isCompleted()){
+						this.getDomainFacade().completeWorkpostTask(
+								wp.getWorkPostNum(), task.getTaskNumber(),
+								timeSpentPerTask);
+					}
+				}
+			}
+		}
+	}
+
+	//----- end of Assembly line advancement methods -----//
+
+	
 	
 }

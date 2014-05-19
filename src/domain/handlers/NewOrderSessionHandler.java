@@ -200,10 +200,21 @@ public class NewOrderSessionHandler {
 	 * 		The model to check for
 	 * @param options
 	 * 		The options to check for
+	 * 
 	 * @return whether given model and options match, and the options pass the
 	 * 		system's restriction checks
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		When either of the arguments is or contains null
 	 */
-	public boolean isFullyValidOptionSet(Model model, List<Option> options){
+	public boolean isFullyValidOptionSet(Model model, List<Option> options)
+	throws IllegalArgumentException{
+		if (model == null)
+			throw new IllegalArgumentException("model can not be null!");
+		if (options == null)
+			throw new IllegalArgumentException("options can not be null!");
+		if (options.contains(null))
+			throw new IllegalArgumentException("options can not contain null!");
 		return model.checkOptionsValidity(options) && 
 				this.getManufacturer().checkSpecificationRestrictions(model,
 						new Specification(options));
