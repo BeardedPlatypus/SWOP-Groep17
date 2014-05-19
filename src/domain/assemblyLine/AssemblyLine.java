@@ -28,18 +28,10 @@ public class AssemblyLine implements WorkPostObserver {
 	 * Instantiate a new AssemblyLine with the specified {@link Manufacturer}.
 	 * Also links the manufacturer to itself.
 	 * 
-	 * @param manufacturer
-	 * 		manufacturer that owns this AssemblyLine
 	 * @throws IllegalArgumentException
 	 * 		manufacturer == null
 	 */
-	public AssemblyLine(Manufacturer manufacturer) throws IllegalArgumentException {
-		if (manufacturer == null) {
-			throw new IllegalArgumentException();
-		}
-		
-		this.manufacturer = manufacturer;
-		manufacturer.setAssemblyLine(this);
+	public AssemblyLine() throws IllegalArgumentException {
 		
 		int workPostNum = 0;
 		for (TaskType type : TaskType.values()) {
@@ -65,7 +57,7 @@ public class AssemblyLine implements WorkPostObserver {
 	}
 	
 	/** The manufacturer that owns this AssemblyLIne. */
-	private final Manufacturer manufacturer;
+	private Manufacturer manufacturer;
 	
 	//--------------------------------------------------------------------------
 	// Order-related methods

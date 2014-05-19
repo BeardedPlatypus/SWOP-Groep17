@@ -56,8 +56,12 @@ public class Manufacturer {
 	 * 		The {@link OptionRestrictionManager} for the new {@link Manufacturer}
 	 * @param assemblyLine
 	 * 		The {@link AssemblyLine} for the new {@link Manufacturer}
+	 * @param intermediate
+	 * 		The {@link SchedulerIntermediate} for the new {@link Manufacturer}
 	 * @param prodSched
 	 * 		The {@link ProductionScheduleFacade} for the new {@link Manufacturer}
+	 * @param inter 
+	 * @param line 
 	 * @throws IllegalArgumentException
 	 * 		If any of the parameters is null
 	 */
@@ -67,7 +71,9 @@ public class Manufacturer {
 						ModelCatalog modelCat,
 						OptionRestrictionManager optionRestMan,
 						ProductionScheduleFacade prodSched,
-						OrderFactory orderFactory)
+						OrderFactory orderFactory,
+						AssemblyLine assemblyLine,
+						SchedulerIntermediate intermediate)
 						throws IllegalArgumentException
 	{
 		if(stratFact == null)
@@ -90,10 +96,15 @@ public class Manufacturer {
 		this.optionRestrictionManager = optionRestMan;
 		this.productionScheduleFacade = prodSched;
 		this.orderFactory = orderFactory;
+		this.assemblyLine = assemblyLine;
+		this.lineIntermediate = intermediate;
+
+		this.assemblyLine.setM
+		this.orderFactory.setManufacturer(this);
+		this.lineIntermediate.setManufacturer(this);
+
 	}
 	
-	/** The SingleTaskCatalog of this Manufacturer. */
-	private final SingleTaskCatalog singleTaskCatalog;
 
 	
 	//--------------------------------------------------------------------------
@@ -256,6 +267,19 @@ public class Manufacturer {
 	public SingleOrderSession startNewSingleTaskOrderSession() {
 		return new SingleOrderSession(this, this.singleTaskCatalog);
 	}
+	
+	
+	/**
+	 * Get the {@link SingleTaskCatalog} of this {@link Manufacturer}.
+	 * 
+	 * @return the {@link SingleTaskCatalog}.
+	 */
+	public SingleTaskCatalog getSingleTaskCatalog(){
+		return this.singleTaskCatalog;
+	}
+
+	/** The SingleTaskCatalog of this Manufacturer. */
+	private final SingleTaskCatalog singleTaskCatalog;
 	
 	/**
 	 * Submit the parameters for a single task order to the production schedule.
