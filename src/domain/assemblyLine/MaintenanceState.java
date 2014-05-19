@@ -34,13 +34,19 @@ public class MaintenanceState extends AssemblyLineState {
 	
 	@Override
 	protected void finaliseSetState() {
-		// TODO Auto-generated method stub
-		
+		this.checkEmptyAssemblyLine();
 	}
 
 	@Override
-	protected void checkStateTransition() {
-		// TODO Auto-generated method stub
+	protected void ensureStateConsistency() {
+		this.checkEmptyAssemblyLine();
+		
+	}
+	
+	private void checkEmptyAssemblyLine() {
+		if (super.getAssemblyLine().isEmpty()) {
+			//TODO request time and set operational time to four hours later
+		}
 		
 	}
 	

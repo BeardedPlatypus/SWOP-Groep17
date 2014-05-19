@@ -1,5 +1,6 @@
 package domain.assemblyLine;
 
+import domain.DateTime;
 import domain.order.Order;
 
 /**
@@ -57,121 +58,74 @@ public abstract class AssemblyLineState {
 	 */
 	public void completeWorkpostTask(int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException,
 			IllegalStateException{
-		if(!this.getAssemblyLine().isValidWorkPost(workPostNumber))
+		if(!this.isValidWorkPost(workPostNumber))
 			throw new IllegalArgumentException("Argument is not an existing workpost.");
-		this.getAssemblyLine().getWorkPost(workPostNumber).completeTask(taskNumber, minutes);
+		this.getWorkPost(workPostNumber).completeTask(taskNumber, minutes);
+	}
+	
+	
+	
+	/**
+	 * When the AssemblyLine has advanced, do what is necessary to ensure
+	 * the AssemblyLine state is consistent. Each subclass must ensure behaviour
+	 * as specified in the assignment.
+	 */
+	protected abstract void ensureStateConsistency();
+	
+	/**
+	 * See {@link AssemblyLine#isValidWorkPost(int) isValidWorkPost(int)}
+	 */
+	boolean isValidWorkPost(int workPostNum) {
+		return this.getAssemblyLine().isValidWorkPost(workPostNum);
 	}
 	
 	/**
-	 * Advance the AssemblyLine such that no AssemblyProcedures can skip
-	 * their WorkPosts
-	 * 
-	 * @throws IllegalStateException
-	 * 		Concrete state does not allow the AssemblyLine to advance
+	 * See {@link AssemblyLine#getWorkPost(int) getWorkPost(int)}
 	 */
-	public void advanceAssemblyLine() throws IllegalStateException {
-		this.initialWorkPostShift();
-		this.shiftLoop();
-		this.checkStateTransition();
+	WorkPost getWorkPost(int workPostNum) throws IllegalArgumentException {
+		return this.getAssemblyLine().getWorkPost(workPostNum);
 	}
 	
 	/**
-	 * When the AssemblyLine has advanced, check whether a state transition is
-	 * necessary.
+	 * See {@link AssemblyLine#getFirstWorkPost() getFirstWorkPost()}
 	 */
-	protected abstract void checkStateTransition();
-	
-	/**
-	 * Advance this AssemblyLine by one WorkPost. All AssemblyProcedures
-	 * are shifted forward by one WorkPost. Concerning the last AssemblyProcedure:
-	 * its order is retrieved and information about it is reported to the StatisticsLogger
-	 */
-	private void initialWorkPostShift() throws IllegalStateException{
-		AssemblyProcedure finishedProcedure = this.getAssemblyLine().
-				getLastWorkPost().getAssemblyProcedure();
-		
-		this.getAssemblyLine().getLastWorkPost()
-			.addToElapsedMinutes((int) this.getAssemblyLine().getElapsedTime().getInMinutes());
-		for(int i = this.getAssemblyLine().getAssemblyLineSize() - 1; i > 0 ; i--){
-			this.getAssemblyLine().getWorkPost(i - 1).
-				addToElapsedMinutes((int) this.getAssemblyLine().getElapsedTime().getInMinutes());
-			this.getAssemblyLine().getWorkPost(i)
-				.takeAssemblyProcedureFrom(this.getAssemblyLine().getWorkPost(i - 1));
-		}
-		
-		this.getAssemblyLine().handleFinishedAssemblyProcedure(finishedProcedure);
+	WorkPost getFirstWorkPost() {
+		return this.getAssemblyLine().getFirstWorkPost();
 	}
 	
 	/**
-	 * After the initial work post shift, keep advancing parts of the
-	 * AssemblyLine individually until no more AssemblyProcedures can skip
-	 * a WorkPost and until the first WorkPost has an active AssemblyProcedure.
+	 * See {@link AssemblyLine#getLastWorkPost() getLastWorkPost()}
 	 */
-	private void shiftLoop() {
-		boolean loopHadAnEffect;
-		do {
-			loopHadAnEffect = false;
-			if (this.getAssemblyLine().getLastWorkPost().isFinished()) {
-				this.rollFinishedAssemblyProcedureOffLine();
-			}
-			if (this.getAssemblyLine().getFirstWorkPost().isEmpty()) {
-				loopHadAnEffect = this.putNextOrderOnFirstWorkPost();
-			}
-			for (int i = this.getAssemblyLine().getAssemblyLineSize(); i > 0; i--) {
-				loopHadAnEffect = loopHadAnEffect || this.workPostShiftStep(i, i - 1);
-			}
-		} while (loopHadAnEffect);
+	WorkPost getLastWorkPost() {
+		return this.getAssemblyLine().getLastWorkPost();
 	}
 	
 	/**
-	 * When necessary, take the completed AssemblyProcedure from the last WorkPost
-	 * and process it.
+	 * See {@link AssemblyLine#getElapsedTime() getElapsedTime()}
 	 */
-	private void rollFinishedAssemblyProcedureOffLine() {
-		AssemblyProcedure finishedProcedure = this.getAssemblyLine().getLastWorkPost()
-				.getAssemblyProcedure();
-		this.getAssemblyLine().handleFinishedAssemblyProcedure(finishedProcedure);
-		//FIXME replace null by Optional
-		this.getAssemblyLine().getLastWorkPost().setAssemblyProcedure(null);
+	DateTime getElapsedTime() {
+		return this.getAssemblyLine().getElapsedTime();
 	}
 	
 	/**
-	 * When necessary, consume the next Order from the ProductionSchedule
-	 * and put it on the AssemblyLine.
-	 * 
-	 * @return The first WorkPost is no longer empty
+	 * See {@link AssemblyLine#getAssemblyLineSize() getAssemblyLineSize()}
 	 */
-	private boolean putNextOrderOnFirstWorkPost() {
-		Order nextOrder = this.popNextOrderFromSchedule();
-		//FIXME optional?
-		if (nextOrder != null) {
-			AssemblyProcedure nextProcedure = this.getAssemblyLine()
-					.makeAssemblyProcedure(nextOrder);
-			this.getAssemblyLine().getFirstWorkPost().setAssemblyProcedure(nextProcedure);
-		}
-		return ! this.getAssemblyLine().getFirstWorkPost().isEmpty();
+	int getAssemblyLineSize() {
+		return this.getAssemblyLine().getAssemblyLineSize();
 	}
 	
 	/**
-	 * If the current WorkPost is empty and the preceding WorkPost is finished,
-	 * put the AssemblyProcedure from the preceding WorkPost on the current WorkPost
-	 * 
-	 * @param currentWorkPostNum
-	 * 		The WorkPost that takes the AssemblyProcedure
-	 * @param predecessorWorkPostNum
-	 * 		The WorkPost that loses its AssemblyProcedure
-	 * @return The current WorkPost took the AssemblyProcedure from the preceding
-	 * 		WorkPost
+	 * See {@link AssemblyLine#makeAssemblyProcedure(Order) makeAssemblyProcedure(Order)}
 	 */
-	private boolean workPostShiftStep(int currentWorkPostNum, int predecessorWorkPostNum) {
-		boolean currentEmpty = this.getAssemblyLine().getWorkPost(currentWorkPostNum).isEmpty();
-		boolean predecessorFinished = this.getAssemblyLine().getWorkPost(predecessorWorkPostNum).isFinished();
-		if (currentEmpty && predecessorFinished) {
-			this.getAssemblyLine().getWorkPost(currentWorkPostNum)
-				.takeAssemblyProcedureFrom(this.getAssemblyLine().getWorkPost(predecessorWorkPostNum));
-			return true;
-		}
-		return false;
+	AssemblyProcedure makeAssemblyProcedure(Order order) throws IllegalArgumentException {
+		return this.getAssemblyLine().makeAssemblyProcedure(order);
+	}
+	
+	/**
+	 * See {@link AssemblyLine#handleFinishedAssemblyProcedure(Order) handleFinishedAssemblyProcedure(Order)}
+	 */
+	void handleFinishedAssemblyProcedure(AssemblyProcedure procedure) {
+		this.getAssemblyLine().handleFinishedAssemblyProcedure(procedure);
 	}
 	
 	/**

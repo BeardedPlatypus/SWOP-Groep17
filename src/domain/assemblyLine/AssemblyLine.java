@@ -484,11 +484,13 @@ public class AssemblyLine implements WorkPostObserver {
 	}
 	
 	Order popNextOrderFromSchedule() {
-		return this.getSchedulerIntermediate().popNextOrderFromSchedule();
+		//TODO ask the AssemblyLineController
+		return null;
 	}
 	
 	Order peekNextOrderFromSchedule() {
-		return this.getSchedulerIntermediate().peekNextOrderFromSchedule();
+		//TODO ask the AssemblyLineController
+		return null;
 	}
 	
 	/**
@@ -542,9 +544,16 @@ public class AssemblyLine implements WorkPostObserver {
 	 * is built out of tasks 
 	 * 
 	 * @param order
-	 * @return
+	 * 		Order to make AssemblyProcedure from
+	 * @return A new AssemblyProcedure compatible with this AssemblyLine
+	 * @throws IllegalArgumentException
+	 * 		order is null
 	 */
-	public AssemblyProcedure makeAssemblyProcedure(Order order) {
+	public AssemblyProcedure makeAssemblyProcedure(Order order) throws IllegalArgumentException {
+		if (order == null) {
+			throw new IllegalArgumentException("Cannot make assembly procedure"
+					+ "from null order");
+		}
 		List<AssemblyTask> tasks = this.generateTasksFrom(order);
 		int expectedMinutes = this.calculateExpectedTimeOnLine(order);
 		return new AssemblyProcedure(order, tasks, expectedMinutes);

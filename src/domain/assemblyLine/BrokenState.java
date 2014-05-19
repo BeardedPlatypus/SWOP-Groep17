@@ -56,7 +56,7 @@ public class BrokenState extends AssemblyLineState {
 	}
 	
 	@Override
-	protected void checkStateTransition() {
+	protected void ensureStateConsistency() {
 		// no special treatment required
 	}
 	
