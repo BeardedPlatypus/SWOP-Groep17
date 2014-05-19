@@ -1,16 +1,13 @@
 package domain.productionSchedule;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 
-import domain.DateTime;
 import domain.car.Model;
 import domain.car.Specification;
 import domain.assemblyLine.TaskType;
