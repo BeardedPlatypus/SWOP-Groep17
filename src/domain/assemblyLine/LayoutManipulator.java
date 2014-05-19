@@ -39,7 +39,7 @@ public class LayoutManipulator {
 	 * @throws IllegalStateException
 	 * 		Concrete state does not allow the AssemblyLine to advance
 	 */
-	public void advanceAssemblyLine() throws IllegalStateException {
+	void advanceAssemblyLine() throws IllegalStateException {
 		this.initialWorkPostShift();
 		this.shiftLoop();
 		this.getState().ensureStateConsistency();

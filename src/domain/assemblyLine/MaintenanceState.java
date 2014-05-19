@@ -13,9 +13,14 @@ import domain.order.Order;
  *
  */
 public class MaintenanceState extends AssemblyLineState {
-
-	public MaintenanceState(AssemblyLine line) throws IllegalArgumentException {
-		super(line);
+	
+	@Override
+	public String getName() {
+		return "In maintenance";
+	}
+	
+	public MaintenanceState clone() {
+		return new MaintenanceState();
 	}
 
 	@Override
@@ -50,6 +55,12 @@ public class MaintenanceState extends AssemblyLineState {
 		
 	}
 	
-	
+	@Override
+	public boolean equals(Object other) {
+		if (other == null) {
+			return false;
+		}
+		return other instanceof MaintenanceState;
+	}
 
 }

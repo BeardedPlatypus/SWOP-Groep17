@@ -87,7 +87,8 @@ public class LayoutManipulatorTest {
 		
 		Mockito.when(assemblyLine.getAssemblyLineSize()).thenReturn(workPosts.size());
 		
-		state = new ActiveState(assemblyLine);
+		state = new ActiveState();
+		state.setAssemblyLine(assemblyLine);
 		man = new LayoutManipulator(state);
 	}
 

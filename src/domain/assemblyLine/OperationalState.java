@@ -8,29 +8,51 @@ package domain.assemblyLine;
  *
  */
 public class OperationalState extends AssemblyLineState {
+	
+	@Override
+	public String getName() {
+		return "Operational";
+	}
 
 	/**
-	 * Initialise a new OperationalState with the specified AssemblyLine.
-	 * 
-	 * @param line
-	 * 		The AssemblyLine of interest.
-	 * @throws IllegalArgumentException
-	 * 		line is null
+	 * When setting an AssemblyLine's state to OperationalState,
+	 * it must still be decided which subclass of OperationalState to use.
 	 */
-	public OperationalState(AssemblyLine line) throws IllegalArgumentException {
-		super(line);
-	}
-
-	@Override
-	protected void ensureStateConsistency() {
-		// TODO Auto-generated method stub
-
-	}
-
 	@Override
 	protected void finaliseSetState() {
-		// TODO Auto-generated method stub
+		if (super.isEmpty()) {
+			this.checkSetIdleState();
+		}
+		else {
+			super.setState(new ActiveState());
+		}
+	}
+	
+	/**
+	 * If the AssemblyLine is empty, advance the assembly line and then
+	 * check if it is still empty.
+	 */
+	private void checkSetIdleState() {
+		super.advanceAssemblyLine();
+		if (super.isEmpty()) {
+			super.setState(new IdleState());
+		}
+		else {
+			super.setState(new ActiveState());
+		}
+	}
 
+	@Override
+	public OperationalState clone() {
+		return new OperationalState();
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other == null) {
+			return false;
+		}
+		return other instanceof OperationalState;
 	}
 
 }

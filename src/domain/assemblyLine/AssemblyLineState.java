@@ -10,26 +10,46 @@ import domain.order.Order;
  * @author Thomas Vochten
  *
  */
-public abstract class AssemblyLineState {
+public abstract class AssemblyLineState implements IAssemblyLineState {
 	
 	/**
-	 * Initialise a new AssemblyLineState with the specified AssemblyLine
+	 * Initialise a new AssemblyLineState
+	 */
+	public AssemblyLineState() throws IllegalArgumentException {
+		this.layoutManipulator = new LayoutManipulator(this);
+	}
+	
+	/**
+	 * Make a clone of this AssemblyLineState, without the AssemblyLine set.
+	 */
+	@Override
+	public abstract AssemblyLineState clone();
+	
+	/**
+	 * Get the name of this AssemblyLineState
+	 * 
+	 * @return the name
+	 */
+	public abstract String getName();
+	
+	/** The AssemblyLine to control the state of */
+	protected AssemblyLine assemblyLine;
+	
+	/**
+	 * Set the AssemblyLine of this AssemblyLineState to the specified AssemblyLine
 	 * 
 	 * @param line
-	 * 		The AssemblyLine to control the state of
+	 * 		The AssemblyLine of interest
 	 * @throws IllegalArgumentException
 	 * 		line is null
 	 */
-	public AssemblyLineState(AssemblyLine line) throws IllegalArgumentException {
+	public void setAssemblyLine(AssemblyLine line) throws IllegalArgumentException {
 		if (line == null) {
-			throw new IllegalArgumentException("Cannot initialise an"
-					+ "AssemblyLineState with null AssemblyLine");
+			throw new IllegalArgumentException("Cannot set null AssemblyLine"
+					+ "in AssemblyLineState");
 		}
 		this.assemblyLine = line;
 	}
-	
-	/** The AssemblyLine to control the state of */
-	protected final AssemblyLine assemblyLine;
 	
 	/**
 	 * Get the AssemblyLine of which this State controls the work flow.
@@ -38,6 +58,53 @@ public abstract class AssemblyLineState {
 	 */
 	protected AssemblyLine getAssemblyLine() {
 		return this.assemblyLine;
+	}
+	
+	/**
+	 * Indicate whether this AssemblyLineState's AssemblyLine has been set
+	 * 
+	 * @return The AssemblyLine is not null
+	 */
+	protected boolean assemblyLineIsSet() {
+		return this.getAssemblyLine() != null;
+	}
+	
+	/**
+	 * Checks whether the AssemblyLine has been set and throws an IllegalStateException
+	 * if not.
+	 * 
+	 * @throws IllegalStateException
+	 * 		assemblyLineIsSet() == true
+	 */
+	private void checkAssemblyLineSet() throws IllegalStateException {
+		if (! this.assemblyLineIsSet()) {
+			throw new IllegalStateException("AssemblyLine has not yet been set in"
+					+ "AssemblyLineState");
+		}
+	}
+	
+	/** Responsible for advancing the AssemblyLine */
+	private LayoutManipulator layoutManipulator;
+	
+	/**
+	 * Advances the AssemblyLine piecewise until no more orders can be
+	 * placed on the line and no AssemblyProcedures can be shifted
+	 * 
+	 * @throws IllegalStateException
+	 * 		assemblyLineIsSet() == false
+	 */
+	void advanceAssemblyLine() throws IllegalStateException {
+		this.checkAssemblyLineSet();
+		this.getLayoutManipulator().advanceAssemblyLine();
+	}
+	
+	/**
+	 * Get the LayoutManipulator
+	 * 
+	 * @return the LayoutManipulator
+	 */
+	private LayoutManipulator getLayoutManipulator() {
+		return this.layoutManipulator;
 	}
 	
 	/**
@@ -55,11 +122,14 @@ public abstract class AssemblyLineState {
 	 * 		See {@link WorkPost#completeTask(int, int) completeTask(int, int)}
 	 * @throws IllegalStateException
 	 * 		Concrete state does not allow the completion of tasks
+	 * @throws IllegalStateException
+	 * 		assemblyLineIsSet() == false
 	 */
 	public void completeWorkpostTask(int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException,
 			IllegalStateException{
 		if(!this.isValidWorkPost(workPostNumber))
 			throw new IllegalArgumentException("Argument is not an existing workpost.");
+		this.checkAssemblyLineSet();
 		this.getWorkPost(workPostNumber).completeTask(taskNumber, minutes);
 	}
 	
@@ -80,9 +150,17 @@ public abstract class AssemblyLineState {
 	}
 	
 	/**
+	 * See {@link AssemblyLine#isEmpty() isEmpty()}
+	 */
+	boolean isEmpty() {
+		return this.getAssemblyLine().isEmpty();
+	}
+	
+	/**
 	 * See {@link AssemblyLine#getWorkPost(int) getWorkPost(int)}
 	 */
 	WorkPost getWorkPost(int workPostNum) throws IllegalArgumentException {
+		this.checkAssemblyLineSet();
 		return this.getAssemblyLine().getWorkPost(workPostNum);
 	}
 	
@@ -90,6 +168,7 @@ public abstract class AssemblyLineState {
 	 * See {@link AssemblyLine#getFirstWorkPost() getFirstWorkPost()}
 	 */
 	WorkPost getFirstWorkPost() {
+		this.checkAssemblyLineSet();
 		return this.getAssemblyLine().getFirstWorkPost();
 	}
 	
@@ -97,6 +176,7 @@ public abstract class AssemblyLineState {
 	 * See {@link AssemblyLine#getLastWorkPost() getLastWorkPost()}
 	 */
 	WorkPost getLastWorkPost() {
+		this.checkAssemblyLineSet();
 		return this.getAssemblyLine().getLastWorkPost();
 	}
 	
@@ -104,6 +184,7 @@ public abstract class AssemblyLineState {
 	 * See {@link AssemblyLine#getElapsedTime() getElapsedTime()}
 	 */
 	DateTime getElapsedTime() {
+		this.checkAssemblyLineSet();
 		return this.getAssemblyLine().getElapsedTime();
 	}
 	
@@ -111,6 +192,7 @@ public abstract class AssemblyLineState {
 	 * See {@link AssemblyLine#getAssemblyLineSize() getAssemblyLineSize()}
 	 */
 	int getAssemblyLineSize() {
+		this.checkAssemblyLineSet();
 		return this.getAssemblyLine().getAssemblyLineSize();
 	}
 	
@@ -118,6 +200,7 @@ public abstract class AssemblyLineState {
 	 * See {@link AssemblyLine#makeAssemblyProcedure(Order) makeAssemblyProcedure(Order)}
 	 */
 	AssemblyProcedure makeAssemblyProcedure(Order order) throws IllegalArgumentException {
+		this.checkAssemblyLineSet();
 		return this.getAssemblyLine().makeAssemblyProcedure(order);
 	}
 	
@@ -125,6 +208,7 @@ public abstract class AssemblyLineState {
 	 * See {@link AssemblyLine#handleFinishedAssemblyProcedure(Order) handleFinishedAssemblyProcedure(Order)}
 	 */
 	void handleFinishedAssemblyProcedure(AssemblyProcedure procedure) {
+		this.checkAssemblyLineSet();
 		this.getAssemblyLine().handleFinishedAssemblyProcedure(procedure);
 	}
 	
@@ -135,6 +219,7 @@ public abstract class AssemblyLineState {
 	 * @return The next Order
 	 */
 	protected Order popNextOrderFromSchedule() {
+		this.checkAssemblyLineSet();
 		return this.getAssemblyLine().popNextOrderFromSchedule();
 	}
 	
@@ -144,6 +229,7 @@ public abstract class AssemblyLineState {
 	 * @return The next Order
 	 */
 	protected Order peekNextOrderFromSchedule() {
+		this.checkAssemblyLineSet();
 		return this.getAssemblyLine().peekNextOrderFromSchedule();
 	}
 	

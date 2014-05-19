@@ -10,9 +10,15 @@ import domain.order.Order;
  *
  */
 public class BrokenState extends AssemblyLineState {
-
-	public BrokenState(AssemblyLine line) throws IllegalArgumentException {
-		super(line);
+	
+	@Override
+	public String getName() {
+		return "Broken";
+	}
+	
+	@Override
+	public BrokenState clone() {
+		return new BrokenState();
 	}
 	
 	/**
@@ -30,7 +36,7 @@ public class BrokenState extends AssemblyLineState {
 	 * in this state.
 	 */
 	@Override
-	public void advanceAssemblyLine() throws IllegalStateException {
+	void advanceAssemblyLine() throws IllegalStateException {
 		throw new IllegalStateException("Cannot advance assembly line"
 				+ "if it is broken");
 	}
@@ -63,6 +69,14 @@ public class BrokenState extends AssemblyLineState {
 	@Override
 	protected void finaliseSetState() {
 		// no special treatment required
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other == null) {
+			return false;
+		}
+		return other instanceof BrokenState;
 	}
 
 }
