@@ -15,8 +15,12 @@ import org.mockito.MockitoAnnotations;
 
 import domain.DateTime;
 import domain.Manufacturer;
+import domain.car.CarModel;
 import domain.car.Option;
+import domain.car.OptionCategory;
+import domain.car.Specification;
 import domain.order.Order;
+import domain.order.StandardOrder;
 import domain.car.Model;
 
 public class OperationalStateTest {
@@ -33,6 +37,8 @@ public class OperationalStateTest {
 	AssemblyProcedure proc0;
 	AssemblyProcedure proc1;
 	AssemblyProcedure proc2;
+	Model model = new CarModel("Batmobile", new ArrayList<OptionCategory>(), 60);
+	Option bodyOption = new Option(TaskType.BODY, "john", "doe");
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -69,6 +75,15 @@ public class OperationalStateTest {
 		workPosts.get(0).setAssemblyProcedure(proc0);
 		line.setCurrentState(new OperationalState());
 		assertEquals(new ActiveState(), line.getCurrentState());
+	}
+	
+	@Test
+	public void setState_orderWaiting() {
+		Order order = new StandardOrder(model, new Specification(bodyOption), 0, new DateTime(0, 6, 0));
+		AssemblyLine spiedLine = Mockito.spy(line);
+		Mockito.when(spiedLine.popNextOrderFromSchedule()).thenReturn(order);
+		spiedLine.setCurrentState(new OperationalState());
+		assertEquals(new ActiveState(), spiedLine.getCurrentState());
 	}
 
 }

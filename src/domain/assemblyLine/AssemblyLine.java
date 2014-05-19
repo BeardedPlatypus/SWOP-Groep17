@@ -609,7 +609,8 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @return The expected amount of minutes
 	 */
 	private int calculateExpectedTimeOnLine(Order order) {
-		return order.getMinutesPerPost() * this.getAssemblyLineSize();
+		//FIXME
+		return 0;
 	}
 	
 	//--------------------------------------------------------------------------
