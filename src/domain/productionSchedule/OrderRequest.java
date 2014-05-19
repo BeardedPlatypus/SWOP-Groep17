@@ -1,5 +1,10 @@
 package domain.productionSchedule;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
 import domain.assemblyLine.TaskType;
 import domain.car.Model;
 
@@ -37,22 +42,24 @@ public class OrderRequest {
 	/**
 	 * Construct a new OrderRequest of a StandardOrder with the specified Model.
 	 * 
-	 * @param model
-	 * 		The Model of this new OrderRequest.
+	 * @param models
+	 * 		A set of Models of this new OrderRequest, should contain atleast one model.
 	 * 
 	 * @postcondition | (new this).getOrderType == STANDARD
 	 * @postcondition | (new this).getModel == model
-	 * 
-	 * @throws IllegalArgumentException | model == null
+	 * @throws IllegalArgumentException (models == null || models.size() < 1)
 	 */
-	public OrderRequest(Model model) throws IllegalArgumentException {
-		if (model == null) {
-			throw new IllegalArgumentException("model cannot be null.");
+	public OrderRequest(Model[] models) throws IllegalArgumentException {
+		if (models == null) {
+			throw new IllegalArgumentException("models cannot be null.");
+		}
+		if (models.length < 1) {
+			throw new IllegalArgumentException("models should contain atleast one model.");
 		}
 		
 		this.orderType = Type.STANDARD;
-		this.model = model;
-		this.taskType = null;
+		this.models = Sets.newHashSet(models);
+		this.taskTypes = null;
 	}
 	
 	/**
@@ -62,24 +69,23 @@ public class OrderRequest {
 	 * @return | this.getOrderType == STANDARD -> (the model of this OrderRequest)
 	 * @throws IllegalStateArgument | this.getOrderType != STANDARD
 	 */
-	public Model getModel() throws IllegalStateException {
+	public Set<Model> getModels() throws IllegalStateException {
 		switch (this.getOrderType()) {
 		case STANDARD:
-			return this.model;
+			return new HashSet<>(this.models);
 		default:
 			throw new IllegalStateException("Cannot access model of a non-StandardOrder.");
 		}
 	}
 	
 	/** The model of the StandardOrder request. */
-	private final Model model;
+	private final Set<Model> models;
 	
 	//--------------------------------------------------------------------------
 	// SingleTaskOrder
 	//--------------------------------------------------------------------------
 	/**
 	 * Construct a new OrderRequest of a SingleTaskOrder with the specified task.
-	 * 
 	 * 
 	 * @param task
 	 * 		The TaskType of this new OrderRequest
@@ -89,14 +95,17 @@ public class OrderRequest {
 	 * 
 	 * @throws IllegalArgumentException | task == null
 	 */
-	public OrderRequest(TaskType task) throws IllegalArgumentException {
-		if (task == null) {
-			throw new IllegalArgumentException("task cannot be null.");
+	public OrderRequest(TaskType[] tasks) throws IllegalArgumentException {
+		if (tasks == null) {
+			throw new IllegalArgumentException("tasks cannot be null.");
+		} 
+		if (tasks.length < 1) {
+			throw new IllegalArgumentException("tasks has to contain atleast one task.");
 		}
 		
 		this.orderType = Type.SINGLETASK;
-		this.taskType = task;
-		this.model = null;
+		this.taskTypes = Sets.newHashSet(tasks);
+		this.models = null;
 	}
 	
 	/**
@@ -106,16 +115,16 @@ public class OrderRequest {
 	 * @return | this.getOrderType == SINGLETASK -> (the tasktype of this OrderRequest).
 	 * @throws IllegalStateArgument | this.getOrderType != SINGLETASK.
 	 */
-	public TaskType getTaskType() throws IllegalStateException {
+	public Set<TaskType> getTaskTypes() throws IllegalStateException {
 		switch (this.getOrderType()) {
 		case SINGLETASK:
-			return this.taskType;
+			return new HashSet<>(this.taskTypes);
 		default:
 			throw new IllegalStateException("Cannot access TaskType of a non-SingleTaskOrder.");
 		}
 	}
 	
 	/** The taskType of the SingleTaskOrder request. */
-	private final TaskType taskType;
+	private final Set<TaskType> taskTypes;
 }
 
