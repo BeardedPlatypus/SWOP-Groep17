@@ -4,8 +4,8 @@ import com.google.common.base.Optional;
 
 import domain.DateTime;
 import domain.assemblyLine.TaskType;
-import domain.car.Model;
 import domain.car.Specification;
+import domain.car.Model;
 
 /** 
  * The SingleTaskOrder provides the interface for a custom order consisting of

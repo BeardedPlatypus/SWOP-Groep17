@@ -3,8 +3,8 @@ package domain.order;
 import com.google.common.base.Optional;
 
 import domain.DateTime;
-import domain.car.Model;
 import domain.car.Specification;
+import domain.car.Model;
 
 
 /** 
