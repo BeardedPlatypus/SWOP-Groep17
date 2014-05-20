@@ -118,12 +118,6 @@ public class SingleTaskOrderTest {
 		assertEquals(true, spiedOrder.isCompleted());
 	}
 	
-	@Test
-	public void testMinutesAtPost() {
-		Mockito.when(mockSuperModel2.getMinsPerWorkPost()).thenReturn(30);
-		assertTrue(order1.getMinutesPerPost() == 30);
-	}
-	
 	//--------------------------------------------------------------------------
 	// Completion Time setter and getters.
 	//--------------------------------------------------------------------------
