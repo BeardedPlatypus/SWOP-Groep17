@@ -14,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import domain.DateTime;
+import domain.assemblyLine.TaskType;
 import domain.car.Specification;
 import domain.car.Model;
 
@@ -111,7 +112,7 @@ public class StandardOrderTest {
 	
 	@Test
 	public void testMinutesAtPost() {
-		Mockito.when(mockSuperModel2.getMinsPerWorkPost()).thenReturn(30);
+		Mockito.when(mockSuperModel2.getMinsOnWorkPostOfType(Mockito.any(TaskType.class))).thenReturn(30);
 		assertTrue(order1.getMinutesPerPost() == 30);
 	}
 	

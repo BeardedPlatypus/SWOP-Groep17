@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import domain.DateTime;
+import domain.assemblyLine.TaskType;
 import domain.car.Specification;
 import domain.car.Model;
 
@@ -120,7 +121,7 @@ public class SingleTaskOrderTest {
 	
 	@Test
 	public void testMinutesAtPost() {
-		Mockito.when(mockSuperModel2.getMinsPerWorkPost()).thenReturn(30);
+		Mockito.when(mockSuperModel2.getMinsOnWorkPostOfType(Mockito.any(TaskType.class))).thenReturn(30);
 		assertTrue(order1.getMinutesPerPost() == 30);
 	}
 	

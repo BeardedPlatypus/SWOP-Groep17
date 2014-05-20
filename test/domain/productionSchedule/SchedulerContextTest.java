@@ -21,6 +21,7 @@ import domain.order.Order;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
 import domain.productionSchedule.strategy.BatchStrategy;
+import domain.car.CarModel;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
@@ -295,7 +296,7 @@ public class SchedulerContextTest {
 	//--------------------------------------------------------------------------
 	@Test
 	public void getEligibleBatchesTest() {
-		Model model = new Model("test", new ArrayList<OptionCategory>(), 60);
+		Model model = new CarModel("test", new ArrayList<OptionCategory>(), 60);
 		Option option1 = new Option(TaskType.BODY, "john", "doe");
 		Option option2 = new Option(TaskType.DRIVETRAIN, "you", "what");
 		Specification correctSpec = new Specification(new ArrayList<Option>(Arrays

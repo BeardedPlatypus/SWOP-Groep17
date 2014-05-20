@@ -48,7 +48,8 @@ public class AlgorithmStrategyFactoryTest {
 	public void getBatchStrategyTest() {
 		Option option = new Option(TaskType.BODY, "john", "doe");
 		Specification spec = new Specification(new ArrayList<Option>(Arrays.asList(option)));
-		BatchStrategy strat = new BatchStrategy(spec);
+		BatchStrategy strat = (BatchStrategy) factory.getBatchStrategy(spec);
+		//BatchStrategy strat = new BatchStrategy(spec);
 		BatchComparator comp = Whitebox.getInternalState(strat, BatchComparator.class);
 		assertEquals(spec, Whitebox.getInternalState(comp, Specification.class));
 	}
