@@ -265,7 +265,7 @@ public class WorkPostTest {
 	public void takeProcedureFrom_valid() {
 		emptyWorkPost.takeAssemblyProcedureFrom(workPost);
 		assertEquals(emptyWorkPost.getAssemblyProcedure().get(), assemblyProcedure);
-		assertEquals(null, workPost.getAssemblyProcedure());
+		assertEquals(Optional.absent(), workPost.getAssemblyProcedure());
 		assertEquals(0, (int) Whitebox.getInternalState(workPost, "minutesOfWork"));
 	}
 

@@ -30,8 +30,6 @@ public class AssemblyLine implements WorkPostObserver {
 	 * Instantiate a new AssemblyLine with the specified {@link Manufacturer}.
 	 * Also links the manufacturer to itself.
 	 * 
-	 * @param manufacturer
-	 * 		manufacturer that owns this AssemblyLine
 	 * @param workPosts
 	 * 		The WorkPosts managed by the new AssemblyLine
 	 * @param orderSelector
@@ -39,12 +37,8 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @throws IllegalArgumentException
 	 * 		manufacturer == null
 	 */
-	public AssemblyLine(Manufacturer manufacturer, List<WorkPost> workPosts,
-			OrderAcceptanceChecker orderSelector) throws IllegalArgumentException {
-		if (manufacturer == null) {
-			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
-					+ "with null manufacturer");
-		}
+	public AssemblyLine(List<WorkPost> workPosts, OrderAcceptanceChecker orderSelector)
+		throws IllegalArgumentException {
 		if (workPosts == null || workPosts.isEmpty()) {
 			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
 					+ "without any WorkPosts");
@@ -53,9 +47,6 @@ public class AssemblyLine implements WorkPostObserver {
 			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
 					+ "with null order selector");
 		}
-		
-		this.manufacturer = manufacturer;
-		manufacturer.setAssemblyLine(this);
 		
 		this.workPosts = workPosts;
 		for (WorkPost workPost : workPosts) {
@@ -79,7 +70,23 @@ public class AssemblyLine implements WorkPostObserver {
 	}
 	
 	/** The manufacturer that owns this AssemblyLIne. */
-	private final Manufacturer manufacturer;
+	private Manufacturer manufacturer;
+	
+	/**
+	 * Set this AssemblyLine's Manufacturer to the specified manufacturer
+	 * 
+	 * @param manufacturer
+	 * 		The new Manufacturer
+	 * @throws IllegalArgumentException
+	 * 		manufacturer is null
+	 */
+	public void setManufacturer(Manufacturer manufacturer) throws IllegalArgumentException {
+		if (manufacturer == null) {
+			throw new IllegalArgumentException("Cannot set null Manufacturer"
+					+ "in AssemblyLine");
+		}
+		this.manufacturer = manufacturer;
+	}
 	
 	//--------------------------------------------------------------------------
 	// Order-related methods
@@ -146,23 +153,7 @@ public class AssemblyLine implements WorkPostObserver {
 		}
 		return activeOrders;
 	}
-	
-	//--------------------------------------------------------------------------
-	// Querying AssemblyProcedure objects
-	//--------------------------------------------------------------------------
-	/**
-	 * Get views of the AssemblyProcedures currently active on each WorkPost
-	 * 
-	 * @return The views of the AssemblyProcedures
-	 */
-	public List<AssemblyProcedureContainer> getAssemblyOnEachWorkPost() {
-		List<AssemblyProcedureContainer> toReturn = new ArrayList<AssemblyProcedureContainer>();
-		for (WorkPost workPost : this.getWorkPosts()) {
-			toReturn.add(workPost.getAssemblyProcedureContainer());
-		}
-		return toReturn;
-	}
-	
+
 	//--------------------------------------------------------------------------
 	/**
 	 * Get views those AssemblyTasks that are of the specified WorkPost's type.
@@ -607,8 +598,11 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @return The expected amount of minutes
 	 */
 	private int calculateExpectedTimeOnLine(Order order) {
-		//FIXME
-		return 0;
+		int total = 0;
+		for(WorkPost p : this.getWorkPosts()){
+			total += p.getExpectedTimeOnPost(order);
+		}
+		return total;
 	}
 	
 	//--------------------------------------------------------------------------

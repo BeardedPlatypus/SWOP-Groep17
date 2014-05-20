@@ -5,12 +5,12 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ CarsProducedRegistrarTest.class,
+@SuiteClasses({ CarModelTest.class,
+				CarsProducedRegistrarTest.class,
 				ClockManagerTest.class,
 				CompletedOrderCatalogTest.class,
 				DateTimeTest.class,
 				DelayRegistrarTest.class,
-				InteractionSimulator.class,
 				MedianSelectorTest.class,
 				ModelCatalogTest.class,
 				ModelTest.class,
@@ -22,6 +22,7 @@ import org.junit.runners.Suite.SuiteClasses;
 				SingleTaskCatalogTest.class,
 				SpecificationTest.class,
 				StatisticsLoggerTest.class,
+				TruckModelTest.class,
 				WorkingDayTest.class })
 public class DomainTestSuite {
 

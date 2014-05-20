@@ -55,7 +55,7 @@ public class OperationalStateTest {
 		workPosts.add(new WorkPost(TaskType.DRIVETRAIN, 1));
 		workPosts.add(new WorkPost(TaskType.ACCESSORIES, 2));
 		
-		line = new AssemblyLine(manufacturer, workPosts, new OrderAcceptanceChecker(new ArrayList<Model>()));
+		line = new AssemblyLine(workPosts, new OrderAcceptanceChecker(new ArrayList<Model>()));
 		
 		task0 = new AssemblyTask(new Option(TaskType.BODY, "john", "doe"), 0);
 		task1 = new AssemblyTask(new Option(TaskType.DRIVETRAIN, "jane", "doe"), 0);

@@ -1,6 +1,5 @@
 package domain;
 
-import java.util.Comparator;
 import java.util.List;
 
 import domain.restrictions.OptionRestrictionManager;
@@ -56,8 +55,12 @@ public class Manufacturer {
 	 * 		The {@link OptionRestrictionManager} for the new {@link Manufacturer}
 	 * @param assemblyLine
 	 * 		The {@link AssemblyLine} for the new {@link Manufacturer}
+	 * @param intermediate
+	 * 		The {@link SchedulerIntermediate} for the new {@link Manufacturer}
 	 * @param prodSched
 	 * 		The {@link ProductionScheduleFacade} for the new {@link Manufacturer}
+	 * @param inter 
+	 * @param line 
 	 * @throws IllegalArgumentException
 	 * 		If any of the parameters is null
 	 */
@@ -67,7 +70,9 @@ public class Manufacturer {
 						ModelCatalog modelCat,
 						OptionRestrictionManager optionRestMan,
 						ProductionScheduleFacade prodSched,
-						OrderFactory orderFactory)
+						OrderFactory orderFactory,
+						AssemblyLine assemblyLine,
+						SchedulerIntermediate intermediate)
 						throws IllegalArgumentException
 	{
 		if(stratFact == null)
@@ -90,10 +95,15 @@ public class Manufacturer {
 		this.optionRestrictionManager = optionRestMan;
 		this.productionScheduleFacade = prodSched;
 		this.orderFactory = orderFactory;
+		this.assemblyLine = assemblyLine;
+		this.lineIntermediate = intermediate;
+
+
+		this.orderFactory.setManufacturer(this);
+		this.lineIntermediate.setManufacturer(this);
+
 	}
 	
-	/** The SingleTaskCatalog of this Manufacturer. */
-	private final SingleTaskCatalog singleTaskCatalog;
 
 	
 	//--------------------------------------------------------------------------
@@ -255,6 +265,19 @@ public class Manufacturer {
 		return new SingleOrderSession(this, this.singleTaskCatalog);
 	}
 	
+	
+	/**
+	 * Get the {@link SingleTaskCatalog} of this {@link Manufacturer}.
+	 * 
+	 * @return the {@link SingleTaskCatalog}.
+	 */
+	public SingleTaskCatalog getSingleTaskCatalog(){
+		return this.singleTaskCatalog;
+	}
+
+	/** The SingleTaskCatalog of this Manufacturer. */
+	private final SingleTaskCatalog singleTaskCatalog;
+	
 	/**
 	 * Submit the parameters for a single task order to the production schedule.
 	 * We expect the schedule to make an order and schedule it. The schedule
@@ -408,7 +431,7 @@ public class Manufacturer {
 	 * @throws IllegalCarOptionCombinationException 
 	 * 		When the list of options is not valid with given model
 	 */
-	public boolean checkOrderValidity(Model model, List<Option> options)
+	private boolean checkOrderRestrictionValidity(Model model, List<Option> options)
 			throws IllegalArgumentException, IllegalCarOptionCombinationException
 	{
 		if(model == null)
@@ -482,7 +505,7 @@ public class Manufacturer {
 			throw new IllegalArgumentException("Options list should not be null.");
 		if(options.contains(null))
 			throw new IllegalArgumentException("Options list should not contain null.");
-		if(!checkOrderValidity(model, options))
+		if(!checkOrderRestrictionValidity(model, options))
 			throw new OptionRestrictionException("Options do not meet Restriction criteria.");
 		Specification orderSpecs = model.makeSpecification(options);
 		StandardOrder newOrder = this.getOrderFactory().makeNewStandardOrder(model, orderSpecs);
