@@ -1,5 +1,7 @@
 package domain.order;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.car.Model;
 import domain.car.Specification;
@@ -10,8 +12,8 @@ import domain.car.Specification;
  * the OrderContainer interface for passing to the outside system. 
  * 
  * It provides a mostly immutable set of properties of an order, the model,
- * specification, and initialisation are immutable and set at creation.
- * An Order is created as !isCompleted, and can only be set to completed once.
+ * specification, and submission time are immutable and set at creation.
+ * An Order is created as not isCompleted, and can only be set to completed once.
  * The estimatedCompletionTime can be updated as time progresses.
  * 
  * Order objects are created by the ProductionScheduler, which keeps track of
@@ -22,8 +24,7 @@ import domain.car.Specification;
  * 
  * @invariant order.getModel() != null
  * @invariant order.getSpecifications() != null
- * @invariant order.getInitialisationTime() != null
- * @invariant order.getEstimatedCompletionTime() != null
+ * @invariant order.getSubmissionTime() != null
  * @invariant order.getModel().isValidSpecification(order.getSpecifications())
  */
 public abstract class Order implements OrderContainer {
@@ -41,33 +42,38 @@ public abstract class Order implements OrderContainer {
 	 * 		The specifications of this new Order.
 	 * @param orderNumber
 	 * 		The orderNumber of this new Order.  
-	 * @param initTime
+	 * @param submissionTime
 	 * 		The time at which this order was created.
-	 * @param estimatedCompletionDateTime
-	 * 		The estimated time at which this order should be completed. 
+	 * @param deadline
+	 * 		The deadline of this Order if one is specified. 
 	 * 
 	 * @postcondition | (new this).order.getModel() == model
 	 * 				  | (new this).order.getSpecifications() == specifications
-	 * 			      | (new this).order.getInitTime() == initTime
+	 * 			      | (new this).order.getSubmissionTime() == submissionTime
 	 * 				  | (new this).order.isCompleted() == False
 	 * 				  | (new this).order.getOrderNumber() == orderNumber
 	 * 
-	 * @throws NullPointerException
-	 * 		| model == null || specifications == null || initTime == null 
+	 * @throws IllegalArgumentExceptionException
+	 * 		| model == null || specifications == null || 
+	 *      | submissionTime == null || deadline == null  
 	 */
-	protected Order(Model model, Specification specification, int orderNumber, DateTime submissionTime) 
-													   throws NullPointerException{
-		if (model == null )
-			throw new NullPointerException("Model is null.");
+	protected Order(Model model, Specification specification, int orderNumber, 
+			        DateTime submissionTime, Optional<DateTime> deadline) 
+													   throws IllegalArgumentException{
+		if (model == null)
+			throw new IllegalArgumentException("Model is null.");
 		if (specification == null)
-			throw new NullPointerException("Specification is null.");		
+			throw new IllegalArgumentException("Specification is null.");		
 		if (submissionTime == null)
-			throw new NullPointerException("The submission time is null.");
-
+			throw new IllegalArgumentException("The submission time is null.");
+		if (deadline == null)
+			throw new IllegalArgumentException("The deadline cannot be null.");
+		
 		this.model = model; 
 		this.specifications = specification;
 		this.orderNumber = orderNumber;
 		this.submissionTime = submissionTime;
+		this.deadline = deadline;
 		
 		this.setIsComplete(false);
 	}
@@ -89,7 +95,7 @@ public abstract class Order implements OrderContainer {
  	 * @postcondition | this.isCompleted()
  	 * @postcondition | this.getCompletionTimeh() == dt
  	 * 
-	 * @throws NullPointerException
+	 * @throws IllegalArgumentException
 	 * 		| dt == null
 	 * @throws IllegalStateException
 	 * 		dt has been set already.
@@ -122,6 +128,7 @@ public abstract class Order implements OrderContainer {
 		if (!this.isCompleted()) {
 			throw new IllegalStateException();
 		}
+		
 		return this.completionTime;
 	}
 	
@@ -131,18 +138,17 @@ public abstract class Order implements OrderContainer {
 	 * @param dt
 	 * 		The new completion DateTime of this Order.
 	 * 
-	 * @throws NullPointerException
+	 * @throws IllegalArgumentException
 	 * 		| dt == null
 	 * @throws IllegalStateException
 	 * 		dt has been set already.
 	 * @throws IllegalArgumentException
 	 * 		| dt < this.getSubmissionTime()
 	 */
-	protected void setCompletionTime(DateTime dt) throws NullPointerException, 
-														 IllegalStateException,
+	protected void setCompletionTime(DateTime dt) throws  IllegalStateException,
 														 IllegalArgumentException {
 		if (dt == null)
-			throw new NullPointerException("Completion time cannot be null.");
+			throw new IllegalArgumentException("Completion time cannot be null.");
 		if (this.completionTime != null)
 			throw new IllegalStateException("An order cannot be completed twice");		
 		if (dt.compareTo(this.getSubmissionTime()) < 0)
@@ -166,6 +172,17 @@ public abstract class Order implements OrderContainer {
 	private final DateTime submissionTime;
 
 	//--------------------------------------------------------------------------
+	// Deadline
+	//--------------------------------------------------------------------------
+	@Override
+	public Optional<DateTime> getDeadline() {
+		return this.deadline;
+	}
+	
+	/** An Optional of the deadline of this Order. */
+	private final Optional<DateTime> deadline;
+	
+	//--------------------------------------------------------------------------
 	// Specifications
 	//--------------------------------------------------------------------------
 	@Override
@@ -175,7 +192,7 @@ public abstract class Order implements OrderContainer {
 	
 	/** The specifications of this Order. */
 	public final Specification specifications;
-
+	
 	//--------------------------------------------------------------------------
 	// OrderNumber
 	//--------------------------------------------------------------------------
