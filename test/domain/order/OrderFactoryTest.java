@@ -13,6 +13,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.car.Model;
@@ -292,7 +294,9 @@ public class OrderFactoryTest {
 		SingleTaskOrder o = spiedOrderFactory.makeNewSingleTaskOrder(dt1, s1);
 		assertEquals(s1, o.getSpecifications());
 		assertEquals(dt1, o.getSubmissionTime());	
-		assertEquals(dt1, o.getDeadline());
+		Optional<DateTime> tdl = o.getDeadline();
+		assertTrue(tdl.isPresent());
+		assertEquals(dt1, tdl.get());
 	}
 	
 	

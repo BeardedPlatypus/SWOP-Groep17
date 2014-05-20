@@ -152,8 +152,8 @@ public class WorkPostTest {
 		
 	@Test 
 	public void test_getMatchinAssemblyTasks_empty() {
-		exception.expect(IllegalStateException.class);
-		emptyWorkPost.getMatchingAssemblyTasks();
+		List<AssemblyTaskContainer> res = emptyWorkPost.getMatchingAssemblyTasks();
+		assertTrue(res.isEmpty());
 	}
 	
 	@Test

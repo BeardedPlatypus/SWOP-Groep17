@@ -10,7 +10,7 @@ import org.junit.runners.Suite.SuiteClasses;
 				AssemblyProcedureTest.class,
 				AssemblyTaskTest.class,
 				LayoutFactoryTest.class,
-				OrderAcceptanceChecker.class,
+				OrderAcceptanceCheckerTest.class,
 				WorkPostTest.class })
 public class AssemblyLineTestSuite {
 

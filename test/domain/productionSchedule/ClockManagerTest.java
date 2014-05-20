@@ -257,16 +257,31 @@ public class ClockManagerTest {
 	 */
 	@Test
 	public void testNotifyTime() {
-		clock.attachTimeObserver(to1);
-		clock.attachTimeObserver(to2);
-		clock.attachTimeObserver(to3);
+		// Spy on clock
+		ClockManager spiedNotifyClock = Mockito.spy(clock);
 		
-		DateTime time = clock.getCurrentTime();
-		clock.notifyTime();
+		// Get current and future time
+		DateTime time = spiedNotifyClock.getCurrentTime();
+		DateTime newTime = time.addTime(0, 0, 5);
 		
+		// Attach observers
+		spiedNotifyClock.attachTimeObserver(to1);
+		spiedNotifyClock.attachTimeObserver(to2);
+		spiedNotifyClock.attachTimeObserver(to3);
+		
+		// Check initial update
 		Mockito.verify(to1).update(time);
 		Mockito.verify(to2).update(time);
-		Mockito.verify(to3).update(time);		
+		Mockito.verify(to3).update(time);
+		
+		// Change time and check if notifyTime has been called.
+		spiedNotifyClock.update(new DateTime(0, 0, 5));
+		Mockito.verify(spiedNotifyClock).notifyTime();
+		
+		// Verify notifyTime has updated observers
+		Mockito.verify(to1).update(newTime);
+		Mockito.verify(to2).update(newTime);
+		Mockito.verify(to3).update(newTime);
 	}
 
 	//--------------------------------------------------------------------------
