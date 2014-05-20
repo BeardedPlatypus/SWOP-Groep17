@@ -16,6 +16,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.order.Order;
 import domain.order.SingleTaskOrder;
@@ -47,8 +49,9 @@ public class SchedulerContextTest {
 	@Mock SingleTaskOrder order4;
 	@Mock SingleTaskOrder order5;
 	@Mock Order completedOrder;
-	
-	List<TaskType> types= new ArrayList<TaskType>(Arrays.asList(TaskType.ACCESSORIES, TaskType.BODY));
+		
+	@Mock StandardOrder completedStandardOrder;
+	@Mock SingleTaskOrder completedSingleTaskOrder;
 	
 	SchedulerContext schedCon;
 	//--------------------------------------------------------------------------
@@ -62,16 +65,19 @@ public class SchedulerContextTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		Mockito.when(order1.getSubmissionTime()).thenReturn(new DateTime(1, 2, 3));
+		Mockito.when(order1.getModel()).thenReturn();
 		Mockito.when(order2.getSubmissionTime()).thenReturn(new DateTime(4, 5, 6));
-		Mockito.when(order3.getDeadline()).thenReturn(new DateTime(0, 2, 3));
+		Mockito.when(order3.getDeadline()).thenReturn(Optional.of(new DateTime(0, 2, 3)));
 		Mockito.when(order3.getSingleTaskOrderType()).thenReturn(TaskType.BODY);
-		Mockito.when(order4.getDeadline()).thenReturn(new DateTime(0, 3, 3));
+		Mockito.when(order4.getDeadline()).thenReturn(Optional.of(new DateTime(0, 3, 3)));
 		Mockito.when(order4.getSingleTaskOrderType()).thenReturn(TaskType.ACCESSORIES);
-		Mockito.when(order5.getDeadline()).thenReturn(new DateTime(0, 4, 3));
+		Mockito.when(order5.getDeadline()).thenReturn(Optional.of(new DateTime(0, 4, 3)));
 		Mockito.when(order5.getSingleTaskOrderType()).thenReturn(TaskType.ACCESSORIES);
 		Mockito.when(order5.isCompleted()).thenReturn(false);
 		Mockito.when(completedOrder.isCompleted()).thenReturn(true);
-		schedCon = new SchedulerContext(strat, types);		
+		Mockito.when(completedSingleTaskOrder.isCompleted()).thenReturn(true);
+		Mockito.when(completedStandardOrder.isCompleted()).thenReturn(true);
+		schedCon = new SchedulerContext(strat);		
 	}
 
 	//--------------------------------------------------------------------------
@@ -80,28 +86,17 @@ public class SchedulerContextTest {
 	@Test
 	public void testConstructorNullStrat() {
 		exception.expect(IllegalArgumentException.class);
-		new SchedulerContext(null, types);
+		new SchedulerContext(null);
 	}
-	
-	@Test
-	public void testConstructorNullList() {
-		exception.expect(IllegalArgumentException.class);
-		new SchedulerContext(strat, null);
-	}
-	
-	@Test
-	public void testConstructorNullInList() {
-		exception.expect(IllegalArgumentException.class);
-		List<TaskType> nullList = new ArrayList<>();
-		nullList.add(null);
-		new SchedulerContext(strat, nullList);
-	}
-	
+		
 	@Test
 	public void testConstructorValid() {
 		assertEquals(strat, schedCon.getCurrentSchedulingStrategy());
 	}
 
+	//--------------------------------------------------------------------------
+	// Strategy related tests
+	//--------------------------------------------------------------------------
 	@Test
 	public void testSetSchedulingStrategy() {
 		assertEquals(strat, schedCon.getCurrentSchedulingStrategy());
@@ -125,10 +120,14 @@ public class SchedulerContextTest {
 		assertEquals(strat, schedCon.getDefaultStrategy());
 	}
 
+	//--------------------------------------------------------------------------
+	// StandardOrder related methods.
+	//--------------------------------------------------------------------------
 	@Test
 	public void testContainsOrder() {
 		FifoStrategy<StandardOrder> realStrat = new FifoStrategy<>();
 		schedCon.setSchedulingStrategy(realStrat);
+		
 		assertFalse(schedCon.containsOrder(order1));
 		schedCon.addNewStandardOrder(order1);
 		assertTrue(schedCon.containsOrder(order1));
@@ -147,7 +146,7 @@ public class SchedulerContextTest {
 	}
 
 	@Test
-	public void testGetNextScheduledOrderContainer() {
+	public void testGetNextScheduledOrderStandard() {
 		FifoStrategy<StandardOrder> realStrat = new FifoStrategy<>();
 		schedCon.setSchedulingStrategy(realStrat);
 		schedCon.addNewStandardOrder(order1);
@@ -192,8 +191,8 @@ public class SchedulerContextTest {
 		schedCon.setSchedulingStrategy(realStrat);
 		schedCon.addNewStandardOrder(order1);
 		schedCon.addNewStandardOrder(order2);
-		assertTrue(schedCon.getOrderQueue().contains(order1));
-		assertTrue(schedCon.getOrderQueue().contains(order2));
+		assertTrue(schedCon.getStandardOrderQueue().contains(order1));
+		assertTrue(schedCon.getStandardOrderQueue().contains(order2));
 	}
 
 	@Test
@@ -265,6 +264,9 @@ public class SchedulerContextTest {
 		assertFalse(schedCon.getSingleTaskOrdersOfType(TaskType.ACCESSORIES).contains(order3));
 	}
 
+	//--------------------------------------------------------------------------
+	// Adding orders.
+	//--------------------------------------------------------------------------
 	@Test
 	public void testAddNewStandardOrder() {
 		FifoStrategy<StandardOrder> realStrat = new FifoStrategy<>();
@@ -275,6 +277,23 @@ public class SchedulerContextTest {
 		assertEquals(1, schedCon.getPendingStandardOrders().size());
 	}
 
+	@Test
+	public void testAddNewStandardOrderNull() {
+		exception.expect(IllegalArgumentException.class);
+		FifoStrategy<StandardOrder> realStrat = new FifoStrategy<>();
+		schedCon.setSchedulingStrategy(realStrat);
+		schedCon.addNewStandardOrder(null);
+	}
+
+	@Test
+	public void testAddNewStandardOrderCompleted() {
+		exception.expect(IllegalArgumentException.class);
+		FifoStrategy<StandardOrder> realStrat = new FifoStrategy<>();
+		schedCon.setSchedulingStrategy(realStrat);
+		schedCon.addNewStandardOrder();
+	}
+
+	
 	@Test
 	public void testAddNewSingleTaskOrder() {
 		assertFalse(schedCon.containsOrder(order3));

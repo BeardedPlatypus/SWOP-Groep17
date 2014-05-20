@@ -6,20 +6,17 @@ package domain.productionSchedule;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.junit.runner.RunWith;
 
 import domain.DateTime;
 
 /**
- * @author Month
+ * @author Martinus Wilhelmus Tegelaers
  *
  */
 public class ClockManagerTest {
@@ -40,13 +37,6 @@ public class ClockManagerTest {
 	//--------------------------------------------------------------------------
 	// Setup Methods
 	//--------------------------------------------------------------------------
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
 	/**
 	 * @throws java.lang.Exception
 	 */
