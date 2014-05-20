@@ -7,16 +7,16 @@ import exceptions.IllegalCarOptionCombinationException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
 import domain.assemblyLine.AssemblyLine;
-import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.AssemblyTaskView;
 import domain.assemblyLine.SchedulerIntermediate;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.WorkPostView;
 import domain.car.ModelCatalog;
 import domain.car.Option;
 import domain.car.Specification;
 import domain.car.Model;
 import domain.order.CompletedOrderCatalog;
 import domain.order.Order;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.order.OrderFactory;
 import domain.order.OrderSession;
 import domain.order.SingleOrderSession;
@@ -116,8 +116,8 @@ public class Manufacturer {
 	 * 
 	 * @return the list of pending orders in the system
 	 */
-	public List<OrderContainer> getPendingOrderContainers() {
-		List<OrderContainer> pending = this.getAssemblingPendingOrderContainers();
+	public List<OrderView> getPendingOrderContainers() {
+		List<OrderView> pending = this.getAssemblingPendingOrderContainers();
 		pending.addAll(this.getSchedulePendingOrderContainers());
 		return pending;
 	}
@@ -139,7 +139,7 @@ public class Manufacturer {
 	 * @throws OrderDoesNotExistException
 	 * 		When the order is not found in the system.
 	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order) throws OrderDoesNotExistException{
+	public DateTime getEstimatedCompletionTime(OrderView order) throws OrderDoesNotExistException{
 		if(this.getProductionSchedule().contains(order))
 			return this.getProductionSchedule().getEstimatedCompletionTime(order);
 		if(this.getAssemblyLine().contains(order))
@@ -296,7 +296,7 @@ public class Manufacturer {
 	 * @throws IllegalArgumentException
 	 * 		If either of the arguments is null
 	 */
-	public OrderContainer submitSingleTaskOrder(Option option, DateTime deadline) {
+	public OrderView submitSingleTaskOrder(Option option, DateTime deadline) {
 		SingleTaskOrder order = this.getOrderFactory().makeNewSingleTaskOrder(deadline, option);
 		this.getProductionSchedule().submitSingleTaskOrder(order);
 		
@@ -467,11 +467,11 @@ public class Manufacturer {
 
 
 	/**
-	 * Get a list of pending {@link OrderContainer}s in the productionSchedule.
+	 * Get a list of pending {@link OrderView}s in the productionSchedule.
 	 * 
 	 * @return List of pending order containers in the productionSchedule.
 	 */
-	private List<OrderContainer> getSchedulePendingOrderContainers() {
+	private List<OrderView> getSchedulePendingOrderContainers() {
 		return this.getProductionSchedule().getPendingStandardOrderContainers();
 	}
 	
@@ -494,7 +494,7 @@ public class Manufacturer {
 	 * @throws OptionRestrictionException
 	 * 		When the set of options does not meet the system's restrictions
 	 */
-	public OrderContainer submitStandardOrder(Model model, List<Option> options)
+	public OrderView submitStandardOrder(Model model, List<Option> options)
 			throws IllegalArgumentException,
 			IllegalCarOptionCombinationException,
 			OptionRestrictionException
@@ -581,7 +581,7 @@ public class Manufacturer {
 	 * 
 	 * @return The WorkPostContainers
 	 */
-	public List<WorkPostContainer> getWorkPostContainers() {
+	public List<WorkPostView> getWorkPostContainers() {
 		return this.getAssemblyLine().getWorkPostContainers();
 	}
 
@@ -596,7 +596,7 @@ public class Manufacturer {
 	 * @throws IllegalArgumentException
 	 * 		See {@link AssemblyLine#getAssemblyTasksAtPost(int) getAssemblyTasksAtPost(int)}
 	 */
-	public List<AssemblyTaskContainer> getAssemblyTasksAtPost(int postNum) throws IllegalArgumentException {
+	public List<AssemblyTaskView> getAssemblyTasksAtPost(int postNum) throws IllegalArgumentException {
 		return this.getAssemblyLine().getAssemblyTasksAtPost(postNum);
 	}
 
@@ -621,11 +621,11 @@ public class Manufacturer {
 	}
 	
 	/**
-	 * Get a list of pending {@link OrderContainer}s on the assembly line. 
+	 * Get a list of pending {@link OrderView}s on the assembly line. 
 	 * 
 	 * @return List of pending order containers on the assembly line.
 	 */
-	private List<OrderContainer> getAssemblingPendingOrderContainers() {
+	private List<OrderView> getAssemblingPendingOrderContainers() {
 		return this.getAssemblyLine().getActiveOrderContainers();
 	}
 
@@ -669,7 +669,7 @@ public class Manufacturer {
 	 * 
 	 * @return the list of completed orders in the system
 	 */
-	public List<OrderContainer> getCompletedOrderContainers() {
+	public List<OrderView> getCompletedOrderContainers() {
 		return this.getCompletedOrderCatalog().getCompletedOrderContainers();
 	}
 	

@@ -12,7 +12,7 @@ import domain.statistics.ProcedureStatistics;
  * @invariant getAssemblyTasks() != null
  * @invariant getOrder() != null && getOrderContainer != null
  */
-public class AssemblyProcedure implements AssemblyProcedureContainer {
+public class AssemblyProcedure implements AssemblyProcedureView {
 	//--------------------------------------------------------------------------
 	// Constructor 
 	//--------------------------------------------------------------------------
@@ -182,7 +182,7 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 	 * 		The order to look for
 	 * @return This AssemblyProcedure fulfills the given Order
 	 */
-	public boolean contains(OrderContainer order) {
+	public boolean contains(OrderView order) {
 		return this.getOrder().equals(order);
 	}
 	
@@ -277,19 +277,19 @@ public class AssemblyProcedure implements AssemblyProcedureContainer {
 	//  AssemblyProcedureContainer immutable views.
 	//--------------------------------------------------------------------------
 	@Override
-	public Order getOrderContainer() {
+	public Order getOrderView() {
 		return this.assemblyOrder;
 	}
 
 	@Override
-	public List<AssemblyTaskContainer> getAssemblyTasks() {
-		return new ArrayList<AssemblyTaskContainer>(tasks);
+	public List<AssemblyTaskView> getAssemblyTasks() {
+		return new ArrayList<AssemblyTaskView>(tasks);
 	}
 
 	@Override
-	public List<AssemblyTaskContainer> getAssemblyTasks(TaskType taskType) {
-		ArrayList<AssemblyTaskContainer> typeTasks = new ArrayList<AssemblyTaskContainer>();
-		for(AssemblyTaskContainer task : this.getAssemblyTasks()){
+	public List<AssemblyTaskView> getAssemblyTasks(TaskType taskType) {
+		ArrayList<AssemblyTaskView> typeTasks = new ArrayList<AssemblyTaskView>();
+		for(AssemblyTaskView task : this.getAssemblyTasks()){
 			if(task.getTaskType().equals(taskType))
 				typeTasks.add(task);
 		}

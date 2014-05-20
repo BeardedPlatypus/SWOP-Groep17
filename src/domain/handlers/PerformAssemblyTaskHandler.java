@@ -3,8 +3,8 @@ package domain.handlers;
 import java.util.List;
 
 import domain.Manufacturer;
-import domain.assemblyLine.AssemblyTaskContainer;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.AssemblyTaskView;
+import domain.assemblyLine.WorkPostView;
 
 /**
  * Coordinates with the outside world in order to complete assembly tasks of a single WorkPost.
@@ -50,7 +50,7 @@ public class PerformAssemblyTaskHandler {
 	 * 
 	 * @return the WorkPostContainers of the ASsemblyLine's WorkPosts
 	 */
-	public List<WorkPostContainer> getWorkPosts() {
+	public List<WorkPostView> getWorkPosts() {
 		return this.getManufacturer().getWorkPostContainers();
 	}
 
@@ -65,7 +65,7 @@ public class PerformAssemblyTaskHandler {
 	 * @throws IllegalArgumentException
 	 * 		workPostNumber refers to a work post that does not exist.
 	 */
-	public List<AssemblyTaskContainer> getAssemblyTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
+	public List<AssemblyTaskView> getAssemblyTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
 		return this.getManufacturer().getAssemblyTasksAtPost(workPostNumber);
 	}
 

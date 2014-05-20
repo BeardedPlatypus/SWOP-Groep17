@@ -8,7 +8,7 @@ import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.car.Specification;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.order.OrderSession;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
@@ -84,7 +84,7 @@ public class NewOrderSessionHandler {
 	 * 
 	 * @return the list of pending orders in the system
 	 */
-	public List<OrderContainer> getPendingOrders() {
+	public List<OrderView> getPendingOrders() {
 		return this.getManufacturer().getPendingOrderContainers();
 	}
 
@@ -94,7 +94,7 @@ public class NewOrderSessionHandler {
 	 * 
 	 * @return the list of completed orders in the system
 	 */
-	public List<OrderContainer> getCompletedOrders() {
+	public List<OrderView> getCompletedOrders() {
 		return this.getManufacturer().getCompletedOrderContainers();
 	}
 
@@ -287,7 +287,7 @@ public class NewOrderSessionHandler {
 	 * @throws OrderDoesNotExistException
 	 * 		If the order is not an order of the system
 	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order) 
+	public DateTime getEstimatedCompletionTime(OrderView order) 
 			throws IllegalArgumentException,
 			OrderDoesNotExistException
 	{

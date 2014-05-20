@@ -6,7 +6,7 @@ import java.util.List;
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.car.Specification;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import exceptions.OrderDoesNotExistException;
 
 /**
@@ -80,7 +80,7 @@ public class CheckOrderDetailsHandler {
 	 * 
 	 * @return a copy of the completed orders snapshot list.
 	 */
-	public List<OrderContainer> getCompletedOrdersContainers(){
+	public List<OrderView> getCompletedOrdersContainers(){
 		if(this.snapshotsAreDeprecated())
 			updateSnapshots();
 		return new ArrayList<>(this.snapshotCompletedOrders);
@@ -92,7 +92,7 @@ public class CheckOrderDetailsHandler {
 	 * 
 	 * @return a copy of the pending orders snapshot list.
 	 */
-	public List<OrderContainer> getPendingOrdersContainers(){
+	public List<OrderView> getPendingOrdersContainers(){
 		if(this.snapshotsAreDeprecated())
 			updateSnapshots();
 		return new ArrayList<>(this.snapshotPendingOrders);
@@ -104,7 +104,7 @@ public class CheckOrderDetailsHandler {
 	 * 
 	 * @return the pending orders snapshot
 	 */
-	private List<OrderContainer> getPendingSnapshot(){
+	private List<OrderView> getPendingSnapshot(){
 		return this.snapshotPendingOrders;
 	}
 	
@@ -114,15 +114,15 @@ public class CheckOrderDetailsHandler {
 	 * 
 	 * @return the completed orders snapshot
 	 */
-	private List<OrderContainer> getCompletedSnapshot(){
+	private List<OrderView> getCompletedSnapshot(){
 		return this.snapshotCompletedOrders;
 	}
 	
 	/** List which keeps a snapshot of the pending orders at one point in the system */
-	private List<OrderContainer> snapshotPendingOrders;
+	private List<OrderView> snapshotPendingOrders;
 
 	/** List which keeps a snapshot of the completed orders at one point in the system */
-	private List<OrderContainer> snapshotCompletedOrders;
+	private List<OrderView> snapshotCompletedOrders;
 	
 	/**
 	 * Set the state of snapshot deprecation to given boolean
@@ -166,12 +166,12 @@ public class CheckOrderDetailsHandler {
 	 * 
 	 * @return the current observed order
 	 */
-	private OrderContainer getCurrentObservedOrder(){
+	private OrderView getCurrentObservedOrder(){
 		return this.currentObservedOrder;
 	}
 
 	/** current queried Order of this handler */
-	private OrderContainer currentObservedOrder;
+	private OrderView currentObservedOrder;
 	
 	
 	/**
@@ -324,7 +324,7 @@ public class CheckOrderDetailsHandler {
 	 * @throws OrderDoesNotExistException
 	 * 		If the order is not an order of the system
 	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order) 
+	public DateTime getEstimatedCompletionTime(OrderView order) 
 			throws IllegalArgumentException,
 			OrderDoesNotExistException
 	{

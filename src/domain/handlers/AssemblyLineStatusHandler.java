@@ -3,8 +3,8 @@ package domain.handlers;
 import java.util.List;
 
 import domain.Manufacturer;
-import domain.assemblyLine.AssemblyTaskContainer;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.AssemblyTaskView;
+import domain.assemblyLine.WorkPostView;
 
 /**
  * Coordinates with the outside world in order to view the assembly line status.
@@ -48,7 +48,7 @@ public class AssemblyLineStatusHandler {
 	 * 
 	 * @return List of work post containers.
 	 */
-	public List<WorkPostContainer> getWorkPosts() {
+	public List<WorkPostView> getWorkPosts() {
 		return getManufacturer().getWorkPostContainers();
 	}
 	
@@ -82,7 +82,7 @@ public class AssemblyLineStatusHandler {
 	 * @throws	IllegalArgumentException
 	 * 			| workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts()
 	 */
-	public WorkPostContainer getWorkPost(int workPostNumber) throws IllegalArgumentException {
+	public WorkPostView getWorkPost(int workPostNumber) throws IllegalArgumentException {
 		if(!isValidWorkPostNumber(workPostNumber)){
 			throw new IllegalArgumentException("The passed index is invalid. Needs to be in between 0 and "
 						+ (getAmountOfWorkPosts()-1) + ". " + workPostNumber + " was passed.");
@@ -100,7 +100,7 @@ public class AssemblyLineStatusHandler {
 	 * @throws	IllegalArgumentException
 	 * 			| workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts()
 	 */
-	public List<AssemblyTaskContainer> getTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
+	public List<AssemblyTaskView> getTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
 		if(!isValidWorkPostNumber(workPostNumber)){
 			throw new IllegalArgumentException("The passed index is invalid. Needs to be in between 0 and "
 						+ (getAmountOfWorkPosts()-1) + ". " + workPostNumber + " was passed.");

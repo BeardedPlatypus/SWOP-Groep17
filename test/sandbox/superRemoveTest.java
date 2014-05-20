@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import domain.assemblyLine.WorkPost;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.WorkPostView;
 
 public class superRemoveTest {
 	
@@ -25,7 +25,7 @@ public class superRemoveTest {
 	public void test() {
 		List<WorkPost> list = new ArrayList<>();
 		list.add(wp);
-		WorkPostContainer wpc = wp;
+		WorkPostView wpc = wp;
 		list.remove(wpc);
 		assertEquals(0, list.size());
 	}

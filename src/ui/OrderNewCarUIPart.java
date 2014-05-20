@@ -8,7 +8,7 @@ import domain.car.OptionCategory;
 import domain.car.Specification;
 import domain.car.Model;
 import domain.handlers.NewOrderSessionHandler;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import exceptions.OptionRestrictionException;
 
 public class OrderNewCarUIPart {
@@ -73,8 +73,8 @@ public class OrderNewCarUIPart {
 		System.out.println(helper.SEPERATOR);
 		boolean exitMenu = false;
 		while(!exitMenu){
-			List<OrderContainer> completedOrders = getHandler().getCompletedOrders();
-			List<OrderContainer> pendingOrders = getHandler().getPendingOrders();
+			List<OrderView> completedOrders = getHandler().getCompletedOrders();
+			List<OrderView> pendingOrders = getHandler().getPendingOrders();
 			visualiseCompletedAndPendingOrders(completedOrders,pendingOrders);
 			System.out.println("What do you want to do?:" + helper.CRLF + 
 					"1) Order a new car" + helper.CRLF + "2) Exit this menu");
@@ -132,13 +132,13 @@ public class OrderNewCarUIPart {
 	 * @param pendingOrders
 	 * 		The list of pending orders from the system
 	 */
-	private void visualiseCompletedAndPendingOrders(List<OrderContainer> completedOrders,
-			List<OrderContainer> pendingOrders) {
+	private void visualiseCompletedAndPendingOrders(List<OrderView> completedOrders,
+			List<OrderView> pendingOrders) {
 		
 		System.out.println(helper.SEPERATOR);
 		System.out.println("Pending orders at this moment:");
 		System.out.println(helper.SEPERATOR);
-		for(OrderContainer order: pendingOrders){
+		for(OrderView order: pendingOrders){
 			Model currentOrderModel = order.getModel();
 			Specification orderSpec = order.getSpecifications();
 			int amountOfOptionsInOrder = orderSpec.getAmountOfOptions();
@@ -153,7 +153,7 @@ public class OrderNewCarUIPart {
 
 		System.out.println("Completed orders to date:");
 		System.out.println(helper.SEPERATOR);
-		for(OrderContainer order: completedOrders){
+		for(OrderView order: completedOrders){
 			Model currentOrderModel = order.getModel();
 			Specification orderSpec = order.getSpecifications();
 			int amountOfOptionsInOrder = orderSpec.getAmountOfOptions();

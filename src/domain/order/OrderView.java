@@ -7,12 +7,12 @@ import domain.car.Specification;
 import domain.car.Model;
 
 /**
- * Container Interface that provides get methods of the container, for inspection
+ * View Interface that provides get methods of the container, for inspection
  * purposes.
  * 
  * @author Martinus Wilhelmus Tegelaers
  */
-public interface OrderContainer {
+public interface OrderView {
 	/**
 	 * Get the model of this Order.
 	 * 
