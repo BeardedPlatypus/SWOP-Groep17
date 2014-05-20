@@ -1,12 +1,14 @@
 package domain.productionSchedule;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import domain.DateTime;
+import com.google.common.base.Optional;
+
+import domain.car.Model;
 import domain.car.Specification;
 import domain.assemblyLine.TaskType;
 import domain.order.Order;
@@ -22,45 +24,27 @@ import domain.productionSchedule.strategy.SchedulingStrategy;
  * It is also responsible for keeping track of and minimising overtime. 
  * 
  * @author Martinus Wilhelmus Tegelaers
- *
  */
 public class SchedulerContext {
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
 	/**
-	 * //TODO fix doc
 	 * Construct a new SchedulerContext with the given default Strategy and the
 	 * TaskTypes this context should have a queue for
 	 * 
 	 * @param defaultStrategy
 	 * 		The default strategy of this new SchedulerContext
-	 * @param taskCategories
-	 * 		The supported tasktypes of the new context 
-	 * @post this.getCurrentStrategy == defaultStrategy
+	 * @post this.getCurrentStrategy == defaultStrategy 
 	 * 
-	 * 
-	 * @throws IllegalArgumentException
-	 * 		if either of the parameters is or contains null
+	 * @throws IllegalArgumentException | defaultStrategy == null
 	 */
-	public SchedulerContext(SchedulingStrategy<StandardOrder> defaultStrategy,
-			                List<TaskType> taskCategories) throws IllegalArgumentException {
+	public SchedulerContext(SchedulingStrategy<StandardOrder> defaultStrategy) throws IllegalArgumentException {
 		if(defaultStrategy == null)
 			throw new IllegalArgumentException("Strategy should not be null.");
-		if (taskCategories == null)
-			throw new IllegalArgumentException(
-					"taskCategories list should not be null.");
-		if (taskCategories.contains(null))
-			throw new IllegalArgumentException(
-					"taskCategories list should not contain null");
+		
 		//Scheduling variables
-		this.defaultStrategy = defaultStrategy;
-		
-		// Init SingleTaskOrder queues
-		for (TaskType t: taskCategories) {
-			this.taskOrderQueue.put(t, new ArrayList<SingleTaskOrder>());
-		}
-		
+		this.defaultStrategy = defaultStrategy;		
 		this.setSchedulingStrategy(this.getDefaultStrategy());
 	}
 	
@@ -92,12 +76,12 @@ public class SchedulerContext {
 		if (newStrategy == null)
 			throw new IllegalArgumentException();
 		this.setSchedulingStrategyRaw(newStrategy);
-		newStrategy.sort(this.orderQueue);
+		newStrategy.sort(this.standardOrderQueue);
 	}
 	
 	/**
 	 * Set the current SchedulingStrategy of this SchedulerContext to newStrategy
-	 * without anymore side effects.
+	 * without any side effects.
 	 * 
 	 * @param newStrategy
 	 * 		The new SchedulingStrategy of this SchedulerContext.
@@ -113,8 +97,7 @@ public class SchedulerContext {
 	
 	//--------------------------------------------------------------------------
 	/**
-	 * Get the default ordering strategy (Comparator<Order>) of this 
-	 * SchedulerContext.
+	 * Get the default ordering strategy of this SchedulerContext.
 	 *  
 	 * @return the default ordering strategy of this SchedulerContext.
 	 */
@@ -152,6 +135,30 @@ public class SchedulerContext {
 		return result;
 	}
 
+	//--------------------------------------------------------------------------
+	// Get orders
+	//--------------------------------------------------------------------------
+	public Optional<Order> getOrder(OrderRequest request) {
+		switch (request.getOrderType()) {
+		case STANDARD:
+			return this.getNextStandardOrder(request.getModels());
+		case SINGLETASK:
+			return this.getNextSingleTaskOrder(request.getTaskTypes());
+		default:
+			throw new IllegalStateException("Enum type not in cases.");
+		}
+	}
+	
+	public Optional<Order> popOrder(OrderRequest request) {
+		switch (request.getOrderType()) {
+		case STANDARD:
+			return this.popNextStandardOrder(request.getModels());
+		case SINGLETASK:
+			return this.popNextSingleTaskOrder(request.getTaskTypes());
+		default:
+			throw new IllegalStateException("Enum type not in cases.");
+		}
+	}
 	
 	//--------------------------------------------------------------------------
 	// Get StandardOrder methods.
@@ -166,7 +173,7 @@ public class SchedulerContext {
 	public List<Specification> getEligibleBatches() {
 		Map<Specification, Integer> tally = new HashMap<Specification, Integer>();
 		
-		for (StandardOrder order : this.getOrderQueueRaw()) {
+		for (StandardOrder order : this.getStandardOrderQueueRaw()) {
 			Specification spec = order.getSpecifications();
 			if (tally.containsKey(spec)) {
 				tally.put(spec, tally.get(spec) + 1);
@@ -194,101 +201,112 @@ public class SchedulerContext {
 	 */
 	public List<OrderContainer> getPendingStandardOrders() {
 		List<OrderContainer> result = new ArrayList<>();
-		for (OrderContainer o : this.getOrderQueue()) {
+		for (OrderContainer o : this.getStandardOrderQueue()) {
 			result.add(o);
 		}
 		return result;
 	}
 	
 	/**
-	 * Pop the next SingleTaskOrder to be scheduled of the specified TaskType from
-	 * its respective queue.
-	 * If the scheduling algorithm is done after popping, it will be set to the 
-	 * default algorithm.
+	 * Get the next StandardOrder to be scheduled (does not modify the queue)
+	 * that matches on of the models in the specified set. 
+	 * If no order exists with a model in the specified set the optional will 
+	 * be absent.
 	 * 
-	 * @param t
-	 * 		The TaskType of the SingleTaskOrder to be popped. 
+	 * @param acceptedModels
+	 * 		The set of models that the result is allowed to contain. 
 	 * 
-	 * @return the next SingleTaskOrder to be scheduled of the specified type
+	 * @return An optional of the next StandardOrder to be scheduled if it 
+	 * 		   exists, else an absent Optional.
 	 * 
-	 * @postcondition | !(new this).contains(result)
-	 * @postcondition | !E (o) o.deadline && == o.TaskType == t < result.deadline
-	 * @postcondition | currentSchedulingAlgorithm.isDone() -> (new this).getCurrentSchedulingAlgorithm() == this.getDefaultAlgorithm
-	 * 
-	 * @throws IllegalStateException
-	 * 		| !this.hasSingleTaskOrdersOfType(t)
+	 * @throws IllegalArgumentException
+	 * 		| acceptedModels == null || acceptedModels.contains(null)
 	 */
-	StandardOrder popNextStandardOrder() throws IllegalStateException {
-		if (!this.hasStandardOrders())
-			throw new IllegalStateException();
-		StandardOrder result = this.getOrderQueueRaw().remove(0);
-
-		if (this.getCurrentSchedulingStrategy().isDone(this.getOrderQueueRaw()))
-			this.setSchedulingStrategy(this.getDefaultStrategy());
-		return result;
+	Optional<Order> getNextStandardOrder(Set<Model> acceptedModels) {
+		if (acceptedModels == null)
+			throw new IllegalArgumentException("acceptedModels cannot be null");
+		if (acceptedModels.contains(null))
+			throw new IllegalArgumentException("acceptedModels cannot contain null");
+		Order result = null;
+		
+		for (StandardOrder order : this.getStandardOrderQueue()) {
+			if (acceptedModels.contains(order.getModel())) {
+				result = order;
+				break;
+			}
+		}		
+		return Optional.fromNullable(result);
 	}
-
+	
 	
 	/**
-	 * Get the next StandardOrder to be scheduled (does not modify the queue).
+	 * Pop the next StandardOrder that has a model belonging to acceptedModels 
+	 * from the internal queue. If no order having a model belonging to 
+	 * acceptedModels exists, the result will be absent. 
+	 * After requesting the update, the strategy will be updated if it is
+	 * finished. 
 	 * 
-	 * @return the next StandardOrder to be scheduled.
+	 * @param acceptedModels
+	 * 		The set of models that the result is allowed to contain. 
+	 * @return An optional containing the popped Order if it exists.
 	 * 
-	 * @throws IllegalStateException
-	 * 		| !this.hasStandardOrders()
+	 * @throws IllegalArgumentException
+	 * 		| acceptedModels == null || acceptedModels.contains(null)
 	 */
-	public StandardOrder getNextStandardOrder() {
-		if (!this.hasStandardOrders())
-			throw new IllegalStateException();
+	Optional<Order> popNextStandardOrder(Set<Model> acceptedModels) throws IllegalArgumentException {
+		Optional<Order> result = this.getNextStandardOrder(acceptedModels);
 		
-		return this.getOrderQueue().get(0);
+		if (result.isPresent())
+			this.getStandardOrderQueueRaw().remove(result.get());
+
+		if (this.getCurrentSchedulingStrategy().isDone(this.getStandardOrderQueueRaw()))
+			this.setSchedulingStrategy(this.getDefaultStrategy());
+		
+		return result;
 	}
-	
+	//--------------------------------------------------------------------------	
 	/**
 	 * Check if the StandardOrders queue is not empty.
 	 *  
 	 * @return true if queue not empty, else false.
      */
 	boolean hasStandardOrders() {
-		return !this.getOrderQueue().isEmpty();
+		return !this.getStandardOrderQueue().isEmpty();
 	}
 	
 	/**
-	 * Return the orderQueue of this SchedulerContext.
+	 * Get the standardOrderQueue of this SchedulerContext.
 	 * 
-	 * @return the orderQueue of this SchedulerContext
+	 * @return the standardOrderQueue of this SchedulerContext.
 	 */
-	public List<StandardOrder> getOrderQueue() {
-		return new ArrayList<>(this.getOrderQueueRaw());
+	public List<StandardOrder> getStandardOrderQueue() {
+		return new ArrayList<>(this.getStandardOrderQueueRaw());
 	}
 	
 	/**
-	 * Return the interal OrderQueue of this SchedulerContext;
+	 * Get the internal StandardOrderQueue of this SchedulerContext;
 	 * 
 	 * @return the internal OrderQueue of this SchedulerContext
 	 */
-	private List<StandardOrder> getOrderQueueRaw() {
-		return this.orderQueue;
+	private List<StandardOrder> getStandardOrderQueueRaw() {
+		return this.standardOrderQueue;
 	}
 	
 	/** The order queue of this SchedulerContext */
-	private final List<StandardOrder> orderQueue = new ArrayList<>();
+	private final List<StandardOrder> standardOrderQueue = new ArrayList<>();
 	
 	//--------------------------------------------------------------------------
 	// Get SingleTaskOrder methods
-	//--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------	
 	/**
-	 * Get all pending SingleTaskOrders of this SchedulerContext
+	 * Get all pending StandardOrders of this SchedulerContext.
 	 * 
-	 * @return all pending SingleTaskOrders of this SchedulerContext.
+	 * @return all pending StandardOrders of this SchedulerContext.
 	 */
 	public List<OrderContainer> getPendingSingleTaskOrders() {
 		List<OrderContainer> result = new ArrayList<>();
-		
-		for (List<SingleTaskOrder> l : this.taskOrderQueue.values()) {
-			for (OrderContainer o : l) {
-				result.add(o);
-			}
+		for (OrderContainer o : this.getSingleTaskOrderQueue()) {
+			result.add(o);
 		}
 		return result;
 	}
@@ -305,11 +323,22 @@ public class SchedulerContext {
 	 * 		| !this.hasSingleTaskOrdersOfType(t)
 
 	 */
-	SingleTaskOrder getNextSingleTaskOrderOfType(TaskType t) {
-		if (!this.hasSingleTaskOrdersOfType(t))
-			throw new IllegalStateException();
+	Optional<Order> getNextSingleTaskOrder(Set<TaskType> acceptedTaskTypes) {
+		if (acceptedTaskTypes == null)
+			throw new IllegalArgumentException("acceptedModels cannot be null");
+		if (acceptedTaskTypes.contains(null))
+			throw new IllegalArgumentException("acceptedModels cannot contain null");
 		
-		return this.getSingleTaskOrdersOfType(t).get(0);
+		Order result = null;
+		
+		for (SingleTaskOrder order : this.getSingleTaskOrderQueue()) {
+			if (acceptedTaskTypes.contains(order.getSingleTaskOrderType())) {
+				result = order;
+				break;
+			}
+		}		
+		
+		return Optional.fromNullable(result);
 	}
 	
 	/**
@@ -327,65 +356,44 @@ public class SchedulerContext {
 	 * @throws IllegalStateException
 	 * 		| !this.hasSingleTaskOrdersOfType(t)
 	 */
-	SingleTaskOrder popNextSingleTaskOrderOfType(TaskType t) throws IllegalStateException {
-		if (!this.hasSingleTaskOrdersOfType(t))
-			throw new IllegalStateException();
-
-		return this.taskOrderQueue.get(t).remove(0);
+	Optional<Order> popNextSingleTaskOrder(Set<TaskType> acceptedTaskTypes) throws IllegalStateException {
+		Optional<Order> result = this.getNextSingleTaskOrder(acceptedTaskTypes);
+		
+		if (result.isPresent())
+			this.getSingleTaskOrderQueueRaw().remove(result.get());		
+		return result;
 	}
 	
-	boolean hasSingleTaskOrders() {
-		for (TaskType t : this.taskOrderQueue.keySet()) {
-			if (this.hasSingleTaskOrdersOfType(t))
-				return true;
-		}
-		return false;
+	//--------------------------------------------------------------------------
+	/**
+	 * Check if the SingleTaskOrder queue is not empty.
+	 * 
+	 * @return True if the queue is not empty, else false.
+	 */
+	public boolean hasSingleTaskOrders() {
+		return this.getSingleTaskOrderQueue().isEmpty();
 	}
 	
 	/**
-	 * check if the queue of the specified Tasktype SingleTaskOrders is not empty.
+	 * Get the standardOrderQueue of this SchedulerContext.
 	 * 
-	 * @param t
-	 * 		The TaskType of the SingleTaskOrder queue that h
-	 * 
-	 * @return true if queue not empty, else false.
+	 * @return the standardOrderQueue of this SchedulerContext.
 	 */
-	boolean hasSingleTaskOrdersOfType(TaskType t) {
-		return !this.getSingleTaskOrdersOfType(t).isEmpty();
+	public List<SingleTaskOrder> getSingleTaskOrderQueue() {
+		return new ArrayList<>(this.getSingleTaskOrderQueueRaw());
 	}
-	
-	public List<SingleTaskOrder> getNextSingleTaskOrders() {
-		List<SingleTaskOrder> res = new ArrayList<>();
-		
-		for (List<SingleTaskOrder> l: this.taskOrderQueue.values()) {
-			if (!l.isEmpty())
-				res.add(l.get(0));
-		}
-		
-		return res;
-	}
-
 	
 	/**
-	 * Get a list of all pending task orders of the specified TaskType sorted
-	 * by Deadline. 
+	 * Return the internal singleTaskOrderQueue of this SchedulerContext;
 	 * 
-	 * @param t
-	 * 		The TaskType of which all SingleTaskOrders are requested.
-	 *  
-	 * @return A list of all pending task orders of the specified TaskType sorted
-	 * 		   by deadline.
+	 * @return the internal singleTaskOrderQueue of this SchedulerContext
 	 */
-	protected List<SingleTaskOrder> getSingleTaskOrdersOfType(TaskType t) {
-		if(!taskOrderQueue.containsKey(t)){
-			throw new IllegalArgumentException("Single task type is not correct for this system.");
-		}
-		return new ArrayList<SingleTaskOrder>(this.taskOrderQueue.get(t));
+	private List<SingleTaskOrder> getSingleTaskOrderQueueRaw() {
+		return this.singleTaskOrderQueue;
 	}
 	
-	/** The queues of all SingleTaskOrders sorted by their TaskType. */
-	private final Map<TaskType, List<SingleTaskOrder>> taskOrderQueue = new EnumMap<>(TaskType.class);
-
+	/** List containing all the SingleTaskOrders of this system. */
+	private final List<SingleTaskOrder> singleTaskOrderQueue = new ArrayList<>();
 	//--------------------------------------------------------------------------
 	// Adding orders
 	//--------------------------------------------------------------------------
@@ -404,7 +412,7 @@ public class SchedulerContext {
 		if (!isValidPendingOrder(order)) {
 			throw new IllegalArgumentException("Order is not a valid pending order.");
 		}
-		this.getCurrentSchedulingStrategy().addTo(order, this.getOrderQueueRaw());
+		this.getCurrentSchedulingStrategy().addTo(order, this.getStandardOrderQueueRaw());
 	}
 	
 	/**
@@ -422,22 +430,24 @@ public class SchedulerContext {
 		if (!isValidPendingOrder(order)) {
 			throw new IllegalArgumentException("Order is not a valid pending order.");
 		}
-		if(!taskOrderQueue.containsKey(order.getSingleTaskOrderType())){
-			throw new IllegalArgumentException("Single task type is not correct for this system.");
-		}
-		List<SingleTaskOrder> queue = taskOrderQueue.get(order.getSingleTaskOrderType());
-		boolean added = false;
+
+		List<SingleTaskOrder> queue = this.getSingleTaskOrderQueueRaw();
+		boolean hasAdded = false; 
+		
 		for (int i = 0; i < queue.size(); i++) {
-			if(!added && order.getDeadline().compareTo(queue.get(i).getDeadline())==-1){
+			if (queue.get(i).getDeadline().get().compareTo(order.getDeadline().get()) > 0) {
+				
 				queue.add(i, order);
-				added = true;
+				hasAdded = true;
 				break;
 			}
 		}
-		if(!added)
+		if (!hasAdded) {
 			queue.add(order);
+		}
 	}
 	
+	//--------------------------------------------------------------------------
 	/**
 	 * Check if the specified Order is a valid pending Order to be scheduled.
 	 * 
@@ -446,5 +456,4 @@ public class SchedulerContext {
 	public boolean isValidPendingOrder(Order order) {
 		return order != null && !order.isCompleted();
 	}
-
 }

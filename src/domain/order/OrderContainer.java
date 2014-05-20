@@ -1,5 +1,7 @@
 package domain.order;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.car.Specification;
 import domain.car.Model;
@@ -46,6 +48,13 @@ public interface OrderContainer {
 	 */
 	public DateTime getSubmissionTime();
 
+	/** 
+	 * Get the Deadline of this Order, when it should be finished if it is specified
+	 * .
+	 * @return an optional containing the deadline of this Order if it exists.
+	 */
+	public Optional<DateTime> getDeadline();
+	
 	/**
 	 * Get the DateTime at which this Order was submitted.
 	 * 
