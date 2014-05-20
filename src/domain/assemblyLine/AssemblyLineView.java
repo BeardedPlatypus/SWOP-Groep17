@@ -4,6 +4,12 @@ import java.util.List;
 
 import domain.order.OrderContainer;
 
+/**
+ * A view on an AssemblyLineFacade. Allows the system to pass a facade as an
+ * immutable object that can be inspected.
+ * 
+ * @author Frederik Goovaerts
+ */
 public interface AssemblyLineView {
 
 	/**

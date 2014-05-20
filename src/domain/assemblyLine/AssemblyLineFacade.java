@@ -8,6 +8,12 @@ import domain.order.Order;
 import domain.order.OrderContainer;
 import domain.statistics.StatisticsLogger;
 
+/**
+ * A facade which hold together an assemblyLine and its controller.
+ * This class offers all necessary methods the system should see of both objects.
+ * 
+ * @author Frederik Goovaerts
+ */
 public class AssemblyLineFacade implements AssemblyLineView{
 	
 	//--------------------------------------------------------------------------
