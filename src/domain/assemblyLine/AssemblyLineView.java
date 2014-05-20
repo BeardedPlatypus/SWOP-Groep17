@@ -2,7 +2,7 @@ package domain.assemblyLine;
 
 import java.util.List;
 
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 
 /**
  * A view on an AssemblyLineFacade. Allows the system to pass a facade as an
@@ -19,14 +19,14 @@ public interface AssemblyLineView {
 	 * 		The order to look for
 	 * @return This AssemblyLine has the given Order
 	 */
-	public boolean contains(OrderContainer order);
+	public boolean contains(OrderView order);
 	
 	/**
-	 * Get a list of pending {@link OrderContainer}s on the assembly line. 
+	 * Get a list of pending {@link OrderView}s on the assembly line. 
 	 * 
 	 * @return List of pending order containers on the assembly line.
 	 */
-	public List<OrderContainer> getActiveOrderContainers();
+	public List<OrderView> getActiveOrderContainers();
 	
 	/**
 	 * Get views those AssemblyTasks that are of the specified WorkPost's type.
@@ -37,15 +37,15 @@ public interface AssemblyLineView {
 	 * @throws IllegalArgumentException
 	 * 		workPostNum refers to a WorkPost that does not exist
 	 */
-	public List<AssemblyTaskContainer> getAssemblyTasksAtPost(int workPostNum)
+	public List<AssemblyTaskView> getAssemblyTasksAtPost(int workPostNum)
 		throws IllegalArgumentException;
 	
 	/**
-	 * Get the WorkPosts composing the assembly line, as immutable {@link WorkPostContainer}s
+	 * Get the WorkPosts composing the assembly line, as immutable {@link WorkPostView}s
 	 * 
 	 * @return A list of immutable containers for all respective WorkPosts in their order.
 	 */
-	public List<WorkPostContainer> getWorkPostContainers();
+	public List<WorkPostView> getWorkPostContainers();
 	
 	/**
 	 * Return if this AssemblyLine is currently empty. 

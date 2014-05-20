@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import domain.assemblyLine.AssemblyTaskContainer;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.AssemblyTaskView;
+import domain.assemblyLine.WorkPostView;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
@@ -231,8 +231,8 @@ public class InitialDataLoader {
 	public void simulateCompleteAllTasksOnAssemblyLine(int numberOfTimes,
 			int timeSpentPerTask) {
 		for(int i = 0; i < numberOfTimes; i++){
-			for(WorkPostContainer wp : this.getDomainFacade().getWorkPosts()){
-				for(AssemblyTaskContainer task : wp.getMatchingAssemblyTasks()){
+			for(WorkPostView wp : this.getDomainFacade().getWorkPosts()){
+				for(AssemblyTaskView task : wp.getMatchingAssemblyTasks()){
 					if(!task.isCompleted()){
 						this.getDomainFacade().completeWorkpostTask(
 								wp.getWorkPostNum(), task.getTaskNumber(),

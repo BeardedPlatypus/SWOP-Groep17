@@ -173,7 +173,7 @@ public class SingleOrderSession {
 	 * @throws 	IllegalStateException
 	 * 			If the option or deadline were not yet specified upon submission.
 	 */
-	public OrderContainer submitSingleTaskOrder() throws IllegalStateException{
+	public OrderView submitSingleTaskOrder() throws IllegalStateException{
 		if(orderDetailsSpecified()){
 			return getManufacturer().submitSingleTaskOrder(getOption(), getDeadline());
 		} else {

@@ -20,7 +20,7 @@ import org.powermock.reflect.Whitebox;
 
 import domain.assemblyLine.AssemblyProcedure;
 import domain.assemblyLine.AssemblyTask;
-import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.AssemblyTaskView;
 import domain.assemblyLine.TaskType;
 import domain.car.Option;
 import domain.order.Order;
@@ -195,7 +195,7 @@ public class AssemblyProcedureTest {
 	
 	@Test
 	public void getTasksOfType_test() {
-		List<AssemblyTaskContainer> containers = procedure.getAssemblyTasks(TaskType.BODY);
+		List<AssemblyTaskView> containers = procedure.getAssemblyTasks(TaskType.BODY);
 		assertEquals(containers.size(), 2);
 		assertSame(containers.get(0), color);
 		assertSame(containers.get(1), body);

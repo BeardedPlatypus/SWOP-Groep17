@@ -23,7 +23,7 @@ import org.powermock.reflect.Whitebox;
 
 import domain.assemblyLine.AssemblyProcedure;
 import domain.assemblyLine.AssemblyTask;
-import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.AssemblyTaskView;
 import domain.assemblyLine.TaskType;
 import domain.assemblyLine.WorkPost;
 import domain.assemblyLine.WorkPostObserver;
@@ -67,7 +67,7 @@ public class WorkPostTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		
-		List<AssemblyTaskContainer> tasks = new ArrayList<AssemblyTaskContainer>();
+		List<AssemblyTaskView> tasks = new ArrayList<AssemblyTaskView>();
 		tasks.add(assemblyTaskInfo1);
 		tasks.add(assemblyTaskInfo2);
 		tasks.add(assemblyTaskInfo3);
@@ -152,7 +152,7 @@ public class WorkPostTest {
 		
 	@Test 
 	public void test_getMatchinAssemblyTasks_empty() {
-		List<AssemblyTaskContainer> res = emptyWorkPost.getMatchingAssemblyTasks();
+		List<AssemblyTaskView> res = emptyWorkPost.getMatchingAssemblyTasks();
 		assertTrue(res.isEmpty());
 	}
 	

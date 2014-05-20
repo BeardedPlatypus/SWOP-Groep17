@@ -11,7 +11,7 @@ import domain.DateTime;
 import domain.InteractionSimulator;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import exceptions.OrderDoesNotExistException;
 
 /**
@@ -49,13 +49,13 @@ public class OrderDetailsScenario_Alternate {
 		//   divided into two parts. The first part shows a list of pending orders,
 		//   with estimated completion times, and the second part shows a history
 		//   of completed orders, sorted most recent first.
-		List<OrderContainer> initPending = facade.getPendingOrders();
+		List<OrderView> initPending = facade.getPendingOrders();
 		assertEquals(initPending.size(), 3);
 		
-		List<OrderContainer> initComplete = facade.getCompletedOrders();
+		List<OrderView> initComplete = facade.getCompletedOrders();
 		assertEquals(initComplete.size(), 5);
 		
-		for(OrderContainer oc : initPending){
+		for(OrderView oc : initPending){
 			assertTrue(!oc.isCompleted());
 			DateTime eta = null;
 			try {
@@ -66,7 +66,7 @@ public class OrderDetailsScenario_Alternate {
 			assertNotNull(eta);
 		}
 		
-		for(OrderContainer oc : initComplete){
+		for(OrderView oc : initComplete){
 			assertTrue(oc.isCompleted());
 			DateTime eta = oc.getCompletionTime();
 			assertNotNull(eta);
@@ -74,7 +74,7 @@ public class OrderDetailsScenario_Alternate {
 		
 		//2. The user indicates the order he wants to check the details for. ==HAPPENS IN UI==
 		//3. The system shows the details of the order3.
-		OrderContainer order = initPending.get(0);
+		OrderView order = initPending.get(0);
 		order.getOrderNumber();
 		assertNotNull(order.getSpecifications());
 		assertNotNull(order.getModel());
@@ -88,13 +88,13 @@ public class OrderDetailsScenario_Alternate {
 		//   divided into two parts. The first part shows a list of pending orders,
 		//   with estimated completion times, and the second part shows a history
 		//   of completed orders, sorted most recent first.
-		List<OrderContainer> initPending = facade.getPendingOrders();
+		List<OrderView> initPending = facade.getPendingOrders();
 		assertEquals(initPending.size(), 3);
 		
-		List<OrderContainer> initComplete = facade.getCompletedOrders();
+		List<OrderView> initComplete = facade.getCompletedOrders();
 		assertEquals(initComplete.size(), 5);
 		
-		for(OrderContainer oc : initPending){
+		for(OrderView oc : initPending){
 			assertTrue(!oc.isCompleted());
 			DateTime eta = null;
 			try {
@@ -105,7 +105,7 @@ public class OrderDetailsScenario_Alternate {
 			assertNotNull(eta);
 		}
 		
-		for(OrderContainer oc : initComplete){
+		for(OrderView oc : initComplete){
 			assertTrue(oc.isCompleted());
 			DateTime eta = oc.getCompletionTime();
 			assertNotNull(eta);

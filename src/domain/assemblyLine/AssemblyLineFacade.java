@@ -3,7 +3,7 @@ package domain.assemblyLine;
 import java.util.List;
 
 import domain.order.Order;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.statistics.StatisticsLogger;
 
 /**
@@ -79,7 +79,7 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	 * 		The order to look for
 	 * @return This AssemblyLine has the given Order
 	 */
-	public boolean contains(OrderContainer order) {
+	public boolean contains(OrderView order) {
 		return this.getLine().contains(order);
 	}
 	
@@ -103,11 +103,11 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	}
 
 	/**
-	 * Get a list of pending {@link OrderContainer}s on the assembly line. 
+	 * Get a list of pending {@link OrderView}s on the assembly line. 
 	 * 
 	 * @return List of pending order containers on the assembly line.
 	 */
-	public List<OrderContainer> getActiveOrderContainers() {
+	public List<OrderView> getActiveOrderContainers() {
 		return this.getLine().getActiveOrderContainers();
 	}
 	
@@ -120,7 +120,7 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	 * @throws IllegalArgumentException
 	 * 		workPostNum refers to a WorkPost that does not exist
 	 */
-	public List<AssemblyTaskContainer> getAssemblyTasksAtPost(int workPostNum)
+	public List<AssemblyTaskView> getAssemblyTasksAtPost(int workPostNum)
 		throws IllegalArgumentException {
 		return this.getLine().getAssemblyTasksAtPost(workPostNum);
 	}
@@ -140,11 +140,11 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	// WorkPost-related variables and methods
 	//--------------------------------------------------------------------------
 	/**
-	 * Get the WorkPosts composing the assembly line, as immutable {@link WorkPostContainer}s
+	 * Get the WorkPosts composing the assembly line, as immutable {@link WorkPostView}s
 	 * 
 	 * @return A list of immutable containers for all respective WorkPosts in their order.
 	 */
-	public List<WorkPostContainer> getWorkPostContainers() {
+	public List<WorkPostView> getWorkPostContainers() {
 		return this.getLine().getWorkPostContainers();
 	}
 

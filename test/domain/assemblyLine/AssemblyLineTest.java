@@ -24,17 +24,17 @@ import domain.DateTime;
 import domain.Manufacturer;
 import domain.assemblyLine.AssemblyLine;
 import domain.assemblyLine.AssemblyProcedure;
-import domain.assemblyLine.AssemblyProcedureContainer;
+import domain.assemblyLine.AssemblyProcedureView;
 import domain.assemblyLine.AssemblyTask;
-import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.AssemblyTaskView;
 import domain.assemblyLine.TaskType;
 import domain.assemblyLine.WorkPost;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.WorkPostView;
 import domain.assemblyLine.WorkPostObserver;
 import domain.car.Option;
 import domain.car.Specification;
 import domain.order.Order;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.statistics.ProcedureStatistics;
 import domain.statistics.StatisticsLogger;
 
@@ -169,7 +169,7 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void getAssemblyOnEachWorkStation_test() {
-		List<AssemblyProcedureContainer> assemblyLineProcedures = assemblyLine.getAssemblyOnEachWorkPost();
+		List<AssemblyProcedureView> assemblyLineProcedures = assemblyLine.getAssemblyOnEachWorkPost();
 		assertTrue(assemblyLineProcedures.get(0) == procedure1);
 		assertTrue(assemblyLineProcedures.get(1) == procedure2);
 		assertTrue(assemblyLineProcedures.get(2) == procedure3);
@@ -189,7 +189,7 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void getActiveOrderContainersTest() {
-		List<OrderContainer> orders = assemblyLine.getActiveOrderContainers();
+		List<OrderView> orders = assemblyLine.getActiveOrderContainers();
 		assertTrue(orders.contains(order));
 		assertTrue(orders.contains(order2));
 		assertTrue(orders.contains(order3));
@@ -197,13 +197,13 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void getAssemblyTasksAtPost_valid() {
-		List<AssemblyTaskContainer> containers = assemblyLine.getAssemblyTasksAtPost(0);
+		List<AssemblyTaskView> containers = assemblyLine.getAssemblyTasksAtPost(0);
 		assertTrue(containers.get(0) == task1);
 	}
 	
 	@Test
 	public void getWorkPostContainersTest() {
-		List<WorkPostContainer> containers = assemblyLine.getWorkPostContainers();
+		List<WorkPostView> containers = assemblyLine.getWorkPostContainers();
 		assertTrue(containers.contains(workPosts.get(0)));
 		assertTrue(containers.contains(workPosts.get(1)));
 		assertTrue(containers.contains(workPosts.get(2)));

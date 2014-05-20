@@ -4,7 +4,7 @@ import java.util.List;
 
 import domain.car.OptionCategory;
 import domain.handlers.OrderSingleTaskHandler;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 
 public class OrderSingleTaskUIPart {
 
@@ -83,7 +83,7 @@ public class OrderSingleTaskUIPart {
 					System.out.println("On how many minutes past that hour should the order be finished?");
 					int minutes = helper.getIntFromUser(0, 59);
 					getHandler().specifyDeadline(day, hours, minutes);
-					OrderContainer order = getHandler().submitSingleTaskOrder();
+					OrderView order = getHandler().submitSingleTaskOrder();
 					System.out.println("Estimated Completion Time for this order is:");
 					System.out.println(getHandler().getEstimatedCompletionTime(order).toString());
 					helper.getEnter();

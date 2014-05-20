@@ -28,7 +28,7 @@ import domain.car.Model;
  * @invariant order.getSubmissionTime() != null
  * @invariant order.getModel().isValidSpecification(order.getSpecifications())
  */
-public abstract class Order implements OrderContainer {
+public abstract class Order implements OrderView {
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------

@@ -2,8 +2,8 @@ package ui;
 
 import java.util.List;
 
-import domain.assemblyLine.AssemblyTaskContainer;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.AssemblyTaskView;
+import domain.assemblyLine.WorkPostView;
 import domain.handlers.AssemblyLineStatusHandler;
 
 public class CheckAssemblyLineStatusUIPart {
@@ -62,12 +62,12 @@ public class CheckAssemblyLineStatusUIPart {
 	public void run(){
 		System.out.println("Current overview of the Assembly Line:");
 		System.out.println(helper.SEPERATOR);
-		List<WorkPostContainer> posts = getHandler().getWorkPosts();
-		for(WorkPostContainer post : posts){
+		List<WorkPostView> posts = getHandler().getWorkPosts();
+		for(WorkPostView post : posts){
 			System.out.println("Workpost " + post.getName() + " with tasks:");
 			try{
-				List<AssemblyTaskContainer> tasks = post.getAssemblyProcedureContainer().getAssemblyTasks();
-				for(AssemblyTaskContainer task : tasks){
+				List<AssemblyTaskView> tasks = post.getAssemblyProcedureView().getAssemblyTasks();
+				for(AssemblyTaskView task : tasks){
 					System.out.println("\t" + task.getOptionName() + "(" + task.isCompleted() + ")");
 				}
 			}catch(IllegalStateException e){

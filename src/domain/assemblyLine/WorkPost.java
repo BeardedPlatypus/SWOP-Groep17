@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import domain.order.Order;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 
 /**
  * A class for WorkPosts that are part of an assembly line.
  * A WorkPost has a type, and a name, derived from its type.
  * It also has a number, which depicts it's relative order in the AssemblyLine.
  */
-public class WorkPost implements WorkPostContainer {
+public class WorkPost implements WorkPostView {
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -76,7 +76,7 @@ public class WorkPost implements WorkPostContainer {
 	}
 	
 	@Override
-	public List<AssemblyTaskContainer> getMatchingAssemblyTasks() {
+	public List<AssemblyTaskView> getMatchingAssemblyTasks() {
 		if (this.isEmpty()) {
 			return new ArrayList<>();
 		}
@@ -84,7 +84,7 @@ public class WorkPost implements WorkPostContainer {
 	}
 
 	@Override
-	public AssemblyProcedureContainer getAssemblyProcedureContainer() {
+	public AssemblyProcedureView getAssemblyProcedureView() {
 		if (this.isEmpty())
 			throw new IllegalStateException();
 		
@@ -185,7 +185,7 @@ public class WorkPost implements WorkPostContainer {
 	 * 
 	 * @return The OrderContainer
 	 */
-	public OrderContainer getOrderContainer() {
+	public OrderView getOrderContainer() {
 		return this.getAssemblyProcedure().getOrder();
 	}
 	
@@ -196,7 +196,7 @@ public class WorkPost implements WorkPostContainer {
 	 * 		Given order to check for
 	 * @return whether or not this workpost contains given order
 	 */
-	public boolean contains(OrderContainer order) {
+	public boolean contains(OrderView order) {
 		if (this.getAssemblyProcedure() == null) {
 			return false;
 		}

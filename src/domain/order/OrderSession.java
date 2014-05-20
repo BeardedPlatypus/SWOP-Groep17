@@ -194,7 +194,7 @@ public class OrderSession {
 	 * 
 	 * @return the order of this class
 	 */
-	private OrderContainer getOrder(){
+	private OrderView getOrder(){
 		return this.resultingOrder;
 	}
 	
@@ -209,7 +209,7 @@ public class OrderSession {
 	 * @throws IllegalStateException
 	 * 		When an order was previously set
 	 */
-	private void setOrder(OrderContainer generatedOrder) throws IllegalArgumentException, IllegalStateException{
+	private void setOrder(OrderView generatedOrder) throws IllegalArgumentException, IllegalStateException{
 		if(generatedOrder == null)
 			throw new IllegalArgumentException("Order is not valid.");
 		if(orderIsMade())
@@ -218,7 +218,7 @@ public class OrderSession {
 	}
 	
 	/** The order this  */
-	private OrderContainer resultingOrder;
+	private OrderView resultingOrder;
 
 	//--------------------------------------------------------------------------
 
@@ -280,7 +280,7 @@ public class OrderSession {
 		if(this.orderIsMade())
 			throw new IllegalStateException("An order has already been made from this Session.");
 		try{
-			OrderContainer generatedOrder = this.getManufacturer().
+			OrderView generatedOrder = this.getManufacturer().
 					submitStandardOrder(this.getModel(),
 							new ArrayList<Option>(this.getOptions()));
 			this.setOrder(generatedOrder);

@@ -3,7 +3,7 @@ package domain.assemblyLine;
 import java.util.List;
 
 /** 
- * The WorkPostContainer provides an interface that allows external programs 
+ * The WorkPostView provides an interface that allows external programs 
  * to access the information of a WorkPost in the domain, without accidental 
  * (and uncontrolled) state changes. 
  * It provides methods for accessing its name, workpostnumber, TaskType, and 
@@ -11,18 +11,18 @@ import java.util.List;
  * 
  * @author Martinus Wilhelmus Tegelaers
  */
-public interface WorkPostContainer {
+public interface WorkPostView {
 	/**
-	 * Get the name of this WorkPostContainer.
+	 * Get the name of this WorkPostView.
 	 * 
-	 * @return The name of this WorkPostContainer.
+	 * @return The name of this WorkPostView.
 	 */
 	public String getName();
 	
 	/**
-	 * Get the number of this WorkPostContainer.
+	 * Get the number of this WorkPostView.
 	 * 
-	 * @return The number of this WorkPostContainer.
+	 * @return The number of this WorkPostView.
 	 */
 	public int getWorkPostNum();
 	
@@ -41,7 +41,7 @@ public interface WorkPostContainer {
 	 * @throws IllegalStateException
 	 * 		| this.isEmpty()
 	 */
-	public List<AssemblyTaskContainer> getMatchingAssemblyTasks() throws IllegalStateException;
+	public List<AssemblyTaskView> getMatchingAssemblyTasks() throws IllegalStateException;
 	
 	/**
 	 * Check if this WorkPost is currently empty (has no active AssemblyProcedure).
@@ -53,17 +53,17 @@ public interface WorkPostContainer {
 	/**
 	 * Indicate whether this WorkPost has finished its work.
 	 * @return Whether this WorkPost has finished its work.
-	 * @throws This WorkPostContainer has no active AssemblyProcedure
+	 * @throws This WorkPostView has no active AssemblyProcedure
 	 */
 	public boolean isFinished() throws IllegalStateException;
 	
 	/**
-	 * Get the active AssemblyProcedureContainer of this WorkPost. 
+	 * Get the active AssemblyProcedureView of this WorkPost. 
 	 * 
-	 * @return The active AssemblyProcedureContainer of this WorkPost.
+	 * @return The active AssemblyProcedureView of this WorkPost.
 	 * 
 	 * @throws IllegalStateException
 	 * 		| this.isEmpty()
 	 */
-	public AssemblyProcedureContainer getAssemblyProcedureContainer() throws IllegalStateException;
+	public AssemblyProcedureView getAssemblyProcedureView() throws IllegalStateException;
 }

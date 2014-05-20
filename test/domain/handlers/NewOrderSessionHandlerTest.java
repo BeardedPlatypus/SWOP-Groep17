@@ -17,7 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import domain.Manufacturer;
 import domain.handlers.NewOrderSessionHandler;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 /**
  * @author Month
  *
@@ -25,7 +25,7 @@ import domain.order.OrderContainer;
 @RunWith(MockitoJUnitRunner.class )
 public class NewOrderSessionHandlerTest {
 	@Mock Manufacturer mockManufacturer;
-	@Mock OrderContainer orderContainer;
+	@Mock OrderView orderContainer;
 	
 	NewOrderSessionHandler sessionHandler1;
 	
@@ -48,7 +48,7 @@ public class NewOrderSessionHandlerTest {
 
 	@Test
 	public void test_getPendingOrder() {
-		List<OrderContainer> array = new ArrayList<OrderContainer>();
+		List<OrderView> array = new ArrayList<OrderView>();
 		array.add(this.orderContainer);
 		Mockito.when(this.mockManufacturer.getPendingOrderContainers()).thenReturn(array);
 		

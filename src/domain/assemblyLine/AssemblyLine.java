@@ -7,7 +7,7 @@ import domain.DateTime;
 import domain.Manufacturer;
 import domain.car.Specification;
 import domain.order.Order;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.statistics.ProcedureStatistics;
 import domain.statistics.StatisticsLogger;
 
@@ -80,7 +80,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 		The order to look for
 	 * @return This AssemblyLine has the given Order
 	 */
-	public boolean contains(OrderContainer order) {
+	public boolean contains(OrderView order) {
 		for (WorkPost workPost : this.getWorkPosts()) {
 			if (workPost.contains(order)) {
 				return true;
@@ -120,12 +120,12 @@ public class AssemblyLine implements WorkPostObserver {
 	// OrderContainer methods.
 
 	/**
-	 * Get a list of pending {@link OrderContainer}s on the assembly line. 
+	 * Get a list of pending {@link OrderView}s on the assembly line. 
 	 * 
 	 * @return List of pending order containers on the assembly line.
 	 */
-	public List<OrderContainer> getActiveOrderContainers() {
-		ArrayList<OrderContainer> activeOrders = new ArrayList<>();
+	public List<OrderView> getActiveOrderContainers() {
+		ArrayList<OrderView> activeOrders = new ArrayList<>();
 		
 		for (WorkPost post : this.getWorkPosts()) {
 			if (!post.isEmpty()) {
@@ -145,7 +145,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @throws IllegalArgumentException
 	 * 		workPostNum refers to a WorkPost that does not exist
 	 */
-	public List<AssemblyTaskContainer> getAssemblyTasksAtPost(int workPostNum)
+	public List<AssemblyTaskView> getAssemblyTasksAtPost(int workPostNum)
 		throws IllegalArgumentException {
 		if (! this.isValidWorkPostNum(workPostNum)) {
 			throw new IllegalArgumentException("workPostNum refers to an"
@@ -184,12 +184,12 @@ public class AssemblyLine implements WorkPostObserver {
 	// WorkPost-related variables and methods
 	//--------------------------------------------------------------------------
 	/**
-	 * Get the WorkPosts composing the assembly line, as immutable {@link WorkPostContainer}s
+	 * Get the WorkPosts composing the assembly line, as immutable {@link WorkPostView}s
 	 * 
 	 * @return A list of immutable containers for all respective WorkPosts in their order.
 	 */
-	public List<WorkPostContainer> getWorkPostContainers() {
-		return new ArrayList<WorkPostContainer>(workPosts);
+	public List<WorkPostView> getWorkPostContainers() {
+		return new ArrayList<WorkPostView>(workPosts);
 	}
 
 	/**
@@ -548,7 +548,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @throws IllegalStateException
 	 * 		! order.getModel().isValidSpecification(order.getSpecifications())
 	 */
-	protected List<AssemblyTask> generateTasksFrom(OrderContainer order) {
+	protected List<AssemblyTask> generateTasksFrom(OrderView order) {
 		Specification orderSpecs = order.getSpecifications();
 		
 		List<AssemblyTask> toReturn = new ArrayList<AssemblyTask>();
