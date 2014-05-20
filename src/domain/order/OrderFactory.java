@@ -123,18 +123,8 @@ public class OrderFactory implements TimeObserver {
 			                                    		  throws IllegalArgumentException{
 		
 		Specification spec = new Specification(option);
-		if(!isValidInputSingleTaskOrder(deadline, spec)) {
-			throw new IllegalArgumentException("Input parameters are not valid.");
-		}
 		
-		int orderId = this.getCurrentOrderIdentifier();
-		this.incrementOrderIdentifier();
-		
-		return new SingleTaskOrder(this.getManufacturer().getSingleTaskModel(), 
-				                   spec, 
-				                   orderId, 
-				                   this.getCurrentTime(), 
-				                   deadline);	
+		return makeNewSingleTaskOrder(deadline, spec);
 	}
 
 	/**
