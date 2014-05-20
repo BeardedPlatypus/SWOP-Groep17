@@ -1,6 +1,6 @@
 package domain.assemblyLine;
 
-public class AssemblyLineFacade {
+public class AssemblyLineFacade implements AssemblyLineView{
 
 	
 }
