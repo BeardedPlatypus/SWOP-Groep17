@@ -3,6 +3,7 @@ package domain.order;
 import com.google.common.base.Optional;
 
 import domain.DateTime;
+import domain.assemblyLine.TaskType;
 import domain.car.Specification;
 import domain.car.Model;
 
@@ -217,12 +218,16 @@ public abstract class Order implements OrderContainer {
 	
 	/**
 	 * Get the amount of minutes that the ordered car is expected to spend
-	 * at each work post.
+	 * at the workpost of the specified workPostType
 	 * 
-	 * @return The amount of minutes
+	 * @param workPostType
+	 * 		The type of workpost of which the number of minutes are requestsed.
+	 * 
+	 * @return The amount of minutes that the ordered car is expected to spend at 
+	 * 		   the workpost of the specified workPostType.
 	 */
-	public int getMinutesPerPost() {
-		return this.getModel().getMinsPerWorkPost();
+	public int getMinutesOnPostOfType(TaskType workPostType) {
+		return this.getModel().getMinsOnWorkPostOfType(workPostType);
 	}
 	
 	//--------------------------------------------------------------------------
