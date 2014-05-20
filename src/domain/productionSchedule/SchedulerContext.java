@@ -332,7 +332,7 @@ public class SchedulerContext {
 		Order result = null;
 		
 		for (SingleTaskOrder order : this.getSingleTaskOrderQueue()) {
-			if (acceptedTaskTypes.contains(order)) {
+			if (acceptedTaskTypes.contains(order.getSingleTaskOrderType())) {
 				result = order;
 				break;
 			}
@@ -360,11 +360,7 @@ public class SchedulerContext {
 		Optional<Order> result = this.getNextSingleTaskOrder(acceptedTaskTypes);
 		
 		if (result.isPresent())
-			this.getStandardOrderQueueRaw().remove(result.get());
-
-		if (this.getCurrentSchedulingStrategy().isDone(this.getStandardOrderQueueRaw()))
-			this.setSchedulingStrategy(this.getDefaultStrategy());
-		
+			this.getSingleTaskOrderQueueRaw().remove(result.get());		
 		return result;
 	}
 	
@@ -440,6 +436,7 @@ public class SchedulerContext {
 		
 		for (int i = 0; i < queue.size(); i++) {
 			if (queue.get(i).getDeadline().get().compareTo(order.getDeadline().get()) > 0) {
+				
 				queue.add(i, order);
 				hasAdded = true;
 				break;
@@ -459,5 +456,4 @@ public class SchedulerContext {
 	public boolean isValidPendingOrder(Order order) {
 		return order != null && !order.isCompleted();
 	}
-
 }
