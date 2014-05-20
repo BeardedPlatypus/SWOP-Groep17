@@ -46,6 +46,7 @@ public class AssemblyLineTest {
 	@Rule public ExpectedException expected = ExpectedException.none();
 	
 	@Mock Manufacturer manufacturer;
+	@Mock SchedulerIntermediate sched;
 	
 	AssemblyProcedure procedure1;
 	AssemblyProcedure procedure2;
@@ -110,8 +111,8 @@ public class AssemblyLineTest {
 		
 		workPosts = new ArrayList<WorkPost>();
 		workPosts.add(new WorkPost(TaskType.BODY, 0));
-		workPosts.add(new WorkPost(TaskType.DRIVETRAIN, 0));
-		workPosts.add(new WorkPost(TaskType.ACCESSORIES, 0));
+		workPosts.add(new WorkPost(TaskType.DRIVETRAIN, 1));
+		workPosts.add(new WorkPost(TaskType.ACCESSORIES, 2));
 		
 		assemblyLine = new AssemblyLine(workPosts, orderSelector);
 		assemblyLine.setManufacturer(manufacturer);
@@ -124,6 +125,7 @@ public class AssemblyLineTest {
 		}
 		
 		assemblyLine.setCurrentState(new OperationalState());
+		assemblyLine.setSchedulerIntermediate(sched);
 	}
 	
 	@Test
@@ -303,10 +305,10 @@ public class AssemblyLineTest {
 		assertEquals(new DateTime(0, 0, 60), Whitebox.getInternalState(assemblyLine, "elapsedTime"));
 	}
 	
-	/*@Test
+	@Test
 	public void completeWorkPostTask_simulateAdvance() {
-		Mockito.when(manufacturer.popNextOrderFromSchedule()).thenReturn(newOrder);
-		Mockito.when(newOrder.getMinutesPerPost()).thenReturn(60);
+		Mockito.when(sched.popNextOrderFromSchedule()).thenReturn(Optional.fromNullable(newOrder));
+//		Mockito.when(newOrder.getMinutesPerPost()).thenReturn(60);
 		Option newOption = new Option(TaskType.BODY, "har", "dar");
 		Specification newSpec = new Specification(Arrays.asList(newOption));
 		Mockito.when(newOrder.getSpecifications()).thenReturn(newSpec);
@@ -314,6 +316,9 @@ public class AssemblyLineTest {
 		assemblyLine.completeWorkpostTask(0, 0, 20);
 		assemblyLine.completeWorkpostTask(1, 0, 60);
 		assemblyLine.completeWorkpostTask(2, 0, 40);
+		
+		assertTrue(assemblyLine.canAdvance());
+		assemblyLine.advance();
 		
 		try {
 			assertEquals(60, Whitebox.getInternalState(procedure1, "elapsedMinutes"));
@@ -323,19 +328,18 @@ public class AssemblyLineTest {
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(0), "minutesOfWork"));
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(1), "minutesOfWork"));
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(2), "minutesOfWork"));
-
-			assemblyLine.advance(newOrder);
-			assertEquals(procedure1, workPosts.get(1).getAssemblyProcedure());
-			assertEquals(procedure2, workPosts.get(2).getAssemblyProcedure());
-			assertEquals(newOrder, workPosts.get(0).getAssemblyProcedure().getOrder());
+			
+			assertEquals(Optional.absent(), workPosts.get(1).getAssemblyProcedure());
+			assertEquals(Optional.absent(), workPosts.get(2).getAssemblyProcedure());
+			assertEquals(newOrder, workPosts.get(0).getAssemblyProcedure().get().getOrder());
 			assertEquals(-120, procedure3.makeStatisticsEvent().getDelay());
-			assertEquals(2, Whitebox.getInternalState(assemblyLine, "finishedAssemblyCounter"));
-			Mockito.verify(logger).addStatistics(Matchers.isA(ProcedureStatistics.class));
+			assertEquals(0, Whitebox.getInternalState(assemblyLine, "finishedAssemblyCounter"));
+			Mockito.verify(logger, Mockito.times(3)).addStatistics(Matchers.isA(ProcedureStatistics.class));
 			Mockito.verify(manufacturer).addToCompleteOrders(order3);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}*/
+	}
 	
 	@Test
 	public void containsTest() {

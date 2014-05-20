@@ -93,7 +93,7 @@ public class AssemblyLineBuilderTest {
 		builder.addToDesiredModels(truckModel);
 		
 		AssemblyLine line = builder.buildAssemblyLine();
-		assertEquals(manufacturer, Whitebox.getInternalState(line, Manufacturer.class));
+		assertEquals(null, Whitebox.getInternalState(line, Manufacturer.class));
 		
 		OrderAcceptanceChecker selector = line.getOrderSelector();
 		List<Model> allowedModels = Whitebox.getInternalState(selector, "allowedModels");

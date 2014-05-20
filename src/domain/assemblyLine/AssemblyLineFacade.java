@@ -203,14 +203,10 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	//--------------------------------------------------------------------------
 	
 	/**
-	 * Explicitly tell this AssemblyLine to advance, thereby putting the specified
-	 * Order on the AssemblyLine
-	 * 
-	 * @param order
-	 * 		The order to schedule
+	 * Explicitly tell this AssemblyLine to advance.
 	 */
-	public void advance(Optional<Order> order) {
-		this.getLine().advance(order);
+	public void advance() {
+		this.getLine().advance();
 	}
 
 	//--------------------------------------------------------------------------

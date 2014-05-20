@@ -5,6 +5,8 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.order.Order;
@@ -167,6 +169,11 @@ public class SchedulerIntermediate implements TimeObserver{
 		}
 			
 	}	
+	
+	Optional<Order> popNextOrderFromSchedule() {
+		//FIXME
+		return null;
+	}
 		
 	public boolean isIdle() {
 		return this.isIdle;
