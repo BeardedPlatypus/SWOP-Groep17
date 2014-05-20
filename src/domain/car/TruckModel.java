@@ -67,7 +67,7 @@ public class TruckModel extends Model {
 			case CERTIFICATION:
 				return this.getMinsOnCertificationPost();
 			default:
-				return super.minsPerWorkPost;
+				return super.getMinsPerWorkPost();
 		}
 	}
 

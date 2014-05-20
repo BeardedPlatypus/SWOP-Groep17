@@ -1,5 +1,7 @@
 package domain.order;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.assemblyLine.TaskType;
 import domain.car.Specification;
@@ -16,7 +18,7 @@ import domain.car.Model;
 public class SingleTaskOrder extends Order {
 	/**
 	 * Construct a new SingleTaskOrder with the specified model and specification, 
-	 * initTime and estimatedCompletion time and deadline.  
+	 * submissionTime and deadline.  
 	 * The isCompleted field is initialised as False. 
 	 * 
 	 * @param model 
@@ -25,47 +27,33 @@ public class SingleTaskOrder extends Order {
 	 * 		The specifications of this new Order.
 	 * @param orderNumber
 	 * 		The orderNumber of this new Order.  
-	 * @param initTime
+	 * @param submissionTime
 	 * 		The time at which this order was created.
-	 * @param estimatedCompletionDateTime
-	 * 		The estimated time at which this order should be completed. 
+	 * @param deadline
+	 * 		The time at which this order has to be finished. 
 	 * 
 	 * @postcondition | (new this).order.getModel() == model
 	 * 				  | (new this).order.getSpecifications() == specifications
 	 * 			      | (new this).order.getInitTime() == initTime
+	 * 				  | (new this).order.getDeadline() == Optional.of(deadline)
 	 * 				  | (new this).order.isCompleted() == False
 	 * 				  | (new this).order.getOrderNumber() == orderNumber
 	 * 
-	 * @throws NullPointerException
-	 * 		| model == null || specifications == null || initTime == null || deadline == null
+	 * @throws IllegalArgumentException
+	 * 		| model == null || specifications == null || submissionTime == null || deadline == null
 	 */
 	public SingleTaskOrder(Model model, 
 			               Specification specification,
 						   int orderNumber, 
 						   DateTime submissionTime, 
-						   DateTime deadline) throws NullPointerException {
-		super(model, specification, orderNumber, submissionTime);
+						   DateTime deadline) throws IllegalArgumentException {
+		super(model, specification, orderNumber, submissionTime, Optional.fromNullable(deadline));
 		
-		if (deadline == null)
-			throw new NullPointerException("Deadline cannot be null.");
-		
-		this.deadline = deadline;
+		// Requirement that each SingleTaskOrderAlways has a deadline.
+		if (!this.getDeadline().isPresent()) {
+			throw new IllegalArgumentException("SingleTaskOrder has to have a deadline");
+		}
 	}
-	
-	//--------------------------------------------------------------------------
-	// Deadline Property
-	//--------------------------------------------------------------------------
-	/**
-	 * Get the Deadline of this SingleTaskOrder. 
-	 * 
-	 * @return the Deadline of this SingleTaskOrder.
-	 */
-	public DateTime getDeadline() {
-		return this.deadline;
-	}
-	
-	/** The Deadline of this SingleTaskOrder. */
-	private final DateTime deadline;
 	
 	/**
 	 * Get the tasktype of this singleTaskOrder

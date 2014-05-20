@@ -40,7 +40,7 @@ public class CarModel extends Model {
 			case CERTIFICATION:
 				return 0;
 			default:
-				return super.minsPerWorkPost;
+				return super.getMinsPerWorkPost();
 		}
 	}
 }

@@ -129,8 +129,6 @@ public class Manufacturer {
 	 * @throws OrderDoesNotExistException
 	 * 		When the order is not found in the system.
 	 */
-	//TODO Aan elkaar knopen
-	//FIXME FIX EVERYTHING
 	public DateTime getEstimatedCompletionTime(OrderContainer order) throws OrderDoesNotExistException{
 		if(this.getProductionSchedule().contains(order))
 			return this.getProductionSchedule().getEstimatedCompletionTime(order);

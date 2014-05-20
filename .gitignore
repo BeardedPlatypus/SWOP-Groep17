@@ -71,3 +71,11 @@ local.properties
 # PDT-specific
 .buildpath
 *.vpp~*
+
+test/domain/order/StandardOrderTest.java
+
+test/domain/order/SingleTaskOrderTest.java
+
+test/domain/order/SingleTaskOrderTest.java
+
+test/domain/order/StandardOrderTest.java
