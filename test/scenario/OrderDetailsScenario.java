@@ -12,6 +12,7 @@ import org.junit.Test;
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.assemblyLine.TaskType;
+import domain.car.CarModel;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
@@ -47,7 +48,7 @@ public class OrderDetailsScenario {
 	
 	@Before
 	public void setUp() throws Exception {
-		model = new Model("Super model", new ArrayList<OptionCategory>(), 60);
+		model = new CarModel("Super model", new ArrayList<OptionCategory>(), 60);
 		
 		ArrayList<OrderContainer> compList = new ArrayList<OrderContainer>();
 		ArrayList<OrderContainer> pendList = new ArrayList<OrderContainer>();
