@@ -3,6 +3,8 @@ package domain.assemblyLine;
 import java.util.ArrayList;
 import java.util.List;
 
+import domain.order.Order;
+
 /**
  * A class representing a workfloor containing a number of assemblylines.
  * This Floor oversees those lines, and can unidle or idle a line if necessary.
@@ -41,15 +43,50 @@ public class AssemblyFloor {
 	//--------------------------------------------------------------------------
 	// Properties
 	//--------------------------------------------------------------------------
-	public AssemblyLineView getLineView(int lineNb){
+	
+	/**
+	 * Get a view of the assemblyLine with given index. A view is immutable.
+	 * 
+	 * @param lineNb
+	 * 		The index of wanted assemblyLine
+	 * @return assemblyline with given index
+	 *
+	 * @throws IllegalArgumentException
+	 * 		When given index is not valid
+	 *
+	 */
+	public AssemblyLineView getLineView(int lineNb) throws IllegalArgumentException{
 		if(lineNb<0 || lineNb >= getLineViews().size())
 			throw new IllegalArgumentException("Not a valid index for an assemblyline.");
-		return null;
+		return lines.get(lineNb);
 	}
 	
+	/**
+	 * Get a list of views of all assemblylines. They are all immutable.
+	 * 
+	 * @return a list of all assemblylines, as views.
+	 * 
+	 */
 	public List<AssemblyLineView> getLineViews(){
 		return new ArrayList<AssemblyLineView>(this.lines);
 	}
 	
+	/** a list with all assemblylines of this floor */
 	private List<AssemblyLineFacade> lines;
+	
+	//--------------------------------------------------------------------------
+	// AssemblyFloor and AssemblyLine methods
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * If possible, unidle an assemblyline that is currently idle and can fully
+	 * process given order. If no such assemblyline exists, nothing happens.
+	 * Maximum one assemblyline is unidled.
+	 * 
+	 * @param order
+	 * 		The order the unidled assemblyline has to be able to process
+	 */
+	public void unidleLineFor(Order order){
+		//TODO
+	}
 }
