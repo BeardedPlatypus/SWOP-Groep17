@@ -2,6 +2,8 @@ package domain.assemblyLine;
 
 import java.util.List;
 
+import com.google.common.base.Optional;
+
 import domain.order.Order;
 import domain.order.OrderView;
 import domain.statistics.StatisticsLogger;
@@ -132,7 +134,7 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	 * 
 	 * @return
 	 */
-	public List<AssemblyProcedure> getAssemblyProcedures() {
+	public List<Optional<AssemblyProcedure>> getAssemblyProcedures() {
 		return this.getLine().getAssemblyProcedures();
 	}
 
@@ -207,7 +209,7 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	 * @param order
 	 * 		The order to schedule
 	 */
-	public void advance(Order order) {
+	public void advance(Optional<Order> order) {
 		this.getLine().advance(order);
 	}
 
@@ -221,7 +223,7 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	 * @param order
 	 * @return
 	 */
-	public AssemblyProcedure makeAssemblyProcedure(Order order) {
+	public AssemblyProcedure makeAssemblyProcedure(Optional<Order> order) {
 		return this.getLine().makeAssemblyProcedure(order);
 	}
 

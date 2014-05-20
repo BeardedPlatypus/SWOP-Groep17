@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.car.CarModel;
@@ -53,7 +55,7 @@ public class OperationalStateTest {
 		workPosts.add(new WorkPost(TaskType.DRIVETRAIN, 1));
 		workPosts.add(new WorkPost(TaskType.ACCESSORIES, 2));
 		
-		line = new AssemblyLine(manufacturer, workPosts, new OrderAcceptanceChecker(new ArrayList<Model>()));
+		line = new AssemblyLine(workPosts, new OrderAcceptanceChecker(new ArrayList<Model>()));
 		
 		task0 = new AssemblyTask(new Option(TaskType.BODY, "john", "doe"), 0);
 		task1 = new AssemblyTask(new Option(TaskType.DRIVETRAIN, "jane", "doe"), 0);
@@ -72,7 +74,7 @@ public class OperationalStateTest {
 	
 	@Test
 	public void setState_active() {
-		workPosts.get(0).setAssemblyProcedure(proc0);
+		workPosts.get(0).setAssemblyProcedure(Optional.fromNullable(proc0));
 		line.setCurrentState(new OperationalState());
 		assertEquals(new ActiveState(), line.getCurrentState());
 	}
@@ -81,7 +83,7 @@ public class OperationalStateTest {
 	public void setState_orderWaiting() {
 		Order order = new StandardOrder(model, new Specification(bodyOption), 0, new DateTime(0, 6, 0));
 		AssemblyLine spiedLine = Mockito.spy(line);
-		Mockito.when(spiedLine.popNextOrderFromSchedule()).thenReturn(order);
+		Mockito.when(spiedLine.popNextOrderFromSchedule()).thenReturn(Optional.fromNullable(order));
 		spiedLine.setCurrentState(new OperationalState());
 		assertEquals(new ActiveState(), spiedLine.getCurrentState());
 	}

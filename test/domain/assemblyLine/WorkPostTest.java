@@ -21,6 +21,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import com.google.common.base.Optional;
+
 import domain.assemblyLine.AssemblyProcedure;
 import domain.assemblyLine.AssemblyTask;
 import domain.assemblyLine.AssemblyTaskView;
@@ -92,7 +94,7 @@ public class WorkPostTest {
 		this.emptyWorkPost = new WorkPost(this.wrongWorkPostType, 1);
 		this.thirdWorkPost = new WorkPost(TaskType.ACCESSORIES, 2);
 		
-		workPost.addActiveAssemblyProcedure(assemblyProcedure);
+		workPost.addActiveAssemblyProcedure(Optional.fromNullable(assemblyProcedure));
 		workPost.register(observer);
 	}
 	
@@ -112,7 +114,7 @@ public class WorkPostTest {
 		assertEquals(0, wp.getWorkPostNum());
 		assertEquals(TaskType.BODY, wp.getTaskType());
 		assertEquals(true, wp.isEmpty());
-		assertEquals(null, wp.getAssemblyProcedure());
+		assertEquals(Optional.absent(), wp.getAssemblyProcedure());
 	}
 	
 	//--------------------------------------------------------------------------
@@ -125,15 +127,15 @@ public class WorkPostTest {
 	
 	@Test
 	public void test_isNotEmpty() {
-		workPost.setAssemblyProcedure(assemblyProcedure);
+		workPost.setAssemblyProcedure(Optional.fromNullable(assemblyProcedure));
 		
-		assertEquals(false, workPost.isEmpty());
+		assertFalse(workPost.isEmpty());
 	}
 	
 	@Test
 	public void test_addActiveAssemblyProcedureValid() {
-		emptyWorkPost.addActiveAssemblyProcedure(assemblyProcedure);
-		assertEquals(assemblyProcedure, emptyWorkPost.getAssemblyProcedure());
+		emptyWorkPost.addActiveAssemblyProcedure(Optional.fromNullable(assemblyProcedure));
+		assertEquals(assemblyProcedure, emptyWorkPost.getAssemblyProcedure().get());
 		assertEquals(false, emptyWorkPost.isEmpty());
 	}
 	
@@ -147,13 +149,12 @@ public class WorkPostTest {
 	@Test
 	public void test_addActiveAssemblyProcedureNotEmpty() {
 		exception.expect(IllegalStateException.class);
-		workPost.addActiveAssemblyProcedure(assemblyProcedure);
+		workPost.addActiveAssemblyProcedure(Optional.fromNullable(assemblyProcedure));
 	}
 		
 	@Test 
 	public void test_getMatchinAssemblyTasks_empty() {
-		List<AssemblyTaskView> res = emptyWorkPost.getMatchingAssemblyTasks();
-		assertTrue(res.isEmpty());
+		assertTrue(emptyWorkPost.getMatchingAssemblyTasks().isEmpty());
 	}
 	
 	@Test
@@ -241,7 +242,7 @@ public class WorkPostTest {
 	@Test
 	public void completeTask_lastTask() {
 		WorkPost workPost = PowerMockito.spy(this.workPost);
-		workPost.setAssemblyProcedure(realProcedure);
+		workPost.setAssemblyProcedure(Optional.fromNullable(realProcedure));
 		workPost.completeTask(0, 60);
 		workPost.completeTask(1, 60);
 		try {
@@ -263,8 +264,8 @@ public class WorkPostTest {
 	@Test
 	public void takeProcedureFrom_valid() {
 		emptyWorkPost.takeAssemblyProcedureFrom(workPost);
-		assertEquals(emptyWorkPost.getAssemblyProcedure(), assemblyProcedure);
-		assertEquals(null, workPost.getAssemblyProcedure());
+		assertEquals(emptyWorkPost.getAssemblyProcedure().get(), assemblyProcedure);
+		assertEquals(Optional.absent(), workPost.getAssemblyProcedure());
 		assertEquals(0, (int) Whitebox.getInternalState(workPost, "minutesOfWork"));
 	}
 

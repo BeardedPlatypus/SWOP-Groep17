@@ -3,6 +3,8 @@ package domain.assemblyLine;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.car.Specification;
@@ -70,6 +72,22 @@ public class AssemblyLine implements WorkPostObserver {
 	/** The manufacturer that owns this AssemblyLIne. */
 	private Manufacturer manufacturer;
 	
+	/**
+	 * Set this AssemblyLine's Manufacturer to the specified manufacturer
+	 * 
+	 * @param manufacturer
+	 * 		The new Manufacturer
+	 * @throws IllegalArgumentException
+	 * 		manufacturer is null
+	 */
+	public void setManufacturer(Manufacturer manufacturer) throws IllegalArgumentException {
+		if (manufacturer == null) {
+			throw new IllegalArgumentException("Cannot set null Manufacturer"
+					+ "in AssemblyLine");
+		}
+		this.manufacturer = manufacturer;
+	}
+	
 	//--------------------------------------------------------------------------
 	// Order-related methods
 	//--------------------------------------------------------------------------
@@ -111,9 +129,10 @@ public class AssemblyLine implements WorkPostObserver {
 	 */
 	public void completeWorkpostTask(int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException,
 			IllegalStateException{
-		if(!this.isValidWorkPost(workPostNumber))
-			throw new IllegalArgumentException("Argument is not an existing workpost.");
-		this.getWorkPost(workPostNumber).completeTask(taskNumber, minutes);
+		this.getCurrentState().completeWorkpostTask(workPostNumber, taskNumber, minutes);
+//		if(!this.isValidWorkPost(workPostNumber))
+//			throw new IllegalArgumentException("Argument is not an existing workpost.");
+//		this.getWorkPost(workPostNumber).completeTask(taskNumber, minutes);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -129,7 +148,7 @@ public class AssemblyLine implements WorkPostObserver {
 		
 		for (WorkPost post : this.getWorkPosts()) {
 			if (!post.isEmpty()) {
-				activeOrders.add(post.getOrderContainer());
+				activeOrders.add(post.getOrderView());
 			}
 		}
 		return activeOrders;
@@ -161,8 +180,8 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 
 	 * @return
 	 */
-	public List<AssemblyProcedure> getAssemblyProcedures() {
-		List<AssemblyProcedure> toReturn = new ArrayList<AssemblyProcedure>();
+	public List<Optional<AssemblyProcedure>> getAssemblyProcedures() {
+		List<Optional<AssemblyProcedure>> toReturn = new ArrayList<Optional<AssemblyProcedure>>();
 		for (WorkPost workPost : this.getWorkPosts()) {
 			toReturn.add(workPost.getAssemblyProcedure());
 		}
@@ -414,7 +433,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @param order
 	 * 		The order to schedule
 	 */
-	public void advance(Order order) {
+	public void advance(Optional<Order> order) {
 		this.putNextOrderOnAssemblyLine(order);
 		this.resetFinishedAssemblyCounter();
 	}
@@ -428,7 +447,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 		If the completedOrder field is not empty, the line cannot be advanced.
 	 */
 	private void shiftWorkPosts() throws IllegalStateException{
-		AssemblyProcedure finishedProcedure = this.getWorkPosts()
+		Optional<AssemblyProcedure> finishedProcedure = this.getWorkPosts()
 				.get(this.getWorkPosts().size() - 1).getAssemblyProcedure();
 		
 		this.getWorkPost(this.getAssemblyLineSize() - 1)
@@ -450,20 +469,15 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @throws IllegalStateException
 	 * 		| ! this.orderIsAvailable()
 	 */
-	private void putNextOrderOnAssemblyLine(Order order) throws IllegalStateException{
-		if (order == null) {
+	private void putNextOrderOnAssemblyLine(Optional<Order> order) throws IllegalStateException{
+		if (order == null || ! order.isPresent()) {
 			return;
 		}
 		AssemblyProcedure procedure = this.makeAssemblyProcedure(order);
-		this.getWorkPost(0).setAssemblyProcedure(procedure);
+		this.getWorkPost(0).setAssemblyProcedure(Optional.fromNullable(procedure));
 	}
 	
-	Order popNextOrderFromSchedule() {
-		//TODO ask the AssemblyLineController
-		return null;
-	}
-	
-	Order peekNextOrderFromSchedule() {
+	Optional<Order> popNextOrderFromSchedule() {
 		//TODO ask the AssemblyLineController
 		return null;
 	}
@@ -474,15 +488,15 @@ public class AssemblyLine implements WorkPostObserver {
 	 * AssemblyProcedure's Order to the Manufacturer as a completed Order, record
 	 * statistical information and give that information to the StatisticsLogger.
 	 */
-	void handleFinishedAssemblyProcedure(AssemblyProcedure finishedProcedure) {
-		if (finishedProcedure == null) {
+	void handleFinishedAssemblyProcedure(Optional<AssemblyProcedure> finishedProcedure) {
+		if (finishedProcedure == null || ! finishedProcedure.isPresent()) {
 			return;
 		}
 		
-		ProcedureStatistics stats = finishedProcedure.makeStatisticsEvent();
+		ProcedureStatistics stats = finishedProcedure.get().makeStatisticsEvent();
 		this.addStatistics(stats);
 		
-		this.getManufacturer().addToCompleteOrders(finishedProcedure.getOrder());
+		this.getManufacturer().addToCompleteOrders(finishedProcedure.get().getOrder());
 	}
 	
 	//--------------------------------------------------------------------------
@@ -525,14 +539,14 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @throws IllegalArgumentException
 	 * 		order is null
 	 */
-	public AssemblyProcedure makeAssemblyProcedure(Order order) throws IllegalArgumentException {
-		if (order == null) {
+	public AssemblyProcedure makeAssemblyProcedure(Optional<Order> order) throws IllegalArgumentException {
+		if (order == null || ! order.isPresent()) {
 			throw new IllegalArgumentException("Cannot make assembly procedure"
 					+ "from null order");
 		}
-		List<AssemblyTask> tasks = this.generateTasksFrom(order);
-		int expectedMinutes = this.calculateExpectedTimeOnLine(order);
-		return new AssemblyProcedure(order, tasks, expectedMinutes);
+		List<AssemblyTask> tasks = this.generateTasksFrom(order.get());
+		int expectedMinutes = this.calculateExpectedTimeOnLine(order.get());
+		return new AssemblyProcedure(order.get(), tasks, expectedMinutes);
 	}
 	
 	/**
