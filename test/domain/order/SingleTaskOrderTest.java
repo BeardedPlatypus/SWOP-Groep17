@@ -65,24 +65,28 @@ public class SingleTaskOrderTest {
 	@Test 
 	public void test_constructorIllegalArgumentExceptionModel() {
 		exception.expect(IllegalArgumentException.class);
+		@SuppressWarnings("unused")
 		Order test = new SingleTaskOrder(null, spectacles, 0, submission1, deadline1);
 	}
 	
 	@Test
 	public void test_constructorIllegalArgumentExceptionSpecs() {
 		exception.expect(IllegalArgumentException.class);
+		@SuppressWarnings("unused")
 		Order test = new SingleTaskOrder(mockSuperModel, null, 0, submission1, deadline1);
 	}
 
 	@Test
 	public void test_constructorIllegalArgumentExceptionSubmissiontime() {
 		exception.expect(IllegalArgumentException.class);
+		@SuppressWarnings("unused")
 		Order test = new SingleTaskOrder(mockSuperModel, spectacles, 0, null, deadline1);
 	}
 	
 	@Test
 	public void test_constructorIllegalArgumentExceptionDeadline() {
 		exception.expect(IllegalArgumentException.class);
+		@SuppressWarnings("unused")
 		Order test = new SingleTaskOrder(mockSuperModel, spectacles, 0, submission1, null);
 	}
 	
@@ -119,15 +123,12 @@ public class SingleTaskOrderTest {
 		assertEquals(true, spiedOrder.isCompleted());
 	}
 	
-<<<<<<< HEAD
 	@Test
 	public void testMinutesAtPost() {
-		Mockito.when(mockSuperModel2.getMinsOnWorkPostOfType(Mockito.any(TaskType.class))).thenReturn(30);
-		assertTrue(order1.getMinutesPerPost() == 30);
+		Mockito.when(mockSuperModel2.getMinsOnWorkPostOfType(TaskType.ACCESSORIES)).thenReturn(30);
+		assertEquals(order1.getMinutesOnPostOfType(TaskType.ACCESSORIES), 30);
 	}
-	
-=======
->>>>>>> development
+
 	//--------------------------------------------------------------------------
 	// Completion Time setter and getters.
 	//--------------------------------------------------------------------------
