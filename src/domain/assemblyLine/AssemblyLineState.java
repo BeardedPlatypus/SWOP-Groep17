@@ -46,7 +46,7 @@ public abstract class AssemblyLineState implements IAssemblyLineState {
 	public void setAssemblyLine(AssemblyLine line) throws IllegalArgumentException {
 		if (line == null) {
 			throw new IllegalArgumentException("Cannot set null AssemblyLine"
-					+ "in AssemblyLineState");
+					+ " in AssemblyLineState");
 		}
 		this.assemblyLine = line;
 	}

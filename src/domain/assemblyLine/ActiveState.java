@@ -1,6 +1,6 @@
 package domain.assemblyLine;
 
-public class ActiveState extends OperationalState {
+class ActiveState extends OperationalState {
 
 	@Override
 	public ActiveState clone() {

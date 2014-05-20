@@ -1,6 +1,6 @@
 package domain.assemblyLine;
 
-public class IdleState extends OperationalState {
+class IdleState extends OperationalState {
 
 	@Override
 	public IdleState clone() {
