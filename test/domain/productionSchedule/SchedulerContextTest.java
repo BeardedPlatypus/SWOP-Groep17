@@ -398,7 +398,6 @@ public class SchedulerContextTest {
 	//--------------------------------------------------------------------------
 	// Specification-related methods
 	//--------------------------------------------------------------------------
-	//FIXME: THOMAS THIS TEST IS IN A UNACCEPTABLE CONDITION. UNACCEPTABLE!!!
 	@Test
 	public void getEligibleBatchesTest() {
 		Model model = new CarModel("test", new ArrayList<OptionCategory>(), 60);
