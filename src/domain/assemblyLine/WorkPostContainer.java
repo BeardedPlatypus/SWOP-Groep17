@@ -2,6 +2,8 @@ package domain.assemblyLine;
 
 import java.util.List;
 
+import com.google.common.base.Optional;
+
 /** 
  * The WorkPostContainer provides an interface that allows external programs 
  * to access the information of a WorkPost in the domain, without accidental 

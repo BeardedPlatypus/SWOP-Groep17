@@ -1,5 +1,7 @@
 package domain.assemblyLine;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.order.Order;
 
@@ -51,7 +53,8 @@ public class LayoutManipulator {
 	 * its order is retrieved and information about it is reported to the StatisticsLogger
 	 */
 	private void initialWorkPostShift() throws IllegalStateException{
-		AssemblyProcedure finishedProcedure = this.getLastWorkPost().getAssemblyProcedure();
+		Optional<AssemblyProcedure> finishedProcedure = 
+				this.getLastWorkPost().getAssemblyProcedure();
 		
 		this.getLastWorkPost()
 			.addToElapsedMinutes((int) this.getElapsedTime().getInMinutes());
@@ -92,10 +95,9 @@ public class LayoutManipulator {
 	 * and process it.
 	 */
 	private void rollFinishedAssemblyProcedureOffLine() {
-		AssemblyProcedure finishedProcedure = this.getLastWorkPost()
+		Optional<AssemblyProcedure> finishedProcedure = this.getLastWorkPost()
 				.getAssemblyProcedure();
 		this.handleFinishedAssemblyProcedure(finishedProcedure);
-		//FIXME replace null by Optional
 		this.getLastWorkPost().setAssemblyProcedure(null);
 	}
 	
@@ -106,11 +108,10 @@ public class LayoutManipulator {
 	 * @return The first WorkPost is no longer empty
 	 */
 	private boolean putNextOrderOnFirstWorkPost() {
-		Order nextOrder = this.popNextOrderFromSchedule();
-		//FIXME optional?
+		Optional<Order> nextOrder = this.popNextOrderFromSchedule();
 		if (nextOrder != null) {
 			AssemblyProcedure nextProcedure = this.makeAssemblyProcedure(nextOrder);
-			this.getFirstWorkPost().setAssemblyProcedure(nextProcedure);
+			this.getFirstWorkPost().setAssemblyProcedure(Optional.fromNullable(nextProcedure));
 		}
 		return ! this.getFirstWorkPost().isEmpty();
 	}
@@ -197,21 +198,21 @@ public class LayoutManipulator {
 	/**
 	 * See {@link AssemblyLineState#handleFinishedAssemblyProcedure() handleFinishedAssemblyProcedure()}
 	 */
-	private void handleFinishedAssemblyProcedure(AssemblyProcedure procedure) {
+	private void handleFinishedAssemblyProcedure(Optional<AssemblyProcedure> procedure) {
 		this.getState().handleFinishedAssemblyProcedure(procedure);
 	}
 
 	/**
 	 * See {@link AssemblyLineState#makeAssemblyProcedure() makeAssemblyProcedure()}
 	 */
-	private AssemblyProcedure makeAssemblyProcedure(Order order) throws IllegalArgumentException {
+	private AssemblyProcedure makeAssemblyProcedure(Optional<Order> order) throws IllegalArgumentException {
 		return this.getState().makeAssemblyProcedure(order);
 	}
 	
 	/**
 	 * See {@link AssemblyLineState#popNextOrderFromSchedule() popNextOrderFromSchedule()}
 	 */
-	private Order popNextOrderFromSchedule() {
+	private Optional<Order> popNextOrderFromSchedule() {
 		return this.getState().popNextOrderFromSchedule();
 	}
 }

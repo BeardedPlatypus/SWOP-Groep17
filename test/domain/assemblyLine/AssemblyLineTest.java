@@ -20,6 +20,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.assemblyLine.AssemblyLine;
@@ -117,8 +119,10 @@ public class AssemblyLineTest {
 		for (int i = 0; i < assemblyLine.getAssemblyLineSize(); i++)
 		{
 			WorkPost wp = (WorkPost) assemblyLine.getWorkPostContainers().get(i);
-			Whitebox.invokeMethod(wp, "setAssemblyProcedure", procedures.get(i));
+			Whitebox.invokeMethod(wp, "setAssemblyProcedure", Optional.fromNullable(procedures.get(i)));
 		}
+		
+		assemblyLine.setCurrentState(new OperationalState());
 	}
 
 	@Test
@@ -163,7 +167,7 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void makeAssemblyProcedureTest() {
-		AssemblyProcedure generated = assemblyLine.makeAssemblyProcedure(notOnAssemblyLine);
+		AssemblyProcedure generated = assemblyLine.makeAssemblyProcedure(Optional.fromNullable(notOnAssemblyLine));
 		assertEquals(specGenProcedure, generated.getOrder().getSpecifications());
 	}
 	

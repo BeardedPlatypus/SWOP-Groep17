@@ -19,6 +19,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.reflect.Whitebox;
 import org.powermock.modules.junit4.*;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.car.Option;
 import domain.order.Order;
@@ -74,9 +76,9 @@ public class ActiveStateTest {
 		
 		Mockito.when(line.isValidWorkPost(Mockito.anyInt())).thenReturn(true);
 		
-		workPosts.get(0).setAssemblyProcedure(proc0);
-		workPosts.get(1).setAssemblyProcedure(proc1);
-		workPosts.get(2).setAssemblyProcedure(proc2);
+		workPosts.get(0).setAssemblyProcedure(Optional.fromNullable(proc0));
+		workPosts.get(1).setAssemblyProcedure(Optional.fromNullable(proc1));
+		workPosts.get(2).setAssemblyProcedure(Optional.fromNullable(proc2));
 		
 		state = new ActiveState();
 		state.setAssemblyLine(line);
@@ -85,7 +87,7 @@ public class ActiveStateTest {
 	@Test
 	public void completeWorkPostTaskTest() {
 		state.completeWorkpostTask(0, 0, 60);
-		assertTrue(workPosts.get(0).getAssemblyProcedure().getTask(0).isCompleted());
+		assertTrue(workPosts.get(0).getAssemblyProcedure().get().getTask(0).isCompleted());
 		assertEquals(60, Whitebox.getInternalState(workPosts.get(0), "minutesOfWork"));
 	}
 	
@@ -108,9 +110,9 @@ public class ActiveStateTest {
 		task1.setCompleted(true);
 		task2.setCompleted(true);
 		state.advanceAssemblyLine();
-		assertEquals(null, workPosts.get(0).getAssemblyProcedure());
-		assertEquals(null, workPosts.get(1).getAssemblyProcedure());
-		assertEquals(null, workPosts.get(2).getAssemblyProcedure());
+		assertEquals(Optional.absent(), workPosts.get(0).getAssemblyProcedure());
+		assertEquals(Optional.absent(), workPosts.get(1).getAssemblyProcedure());
+		assertEquals(Optional.absent(), workPosts.get(2).getAssemblyProcedure());
 		Mockito.when(line.isEmpty()).thenReturn(true);
 		state.advanceAssemblyLine();
 		try {

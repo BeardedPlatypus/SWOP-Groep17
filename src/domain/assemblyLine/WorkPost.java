@@ -3,6 +3,8 @@ package domain.assemblyLine;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Optional;
+
 import domain.order.Order;
 import domain.order.OrderContainer;
 
@@ -38,6 +40,7 @@ public class WorkPost implements WorkPostContainer {
 		this.workPostNum = workPostNum;
 		this.minutesOfWork = 0;
 		this.observers = new ArrayList<WorkPostObserver>();
+		this.activeAssembly = Optional.absent();
 	}
 
 	//--------------------------------------------------------------------------
@@ -72,7 +75,7 @@ public class WorkPost implements WorkPostContainer {
 	//--------------------------------------------------------------------------
 	@Override
 	public boolean isEmpty() {
-		return this.getAssemblyProcedure() == null;
+		return ! this.getAssemblyProcedure().isPresent();
 	}
 	
 	@Override
@@ -80,7 +83,7 @@ public class WorkPost implements WorkPostContainer {
 		if (this.isEmpty()) {
 			return new ArrayList<>();
 		}
-		return this.activeAssembly.getAssemblyTasks(this.getTaskType());
+		return this.activeAssembly.get().getAssemblyTasks(this.getTaskType());
 	}
 
 	@Override
@@ -88,7 +91,7 @@ public class WorkPost implements WorkPostContainer {
 		if (this.isEmpty())
 			throw new IllegalStateException();
 		
-		return this.activeAssembly;
+		return this.activeAssembly.get();
 	}
 	
 	/**
@@ -105,12 +108,17 @@ public class WorkPost implements WorkPostContainer {
 	 * 		| !this.isEmpty()
 	 * @throws IllegalArgumentException
 	 * 		| assemblyProcedure == null
+	 * @throws IllegalArgumentException
+	 * 		| assemblyprocedure.absent()
 	 */
-	void addActiveAssemblyProcedure(AssemblyProcedure assemblyProcedure) {
+	void addActiveAssemblyProcedure(Optional<AssemblyProcedure> assemblyProcedure) {
 		if (!this.isEmpty())
 			throw new IllegalStateException("This workpost is not empty.");
 		if (assemblyProcedure == null)
 			throw new IllegalArgumentException("AssemblyProcedure may not be null");
+		if (! assemblyProcedure.isPresent()) {
+			throw new IllegalArgumentException("AssemblyProcedure may not be null");
+		}
 		
 		this.setAssemblyProcedure(assemblyProcedure);
 	}
@@ -124,8 +132,13 @@ public class WorkPost implements WorkPostContainer {
 	 * 
 	 * @postcondition | (new this).getAssemblyProcedure() == assemblyProcedure
 	 */
-	protected void setAssemblyProcedure(AssemblyProcedure assemblyProcedure) {
-		this.activeAssembly = assemblyProcedure;
+	protected void setAssemblyProcedure(Optional<AssemblyProcedure> assemblyProcedure) {
+		if (assemblyProcedure == null) {
+			this.activeAssembly = Optional.absent();
+		}
+		else {
+			this.activeAssembly = assemblyProcedure;
+		}
 		this.setMinutesOfWork(0);
 	}
 	
@@ -134,7 +147,7 @@ public class WorkPost implements WorkPostContainer {
 	 * 
 	 * @return the AssemblyProcedure of this WorkPost, null if it does not exist.
 	 */
-	protected AssemblyProcedure getAssemblyProcedure(){
+	protected Optional<AssemblyProcedure> getAssemblyProcedure(){
 		return activeAssembly;
 	}
 	
@@ -170,12 +183,12 @@ public class WorkPost implements WorkPostContainer {
 	 */
 	public void addToElapsedMinutes(int minutes) throws IllegalArgumentException {
 		if (! this.isEmpty()) {
-			this.getAssemblyProcedure().addToElapsedMinutes(minutes);	
+			this.getAssemblyProcedure().get().addToElapsedMinutes(minutes);	
 		}
 	}
 	
 	/** The assembly procedure the work post is currently working on. */
-	private AssemblyProcedure activeAssembly;
+	private Optional<AssemblyProcedure> activeAssembly;
 	
 	//--------------------------------------------------------------------------
 	// Order-related methods
@@ -186,14 +199,14 @@ public class WorkPost implements WorkPostContainer {
 	 * @return The OrderContainer
 	 */
 	public OrderContainer getOrderContainer() {
-		return this.getAssemblyProcedure().getOrder();
+		return this.getAssemblyProcedure().get().getOrder();
 	}
 	
 	public boolean contains(OrderContainer order) {
-		if (this.getAssemblyProcedure() == null) {
+		if (! this.getAssemblyProcedure().isPresent()) {
 			return false;
 		}
-		return this.getAssemblyProcedure().contains(order);
+		return this.getAssemblyProcedure().get().contains(order);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -222,7 +235,7 @@ public class WorkPost implements WorkPostContainer {
 		if (this.isEmpty()) {
 			throw new IllegalStateException("The WorkPost has no AssemblyProcedure");
 		}
-		return this.getAssemblyProcedure().isFinished(this.getTaskType());
+		return this.getAssemblyProcedure().get().isFinished(this.getTaskType());
 	}
 	
 	/**
@@ -267,11 +280,11 @@ public class WorkPost implements WorkPostContainer {
 			throw new IllegalArgumentException("Cannot complete a task in a"
 					+ "negative amount of time");
 		}
-		if (this.isFinished() || this.getAssemblyProcedure().taskIsFinished(taskNum)) {
+		if (this.isFinished() || this.getAssemblyProcedure().get().taskIsFinished(taskNum)) {
 			return;
 		}
 		try {
-			this.getAssemblyProcedure().completeTask(taskNum, this.getTaskType());
+			this.getAssemblyProcedure().get().completeTask(taskNum, this.getTaskType());
 			this.incrementTime(minutes);
 			if (this.isFinished()) {
 				this.notifyWorkComplete();

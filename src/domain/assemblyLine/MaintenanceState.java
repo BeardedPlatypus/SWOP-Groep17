@@ -1,5 +1,7 @@
 package domain.assemblyLine;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.order.Order;
 
@@ -24,15 +26,9 @@ public class MaintenanceState extends AssemblyLineState {
 	}
 
 	@Override
-	protected Order popNextOrderFromSchedule() {
+	protected Optional<Order> popNextOrderFromSchedule() {
 		//FIXME optional?
-		return null;
-	}
-	
-	@Override
-	protected Order peekNextOrderFromSchedule() {
-		//FIXME optional?
-		return null;
+		return Optional.absent();
 	}
 	
 	private DateTime timeOfLastAdvance;

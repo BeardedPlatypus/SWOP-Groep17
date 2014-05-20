@@ -45,11 +45,5 @@ public class BrokenStateTest {
 		expected.expect(IllegalStateException.class);
 		state.popNextOrderFromSchedule();
 	}
-	
-	@Test
-	public void peekNextOrderFromScheduleTest() {
-		expected.expect(IllegalStateException.class);
-		state.peekNextOrderFromSchedule();
-	}
 
 }
