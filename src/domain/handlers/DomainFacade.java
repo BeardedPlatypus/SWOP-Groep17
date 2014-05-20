@@ -9,7 +9,6 @@ import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.car.Specification;
-import domain.car.Model;
 import domain.order.OrderContainer;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
 import exceptions.IllegalCarOptionCombinationException;
@@ -480,6 +479,26 @@ public class DomainFacade {
 		if(option == null)
 			throw new IllegalArgumentException("Option can not be null.");
 		this.getNewOrderSessionHandler().selectOption(option);
+	}
+	
+	/**
+	 * Check whether given model and options match, and the options pass the
+	 * system's restriction checks.
+	 * 
+	 * @param model
+	 * 		The model to check for
+	 * @param options
+	 * 		The options to check for
+	 * 
+	 * @return whether given model and options match, and the options pass the
+	 * 		system's restriction checks
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		When either of the arguments is or contains null
+	 */
+	public boolean isFullyValidOptionSet(Model model, List<Option> options)
+			throws IllegalArgumentException{
+		return this.getNewOrderSessionHandler().isFullyValidOptionSet(model, options);
 	}
 
 	/**

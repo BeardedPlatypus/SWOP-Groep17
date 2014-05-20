@@ -9,11 +9,11 @@ import domain.assemblyLine.AssemblyLine;
 import domain.assemblyLine.SchedulerIntermediate;
 import domain.Manufacturer;
 import domain.assemblyLine.TaskType;
+import domain.car.CarModel;
 import domain.car.Model;
 import domain.car.ModelCatalog;
 import domain.car.Option;
 import domain.car.OptionCategory;
-import domain.car.Model;
 import domain.order.CompletedOrderCatalog;
 import domain.order.OrderFactory;
 import domain.order.SingleTaskCatalog;
@@ -39,7 +39,7 @@ import domain.statistics.StatisticsLogger;
  * 
  */
 public class InitialisationHandler {
-	
+
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -48,10 +48,11 @@ public class InitialisationHandler {
 	 * by constructing all necessary components and putting them together.
 	 */
 	public InitialisationHandler(){
-		
+
 		//----------------------------------------------------------------------
 		// Initialise Options
-		
+		//----------------------------------------------------------------------
+
 		// -- Body Options
 		Option bodySedanOption = new Option(TaskType.BODY, "Sedan Body",
 				"Mount the Sedan body on the car.");
@@ -110,11 +111,11 @@ public class InitialisationHandler {
 		Option spoilerNoneOption = new Option(TaskType.ACCESSORIES, "No Spoiler",
 				"Mount no spoiler on the car.");
 		spoilerNoneOption.setNeedsAssemblyTask(false);
-		//----------------------------------------------------------------------
-		
+
 		//----------------------------------------------------------------------
 		// Initialise OptionCategories
-		
+		//----------------------------------------------------------------------
+
 		List<Option> modelABodyList = new ArrayList<>();
 		List<Option> modelBBodyList = new ArrayList<>();
 		List<Option> modelCBodyList = new ArrayList<>();
@@ -144,7 +145,7 @@ public class InitialisationHandler {
 		OptionCategory modelAPaintCategory = new OptionCategory(modelAPaintList, "Car Paint");
 		OptionCategory modelBPaintCategory = new OptionCategory(modelBPaintList, "Car Paint");
 		OptionCategory modelCPaintCategory = new OptionCategory(modelCPaintList, "Car Paint");
-		
+
 		List<Option> modelAEngineList = new ArrayList<>();
 		List<Option> modelBEngineList = new ArrayList<>();
 		List<Option> modelCEngineList = new ArrayList<>();
@@ -158,7 +159,7 @@ public class InitialisationHandler {
 		OptionCategory modelAEngineCategory = new OptionCategory(modelAEngineList, "Engine");
 		OptionCategory modelBEngineCategory = new OptionCategory(modelBEngineList, "Engine");
 		OptionCategory modelCEngineCategory = new OptionCategory(modelCEngineList, "Engine");
-		
+
 		List<Option> modelAGearboxList = new ArrayList<>();
 		List<Option> modelBGearboxList = new ArrayList<>();
 		List<Option> modelCGearboxList = new ArrayList<>();
@@ -230,10 +231,11 @@ public class InitialisationHandler {
 		OptionCategory modelASpoilerCategory = new OptionCategory(modelASpoilerList, "Spoiler");
 		OptionCategory modelBSpoilerCategory = new OptionCategory(modelBSpoilerList, "Spoiler");
 		OptionCategory modelCSpoilerCategory = new OptionCategory(modelCSpoilerList, "Spoiler");
+
 		//----------------------------------------------------------------------
-		
-		//--------------------------------------------------------------------------
 		// Initialise Models
+		//----------------------------------------------------------------------
+
 		List<OptionCategory> modelACategories = new ArrayList<>();
 		modelACategories.add(modelAAircoCategory);
 		modelACategories.add(modelABodyCategory);
@@ -243,7 +245,7 @@ public class InitialisationHandler {
 		modelACategories.add(modelASeatsCategory);
 		modelACategories.add(modelASpoilerCategory);
 		modelACategories.add(modelAWheelsCategory);
-		Model modelA = new Model("Model A", modelACategories, 50);
+		Model modelA = new CarModel("Model A", modelACategories, 50);
 
 		List<OptionCategory> modelBCategories = new ArrayList<>();
 		modelBCategories.add(modelBAircoCategory);
@@ -254,8 +256,8 @@ public class InitialisationHandler {
 		modelBCategories.add(modelBSeatsCategory);
 		modelBCategories.add(modelBSpoilerCategory);
 		modelBCategories.add(modelBWheelsCategory);
-		Model modelB = new Model("Model B", modelBCategories, 70);
-		
+		Model modelB = new CarModel("Model B", modelBCategories, 70);
+
 		List<OptionCategory> modelCCategories = new ArrayList<>();
 		modelCCategories.add(modelCAircoCategory);
 		modelCCategories.add(modelCBodyCategory);
@@ -265,14 +267,14 @@ public class InitialisationHandler {
 		modelCCategories.add(modelCSeatsCategory);
 		modelCCategories.add(modelCSpoilerCategory);
 		modelCCategories.add(modelCWheelsCategory);
-		Model modelC = new Model("Model C", modelCCategories, 60);
+		Model modelC = new CarModel("Model C", modelCCategories, 60);
 
-		Model singleTaskModel = new Model("Single Task Order",
+		Model singleTaskModel = new CarModel("Single Task Order",
 				new ArrayList<OptionCategory>(), 60);
-		//----------------------------------------------------------------------
-		
+
 		//----------------------------------------------------------------------
 		// Initialise ModelCatalog
+		//----------------------------------------------------------------------
 
 		List<Model> normalOrderSessionModels = new ArrayList<>();
 		normalOrderSessionModels.add(modelA);
@@ -280,65 +282,66 @@ public class InitialisationHandler {
 		normalOrderSessionModels.add(modelC);
 		ModelCatalog modelCatalog = new ModelCatalog(normalOrderSessionModels,
 				singleTaskModel);
+
+		//----------------------------------------------------------------------
+		// Initialise Restrictions
 		//----------------------------------------------------------------------
 
-		//--------------------------------------------------------------------------
-		// Initialise Restrictions
-
 		List<Restriction> restrictions = new ArrayList<Restriction>();
-		
+
 		// Body is required
 		//Reusing old list, not good, but it makes for less lines
 		Set<Option> allBodyOptionsSet = new HashSet<Option>(modelBBodyList);
 		restrictions.add(new RequiredOptionSetRestriction(allBodyOptionsSet));
-		
+
 		//Paint is required
 		Set<Option> allPaintOptionsSet = new HashSet<Option>(modelAPaintList);
 		allPaintOptionsSet.addAll(modelBPaintList);
 		restrictions.add(new RequiredOptionSetRestriction(allPaintOptionsSet));
-		
+
 		//Engine is required
 		Set<Option> allEngineOptionsSet = new HashSet<Option>(modelBEngineList);
 		restrictions.add(new RequiredOptionSetRestriction(allEngineOptionsSet));
-		
+
 		//Gearbox is required
 		Set<Option> allGearboxOptionsSet = new HashSet<Option>(modelAGearboxList);
 		restrictions.add(new RequiredOptionSetRestriction(allGearboxOptionsSet));
-		
+
 		//Seats are required
 		Set<Option> allSeatsOptionsSet = new HashSet<Option>(modelBSeatsList);
 		restrictions.add(new RequiredOptionSetRestriction(allSeatsOptionsSet));
-		
+
 		//Wheels are required
 		Set<Option> allWheelsOptionsSet = new HashSet<Option>(modelBWheelsList);
 		restrictions.add(new RequiredOptionSetRestriction(allWheelsOptionsSet));
-		
+
 		// If a sport body is selected, a spoiler is mandatory
 		Set<Option> reqSpoilers = new HashSet<Option>();
 		reqSpoilers.add(spoilerHighOption);
 		reqSpoilers.add(spoilerLowOption);
 		restrictions.add(new OptionRequiresOtherSetRestriction(bodySportOption, reqSpoilers));
-		
+
 		// If a sport body is selected, a performance or ultra engine is necessary
 		Set<Option> reqEngines = new HashSet<Option>();
 		reqEngines.add(enginePerformanceOption);
 		reqEngines.add(engineUltraOption);
 		restrictions.add(new OptionRequiresOtherSetRestriction(bodySportOption, reqEngines));
-		
+
 		// If an ultra engine is selected, this prohibits an automatic airco
 		Set<Option> prohAirco = new HashSet<>();
 		prohAirco.add(aircoAutoOption);
 		restrictions.add(new OptionProhibitsOtherSetRestriction(engineUltraOption, prohAirco));
-		//--------------------------------------------------------------------------
-		
-		//--------------------------------------------------------------------------
+
+		//----------------------------------------------------------------------
 		// Initialise RestrictionManager
+		//----------------------------------------------------------------------
+
 		OptionRestrictionManager restrictionsMan = new OptionRestrictionManager(restrictions);
-		//--------------------------------------------------------------------------
-		
-		//--------------------------------------------------------------------------
+
+		//----------------------------------------------------------------------
 		// Initialise Single Task Catalog
-		
+		//----------------------------------------------------------------------
+
 		//Necessary OptionCategories:
 		// All Paint options
 		List<Option> allPaintOptionsList = new ArrayList<Option>(allPaintOptionsSet);
@@ -346,28 +349,30 @@ public class InitialisationHandler {
 		// All Seats options
 		List<Option> allSeatsOptionsList = new ArrayList<>(allSeatsOptionsSet);
 		OptionCategory allSeatsCategory = new OptionCategory(allSeatsOptionsList, "Custom Seats");
-		
+
 		List<OptionCategory> singleTaskCategories = new ArrayList<>();
 		singleTaskCategories.add(allSeatsCategory);
 		singleTaskCategories.add(allPaintCategory);
-		
-		SingleTaskCatalog singleCatalog = new SingleTaskCatalog(singleTaskCategories);
-		//--------------------------------------------------------------------------
 
-		////--------------------------------------------------------------------------
+		SingleTaskCatalog singleCatalog = new SingleTaskCatalog(singleTaskCategories);
+
+		////--------------------------------------------------------------------
 		// Initialise AlgorithmStrategyFactory
-		
+		//----------------------------------------------------------------------
+
 		AlgorithmStrategyFactory stratFact = new AlgorithmStrategyFactory();
 
-		//--------------------------------------------------------------------------
-		
-		//--------------------------------------------------------------------------
+
+		//----------------------------------------------------------------------
 		// Initialise CompletedOrderCatalog
-		
+		//----------------------------------------------------------------------
+
 		CompletedOrderCatalog  complCat = new CompletedOrderCatalog();
 
-		//--------------------------------------------------------------------------
+		//----------------------------------------------------------------------
 		// Initialise the ProductionSchedule
+		//----------------------------------------------------------------------
+
 		ClockManager clockMan = new ClockManager();
 		List<TaskType> types = new ArrayList<>();
 		types.add(TaskType.BODY);
@@ -375,15 +380,36 @@ public class InitialisationHandler {
 		SchedulerContext schedCont = new SchedulerContext(new FifoStrategy<StandardOrder>(), types);
 		ProductionScheduleFacade schedFacade = new ProductionScheduleFacade(clockMan, schedCont);
 
-		//--------------------------------------------------------------------------
-		
-		//--------------------------------------------------------------------------
+
+		//----------------------------------------------------------------------
 		// Initialise the orderfactory
-		
+		//----------------------------------------------------------------------
+
 		OrderFactory orderFact = new OrderFactory();
 		
-		//--------------------------------------------------------------------------
+		//----------------------------------------------------------------------
+		// Initialise AssemblyLine
+		//----------------------------------------------------------------------
+
+		//FIXME
+		AssemblyLine line = new AssemblyLine(null, null);
+		StatisticsLogger logger = new StatisticsLogger();
+		CarsProducedRegistrar prodRegistrar = new CarsProducedRegistrar();
+		logger.addRegistrar(prodRegistrar);
+		DelayRegistrar delayRegistrar = new DelayRegistrar();
+		logger.addRegistrar(delayRegistrar);
+		line.setStatisticsLogger(logger);
+
+		SchedulerIntermediate inter = new SchedulerIntermediate(line);
+
+		clockMan.attachTimeObserver(logger);
+		clockMan.attachTimeObserver(orderFact);
+		clockMan.attachTimeObserver(complCat);
+		clockMan.attachTimeObserver(inter);
+
+		//----------------------------------------------------------------------
 		// Initialise Manufacturer
+		//----------------------------------------------------------------------
 
 		Manufacturer manufacturer = new Manufacturer(
 				stratFact,
@@ -392,40 +418,13 @@ public class InitialisationHandler {
 				modelCatalog,
 				restrictionsMan,
 				schedFacade,
-				orderFact);
-		
-		//--------------------------------------------------------------------------
-		// Initialise AssemblyLine
-		
-		AssemblyLine line = new AssemblyLine(manufacturer);
-		StatisticsLogger logger = new StatisticsLogger();
-		CarsProducedRegistrar prodRegistrar = new CarsProducedRegistrar();
-		logger.addRegistrar(prodRegistrar);
-		DelayRegistrar delayRegistrar = new DelayRegistrar();
-		logger.addRegistrar(delayRegistrar);
-		line.setStatisticsLogger(logger);
-		
-		SchedulerIntermediate inter = new SchedulerIntermediate(line);
-		manufacturer.setSchedulerIntermediate(inter);
-		inter.setManufacturer(manufacturer);
-		
-		clockMan.attachTimeObserver(logger);
-		clockMan.attachTimeObserver(orderFact);
-		clockMan.attachTimeObserver(complCat);
-		clockMan.attachTimeObserver(inter);
+				orderFact,
+				line,
+				inter);
 
-		
-		//--------------------------------------------------------------------------
-		// Setters afterwards
-		
-		orderFact.setManufacturer(manufacturer);
-		
-		
-
-		
-		//--------------------------------------------------------------------------
+		//----------------------------------------------------------------------
 		// Initialise Handlers
-		
+
 		AdaptSchedulingAlgorithmHandler algorithmHandler = 
 				new AdaptSchedulingAlgorithmHandler(manufacturer);
 		AssemblyLineStatusHandler assemblyLineStatusHandler =
@@ -440,11 +439,11 @@ public class InitialisationHandler {
 				new OrderSingleTaskHandler(manufacturer);
 		PerformAssemblyTaskHandler performHandler =
 				new PerformAssemblyTaskHandler(manufacturer);
-		//--------------------------------------------------------------------------
-		
-		//--------------------------------------------------------------------------
+		//----------------------------------------------------------------------
+
+		//----------------------------------------------------------------------
 		// Initialise DomainFacade
-		
+
 		this.domainFacade = new DomainFacade(
 				algorithmHandler,
 				assemblyLineStatusHandler,
@@ -453,10 +452,10 @@ public class InitialisationHandler {
 				newOrderHandler,
 				singleTaskHandler,
 				performHandler);
-		//--------------------------------------------------------------------------
+		//----------------------------------------------------------------------
 
 	}
-	
+
 	/** 
 	 * Get the DomainFacade of the system initialised 
 	 * by this InitialisationHandler.
@@ -466,7 +465,7 @@ public class InitialisationHandler {
 	public DomainFacade getDomainFacade() {
 		return this.domainFacade;
 	}
-	
+
 	/** The domain facade that is accessible by the UI. */
 	private final DomainFacade domainFacade;
 

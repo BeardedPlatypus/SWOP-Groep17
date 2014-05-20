@@ -189,11 +189,30 @@ public class WorkPost implements WorkPostContainer {
 		return this.getAssemblyProcedure().getOrder();
 	}
 	
+	/**
+	 * Check whether or not this workpost contains given order at the moment
+	 * 
+	 * @param order
+	 * 		Given order to check for
+	 * @return whether or not this workpost contains given order
+	 */
 	public boolean contains(OrderContainer order) {
 		if (this.getAssemblyProcedure() == null) {
 			return false;
 		}
 		return this.getAssemblyProcedure().contains(order);
+	}
+
+	/**
+	 * Get the estimated time given order will spend on this workpost
+	 * 
+	 * @param order
+	 * 		Given order
+	 * @return
+	 * 		estimated time given order will spend on this workpost
+	 */
+	public int getExpectedTimeOnPost(Order order) {
+		return order.getExpectedTimeOnPostofType(this.getTaskType());
 	}
 	
 	//--------------------------------------------------------------------------
@@ -350,4 +369,5 @@ public class WorkPost implements WorkPostContainer {
 			observer.notifyWorkComplete(this.getMinutesOfWork());
 		}
 	}
+
 }
