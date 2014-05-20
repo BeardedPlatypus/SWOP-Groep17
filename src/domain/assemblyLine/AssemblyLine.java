@@ -134,23 +134,7 @@ public class AssemblyLine implements WorkPostObserver {
 		}
 		return activeOrders;
 	}
-	
-	//--------------------------------------------------------------------------
-	// Querying AssemblyProcedure objects
-	//--------------------------------------------------------------------------
-	/**
-	 * Get views of the AssemblyProcedures currently active on each WorkPost
-	 * 
-	 * @return The views of the AssemblyProcedures
-	 */
-	public List<AssemblyProcedureContainer> getAssemblyOnEachWorkPost() {
-		List<AssemblyProcedureContainer> toReturn = new ArrayList<AssemblyProcedureContainer>();
-		for (WorkPost workPost : this.getWorkPosts()) {
-			toReturn.add(workPost.getAssemblyProcedureContainer());
-		}
-		return toReturn;
-	}
-	
+
 	//--------------------------------------------------------------------------
 	/**
 	 * Get views those AssemblyTasks that are of the specified WorkPost's type.
