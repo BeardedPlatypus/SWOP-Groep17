@@ -62,26 +62,26 @@ public class SingleTaskOrderTest {
 	// Constructor
 	//--------------------------------------------------------------------------
 	@Test 
-	public void test_constructorNullPointerExceptionModel() {
-		exception.expect(NullPointerException.class);
+	public void test_constructorIllegalArgumentExceptionModel() {
+		exception.expect(IllegalArgumentException.class);
 		Order test = new SingleTaskOrder(null, spectacles, 0, submission1, deadline1);
 	}
 	
 	@Test
-	public void test_constructorNullPointerExceptionSpecs() {
-		exception.expect(NullPointerException.class);
+	public void test_constructorIllegalArgumentExceptionSpecs() {
+		exception.expect(IllegalArgumentException.class);
 		Order test = new SingleTaskOrder(mockSuperModel, null, 0, submission1, deadline1);
 	}
 
 	@Test
-	public void test_constructorNullPointerExceptionSubmissiontime() {
-		exception.expect(NullPointerException.class);
+	public void test_constructorIllegalArgumentExceptionSubmissiontime() {
+		exception.expect(IllegalArgumentException.class);
 		Order test = new SingleTaskOrder(mockSuperModel, spectacles, 0, null, deadline1);
 	}
 	
 	@Test
-	public void test_constructorNullPointerExceptionDeadline() {
-		exception.expect(NullPointerException.class);
+	public void test_constructorIllegalArgumentExceptionDeadline() {
+		exception.expect(IllegalArgumentException.class);
 		Order test = new SingleTaskOrder(mockSuperModel, spectacles, 0, submission1, null);
 	}
 	
@@ -95,7 +95,7 @@ public class SingleTaskOrderTest {
 		assertEquals(spectacles, test.getSpecifications());
 		assertEquals(0, test.getOrderNumber());
 		assertEquals(submission1, test.getSubmissionTime());
-		assertEquals(deadline1, test.getDeadline());
+		assertEquals(deadline1, test.getDeadline().get());
 	}
 	
 	
@@ -146,7 +146,7 @@ public class SingleTaskOrderTest {
 	
 	@Test
 	public void test_setCompletedNullTime() {
-		exception.expect(NullPointerException.class);
+		exception.expect(IllegalArgumentException.class);
 		
 		Mockito.when(submission1.getDays()).thenReturn(0);
 		Mockito.when(submission1.getHours()).thenReturn(0);

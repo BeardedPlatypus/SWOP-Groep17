@@ -60,20 +60,20 @@ public class StandardOrderTest {
 	// Constructor
 	//--------------------------------------------------------------------------
 	@Test 
-	public void test_constructorNullPointerExceptionModel() {
-		exception.expect(NullPointerException.class);
+	public void test_constructorIllegalArgumentExceptionModel() {
+		exception.expect(IllegalArgumentException.class);
 		Order test = new StandardOrder(null, spectacles, 0, submission1);
 	}
 	
 	@Test
-	public void test_constructorNullPointerExceptionSpecs() {
-		exception.expect(NullPointerException.class);
+	public void test_constructorIllegalArgumentExceptionSpecs() {
+		exception.expect(IllegalArgumentException.class);
 		Order test = new StandardOrder(mockSuperModel, null, 0, submission1);
 	}
 
 	@Test
-	public void test_constructorNullPointerExceptionSubmissiontime() {
-		exception.expect(NullPointerException.class);
+	public void test_constructorIllegalArgumentExceptionSubmissiontime() {
+		exception.expect(IllegalArgumentException.class);
 		Order test = new StandardOrder(mockSuperModel, spectacles, 0, null);
 	}
 	
@@ -137,7 +137,7 @@ public class StandardOrderTest {
 	
 	@Test
 	public void test_setCompletedNullTime() {
-		exception.expect(NullPointerException.class);
+		exception.expect(IllegalArgumentException.class);
 		
 		Mockito.when(submission1.getDays()).thenReturn(0);
 		Mockito.when(submission1.getHours()).thenReturn(0);
