@@ -1,6 +1,9 @@
 package domain.productionSchedule;
 
 import java.util.List;
+
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.assemblyLine.TaskType;
@@ -130,7 +133,7 @@ public class ProductionScheduleFacade {
 	 * 
 	 * @return The next OrderContainer that will be scheduled by this SchedulerContext.
 	 */
-	public OrderContainer getNextScheduledStandardOrderContainer() {
+	public Optional<OrderContainer> getNextScheduledStandardOrderContainer() {
 		return this.getNextScheduledStandardOrder();
 	}
 	
@@ -139,11 +142,11 @@ public class ProductionScheduleFacade {
 	 * 
 	 * @return The next Order that will be scheduled by this SchedulerContext.
 	 */
-	public StandardOrder getNextScheduledStandardOrder() {
+	public Optional<StandardOrder> getNextScheduledStandardOrder() {
 		return this.getSchedulerContext().getNextStandardOrder();
 	}
 	
-	public StandardOrder popNextScheduledStandardOrder() {
+	public Optional<StandardOrder> popNextScheduledStandardOrder() {
 		return this.getSchedulerContext().popNextStandardOrder();
 	}
 	

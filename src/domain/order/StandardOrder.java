@@ -1,5 +1,7 @@
 package domain.order;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.car.Model;
 import domain.car.Specification;
@@ -12,6 +14,11 @@ import domain.car.Model;
  *
  */
 public class StandardOrder extends Order {
+	public StandardOrder(Model model, Specification specification, 
+			int orderNumber, DateTime submissionTime, Optional<DateTime> deadline) throws IllegalArgumentException {
+		super(model, specification, orderNumber, submissionTime, deadline);
+	}
+	
 	/**
 	 * Initialises a new StandardOrder with the specified Model,
 	 * Specification, order number and submission time.
@@ -30,7 +37,7 @@ public class StandardOrder extends Order {
 	 */
 	public StandardOrder(Model model, Specification specification,
 			int orderNumber, DateTime submissionTime)
-			throws NullPointerException {
-		super(model, specification, orderNumber, submissionTime);
+			throws IllegalArgumentException {
+		this(model, specification, orderNumber, submissionTime, (Optional.<DateTime> absent()));
 	}
 }
