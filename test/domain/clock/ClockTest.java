@@ -293,6 +293,15 @@ public class ClockTest {
 	}
 	
 	@Test
+	public void constructEvent_checkHeadQueue() {
+		clock.register(actor3);
+		clock.constructEvent(new DateTime(0, 9, 0), actor1);
+		clock.constructEvent(new DateTime(0, 10, 0), actor2);
+		PriorityQueue<TimeEvent> queue = Whitebox.getInternalState(clock, "eventQueue");
+		assertEquals(new DateTime(0, 15, 0), queue.peek().getGlobalTime());
+	}
+	
+	@Test
 	public void constructEvent_multipleFromSameActor() {
 		clock.constructEvent(new DateTime(0, 9, 0), actor1);
 		exception.expect(IllegalArgumentException.class);
