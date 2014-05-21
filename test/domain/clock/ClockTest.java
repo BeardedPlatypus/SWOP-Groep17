@@ -282,6 +282,7 @@ public class ClockTest {
 		clock.constructEvent(new DateTime(0, 10, 0), actor2);
 		Mockito.verify(actor1).activate();
 		Mockito.verify(actor2, Mockito.never()).activate();
+		assertEquals(new DateTime(0, 15, 0), clock.getCurrentTime());
 	}
 	
 	@Test
@@ -290,6 +291,7 @@ public class ClockTest {
 		clock.constructEvent(new DateTime(0, 9, 0), actor2);
 		Mockito.verify(actor1).activate();
 		Mockito.verify(actor2).activate();
+		assertEquals(new DateTime(0, 15, 0), clock.getCurrentTime());
 	}
 	
 	@Test
