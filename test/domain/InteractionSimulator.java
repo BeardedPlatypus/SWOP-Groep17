@@ -3,8 +3,8 @@ package domain;
 import java.util.LinkedList;
 import java.util.List;
 
-import domain.assemblyLine.AssemblyTaskContainer;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.AssemblyTaskView;
+import domain.assemblyLine.WorkPostView;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.car.Model;
@@ -124,9 +124,9 @@ public class InteractionSimulator {
 		//do numberOfTimes
 		for(int i = 0; i < numberOfTimes; i++){
 			//for each work post
-			for(WorkPostContainer wp : facade.getWorkPosts()){
+			for(WorkPostView wp : facade.getWorkPosts()){
 				//and each task at that work post
-				for(AssemblyTaskContainer task : wp.getMatchingAssemblyTasks()){
+				for(AssemblyTaskView task : wp.getMatchingAssemblyTasks()){
 					//set uncompleted tasks to have been completed in 50 minutes
 					if(!task.isCompleted()){
 						facade.completeWorkpostTask(wp.getWorkPostNum(), task.getTaskNumber(), timeSpentPerTask);
@@ -141,7 +141,7 @@ public class InteractionSimulator {
 	 * tasks if there not enough unfinished tasks. Tasks are set to have been completed in the given number of minutes.
 	 */
 	public void simulateCompleteTasksOnWorkPost(int numberOfTasks, int workPostNumber, int timeSpentPerTask){
-		List<AssemblyTaskContainer> tasks = facade.getWorkPost(workPostNumber).getMatchingAssemblyTasks();
+		List<AssemblyTaskView> tasks = facade.getWorkPost(workPostNumber).getMatchingAssemblyTasks();
 		int finished = 0;
 		for(int i = 0; i < tasks.size() && finished < numberOfTasks; i++){
 			if(!tasks.get(i).isCompleted()){

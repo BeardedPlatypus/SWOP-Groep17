@@ -6,7 +6,7 @@ import domain.car.Option;
 import domain.car.Specification;
 import domain.car.Model;
 import domain.handlers.CheckOrderDetailsHandler;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 
 public class CheckOrderDetailsUIPart {
 
@@ -69,8 +69,8 @@ public class CheckOrderDetailsUIPart {
 		System.out.println(helper.SEPERATOR);
 		boolean exitMenu = false;
 		while(!exitMenu){
-			List<OrderContainer> completedOrders = getHandler().getCompletedOrdersContainers();
-			List<OrderContainer> pendingOrders = getHandler().getPendingOrdersContainers();
+			List<OrderView> completedOrders = getHandler().getCompletedOrdersContainers();
+			List<OrderView> pendingOrders = getHandler().getPendingOrdersContainers();
 			visualiseCompletedAndPendingOrders(completedOrders,pendingOrders);
 			int choice = getMenuChoice();
 			System.out.println(helper.SEPERATOR);
@@ -87,13 +87,13 @@ public class CheckOrderDetailsUIPart {
 	/**
 	 * Displays the contents of given completed order list as desired
 	 */
-	private void chooseAndDisplayComplete(List<OrderContainer> orders) {
+	private void chooseAndDisplayComplete(List<OrderView> orders) {
 		System.out.println("Which complete order would you like to check? (" 
 				+ (orders.size()+1) + " to exit)");
 		//Get order choice
 		int choice = helper.getIntFromUser(1, orders.size()+1);
 		if(choice<orders.size()+1){
-			OrderContainer chosenOrder = orders.get(choice);
+			OrderView chosenOrder = orders.get(choice);
 			//Print order number
 			System.out.println("Pending Order Nb. " + choice);
 			//Print order Model
@@ -118,13 +118,13 @@ public class CheckOrderDetailsUIPart {
 	/**
 	 * Displays the contents of given pending order list as desired
 	 */
-	private void chooseAndDisplayPending(List<OrderContainer> orders) {
+	private void chooseAndDisplayPending(List<OrderView> orders) {
 		System.out.println("Which pending order would you like to check? (" 
 					+ (orders.size()+1) + " to exit)");
 		//Get order choice
 		int choice = helper.getIntFromUser(1, orders.size()+1);
 		if(choice<orders.size()+1){
-			OrderContainer chosenOrder = orders.get(choice);
+			OrderView chosenOrder = orders.get(choice);
 			//Print order number
 			System.out.println("Pending Order Nb. " + choice);
 			//Print order Model
@@ -169,14 +169,14 @@ public class CheckOrderDetailsUIPart {
 	 * @param pendingOrders
 	 * 		The list of pending orders from the system
 	 */
-	private void visualiseCompletedAndPendingOrders(List<OrderContainer> completedOrders,
-			List<OrderContainer> pendingOrders) {
+	private void visualiseCompletedAndPendingOrders(List<OrderView> completedOrders,
+			List<OrderView> pendingOrders) {
 		
 		System.out.println(helper.SEPERATOR);
 		System.out.println("Pending orders at this moment:");
 		System.out.println(helper.SEPERATOR);
 		for(int i = 0; i<pendingOrders.size();i++){
-			OrderContainer order = pendingOrders.get(i);
+			OrderView order = pendingOrders.get(i);
 			System.out.println("Pending Order Nb. " + (i+1));
 			Model currentOrderModel = order.getModel();
 			System.out.println("Model Name:" + currentOrderModel.getName());
@@ -187,7 +187,7 @@ public class CheckOrderDetailsUIPart {
 		System.out.println("Completed orders to date:");
 		System.out.println(helper.SEPERATOR);
 		for(int i = 0; i<completedOrders.size();i++){
-			OrderContainer order = completedOrders.get(i);
+			OrderView order = completedOrders.get(i);
 			System.out.println("Completed Order Nb. " + (i+1));
 			Model currentOrderModel = order.getModel();
 			System.out.println("Model Name:" + currentOrderModel.getName());

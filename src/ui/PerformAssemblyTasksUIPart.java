@@ -3,8 +3,8 @@ package ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.assemblyLine.AssemblyTaskContainer;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.AssemblyTaskView;
+import domain.assemblyLine.WorkPostView;
 import domain.handlers.PerformAssemblyTaskHandler;
 
 public class PerformAssemblyTasksUIPart {
@@ -67,7 +67,7 @@ public class PerformAssemblyTasksUIPart {
 		int postNumber = selectPost();
 		boolean exit = false;
 		while(!exit){
-			AssemblyTaskContainer task = selectTask(postNumber);
+			AssemblyTaskView task = selectTask(postNumber);
 			if(task == null){
 				exit = true;
 			}else{
@@ -85,7 +85,7 @@ public class PerformAssemblyTasksUIPart {
 	 * @param postNumber
 	 * 		The post number the task originates from
 	 */
-	private void showAndCompleteTask(AssemblyTaskContainer task, int postNumber) {
+	private void showAndCompleteTask(AssemblyTaskView task, int postNumber) {
 		System.out.println(helper.SEPERATOR);
 		System.out.println("Short overview of task " + task.getOptionName() + ":");
 		System.out.println("\t" + task.getOptionDescription());
@@ -105,16 +105,16 @@ public class PerformAssemblyTasksUIPart {
 	 * @return
 	 * 		The chosen task as a container
 	 */
-	private AssemblyTaskContainer selectTask(int postNumber) {
+	private AssemblyTaskView selectTask(int postNumber) {
 		System.out.println("Please select an incomplete task at your workpost from the ones below:");
-		List<AssemblyTaskContainer> postTasks = getHandler().getAssemblyTasksAtWorkPost(postNumber);
-		List<AssemblyTaskContainer> incompletePostTasks = new ArrayList<>();
-		for(AssemblyTaskContainer task : postTasks){
+		List<AssemblyTaskView> postTasks = getHandler().getAssemblyTasksAtWorkPost(postNumber);
+		List<AssemblyTaskView> incompletePostTasks = new ArrayList<>();
+		for(AssemblyTaskView task : postTasks){
 			if(!task.isCompleted())
 				incompletePostTasks.add(task);
 		}
 		for(int i = 0; i<incompletePostTasks.size(); i++){
-			AssemblyTaskContainer currentTask = incompletePostTasks.get(i);
+			AssemblyTaskView currentTask = incompletePostTasks.get(i);
 			System.out.println((i+1) + ") " + currentTask.getOptionName());
 		}
 		System.out.println((incompletePostTasks.size()+1) + ") Stop performing assembly tasks");
@@ -137,9 +137,9 @@ public class PerformAssemblyTasksUIPart {
 	 */
 	private int selectPost() {
 		System.out.println("Welcome, please select your workpost:");
-		List<WorkPostContainer> posts= getHandler().getWorkPosts();
+		List<WorkPostView> posts= getHandler().getWorkPosts();
 		for(int i = 0; i<posts.size(); i++){
-			WorkPostContainer currentPost = posts.get(i);
+			WorkPostView currentPost = posts.get(i);
 			System.out.println((i+1) + ") " + currentPost.getName());
 		}
 		return (helper.getIntFromUser(1, posts.size())-1);

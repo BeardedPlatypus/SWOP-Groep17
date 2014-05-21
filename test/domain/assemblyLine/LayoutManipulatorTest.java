@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.car.CarModel;
 import domain.car.Model;
@@ -131,18 +133,18 @@ public class LayoutManipulatorTest {
 		AssemblyProcedure proc3 = new AssemblyProcedure(procOrder, proc3Tasks, 60);
 		AssemblyProcedure proc4 = new AssemblyProcedure(procOrder, proc4Tasks, 60);
 		
-		workPosts.get(0).setAssemblyProcedure(proc0);
-		workPosts.get(1).setAssemblyProcedure(proc1);
-		workPosts.get(2).setAssemblyProcedure(proc2);
-		workPosts.get(3).setAssemblyProcedure(proc3);
-		workPosts.get(4).setAssemblyProcedure(proc4);
+		workPosts.get(0).setAssemblyProcedure(Optional.fromNullable(proc0));
+		workPosts.get(1).setAssemblyProcedure(Optional.fromNullable(proc1));
+		workPosts.get(2).setAssemblyProcedure(Optional.fromNullable(proc2));
+		workPosts.get(3).setAssemblyProcedure(Optional.fromNullable(proc3));
+		workPosts.get(4).setAssemblyProcedure(Optional.fromNullable(proc4));
 		
 		man.advanceAssemblyLine();
-		assertEquals(null, workPosts.get(0).getAssemblyProcedure());
-		assertEquals(proc0, workPosts.get(1).getAssemblyProcedure());
-		assertEquals(proc1, workPosts.get(2).getAssemblyProcedure());
-		assertEquals(proc2, workPosts.get(3).getAssemblyProcedure());
-		assertEquals(proc3, workPosts.get(4).getAssemblyProcedure());
+		assertEquals(Optional.absent(), workPosts.get(0).getAssemblyProcedure());
+		assertEquals(proc0, workPosts.get(1).getAssemblyProcedure().get());
+		assertEquals(proc1, workPosts.get(2).getAssemblyProcedure().get());
+		assertEquals(proc2, workPosts.get(3).getAssemblyProcedure().get());
+		assertEquals(proc3, workPosts.get(4).getAssemblyProcedure().get());
 	}
 	
 	@Test
@@ -153,15 +155,15 @@ public class LayoutManipulatorTest {
 		AssemblyTask task0 = new AssemblyTask(bodyOption, 0);
 		AssemblyTask task1 = new AssemblyTask(cargoOption, 1);
 		AssemblyProcedure proc0 = new AssemblyProcedure(procOrder, new ArrayList<AssemblyTask>(Arrays.asList(task0, task1)), 60);
-		workPosts.get(0).setAssemblyProcedure(proc0);
+		workPosts.get(0).setAssemblyProcedure(Optional.fromNullable(proc0));
 		task0.setCompleted(true);
 		
-		Mockito.when(assemblyLine.popNextOrderFromSchedule()).thenReturn(order);
-		Mockito.when(assemblyLine.makeAssemblyProcedure(order)).thenReturn(newProc);
+		Mockito.when(assemblyLine.popNextOrderFromSchedule()).thenReturn(Optional.fromNullable(order));
+		Mockito.when(assemblyLine.makeAssemblyProcedure(Optional.fromNullable(order))).thenReturn(newProc);
 		
 		man.advanceAssemblyLine();
-		assertEquals(newProc, workPosts.get(0).getAssemblyProcedure());
-		assertEquals(proc0, workPosts.get(1).getAssemblyProcedure());
+		assertEquals(newProc, workPosts.get(0).getAssemblyProcedure().get());
+		assertEquals(proc0, workPosts.get(1).getAssemblyProcedure().get());
 	}
 	
 	@Test
@@ -176,13 +178,13 @@ public class LayoutManipulatorTest {
 		proc1Task0.setCompleted(true);
 		AssemblyProcedure proc1 = new AssemblyProcedure(procOrder, new ArrayList<AssemblyTask>(Arrays.asList(proc1Task1, proc1Task1)), 60);
 		
-		workPosts.get(0).setAssemblyProcedure(proc0);
-		workPosts.get(3).setAssemblyProcedure(proc1);
+		workPosts.get(0).setAssemblyProcedure(Optional.fromNullable(proc0));
+		workPosts.get(3).setAssemblyProcedure(Optional.fromNullable(proc1));
 		
 		man.advanceAssemblyLine();
 		
-		assertEquals(proc0, workPosts.get(3).getAssemblyProcedure());
-		assertEquals(proc1, workPosts.get(4).getAssemblyProcedure());
+		assertEquals(proc0, workPosts.get(3).getAssemblyProcedure().get());
+		assertEquals(proc1, workPosts.get(4).getAssemblyProcedure().get());
 	}
 	
 	@Test
@@ -191,25 +193,25 @@ public class LayoutManipulatorTest {
 		proc0Task0.setCompleted(true);
 		AssemblyProcedure proc0 = new AssemblyProcedure(procOrder, new ArrayList<AssemblyTask>(Arrays.asList(proc0Task0)), 60);
 		
-		workPosts.get(3).setAssemblyProcedure(proc0);
+		workPosts.get(3).setAssemblyProcedure(Optional.fromNullable(proc0));
 		
 		man.advanceAssemblyLine();
 		
-		assertEquals(null, workPosts.get(3).getAssemblyProcedure());
-		assertEquals(null, workPosts.get(4).getAssemblyProcedure());
-		Mockito.verify(assemblyLine).handleFinishedAssemblyProcedure(proc0);
+		assertEquals(Optional.absent(), workPosts.get(3).getAssemblyProcedure());
+		assertEquals(Optional.absent(), workPosts.get(4).getAssemblyProcedure());
+		Mockito.verify(assemblyLine).handleFinishedAssemblyProcedure(Optional.fromNullable(proc0));
 	}
 
 	@Test
 	public void AssemblyLineAdvance_singleTaskOrder() {
 		Order order = new SingleTaskOrder(model, new Specification(accOption), 0, new DateTime(0, 6, 0), new DateTime(1, 6, 0));
-		Mockito.when(assemblyLine.popNextOrderFromSchedule()).thenReturn(order);
+		Mockito.when(assemblyLine.popNextOrderFromSchedule()).thenReturn(Optional.fromNullable(order));
 		
 		AssemblyProcedure proc = new AssemblyProcedure(order, new ArrayList<AssemblyTask>(Arrays.asList(new AssemblyTask(accOption, 0))), 60);
-		Mockito.when(assemblyLine.makeAssemblyProcedure(order)).thenReturn(proc);
+		Mockito.when(assemblyLine.makeAssemblyProcedure(Optional.fromNullable(order))).thenReturn(proc);
 		
 		man.advanceAssemblyLine();
-		assertEquals(proc, workPosts.get(3).getAssemblyProcedure());
+		assertEquals(proc, workPosts.get(3).getAssemblyProcedure().get());
 	}
 	
 	public AssemblyTask cloneTask(AssemblyTask task) {

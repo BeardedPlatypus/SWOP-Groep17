@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import domain.DateTime;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 
 /**
  * The ClockManager is the object that manages the internal Clock of the whole
@@ -121,7 +121,7 @@ public class ClockManager implements TimeSubject, IncrementTimeObserver {
 	 *		If either of the arguments is or contains null
 	 */
 	public DateTime getEstimatedCompletionTime(
-			OrderContainer order, List<OrderContainer> allPendingOrders) {
+			OrderView order, List<OrderView> allPendingOrders) {
 		int indexInList;
 		if(allPendingOrders.contains(order)){
 			indexInList = allPendingOrders.indexOf(order);
@@ -144,7 +144,7 @@ public class ClockManager implements TimeSubject, IncrementTimeObserver {
 	 * 
 	 * @throws IllegalArgumentException | positionOrder < 0
 	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order, int positionOrder) {
+	public DateTime getEstimatedCompletionTime(OrderView order, int positionOrder) {
 		if (positionOrder < 0) {										            // Invalid Argument
 			throw new IllegalArgumentException("position smaller than 0");			//
 		}																			//

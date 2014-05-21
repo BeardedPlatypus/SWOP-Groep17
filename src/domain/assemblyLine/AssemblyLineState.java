@@ -1,5 +1,7 @@
 package domain.assemblyLine;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.order.Order;
 
@@ -199,7 +201,7 @@ public abstract class AssemblyLineState implements IAssemblyLineState {
 	/**
 	 * See {@link AssemblyLine#makeAssemblyProcedure(Order) makeAssemblyProcedure(Order)}
 	 */
-	AssemblyProcedure makeAssemblyProcedure(Order order) throws IllegalArgumentException {
+	AssemblyProcedure makeAssemblyProcedure(Optional<Order> order) throws IllegalArgumentException {
 		this.checkAssemblyLineSet();
 		return this.getAssemblyLine().makeAssemblyProcedure(order);
 	}
@@ -207,7 +209,7 @@ public abstract class AssemblyLineState implements IAssemblyLineState {
 	/**
 	 * See {@link AssemblyLine#handleFinishedAssemblyProcedure(Order) handleFinishedAssemblyProcedure(Order)}
 	 */
-	void handleFinishedAssemblyProcedure(AssemblyProcedure procedure) {
+	void handleFinishedAssemblyProcedure(Optional<AssemblyProcedure> procedure) {
 		this.checkAssemblyLineSet();
 		this.getAssemblyLine().handleFinishedAssemblyProcedure(procedure);
 	}
@@ -218,19 +220,9 @@ public abstract class AssemblyLineState implements IAssemblyLineState {
 	 * 
 	 * @return The next Order
 	 */
-	protected Order popNextOrderFromSchedule() {
+	protected Optional<Order> popNextOrderFromSchedule() {
 		this.checkAssemblyLineSet();
 		return this.getAssemblyLine().popNextOrderFromSchedule();
-	}
-	
-	/**
-	 * Peeks at the next Order the AssemblyLine can process.
-	 * 
-	 * @return The next Order
-	 */
-	protected Order peekNextOrderFromSchedule() {
-		this.checkAssemblyLineSet();
-		return this.getAssemblyLine().peekNextOrderFromSchedule();
 	}
 	
 	/**

@@ -7,8 +7,8 @@ import domain.Manufacturer;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
-import domain.car.Model;
-import domain.order.OrderContainer;
+import domain.car.Specification;
+import domain.order.OrderView;
 import domain.order.OrderSession;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
@@ -84,7 +84,7 @@ public class NewOrderSessionHandler {
 	 * 
 	 * @return the list of pending orders in the system
 	 */
-	public List<OrderContainer> getPendingOrders() {
+	public List<OrderView> getPendingOrders() {
 		return this.getManufacturer().getPendingOrderContainers();
 	}
 
@@ -94,7 +94,7 @@ public class NewOrderSessionHandler {
 	 * 
 	 * @return the list of completed orders in the system
 	 */
-	public List<OrderContainer> getCompletedOrders() {
+	public List<OrderView> getCompletedOrders() {
 		return this.getManufacturer().getCompletedOrderContainers();
 	}
 
@@ -191,6 +191,34 @@ public class NewOrderSessionHandler {
 			throw new IllegalStateException("No active order session.");
 		getCurrentOrderSession().addOption(option);
 	}
+	
+	/**
+	 * Check whether given model and options match, and the options pass the
+	 * system's restriction checks.
+	 * 
+	 * @param model
+	 * 		The model to check for
+	 * @param options
+	 * 		The options to check for
+	 * 
+	 * @return whether given model and options match, and the options pass the
+	 * 		system's restriction checks
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		When either of the arguments is or contains null
+	 */
+	public boolean isFullyValidOptionSet(Model model, List<Option> options)
+	throws IllegalArgumentException{
+		if (model == null)
+			throw new IllegalArgumentException("model can not be null!");
+		if (options == null)
+			throw new IllegalArgumentException("options can not be null!");
+		if (options.contains(null))
+			throw new IllegalArgumentException("options can not contain null!");
+		return model.checkOptionsValidity(options) && 
+				this.getManufacturer().checkSpecificationRestrictions(model,
+						new Specification(options));
+	}
 
 	/**
 	 * Submit the order composed by the active new order session, and return
@@ -259,7 +287,7 @@ public class NewOrderSessionHandler {
 	 * @throws OrderDoesNotExistException
 	 * 		If the order is not an order of the system
 	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order) 
+	public DateTime getEstimatedCompletionTime(OrderView order) 
 			throws IllegalArgumentException,
 			OrderDoesNotExistException
 	{

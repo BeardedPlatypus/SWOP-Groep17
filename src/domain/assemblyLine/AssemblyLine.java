@@ -3,11 +3,13 @@ package domain.assemblyLine;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.car.Specification;
 import domain.order.Order;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.statistics.ProcedureStatistics;
 import domain.statistics.StatisticsLogger;
 
@@ -28,8 +30,6 @@ public class AssemblyLine implements WorkPostObserver {
 	 * Instantiate a new AssemblyLine with the specified {@link Manufacturer}.
 	 * Also links the manufacturer to itself.
 	 * 
-	 * @param manufacturer
-	 * 		manufacturer that owns this AssemblyLine
 	 * @param workPosts
 	 * 		The WorkPosts managed by the new AssemblyLine
 	 * @param orderSelector
@@ -37,12 +37,8 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @throws IllegalArgumentException
 	 * 		manufacturer == null
 	 */
-	public AssemblyLine(Manufacturer manufacturer, List<WorkPost> workPosts,
-			OrderAcceptanceChecker orderSelector) throws IllegalArgumentException {
-		if (manufacturer == null) {
-			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
-					+ "with null manufacturer");
-		}
+	public AssemblyLine(List<WorkPost> workPosts, OrderAcceptanceChecker orderSelector)
+		throws IllegalArgumentException {
 		if (workPosts == null || workPosts.isEmpty()) {
 			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
 					+ "without any WorkPosts");
@@ -51,9 +47,6 @@ public class AssemblyLine implements WorkPostObserver {
 			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
 					+ "with null order selector");
 		}
-		
-		this.manufacturer = manufacturer;
-		manufacturer.setAssemblyLine(this);
 		
 		this.workPosts = workPosts;
 		for (WorkPost workPost : workPosts) {
@@ -77,7 +70,23 @@ public class AssemblyLine implements WorkPostObserver {
 	}
 	
 	/** The manufacturer that owns this AssemblyLIne. */
-	private final Manufacturer manufacturer;
+	private Manufacturer manufacturer;
+	
+	/**
+	 * Set this AssemblyLine's Manufacturer to the specified manufacturer
+	 * 
+	 * @param manufacturer
+	 * 		The new Manufacturer
+	 * @throws IllegalArgumentException
+	 * 		manufacturer is null
+	 */
+	public void setManufacturer(Manufacturer manufacturer) throws IllegalArgumentException {
+		if (manufacturer == null) {
+			throw new IllegalArgumentException("Cannot set null Manufacturer"
+					+ "in AssemblyLine");
+		}
+		this.manufacturer = manufacturer;
+	}
 	
 	//--------------------------------------------------------------------------
 	// Order-related methods
@@ -89,7 +98,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 		The order to look for
 	 * @return This AssemblyLine has the given Order
 	 */
-	public boolean contains(OrderContainer order) {
+	public boolean contains(OrderView order) {
 		for (WorkPost workPost : this.getWorkPosts()) {
 			if (workPost.contains(order)) {
 				return true;
@@ -120,46 +129,28 @@ public class AssemblyLine implements WorkPostObserver {
 	 */
 	public void completeWorkpostTask(int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException,
 			IllegalStateException{
-		if(!this.isValidWorkPost(workPostNumber))
-			throw new IllegalArgumentException("Argument is not an existing workpost.");
-		this.getWorkPost(workPostNumber).completeTask(taskNumber, minutes);
+		this.getCurrentState().completeWorkpostTask(workPostNumber, taskNumber, minutes);
 	}
 	
 	//--------------------------------------------------------------------------
 	// OrderContainer methods.
 
 	/**
-	 * Get a list of pending {@link OrderContainer}s on the assembly line. 
+	 * Get a list of pending {@link OrderView}s on the assembly line. 
 	 * 
 	 * @return List of pending order containers on the assembly line.
 	 */
-	public List<OrderContainer> getActiveOrderContainers() {
-		ArrayList<OrderContainer> activeOrders = new ArrayList<>();
+	public List<OrderView> getActiveOrderContainers() {
+		ArrayList<OrderView> activeOrders = new ArrayList<>();
 		
 		for (WorkPost post : this.getWorkPosts()) {
 			if (!post.isEmpty()) {
-				activeOrders.add(post.getOrderContainer());
+				activeOrders.add(post.getOrderView());
 			}
 		}
 		return activeOrders;
 	}
-	
-	//--------------------------------------------------------------------------
-	// Querying AssemblyProcedure objects
-	//--------------------------------------------------------------------------
-	/**
-	 * Get views of the AssemblyProcedures currently active on each WorkPost
-	 * 
-	 * @return The views of the AssemblyProcedures
-	 */
-	public List<AssemblyProcedureContainer> getAssemblyOnEachWorkPost() {
-		List<AssemblyProcedureContainer> toReturn = new ArrayList<AssemblyProcedureContainer>();
-		for (WorkPost workPost : this.getWorkPosts()) {
-			toReturn.add(workPost.getAssemblyProcedureContainer());
-		}
-		return toReturn;
-	}
-	
+
 	//--------------------------------------------------------------------------
 	/**
 	 * Get views those AssemblyTasks that are of the specified WorkPost's type.
@@ -170,7 +161,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @throws IllegalArgumentException
 	 * 		workPostNum refers to a WorkPost that does not exist
 	 */
-	public List<AssemblyTaskContainer> getAssemblyTasksAtPost(int workPostNum)
+	public List<AssemblyTaskView> getAssemblyTasksAtPost(int workPostNum)
 		throws IllegalArgumentException {
 		if (! this.isValidWorkPostNum(workPostNum)) {
 			throw new IllegalArgumentException("workPostNum refers to an"
@@ -186,8 +177,8 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 
 	 * @return
 	 */
-	public List<AssemblyProcedure> getAssemblyProcedures() {
-		List<AssemblyProcedure> toReturn = new ArrayList<AssemblyProcedure>();
+	public List<Optional<AssemblyProcedure>> getAssemblyProcedures() {
+		List<Optional<AssemblyProcedure>> toReturn = new ArrayList<Optional<AssemblyProcedure>>();
 		for (WorkPost workPost : this.getWorkPosts()) {
 			toReturn.add(workPost.getAssemblyProcedure());
 		}
@@ -209,12 +200,12 @@ public class AssemblyLine implements WorkPostObserver {
 	// WorkPost-related variables and methods
 	//--------------------------------------------------------------------------
 	/**
-	 * Get the WorkPosts composing the assembly line, as immutable {@link WorkPostContainer}s
+	 * Get the WorkPosts composing the assembly line, as immutable {@link WorkPostView}s
 	 * 
 	 * @return A list of immutable containers for all respective WorkPosts in their order.
 	 */
-	public List<WorkPostContainer> getWorkPostContainers() {
-		return new ArrayList<WorkPostContainer>(workPosts);
+	public List<WorkPostView> getWorkPostContainers() {
+		return new ArrayList<WorkPostView>(workPosts);
 	}
 
 	/**
@@ -377,7 +368,6 @@ public class AssemblyLine implements WorkPostObserver {
 	 */
 	private void incrementFinishedAssemblyCounter() {
 		this.finishedAssemblyCounter++;
-		this.checkAdvance();
 	}
 	
 	/**
@@ -404,15 +394,10 @@ public class AssemblyLine implements WorkPostObserver {
 	
 	/**
 	 * Check whether all WorkPosts with an AssemblyProcedure have finished their
-	 * work, and if this is the case, start advancing the AssemblyLine.
+	 * work.
 	 */
-	private void checkAdvance() {
-		if((this.finishedAssemblyCounter >= this.getNbOfActiveWorkPosts()) &&
-				!this.isEmpty()){
-			DateTime elapsedTime = this.getElapsedTime();
-			this.tryAdvance(elapsedTime);
-		}
-		
+	public boolean canAdvance() {
+		return this.finishedAssemblyCounter >= this.getNbOfActiveWorkPosts();
 	}
 
 	/**
@@ -427,70 +412,60 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 		the shifting of the WorkPosts.
 	 */
 	private void tryAdvance(DateTime elapsedTime) throws IllegalStateException{
-		this.shiftWorkPosts();
+		this.getCurrentState().advanceAssemblyLine();
 		this.getManufacturer().incrementTime(elapsedTime);
 		this.setElapsedTime(new DateTime(0, 0, 0));
 	}
 	
 	/**
-	 * Explicitly tell this AssemblyLine to advance, thereby putting the specified
-	 * Order on the AssemblyLine
+	 * Explicitly tell this AssemblyLine to advance.
 	 * 
-	 * @param order
-	 * 		The order to schedule
+	 * @throws IllegalStateException
+	 * 		canAdvance() == false
 	 */
-	public void advance(Order order) {
-		this.putNextOrderOnAssemblyLine(order);
+	public void advance() throws IllegalStateException {
+		if (! this.canAdvance()) {
+			throw new IllegalStateException("Cannot advance AssemblyLine");
+		}
+		this.tryAdvance(this.getElapsedTime());
 		this.resetFinishedAssemblyCounter();
 	}
-
+	
+	/** Source of new Orders. */
+	private SchedulerIntermediate schedulerIntermediate;
+	
 	/**
-	 * Advance this AssemblyLine by one WorkPost. All AssemblyProcedures
-	 * are shifted forward by one WorkPost. Concerning the last AssemblyProcedure:
-	 * its order is retrieved and information about it is reported to the StatisticsLogger
-	 * 
-	 * @throws IllegalStateException
-	 * 		If the completedOrder field is not empty, the line cannot be advanced.
+	 * @return the SchedulerIntermediate
 	 */
-	private void shiftWorkPosts() throws IllegalStateException{
-		AssemblyProcedure finishedProcedure = this.getWorkPosts()
-				.get(this.getWorkPosts().size() - 1).getAssemblyProcedure();
-		
-		this.getWorkPost(this.getAssemblyLineSize() - 1)
-			.addToElapsedMinutes((int) this.getElapsedTime().getInMinutes());
-		for(int i = this.getAssemblyLineSize() - 1; i > 0 ; i--){
-			this.getWorkPost(i - 1).addToElapsedMinutes((int) this.getElapsedTime().getInMinutes());
-			this.getWorkPost(i).takeAssemblyProcedureFrom(this.getWorkPost(i - 1));
-		}
-		
-		this.handleFinishedAssemblyProcedure(finishedProcedure);
-	}
-
-	/**
-	 * Request a new Order from the Manufacturer, convert this to an AssemblyProcedure
-	 * and add this AssemblyProcedure to the first WorkPost. 
-	 * 
-	 * @throws IllegalStateException
-	 * 		| !this.getWorkPost(0).isEmpty()
-	 * @throws IllegalStateException
-	 * 		| ! this.orderIsAvailable()
-	 */
-	private void putNextOrderOnAssemblyLine(Order order) throws IllegalStateException{
-		if (order == null) {
-			return;
-		}
-		AssemblyProcedure procedure = this.makeAssemblyProcedure(order);
-		this.getWorkPost(0).setAssemblyProcedure(procedure);
+	private SchedulerIntermediate getSchedulerIntermediate() {
+		return this.schedulerIntermediate;
 	}
 	
-	Order popNextOrderFromSchedule() {
-		//TODO ask the AssemblyLineController
-		return null;
+	/**
+	 * Set the SchedulerIntermediate to the specified SchedulerIntermediate
+	 * 
+	 * @param schedulerIntermediate
+	 * 		The new SchedulerIntermediate
+	 * @throws IllegalArgumentException
+	 * 		schedulerIntermediate is null
+	 */
+	public void setSchedulerIntermediate(SchedulerIntermediate schedulerIntermediate)
+		throws IllegalArgumentException {
+		if (schedulerIntermediate == null) {
+			throw new IllegalArgumentException("Cannot set null SchedulerIntermediate"
+					+ "in AssemblyLine");
+		}
+		this.schedulerIntermediate = schedulerIntermediate;
 	}
 	
-	Order peekNextOrderFromSchedule() {
+	/**
+	 * Ask the SchedulerIntermediate for the next Order
+	 * 
+	 * @return The next Order
+	 */
+	Optional<Order> popNextOrderFromSchedule() {
 		//TODO ask the AssemblyLineController
-		return null;
+		return this.getSchedulerIntermediate().popNextOrderFromSchedule();
 	}
 	
 	/**
@@ -499,15 +474,15 @@ public class AssemblyLine implements WorkPostObserver {
 	 * AssemblyProcedure's Order to the Manufacturer as a completed Order, record
 	 * statistical information and give that information to the StatisticsLogger.
 	 */
-	void handleFinishedAssemblyProcedure(AssemblyProcedure finishedProcedure) {
-		if (finishedProcedure == null) {
+	void handleFinishedAssemblyProcedure(Optional<AssemblyProcedure> finishedProcedure) {
+		if (finishedProcedure == null || ! finishedProcedure.isPresent()) {
 			return;
 		}
 		
-		ProcedureStatistics stats = finishedProcedure.makeStatisticsEvent();
+		ProcedureStatistics stats = finishedProcedure.get().makeStatisticsEvent();
 		this.addStatistics(stats);
 		
-		this.getManufacturer().addToCompleteOrders(finishedProcedure.getOrder());
+		this.getManufacturer().addToCompleteOrders(finishedProcedure.get().getOrder());
 	}
 	
 	//--------------------------------------------------------------------------
@@ -550,14 +525,14 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @throws IllegalArgumentException
 	 * 		order is null
 	 */
-	public AssemblyProcedure makeAssemblyProcedure(Order order) throws IllegalArgumentException {
-		if (order == null) {
+	public AssemblyProcedure makeAssemblyProcedure(Optional<Order> order) throws IllegalArgumentException {
+		if (order == null || ! order.isPresent()) {
 			throw new IllegalArgumentException("Cannot make assembly procedure"
 					+ "from null order");
 		}
-		List<AssemblyTask> tasks = this.generateTasksFrom(order);
-		int expectedMinutes = this.calculateExpectedTimeOnLine(order);
-		return new AssemblyProcedure(order, tasks, expectedMinutes);
+		List<AssemblyTask> tasks = this.generateTasksFrom(order.get());
+		int expectedMinutes = this.calculateExpectedTimeOnLine(order.get());
+		return new AssemblyProcedure(order.get(), tasks, expectedMinutes);
 	}
 	
 	/**
@@ -573,7 +548,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @throws IllegalStateException
 	 * 		! order.getModel().isValidSpecification(order.getSpecifications())
 	 */
-	protected List<AssemblyTask> generateTasksFrom(OrderContainer order) {
+	protected List<AssemblyTask> generateTasksFrom(OrderView order) {
 		Specification orderSpecs = order.getSpecifications();
 		
 		List<AssemblyTask> toReturn = new ArrayList<AssemblyTask>();
@@ -609,8 +584,11 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @return The expected amount of minutes
 	 */
 	private int calculateExpectedTimeOnLine(Order order) {
-		//FIXME
-		return 0;
+		int total = 0;
+		for(WorkPost p : this.getWorkPosts()){
+			total += p.getExpectedTimeOnPost(order);
+		}
+		return total;
 	}
 	
 	//--------------------------------------------------------------------------
@@ -667,5 +645,4 @@ public class AssemblyLine implements WorkPostObserver {
 		}
 		this.getStatisticsLogger().addStatistics(stats);
 	}
-
 }

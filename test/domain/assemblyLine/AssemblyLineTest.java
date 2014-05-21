@@ -20,21 +20,23 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.assemblyLine.AssemblyLine;
 import domain.assemblyLine.AssemblyProcedure;
-import domain.assemblyLine.AssemblyProcedureContainer;
+import domain.assemblyLine.AssemblyProcedureView;
 import domain.assemblyLine.AssemblyTask;
-import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.AssemblyTaskView;
 import domain.assemblyLine.TaskType;
 import domain.assemblyLine.WorkPost;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.WorkPostView;
 import domain.assemblyLine.WorkPostObserver;
 import domain.car.Option;
 import domain.car.Specification;
 import domain.order.Order;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.statistics.ProcedureStatistics;
 import domain.statistics.StatisticsLogger;
 
@@ -44,6 +46,7 @@ public class AssemblyLineTest {
 	@Rule public ExpectedException expected = ExpectedException.none();
 	
 	@Mock Manufacturer manufacturer;
+	@Mock SchedulerIntermediate sched;
 	
 	AssemblyProcedure procedure1;
 	AssemblyProcedure procedure2;
@@ -108,46 +111,45 @@ public class AssemblyLineTest {
 		
 		workPosts = new ArrayList<WorkPost>();
 		workPosts.add(new WorkPost(TaskType.BODY, 0));
-		workPosts.add(new WorkPost(TaskType.DRIVETRAIN, 0));
-		workPosts.add(new WorkPost(TaskType.ACCESSORIES, 0));
+		workPosts.add(new WorkPost(TaskType.DRIVETRAIN, 1));
+		workPosts.add(new WorkPost(TaskType.ACCESSORIES, 2));
 		
-		assemblyLine = new AssemblyLine(manufacturer, workPosts, orderSelector);
+		assemblyLine = new AssemblyLine(workPosts, orderSelector);
+		assemblyLine.setManufacturer(manufacturer);
 		assemblyLine.setStatisticsLogger(logger);
 		
 		for (int i = 0; i < assemblyLine.getAssemblyLineSize(); i++)
 		{
 			WorkPost wp = (WorkPost) assemblyLine.getWorkPostContainers().get(i);
-			Whitebox.invokeMethod(wp, "setAssemblyProcedure", procedures.get(i));
+			Whitebox.invokeMethod(wp, "setAssemblyProcedure", Optional.fromNullable(procedures.get(i)));
 		}
-	}
-
-	@Test
-	public void constructor_NullManufacturer() {
-		expected.expect(IllegalArgumentException.class);
-		new AssemblyLine(null, workPosts, orderSelector);
+		
+		assemblyLine.setCurrentState(new OperationalState());
+		assemblyLine.setSchedulerIntermediate(sched);
 	}
 	
 	@Test
 	public void constructor_nullWorkPosts() {
 		expected.expect(IllegalArgumentException.class);
-		new AssemblyLine(manufacturer, null, orderSelector);
+		new AssemblyLine(null, orderSelector);
 	}
 	
 	@Test
 	public void constructor_emptyWorkPosts() {
 		expected.expect(IllegalArgumentException.class);
-		new AssemblyLine(manufacturer, new ArrayList<WorkPost>(), orderSelector);
+		new AssemblyLine(new ArrayList<WorkPost>(), orderSelector);
 	}
 	
 	@Test
 	public void constructor_nullOrderSelector() {
 		expected.expect(IllegalArgumentException.class);
-		new AssemblyLine(manufacturer, workPosts, null);
+		new AssemblyLine(workPosts, null);
 	}
 	
 	@Test
 	public void constructor_CheckWorkpostsInitialised() {
-		AssemblyLine assemblyLine = new AssemblyLine(manufacturer, workPosts, orderSelector);
+		AssemblyLine assemblyLine = new AssemblyLine(workPosts, orderSelector);
+		assemblyLine.setManufacturer(manufacturer);
 		AssemblyLine spiedAssemblyLine = PowerMockito.spy(assemblyLine);
 		
 		List<WorkPost> workPosts = new ArrayList<WorkPost>();
@@ -163,16 +165,8 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void makeAssemblyProcedureTest() {
-		AssemblyProcedure generated = assemblyLine.makeAssemblyProcedure(notOnAssemblyLine);
+		AssemblyProcedure generated = assemblyLine.makeAssemblyProcedure(Optional.fromNullable(notOnAssemblyLine));
 		assertEquals(specGenProcedure, generated.getOrder().getSpecifications());
-	}
-	
-	@Test
-	public void getAssemblyOnEachWorkStation_test() {
-		List<AssemblyProcedureContainer> assemblyLineProcedures = assemblyLine.getAssemblyOnEachWorkPost();
-		assertTrue(assemblyLineProcedures.get(0) == procedure1);
-		assertTrue(assemblyLineProcedures.get(1) == procedure2);
-		assertTrue(assemblyLineProcedures.get(2) == procedure3);
 	}
 	
 	@Test
@@ -189,7 +183,7 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void getActiveOrderContainersTest() {
-		List<OrderContainer> orders = assemblyLine.getActiveOrderContainers();
+		List<OrderView> orders = assemblyLine.getActiveOrderContainers();
 		assertTrue(orders.contains(order));
 		assertTrue(orders.contains(order2));
 		assertTrue(orders.contains(order3));
@@ -197,13 +191,13 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void getAssemblyTasksAtPost_valid() {
-		List<AssemblyTaskContainer> containers = assemblyLine.getAssemblyTasksAtPost(0);
+		List<AssemblyTaskView> containers = assemblyLine.getAssemblyTasksAtPost(0);
 		assertTrue(containers.get(0) == task1);
 	}
 	
 	@Test
 	public void getWorkPostContainersTest() {
-		List<WorkPostContainer> containers = assemblyLine.getWorkPostContainers();
+		List<WorkPostView> containers = assemblyLine.getWorkPostContainers();
 		assertTrue(containers.contains(workPosts.get(0)));
 		assertTrue(containers.contains(workPosts.get(1)));
 		assertTrue(containers.contains(workPosts.get(2)));
@@ -235,7 +229,7 @@ public class AssemblyLineTest {
 	public void isEmpty_true() {
 		List<WorkPost> workPosts = new ArrayList<WorkPost>();
 		workPosts.add(new WorkPost(TaskType.BODY, 0));
-		assertTrue(new AssemblyLine(manufacturer, workPosts, orderSelector).isEmpty());
+		assertTrue(new AssemblyLine(workPosts, orderSelector).isEmpty());
 	}
 	
 	@Test
@@ -311,10 +305,10 @@ public class AssemblyLineTest {
 		assertEquals(new DateTime(0, 0, 60), Whitebox.getInternalState(assemblyLine, "elapsedTime"));
 	}
 	
-	/*@Test
+	@Test
 	public void completeWorkPostTask_simulateAdvance() {
-		Mockito.when(manufacturer.popNextOrderFromSchedule()).thenReturn(newOrder);
-		Mockito.when(newOrder.getMinutesPerPost()).thenReturn(60);
+		Mockito.when(sched.popNextOrderFromSchedule()).thenReturn(Optional.fromNullable(newOrder));
+//		Mockito.when(newOrder.getMinutesPerPost()).thenReturn(60);
 		Option newOption = new Option(TaskType.BODY, "har", "dar");
 		Specification newSpec = new Specification(Arrays.asList(newOption));
 		Mockito.when(newOrder.getSpecifications()).thenReturn(newSpec);
@@ -322,6 +316,9 @@ public class AssemblyLineTest {
 		assemblyLine.completeWorkpostTask(0, 0, 20);
 		assemblyLine.completeWorkpostTask(1, 0, 60);
 		assemblyLine.completeWorkpostTask(2, 0, 40);
+		
+		assertTrue(assemblyLine.canAdvance());
+		assemblyLine.advance();
 		
 		try {
 			assertEquals(60, Whitebox.getInternalState(procedure1, "elapsedMinutes"));
@@ -331,19 +328,18 @@ public class AssemblyLineTest {
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(0), "minutesOfWork"));
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(1), "minutesOfWork"));
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(2), "minutesOfWork"));
-
-			assemblyLine.advance(newOrder);
-			assertEquals(procedure1, workPosts.get(1).getAssemblyProcedure());
-			assertEquals(procedure2, workPosts.get(2).getAssemblyProcedure());
-			assertEquals(newOrder, workPosts.get(0).getAssemblyProcedure().getOrder());
+			
+			assertEquals(Optional.absent(), workPosts.get(1).getAssemblyProcedure());
+			assertEquals(Optional.absent(), workPosts.get(2).getAssemblyProcedure());
+			assertEquals(newOrder, workPosts.get(0).getAssemblyProcedure().get().getOrder());
 			assertEquals(-120, procedure3.makeStatisticsEvent().getDelay());
-			assertEquals(2, Whitebox.getInternalState(assemblyLine, "finishedAssemblyCounter"));
-			Mockito.verify(logger).addStatistics(Matchers.isA(ProcedureStatistics.class));
+			assertEquals(0, Whitebox.getInternalState(assemblyLine, "finishedAssemblyCounter"));
+			Mockito.verify(logger, Mockito.times(3)).addStatistics(Matchers.isA(ProcedureStatistics.class));
 			Mockito.verify(manufacturer).addToCompleteOrders(order3);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}*/
+	}
 	
 	@Test
 	public void containsTest() {
@@ -357,14 +353,14 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void setLogger_null() {
-		AssemblyLine line = new AssemblyLine(manufacturer, workPosts, orderSelector);
+		AssemblyLine line = new AssemblyLine(workPosts, orderSelector);
 		expected.expect(IllegalArgumentException.class);
 		line.setStatisticsLogger(null);
 	}
 	
 	@Test
 	public void setLogger_valid() {
-		AssemblyLine line = new AssemblyLine(manufacturer, workPosts, orderSelector);
+		AssemblyLine line = new AssemblyLine(workPosts, orderSelector);
 		line.setStatisticsLogger(logger);
 		assertEquals(logger, Whitebox.getInternalState(line, StatisticsLogger.class));
 	}

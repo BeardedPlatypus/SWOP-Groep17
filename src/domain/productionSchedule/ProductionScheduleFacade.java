@@ -9,7 +9,7 @@ import domain.Manufacturer;
 import domain.assemblyLine.TaskType;
 import domain.car.Specification;
 import domain.order.Order;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
 import domain.productionSchedule.strategy.SchedulingStrategy;
@@ -109,7 +109,7 @@ public class ProductionScheduleFacade {
 	 * @return The pending StandardOrders of this ProductionSchedule.
 	 * 	       | ALL o: o == OrderContainer && o in this 
 	 */
-	public List<OrderContainer> getPendingStandardOrderContainers() {
+	public List<OrderView> getPendingStandardOrderContainers() {
 		return this.getSchedulerContext().getPendingStandardOrders();
 	}
 	
@@ -124,7 +124,7 @@ public class ProductionScheduleFacade {
 	 * @throws IllegalArgumentException
 	 * 		| order == null
 	 */
-	public boolean contains(OrderContainer order) throws IllegalArgumentException {
+	public boolean contains(OrderView order) throws IllegalArgumentException {
 		return this.getSchedulerContext().containsOrder(order);
 	}
 	
@@ -133,7 +133,7 @@ public class ProductionScheduleFacade {
 	 * 
 	 * @return The next OrderContainer that will be scheduled by this SchedulerContext.
 	 */
-	public Optional<OrderContainer> getNextScheduledStandardOrderContainer() {
+	public Optional<OrderView> getNextScheduledStandardOrderContainer() {
 		return this.getNextScheduledStandardOrder();
 	}
 	
@@ -181,7 +181,7 @@ public class ProductionScheduleFacade {
 	 * @throws IllegalArgumentException
 	 * 		| order == null || !this.contains(order)
 	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order) throws IllegalArgumentException {
+	public DateTime getEstimatedCompletionTime(OrderView order) throws IllegalArgumentException {
 		return this.getClockManager().getEstimatedCompletionTime(order, this.getSchedulerContext().getAllPendingOrders());
 	}
 	

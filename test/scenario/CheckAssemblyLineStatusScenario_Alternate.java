@@ -9,8 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import domain.InteractionSimulator;
-import domain.assemblyLine.AssemblyTaskContainer;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.AssemblyTaskView;
+import domain.assemblyLine.WorkPostView;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
 
@@ -36,7 +36,7 @@ public class CheckAssemblyLineStatusScenario_Alternate {
 	
 	@Test
 	public void emptyAssemblyLine_test() {
-		for(WorkPostContainer wp : facade.getWorkPosts()){
+		for(WorkPostView wp : facade.getWorkPosts()){
 			assertTrue(wp.isEmpty());
 		}
 	}
@@ -56,7 +56,7 @@ public class CheckAssemblyLineStatusScenario_Alternate {
 		//Not all work posts are empty.
 		int nonEmptyWorkPosts = 0;
 		int nonFinishedWorkPosts = 0;
-		for(WorkPostContainer wp : facade.getWorkPosts()){
+		for(WorkPostView wp : facade.getWorkPosts()){
 			if(!wp.isEmpty()) nonEmptyWorkPosts++;
 			if(!wp.isFinished()) nonFinishedWorkPosts++;
 		}
@@ -65,8 +65,8 @@ public class CheckAssemblyLineStatusScenario_Alternate {
 		assertEquals(nonEmptyWorkPosts, nonFinishedWorkPosts);
 		
 		//No tasks are completed.
-		for(WorkPostContainer wp : facade.getWorkPosts()){
-			for(AssemblyTaskContainer task : wp.getMatchingAssemblyTasks()){
+		for(WorkPostView wp : facade.getWorkPosts()){
+			for(AssemblyTaskView task : wp.getMatchingAssemblyTasks()){
 				assertFalse(task.isCompleted());
 			}
 		}
@@ -83,8 +83,8 @@ public class CheckAssemblyLineStatusScenario_Alternate {
 		//Find a work post with more than one unfinished task.
 		int workPostNumber = 0;
 		int unfinishedTasks = 0;
-	out:for(WorkPostContainer wp : facade.getWorkPosts()){
-			List<AssemblyTaskContainer> tasks =  wp.getMatchingAssemblyTasks();
+	out:for(WorkPostView wp : facade.getWorkPosts()){
+			List<AssemblyTaskView> tasks =  wp.getMatchingAssemblyTasks();
 			if(tasks.size() > 1){
 				workPostNumber = wp.getWorkPostNum();
 				unfinishedTasks = tasks.size();
@@ -104,7 +104,7 @@ public class CheckAssemblyLineStatusScenario_Alternate {
 		//Not all work posts are empty.
 		int nonEmptyWorkPosts = 0;
 		int nonFinishedWorkPosts = 0;
-		for(WorkPostContainer wp : facade.getWorkPosts()){
+		for(WorkPostView wp : facade.getWorkPosts()){
 			if(!wp.isEmpty()) nonEmptyWorkPosts++;
 			if(!wp.isFinished()) nonFinishedWorkPosts++;
 		}
@@ -113,9 +113,9 @@ public class CheckAssemblyLineStatusScenario_Alternate {
 		assertEquals(nonEmptyWorkPosts, nonFinishedWorkPosts);
 		
 		//Find the work posts with completed tasks
-		HashSet<WorkPostContainer> partiallyCompletedWorkPosts = new HashSet<WorkPostContainer>();
-		for(WorkPostContainer wp : facade.getWorkPosts()){
-			for(AssemblyTaskContainer task : wp.getMatchingAssemblyTasks()){
+		HashSet<WorkPostView> partiallyCompletedWorkPosts = new HashSet<WorkPostView>();
+		for(WorkPostView wp : facade.getWorkPosts()){
+			for(AssemblyTaskView task : wp.getMatchingAssemblyTasks()){
 				if(task.isCompleted()) partiallyCompletedWorkPosts.add(wp);
 			}
 		}
@@ -125,9 +125,9 @@ public class CheckAssemblyLineStatusScenario_Alternate {
 		assertEquals(partiallyCompletedWorkPosts.size(), 1);
 		
 		//Assert that the right number of tasks are marked completed.
-		WorkPostContainer wp = partiallyCompletedWorkPosts.iterator().next();
+		WorkPostView wp = partiallyCompletedWorkPosts.iterator().next();
 		int completedTasks = 0;
-		for(AssemblyTaskContainer task : wp.getMatchingAssemblyTasks()){
+		for(AssemblyTaskView task : wp.getMatchingAssemblyTasks()){
 			if(task.isCompleted()) completedTasks++;
 		}
 		assertEquals(completedTasks,unfinishedTasks-1);

@@ -17,7 +17,7 @@ import domain.car.OptionCategory;
 import domain.car.Model;
 import domain.handlers.InitialisationHandler;
 import domain.handlers.NewOrderSessionHandler;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import exceptions.IllegalCarOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
@@ -46,8 +46,8 @@ public class NewOrderSessionScenario {
 		//1. The system presents an overview of the orders placed by the user, divided into two parts. The first part shows a list of pending orders, 
 		// with estimated completion times, and the second part shows a history	of completed orders, sorted most recent first.
 		// System is currently empty
-		List<OrderContainer> initPending = orderHandler.getPendingOrders();
-		List<OrderContainer> initComplete = orderHandler.getCompletedOrders();
+		List<OrderView> initPending = orderHandler.getPendingOrders();
+		List<OrderView> initComplete = orderHandler.getCompletedOrders();
 		
 		//2. The user indicates he wants to place a new car order. ==HAPPENS IN UI==
 		//3. The system shows a list of available car models.
@@ -132,8 +132,8 @@ public class NewOrderSessionScenario {
 	public void alternateFlow1Initial_test() {
 		//1. The system presents an overview of the orders placed by the user, divided into two parts. The first part shows a list of pending orders, 
 		// with estimated completion times, and the second part shows a history	of completed orders, sorted most recent first.
-		List<OrderContainer> initPending = orderHandler.getPendingOrders();
-		List<OrderContainer> initComplete = orderHandler.getCompletedOrders();
+		List<OrderView> initPending = orderHandler.getPendingOrders();
+		List<OrderView> initComplete = orderHandler.getCompletedOrders();
 		assertTrue(initPending.isEmpty());
 		assertTrue(initComplete.isEmpty());
 		//1. (a) The user indicates he wants to leave the overview. ==HAPPENS IN UI==
@@ -145,8 +145,8 @@ public class NewOrderSessionScenario {
 		//1. The system presents an overview of the orders placed by the user, divided into two parts. The first part shows a list of pending orders, 
 		// with estimated completion times, and the second part shows a history	of completed orders, sorted most recent first.
 		// System is currently empty
-		List<OrderContainer> initPending = orderHandler.getPendingOrders();
-		List<OrderContainer> initComplete = orderHandler.getCompletedOrders();
+		List<OrderView> initPending = orderHandler.getPendingOrders();
+		List<OrderView> initComplete = orderHandler.getCompletedOrders();
 		
 		//2. The user indicates he wants to place a new car order. ==HAPPENS IN UI==
 		//3. The system shows a list of available car models.

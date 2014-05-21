@@ -20,7 +20,7 @@ import domain.car.Specification;
 import domain.car.Model;
 import domain.handlers.CheckOrderDetailsHandler;
 import domain.order.Order;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.order.StandardOrder;
 
 /**
@@ -50,8 +50,8 @@ public class OrderDetailsScenario {
 	public void setUp() throws Exception {
 		model = new CarModel("Super model", new ArrayList<OptionCategory>(), 60);
 		
-		ArrayList<OrderContainer> compList = new ArrayList<OrderContainer>();
-		ArrayList<OrderContainer> pendList = new ArrayList<OrderContainer>();
+		ArrayList<OrderView> compList = new ArrayList<OrderView>();
+		ArrayList<OrderView> pendList = new ArrayList<OrderView>();
 		
 		spec1 = new Specification(new ArrayList<Option>(Arrays
 				.asList(new Option(TaskType.BODY, "what", "is"))));
@@ -84,8 +84,8 @@ public class OrderDetailsScenario {
 		//   divided into two parts. The first part shows a list of pending orders,
 		//   with estimated completion times, and the second part shows a history
 		//   of completed orders, sorted most recent first.
-		List<OrderContainer> initPending = orderDetailsHandler.getPendingOrdersContainers();
-		List<OrderContainer> initComplete = orderDetailsHandler.getCompletedOrdersContainers();
+		List<OrderView> initPending = orderDetailsHandler.getPendingOrdersContainers();
+		List<OrderView> initComplete = orderDetailsHandler.getCompletedOrdersContainers();
 		
 		//2. The user indicates the order he wants to check the details for. ==HAPPENS IN UI==
 		//3. The system shows the details of the order1.
@@ -106,8 +106,8 @@ public class OrderDetailsScenario {
 		//   divided into two parts. The first part shows a list of pending orders,
 		//   with estimated completion times, and the second part shows a history
 		//   of completed orders, sorted most recent first.
-		List<OrderContainer> initPending = orderDetailsHandler.getPendingOrdersContainers();
-		List<OrderContainer> initComplete = orderDetailsHandler.getCompletedOrdersContainers();
+		List<OrderView> initPending = orderDetailsHandler.getPendingOrdersContainers();
+		List<OrderView> initComplete = orderDetailsHandler.getCompletedOrdersContainers();
 		
 		//2. The user indicates the order he wants to check the details for. ==HAPPENS IN UI==
 		//3. The system shows the details of the order1.

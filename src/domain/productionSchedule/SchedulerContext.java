@@ -14,7 +14,7 @@ import domain.assemblyLine.TaskType;
 import domain.order.Order;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.productionSchedule.strategy.SchedulingStrategy;
 
 /**
@@ -119,7 +119,7 @@ public class SchedulerContext {
 	 * 
 	 * @return | order in this.
 	 */
-	public boolean containsOrder(OrderContainer order) {
+	public boolean containsOrder(OrderView order) {
 		return this.getAllPendingOrders().contains(order);
 	}
 
@@ -128,8 +128,8 @@ public class SchedulerContext {
 	 * 
 	 * @return a list of all pending Orders in this SchedulerContext.
 	 */
-	public List<OrderContainer> getAllPendingOrders() {
-		List<OrderContainer> result = new ArrayList<>();
+	public List<OrderView> getAllPendingOrders() {
+		List<OrderView> result = new ArrayList<>();
 		result.addAll(this.getPendingStandardOrders());
 		result.addAll(this.getPendingSingleTaskOrders());
 		return result;
@@ -199,9 +199,9 @@ public class SchedulerContext {
 	 * 
 	 * @return all pending StandardOrders of this SchedulerContext.
 	 */
-	public List<OrderContainer> getPendingStandardOrders() {
-		List<OrderContainer> result = new ArrayList<>();
-		for (OrderContainer o : this.getStandardOrderQueue()) {
+	public List<OrderView> getPendingStandardOrders() {
+		List<OrderView> result = new ArrayList<>();
+		for (OrderView o : this.getStandardOrderQueue()) {
 			result.add(o);
 		}
 		return result;
@@ -303,9 +303,9 @@ public class SchedulerContext {
 	 * 
 	 * @return all pending StandardOrders of this SchedulerContext.
 	 */
-	public List<OrderContainer> getPendingSingleTaskOrders() {
-		List<OrderContainer> result = new ArrayList<>();
-		for (OrderContainer o : this.getSingleTaskOrderQueue()) {
+	public List<OrderView> getPendingSingleTaskOrders() {
+		List<OrderView> result = new ArrayList<>();
+		for (OrderView o : this.getSingleTaskOrderQueue()) {
 			result.add(o);
 		}
 		return result;

@@ -1,6 +1,5 @@
 package domain;
 
-import java.util.Comparator;
 import java.util.List;
 
 import domain.restrictions.OptionRestrictionManager;
@@ -8,16 +7,16 @@ import exceptions.IllegalCarOptionCombinationException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
 import domain.assemblyLine.AssemblyLine;
-import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.AssemblyTaskView;
 import domain.assemblyLine.SchedulerIntermediate;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.WorkPostView;
 import domain.car.ModelCatalog;
 import domain.car.Option;
 import domain.car.Specification;
 import domain.car.Model;
 import domain.order.CompletedOrderCatalog;
 import domain.order.Order;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.order.OrderFactory;
 import domain.order.OrderSession;
 import domain.order.SingleOrderSession;
@@ -56,8 +55,12 @@ public class Manufacturer {
 	 * 		The {@link OptionRestrictionManager} for the new {@link Manufacturer}
 	 * @param assemblyLine
 	 * 		The {@link AssemblyLine} for the new {@link Manufacturer}
+	 * @param intermediate
+	 * 		The {@link SchedulerIntermediate} for the new {@link Manufacturer}
 	 * @param prodSched
 	 * 		The {@link ProductionScheduleFacade} for the new {@link Manufacturer}
+	 * @param inter 
+	 * @param line 
 	 * @throws IllegalArgumentException
 	 * 		If any of the parameters is null
 	 */
@@ -67,7 +70,9 @@ public class Manufacturer {
 						ModelCatalog modelCat,
 						OptionRestrictionManager optionRestMan,
 						ProductionScheduleFacade prodSched,
-						OrderFactory orderFactory)
+						OrderFactory orderFactory,
+						AssemblyLine assemblyLine,
+						SchedulerIntermediate intermediate)
 						throws IllegalArgumentException
 	{
 		if(stratFact == null)
@@ -90,10 +95,15 @@ public class Manufacturer {
 		this.optionRestrictionManager = optionRestMan;
 		this.productionScheduleFacade = prodSched;
 		this.orderFactory = orderFactory;
+		this.assemblyLine = assemblyLine;
+		this.lineIntermediate = intermediate;
+
+
+		this.orderFactory.setManufacturer(this);
+		this.lineIntermediate.setManufacturer(this);
+
 	}
 	
-	/** The SingleTaskCatalog of this Manufacturer. */
-	private final SingleTaskCatalog singleTaskCatalog;
 
 	
 	//--------------------------------------------------------------------------
@@ -106,8 +116,8 @@ public class Manufacturer {
 	 * 
 	 * @return the list of pending orders in the system
 	 */
-	public List<OrderContainer> getPendingOrderContainers() {
-		List<OrderContainer> pending = this.getAssemblingPendingOrderContainers();
+	public List<OrderView> getPendingOrderContainers() {
+		List<OrderView> pending = this.getAssemblingPendingOrderContainers();
 		pending.addAll(this.getSchedulePendingOrderContainers());
 		return pending;
 	}
@@ -129,7 +139,7 @@ public class Manufacturer {
 	 * @throws OrderDoesNotExistException
 	 * 		When the order is not found in the system.
 	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order) throws OrderDoesNotExistException{
+	public DateTime getEstimatedCompletionTime(OrderView order) throws OrderDoesNotExistException{
 		if(this.getProductionSchedule().contains(order))
 			return this.getProductionSchedule().getEstimatedCompletionTime(order);
 		if(this.getAssemblyLine().contains(order))
@@ -255,6 +265,19 @@ public class Manufacturer {
 		return new SingleOrderSession(this, this.singleTaskCatalog);
 	}
 	
+	
+	/**
+	 * Get the {@link SingleTaskCatalog} of this {@link Manufacturer}.
+	 * 
+	 * @return the {@link SingleTaskCatalog}.
+	 */
+	public SingleTaskCatalog getSingleTaskCatalog(){
+		return this.singleTaskCatalog;
+	}
+
+	/** The SingleTaskCatalog of this Manufacturer. */
+	private final SingleTaskCatalog singleTaskCatalog;
+	
 	/**
 	 * Submit the parameters for a single task order to the production schedule.
 	 * We expect the schedule to make an order and schedule it. The schedule
@@ -273,7 +296,7 @@ public class Manufacturer {
 	 * @throws IllegalArgumentException
 	 * 		If either of the arguments is null
 	 */
-	public OrderContainer submitSingleTaskOrder(Option option, DateTime deadline) {
+	public OrderView submitSingleTaskOrder(Option option, DateTime deadline) {
 		SingleTaskOrder order = this.getOrderFactory().makeNewSingleTaskOrder(deadline, option);
 		this.getProductionSchedule().submitSingleTaskOrder(order);
 		
@@ -408,7 +431,7 @@ public class Manufacturer {
 	 * @throws IllegalCarOptionCombinationException 
 	 * 		When the list of options is not valid with given model
 	 */
-	public boolean checkOrderValidity(Model model, List<Option> options)
+	private boolean checkOrderRestrictionValidity(Model model, List<Option> options)
 			throws IllegalArgumentException, IllegalCarOptionCombinationException
 	{
 		if(model == null)
@@ -444,11 +467,11 @@ public class Manufacturer {
 
 
 	/**
-	 * Get a list of pending {@link OrderContainer}s in the productionSchedule.
+	 * Get a list of pending {@link OrderView}s in the productionSchedule.
 	 * 
 	 * @return List of pending order containers in the productionSchedule.
 	 */
-	private List<OrderContainer> getSchedulePendingOrderContainers() {
+	private List<OrderView> getSchedulePendingOrderContainers() {
 		return this.getProductionSchedule().getPendingStandardOrderContainers();
 	}
 	
@@ -471,7 +494,7 @@ public class Manufacturer {
 	 * @throws OptionRestrictionException
 	 * 		When the set of options does not meet the system's restrictions
 	 */
-	public OrderContainer submitStandardOrder(Model model, List<Option> options)
+	public OrderView submitStandardOrder(Model model, List<Option> options)
 			throws IllegalArgumentException,
 			IllegalCarOptionCombinationException,
 			OptionRestrictionException
@@ -482,7 +505,7 @@ public class Manufacturer {
 			throw new IllegalArgumentException("Options list should not be null.");
 		if(options.contains(null))
 			throw new IllegalArgumentException("Options list should not contain null.");
-		if(!checkOrderValidity(model, options))
+		if(!checkOrderRestrictionValidity(model, options))
 			throw new OptionRestrictionException("Options do not meet Restriction criteria.");
 		Specification orderSpecs = model.makeSpecification(options);
 		StandardOrder newOrder = this.getOrderFactory().makeNewStandardOrder(model, orderSpecs);
@@ -558,7 +581,7 @@ public class Manufacturer {
 	 * 
 	 * @return The WorkPostContainers
 	 */
-	public List<WorkPostContainer> getWorkPostContainers() {
+	public List<WorkPostView> getWorkPostContainers() {
 		return this.getAssemblyLine().getWorkPostContainers();
 	}
 
@@ -573,7 +596,7 @@ public class Manufacturer {
 	 * @throws IllegalArgumentException
 	 * 		See {@link AssemblyLine#getAssemblyTasksAtPost(int) getAssemblyTasksAtPost(int)}
 	 */
-	public List<AssemblyTaskContainer> getAssemblyTasksAtPost(int postNum) throws IllegalArgumentException {
+	public List<AssemblyTaskView> getAssemblyTasksAtPost(int postNum) throws IllegalArgumentException {
 		return this.getAssemblyLine().getAssemblyTasksAtPost(postNum);
 	}
 
@@ -598,11 +621,11 @@ public class Manufacturer {
 	}
 	
 	/**
-	 * Get a list of pending {@link OrderContainer}s on the assembly line. 
+	 * Get a list of pending {@link OrderView}s on the assembly line. 
 	 * 
 	 * @return List of pending order containers on the assembly line.
 	 */
-	private List<OrderContainer> getAssemblingPendingOrderContainers() {
+	private List<OrderView> getAssemblingPendingOrderContainers() {
 		return this.getAssemblyLine().getActiveOrderContainers();
 	}
 
@@ -646,7 +669,7 @@ public class Manufacturer {
 	 * 
 	 * @return the list of completed orders in the system
 	 */
-	public List<OrderContainer> getCompletedOrderContainers() {
+	public List<OrderView> getCompletedOrderContainers() {
 		return this.getCompletedOrderCatalog().getCompletedOrderContainers();
 	}
 	

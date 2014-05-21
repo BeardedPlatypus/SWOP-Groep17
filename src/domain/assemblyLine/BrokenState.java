@@ -1,5 +1,7 @@
 package domain.assemblyLine;
 
+import com.google.common.base.Optional;
+
 import domain.order.Order;
 
 /**
@@ -46,18 +48,8 @@ public class BrokenState extends AssemblyLineState {
 	 * new orders in this state.
 	 */
 	@Override
-	protected Order popNextOrderFromSchedule() throws IllegalStateException {
+	protected Optional<Order> popNextOrderFromSchedule() throws IllegalStateException {
 		throw new IllegalStateException("Cannot consume next order"
-				+ "if the assembly line is broken");
-	}
-	
-	/**
-	 * Throw IllegalStateException as the AssemblyLine cannot process
-	 * new orders in this state.
-	 */
-	@Override
-	protected Order peekNextOrderFromSchedule() throws IllegalStateException {
-		throw new IllegalStateException("Cannot peek next order"
 				+ "if the assembly line is broken");
 	}
 	
