@@ -28,7 +28,7 @@ import domain.productionSchedule.TimeObserver;
  * @author Martinus Wilhelmus Tegelaers
  *
  */
-public class SchedulerIntermediate implements TimeObserver{
+public class SchedulerIntermediate implements TimeObserver {
 	public SchedulerIntermediate(AssemblyLine assemblyLine) {
 		this.assemblyLine = assemblyLine;
 		this.setCurrentTime(new DateTime(0, 0, 0));
@@ -376,6 +376,10 @@ public class SchedulerIntermediate implements TimeObserver{
 			}
 		}
 		throw new IllegalStateException("Order was not found on AssemblyLine.");
+	}
+
+	public void setAssemblyLine(AssemblyLine assemblyLine2) {
+		//TODO auto-generated method
 	}
 
 }

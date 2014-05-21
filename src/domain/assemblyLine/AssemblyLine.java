@@ -34,10 +34,17 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 		The WorkPosts managed by the new AssemblyLine
 	 * @param orderSelector
 	 * 		The OrderSelector of the new AssemblyLine
+	 * @param schedulerIntermediate
+	 * 		Source of new Orders
 	 * @throws IllegalArgumentException
-	 * 		manufacturer == null
+	 * 		workPosts == null || workPosts.isEmpty()
+	 * @throws IllegalArgumentException
+	 * 		schedulerIntermediate == null
+	 * @throws IllegalArgumentException
+	 * 		orderSelector == null
 	 */
-	public AssemblyLine(List<WorkPost> workPosts, OrderAcceptanceChecker orderSelector)
+	public AssemblyLine(List<WorkPost> workPosts, OrderAcceptanceChecker orderSelector,
+			SchedulerIntermediate schedulerIntermediate)
 		throws IllegalArgumentException {
 		if (workPosts == null || workPosts.isEmpty()) {
 			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
@@ -47,6 +54,10 @@ public class AssemblyLine implements WorkPostObserver {
 			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
 					+ "with null order selector");
 		}
+		if (schedulerIntermediate == null) {
+			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
+					+ "with null SchedulerIntermediate");
+		}
 		
 		this.workPosts = workPosts;
 		for (WorkPost workPost : workPosts) {
@@ -55,6 +66,9 @@ public class AssemblyLine implements WorkPostObserver {
 		
 		this.orderSelector = orderSelector;
 		this.elapsedTime = new DateTime(0, 0, 0);
+		this.schedulerIntermediate = schedulerIntermediate;
+		schedulerIntermediate.setAssemblyLine(this);
+		this.initialiseState();
 	}	
 	
 	//--------------------------------------------------------------------------
@@ -511,6 +525,12 @@ public class AssemblyLine implements WorkPostObserver {
 		state.setAssemblyLine(this);
 		state.finaliseSetState();
 	}
+	
+	private void initialiseState() {
+		AssemblyLineState initialState = new OperationalState();
+		initialState.setAssemblyLine(this);
+		initialState.setState(initialState);
+	}
 
 	//--------------------------------------------------------------------------
 	// AssemblyProcedure Factory Methods. 
@@ -523,7 +543,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 		Order to make AssemblyProcedure from
 	 * @return A new AssemblyProcedure compatible with this AssemblyLine
 	 * @throws IllegalArgumentException
-	 * 		order is null
+	 * 		order == null || ! order.isPresent()
 	 */
 	public AssemblyProcedure makeAssemblyProcedure(Optional<Order> order) throws IllegalArgumentException {
 		if (order == null || ! order.isPresent()) {

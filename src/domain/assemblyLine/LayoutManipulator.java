@@ -109,7 +109,7 @@ public class LayoutManipulator {
 	 */
 	private boolean putNextOrderOnFirstWorkPost() {
 		Optional<Order> nextOrder = this.popNextOrderFromSchedule();
-		if (nextOrder != null) {
+		if (nextOrder != null && nextOrder.isPresent()) {
 			AssemblyProcedure nextProcedure = this.makeAssemblyProcedure(nextOrder);
 			this.getFirstWorkPost().setAssemblyProcedure(Optional.fromNullable(nextProcedure));
 		}

@@ -98,8 +98,11 @@ public class AssemblyLineBuilder {
 	 * @return A new AssemblyLine that can handle the earlier added models
 	 * @throws IllegalStateException
 	 * 		canBuildAssemblyLine() is false
+	 * @throws IllegalArgumentException
+	 * 		See {@link AssemblyLine#AssemblyLine(List<WorkPost), OrderAcceptanceChecker, SchedulerIntermediate) AssemblyLine(List<WorkPost), OrderAcceptanceChecker, SchedulerIntermediate)}
 	 */
-	public AssemblyLine buildAssemblyLine() throws IllegalStateException {
+	public AssemblyLine buildAssemblyLine(SchedulerIntermediate schedulerIntermediate)
+			throws IllegalStateException {
 		if (! this.canBuildAssemblyLine()) {
 			throw new IllegalStateException("The AssemblyLineBuilder could"
 					+ "not yet build a new AssemblyLine");
@@ -110,6 +113,6 @@ public class AssemblyLineBuilder {
 		OrderAcceptanceChecker orderSelector = new OrderAcceptanceChecker(this.getDesiredModels());
 		List<WorkPost> workPosts = layoutFactory.makeLayout(this.getDesiredModels());
 		
-		return new AssemblyLine(workPosts, orderSelector);
+		return new AssemblyLine(workPosts, orderSelector, schedulerIntermediate);
 	}
 }
