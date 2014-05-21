@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-import com.google.common.base.Optional;
-
 import domain.DateTime;
 
 /**
@@ -209,9 +207,38 @@ public class Clock implements TimeSubject, EventConsumer{
 		if (! this.getRegisteredActors().contains(actor)) {
 			throw new IllegalArgumentException("Cannot construct event with unregistered actor");
 		}
+		if (this.hasEventForActor(actor)) {
+			throw new IllegalArgumentException("Cannot add event for actor"
+					+ "if event queue already contains event scheduled for later for the same actor");
+		}
 		
 		DateTime timeOfExecution = this.getCurrentTime().addTime(timeToElapse);
 		this.addEvent(new TimeEvent(timeOfExecution, actor));
+	}
+	
+	@Override
+	public void removeEventForActor(EventActor actor) {
+		if (! this.hasEventForActor(actor)) {
+			throw new IllegalArgumentException("Tried to remove event for actor"
+					+ ", but there was no event queued for actor");
+		}
+		Iterator<TimeEvent> it = this.getEventQueue().iterator();
+		while (it.hasNext()) {
+			TimeEvent event = it.next();
+			if (event.hasActor(actor)) {
+				it.remove();
+			}
+		}
+	}
+	
+	@Override
+	public boolean hasEventForActor(EventActor actor) {
+		for (TimeEvent eventInQueue : this.getEventQueue()) {
+			if (eventInQueue.hasActor(actor)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -222,26 +249,8 @@ public class Clock implements TimeSubject, EventConsumer{
 	 * 		The event to add
 	 */
 	private void addEvent(TimeEvent event) {
-		this.checkOverriddenEvents(event);
 		this.getEventQueue().add(event);
 		this.checkFireEvent();
-	}
-	
-	/**
-	 * For the specified event, check which events are overridden and remove
-	 * them from the event queue.
-	 * 
-	 * @param event
-	 * 		The event to check for
-	 */
-	private void checkOverriddenEvents(TimeEvent event) {
-		Iterator<TimeEvent> it = this.getEventQueue().iterator();
-		while (it.hasNext()) {
-			TimeEvent next = it.next();
-			if (event.overridesEvent(next)) {
-				it.remove();
-			}
-		}
 	}
 	
 	/**
@@ -278,7 +287,7 @@ public class Clock implements TimeSubject, EventConsumer{
 		
 		do {
 			TimeEvent potentialToFire = this.getEventQueue().peek();
-			if (toReturn.get(0).compareTo(potentialToFire) != 0) {
+			if (potentialToFire == null || toReturn.get(0).compareTo(potentialToFire) != 0) {
 				addNoMore = true;
 			} else {
 				toReturn.add(this.getEventQueue().poll());

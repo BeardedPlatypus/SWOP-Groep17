@@ -62,6 +62,10 @@ public class TimeEvent implements Comparable<TimeEvent> {
 	public boolean hasActor(EventActor actor) {
 		return this.getActor().equals(actor);
 	}
+	
+	public boolean haveSameActor(TimeEvent other) {
+		return this.getActor().equals(other.getActor());
+	}
 
 	/** New time of the system */
 	private final DateTime newTime;
@@ -93,7 +97,7 @@ public class TimeEvent implements Comparable<TimeEvent> {
 	 */
 	public boolean overridesEvent(TimeEvent otherEvent){
 		return this.getActor().equals(otherEvent.getActor())
-				&& this.getGlobalTime().compareTo(otherEvent.getGlobalTime()) < 0;
+				&& this.getGlobalTime().compareTo(otherEvent.getGlobalTime()) <= 0;
 	}
 
 	//----- end of Event Overriding -----//
