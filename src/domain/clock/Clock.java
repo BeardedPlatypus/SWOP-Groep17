@@ -87,7 +87,7 @@ public class Clock implements TimeSubject, EventConsumer{
 	}
 	
 	/** The actors that have registered themselves as event suppliers */
-	Set<EventActor> registeredActors = new HashSet<EventActor>();
+	private Set<EventActor> registeredActors = new HashSet<EventActor>();
 	
 	/**
 	 * @return The registered actors
@@ -136,6 +136,25 @@ public class Clock implements TimeSubject, EventConsumer{
 		}
 		
 		this.getRegisteredActors().remove(actor);
+		this.purgeEventsFromActor(actor);
+	}
+	
+	/**
+	 * When unregistering an EventActor, purge all events originating from the
+	 * actor from the event queue
+	 * 
+	 * @param actor
+	 * 		The actor to unregister
+	 */
+	private void purgeEventsFromActor(EventActor actor) {
+		Iterator<TimeEvent> it = this.getEventQueue().iterator();
+		
+		while (it.hasNext()) {
+			TimeEvent event = it.next();
+			if (event.hasActor(actor)) {
+				it.remove();
+			}
+		}
 	}
 	
 	//--------------------------------------------------------------------------
