@@ -9,6 +9,6 @@ package domain.clock;
  */
 public interface EventActor {
 	
-	public void goGoGadgetActivate();
+	public void activate();
 
 }
