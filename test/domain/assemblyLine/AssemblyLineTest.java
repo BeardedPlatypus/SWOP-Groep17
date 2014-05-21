@@ -349,7 +349,8 @@ public class AssemblyLineTest {
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(0), "minutesOfWork"));
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(1), "minutesOfWork"));
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(2), "minutesOfWork"));
-			
+	
+			assertTrue(workPosts.get(0).getAssemblyProcedure().isPresent());
 			assertEquals(Optional.absent(), workPosts.get(1).getAssemblyProcedure());
 			assertEquals(Optional.absent(), workPosts.get(2).getAssemblyProcedure());
 			assertEquals(Optional.absent(), workPosts.get(3).getAssemblyProcedure());
