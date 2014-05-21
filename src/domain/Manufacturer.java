@@ -573,7 +573,7 @@ public class Manufacturer {
 	 */
 	public List<AssemblyTaskView> getAssemblyTasksAtPost(int postNum) throws IllegalArgumentException {
 		//TODO also add layer of indirection
-		return this.getAssemblyLine().getAssemblyTasksAtPost(postNum);
+		return this.getAssemblyFloor().getAssemblyTasksAtPost(postNum);
 	}
 
 	/**
@@ -591,10 +591,9 @@ public class Manufacturer {
 	 * @throws IllegalStateException
 	 * 		See {@link AssemblyLine#completeWorkpostTask(int, int, int) completeWorkpostTask(int, int, int)}
 	 */
-	public void completeWorkpostTask(int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException,
+	public void completeWorkpostTask(int lineNumber, int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException,
 	IllegalStateException {
-		//TODO add layer of indirection
-		this.getAssemblyLine().completeWorkpostTask(workPostNumber, taskNumber, minutes);
+		this.getAssemblyFloor().completeWorkpostTask(lineNumber, workPostNumber, taskNumber, minutes);
 	}
 	
 	/**
@@ -604,7 +603,7 @@ public class Manufacturer {
 	 */
 	private List<OrderView> getAssemblingPendingOrderContainers() {
 		//TODO add layer of indirection
-		return this.getAssemblyLine().getActiveOrderContainers();
+		return this.getAssemblyFloor().getActiveOrderContainers();
 	}
 
 	//--------------------------------------------------------------------------

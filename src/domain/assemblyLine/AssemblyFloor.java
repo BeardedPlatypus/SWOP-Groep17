@@ -112,4 +112,10 @@ public class AssemblyFloor {
 		// from this to manuf?
 		
 	}
+
+	public void completeWorkpostTask(int lineNumber, int workPostNumber,
+			int taskNumber, int minutes) {
+		// TODO Auto-generated method stub
+		
+	}
 }
