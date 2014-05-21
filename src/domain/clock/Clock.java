@@ -220,7 +220,7 @@ public class Clock implements TimeSubject, EventConsumer{
 	 * @return Whether an event must be fired.
 	 */
 	private boolean mustFireEvent() {
-		return this.getEventQueue().size() >= this.getNumUpdaters();
+		return this.getEventQueue().size() >= this.getNumRegisteredActors();
 	}
 	
 	/**
