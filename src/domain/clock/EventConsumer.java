@@ -23,6 +23,8 @@ public interface EventConsumer {
 	 * 		timeToElapse is null
 	 * @throws IllegalArgumentException
 	 * 		actor is null
+	 * @throws IllegalArgumentException
+	 * 		actor was not previously registered
 	 */
 	public void constructEvent(DateTime timeToElapse, Optional<EventActor> actor) throws IllegalArgumentException;
 	

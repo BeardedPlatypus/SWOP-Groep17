@@ -112,6 +112,7 @@ public class Clock implements TimeSubject, EventConsumer{
 	 * 		actor is null
 	 * 		
 	 */
+	@Override
 	public void register(EventActor actor) throws IllegalArgumentException {
 		if (actor == null) {
 			throw new IllegalArgumentException("Cannot register null actor in Clock");
@@ -128,6 +129,7 @@ public class Clock implements TimeSubject, EventConsumer{
 	 * @throws IllegalArgumentException
 	 * 		actor is null
 	 */
+	@Override
 	public void unregister(EventActor actor) throws IllegalArgumentException {
 		if (actor == null) {
 			throw new IllegalArgumentException("Cannot unregister null actor from Clock");
@@ -168,6 +170,10 @@ public class Clock implements TimeSubject, EventConsumer{
 		if (actor == null) {
 			throw new IllegalArgumentException("Cannot construct event with null actor");
 		}
+		if (! this.getRegisteredActors().contains(actor)) {
+			throw new IllegalArgumentException("Cannot construct event with unregistered actor");
+		}
+		
 		DateTime timeOfExecution = this.getCurrentTime().addTime(timeToElapse);
 		this.addEvent(new TimeEvent(timeOfExecution, actor));
 	}
