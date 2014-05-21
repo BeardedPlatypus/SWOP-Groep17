@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import domain.DateTime;
-import domain.productionSchedule.TimeObserver;
+import domain.clock.TimeObserver;
 
 /**
  * Catalog which contains completed orders of the system.
