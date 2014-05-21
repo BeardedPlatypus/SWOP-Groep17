@@ -3,6 +3,7 @@ package domain.assemblyLine;
 import java.util.ArrayList;
 import java.util.List;
 
+import domain.Manufacturer;
 import domain.order.Order;
 import domain.statistics.StatisticsLogger;
 
@@ -92,8 +93,7 @@ public class AssemblyFloor {
 	}
 
 	public List<AssemblyLineView> getAssemblyLineViews() {
-		//FIXME
-		return null;
+		return new ArrayList<AssemblyLineView>(lines);
 	}
 
 	public void setStatisticsLogger(StatisticsLogger logger) {
@@ -103,5 +103,13 @@ public class AssemblyFloor {
 	public String getStatisticsReport() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void setManufacturer(Manufacturer manufacturer) {
+		// TODO Set everything correctly
+		// Binary from line to manuf?
+		// from controller to manuf?
+		// from this to manuf?
+		
 	}
 }

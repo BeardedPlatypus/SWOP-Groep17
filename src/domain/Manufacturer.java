@@ -39,6 +39,8 @@ import domain.productionSchedule.strategy.SchedulingStrategyView;
  * @author Martinus Wilhelmus Tegelaers, Frederik Goovaerts
  */
 public class Manufacturer {
+
+
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -60,6 +62,7 @@ public class Manufacturer {
 	 * 		The {@link AssemblyLine} for the new {@link Manufacturer}
 	 * @param clock
 	 * 		The {@link SchedulerIntermediate} for the new {@link Manufacturer}
+	 * @param schedule 
 	 * @param prodSched
 	 * 		The {@link ProductionScheduleFacade} for the new {@link Manufacturer}
 	 * @param inter 
@@ -74,7 +77,8 @@ public class Manufacturer {
 						OptionRestrictionManager optionRestMan,
 						OrderFactory orderFactory,
 						AssemblyFloor floor,
-						Clock clock)
+						Clock clock,
+						SchedulerContext schedule)
 						throws IllegalArgumentException
 	{
 		if(stratFact == null)
@@ -87,6 +91,14 @@ public class Manufacturer {
 			throw new IllegalArgumentException("ModelCatalog should not be null.");
 		if(optionRestMan == null)
 			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+		if(orderFactory == null)
+			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+		if(floor == null)
+			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+		if(clock == null)
+			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+		if(schedule == null)
+			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
 		
 		this.algorithmStrategyFactory = stratFact;
 		this.singleTaskCatalog = singleCat;
@@ -96,6 +108,7 @@ public class Manufacturer {
 		this.orderFactory = orderFactory;
 		this.assemblyFloor = floor;
 		this.clock = clock;
+		this.schedulerContext = schedule;
 
 
 		this.orderFactory.setManufacturer(this);
@@ -345,7 +358,7 @@ public class Manufacturer {
 	 * 
 	 * @return a list of the available Models in the system
 	 */
-	public List<Model> getCarModels() {
+	public List<Model> getVehicleModels() {
 		return this.getModelCatalog().getModels();
 	}
 	
@@ -639,8 +652,12 @@ public class Manufacturer {
 	}
 	
 	//--------------------------------------------------------------------------
-	// Time-related methods
+	// Clock and Time-related methods
 	//--------------------------------------------------------------------------
+
+	/** The manufacturer's clock */
+	private final Clock clock;
+	
 	/**
 	 * Increments the time with the specified DateTime
 	 * 

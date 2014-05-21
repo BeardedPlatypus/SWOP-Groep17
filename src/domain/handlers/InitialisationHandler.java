@@ -383,7 +383,7 @@ public class InitialisationHandler {
 		//----------------------------------------------------------------------
 
 		//TODO initialise Production schedule
-
+		SchedulerContext schedule = new SchedulerContext(new FifoStrategy<StandardOrder>());
 
 		//----------------------------------------------------------------------
 		// Initialise the orderfactory
@@ -434,7 +434,8 @@ public class InitialisationHandler {
 				restrictionsMan,
 				orderFact,
 				floor,
-				clock);
+				clock,
+				schedule);
 
 		//----------------------------------------------------------------------
 		// Initialise Handlers
