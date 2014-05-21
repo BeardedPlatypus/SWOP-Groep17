@@ -2,9 +2,11 @@ package domain.clock;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 import com.google.common.base.Optional;
 
@@ -45,7 +47,6 @@ public class Clock implements TimeSubject, EventConsumer{
 	public void attachTimeObserver(TimeObserver t)
 			throws IllegalArgumentException {
 		this.getObserversPrivate().add(t);
-		this.numberOfUpdaters = 0;
 	}
 	
 	/**
@@ -85,31 +86,21 @@ public class Clock implements TimeSubject, EventConsumer{
 		return this.eventQueue;
 	}
 	
-	/** Backlog of events built up by setting AssemblyLines to BrokenState */
-	private List<TimeEvent> eventBacklog = new ArrayList<TimeEvent>();
+	/** The actors that have registered themselves as event suppliers */
+	Set<EventActor> registeredActors = new HashSet<EventActor>();
 	
 	/**
-	 * @return The event backlog
+	 * @return The registered actors
 	 */
-	private List<TimeEvent> getEventBacklog() {
-		return this.eventBacklog;
-	}
-	
-	/** Number of updaters, to determine when the next event must be fired */
-	private int numberOfUpdaters;
-	
-	/**
-	 * @return The number of updaters
-	 */
-	private int getNumUpdaters() {
-		return this.numberOfUpdaters;
+	private Set<EventActor> getRegisteredActors() {
+		return this.registeredActors;
 	}
 	
 	/**
-	 * Increments the number of updaters
+	 * @return The number of registered actors
 	 */
-	private void incrementNumUpdaters() {
-		this.numberOfUpdaters++;
+	private int getNumRegisteredActors() {
+		return this.getRegisteredActors().size();
 	}
 	
 	/**
@@ -119,12 +110,14 @@ public class Clock implements TimeSubject, EventConsumer{
 	 * 		The actor that can supply TimeEvents
 	 * @throws IllegalArgumentException
 	 * 		actor is null
+	 * 		
 	 */
 	public void register(EventActor actor) throws IllegalArgumentException {
 		if (actor == null) {
 			throw new IllegalArgumentException("Cannot register null actor in Clock");
 		}
-		this.incrementNumUpdaters();
+		
+		this.getRegisteredActors().add(actor);
 	}
 	
 	/**
@@ -140,16 +133,7 @@ public class Clock implements TimeSubject, EventConsumer{
 			throw new IllegalArgumentException("Cannot unregister null actor from Clock");
 		}
 		
-		Iterator<TimeEvent> it = this.getEventQueue().iterator();
-		while (it.hasNext()) {
-			TimeEvent event = it.next();
-			if (event.hasActor(actor)) {
-				it.remove();
-				this.getEventBacklog().add(event);
-			}
-		}
-		
-		Collections.sort(this.getEventBacklog());
+		this.getRegisteredActors().remove(actor);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -258,17 +242,6 @@ public class Clock implements TimeSubject, EventConsumer{
 				toReturn.add(this.getEventQueue().poll());
 			}
 		} while(! addNoMore);
-		
-		Iterator<TimeEvent> it = this.getEventBacklog().iterator();
-		while (it.hasNext()) {
-			TimeEvent event = it.next();
-			if (event.compareTo(toReturn.get(0)) <= 0) {
-				it.remove();
-				toReturn.add(event);
-			}
-		}
-		
-		Collections.sort(toReturn);
 		
 		return toReturn;
 	}
