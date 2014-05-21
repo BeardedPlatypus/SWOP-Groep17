@@ -1,9 +1,12 @@
 /**
  * 
  */
-package domain.productionSchedule;
+package domain.clock;
 
 import static org.junit.Assert.*;
+
+import java.util.PriorityQueue;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -12,6 +15,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.reflect.Whitebox;
 
 import domain.DateTime;
 import domain.clock.TimeObserver;
@@ -20,7 +24,7 @@ import domain.clock.TimeObserver;
  * @author Martinus Wilhelmus Tegelaers
  *
  */
-public class ClockManagerTest {
+public class ClockTest {
 	//--------------------------------------------------------------------------
 	// Variables
 	//--------------------------------------------------------------------------
@@ -34,7 +38,11 @@ public class ClockManagerTest {
 	@Mock TimeObserver to2;
 	@Mock TimeObserver to3;
 	
-	ClockManager clock;
+	@Mock EventActor actor1;
+	@Mock EventActor actor2;
+	@Mock EventActor actor3;
+	
+	Clock clock;
 	//--------------------------------------------------------------------------
 	// Setup Methods
 	//--------------------------------------------------------------------------
@@ -44,8 +52,10 @@ public class ClockManagerTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		clock = new ClockManager();
+		clock = new Clock(new DateTime(0, 6, 0));
 		
+		clock.register(actor1);
+		clock.register(actor2);
 	}
 
 	//--------------------------------------------------------------------------
@@ -57,7 +67,7 @@ public class ClockManagerTest {
 	@Test
 	public void testClockManagerDateTimeNull() {
 		exception.expect(IllegalArgumentException.class);
-		new ClockManager(null);
+		new Clock(null);
 	}
 	
 	/**
@@ -65,53 +75,12 @@ public class ClockManagerTest {
 	 */
 	@Test
 	public void testClockManagerDateTimeStartTime() {
-		ClockManager cm = new ClockManager(t1);
+		Clock cm = new Clock(t1);
 		
 		assertEquals(t1, cm.getCurrentTime());
 		assertTrue(cm.getTimeObservers().isEmpty());
 	}
-	
-	/**
-	 * Test with default DateTime init.
-	 */
-	@Test
-	public void testClockManagerDateTimeNoArg() {
-		ClockManager cm = new ClockManager();
-		DateTime t = cm.getCurrentTime();
-
-		assertEquals(0, t.getDays());
-		assertEquals(6, t.getHours());
-		assertEquals(0, t.getMinutes());
-		assertTrue(cm.getTimeObservers().isEmpty());
-	}
 	//--------------------------------------------------------------------------
-	
-	
-	/**
-	 * Test increment time with null, should return an IllegalArgumentException.
-	 */
-	@Test
-	public void testIncrementTimeNull() {
-		exception.expect(IllegalArgumentException.class);
-		clock.incrementTime(null);
-	}
-	
-	/**
-	 * Test increment time with valid time value. 
-	 */
-	@Test
-	public void testIncrementTimeValid() {
-		ClockManager spiedClock = Mockito.spy(clock);
-		spiedClock.incrementTime(new DateTime(0, 4, 10));
-		
-		DateTime t = spiedClock.getCurrentTime();
-		
-		assertEquals(0, t.getDays());
-		assertEquals(10, t.getHours());
-		assertEquals(10, t.getMinutes());
-		
-		Mockito.verify(spiedClock).notifyTime();
-	}
 
 	//--------------------------------------------------------------------------
 	// TimeSubject methods.
@@ -253,50 +222,116 @@ public class ClockManagerTest {
 		assertFalse(clock.getTimeObservers().contains(to3));
 	}
 	
-	/**
-	 * Test method for {@link domain.productionSchedule.ClockManager#notifyTime()}.
-	 */
 	@Test
-	public void testNotifyTime() {
-		// Spy on clock
-		ClockManager spiedNotifyClock = Mockito.spy(clock);
-		
-		// Get current and future time
-		DateTime time = spiedNotifyClock.getCurrentTime();
-		DateTime newTime = time.addTime(0, 0, 5);
-		
-		// Attach observers
-		spiedNotifyClock.attachTimeObserver(to1);
-		spiedNotifyClock.attachTimeObserver(to2);
-		spiedNotifyClock.attachTimeObserver(to3);
-		
-		// Check initial update
-		Mockito.verify(to1).update(time);
-		Mockito.verify(to2).update(time);
-		Mockito.verify(to3).update(time);
-		
-		// Change time and check if notifyTime has been called.
-		spiedNotifyClock.update(new DateTime(0, 0, 5));
-		Mockito.verify(spiedNotifyClock).notifyTime();
-		
-		// Verify notifyTime has updated observers
-		Mockito.verify(to1).update(newTime);
-		Mockito.verify(to2).update(newTime);
-		Mockito.verify(to3).update(newTime);
+	public void setTimeNotifyTest() {
+		try {
+			Whitebox.invokeMethod(clock, "setCurrentTime", new DateTime(0, 9, 0));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		for (TimeObserver obs : clock.getTimeObservers()) {
+			Mockito.verify(obs).update(new DateTime(0, 9, 0));
+		}
 	}
-
+	
 	//--------------------------------------------------------------------------
-	// IncrementTimeObserver methods.
+	// Event queue methods
 	//--------------------------------------------------------------------------
-	//FIXME
-	/**
-	 * Test method for {@link domain.productionSchedule.ClockManager#update(domain.DateTime)}.
-	 */
 	@Test
-	public void testUpdate() {
-		ClockManager spiedClock = Mockito.spy(clock);
+	public void register_null() {
+		exception.expect(IllegalArgumentException.class);
+		clock.register(null);
+	}
+	
+	@Test
+	public void register_valid() {
+		clock.register(actor3);
+		Set<EventActor> registeredActors = Whitebox.getInternalState(clock, "registeredActors");
+		assertTrue(registeredActors.contains(actor3));
+	}
+	
+	@Test
+	public void constructEvent_nullDateTime() {
+		exception.expect(IllegalArgumentException.class);
+		clock.constructEvent(null, actor1);
+	}
+	
+	@Test
+	public void constructEvent_nullActor() {
+		exception.expect(IllegalArgumentException.class);
+		clock.constructEvent(new DateTime(0, 9, 0), null);
+	}
+	
+	@Test
+	public void constructEvent_notRegisteredActor() {
+		exception.expect(IllegalArgumentException.class);
+		clock.constructEvent(new DateTime(0, 9, 0), actor3);
+	}
+	
+	@Test
+	public void constructEvent_valid() {
+		clock.constructEvent(new DateTime(0, 9, 0), actor1);
+		PriorityQueue<TimeEvent> queue = Whitebox.getInternalState(clock, "eventQueue");
+		TimeEvent peeked = queue.peek();
+		assertTrue(peeked.compareTo(new TimeEvent(new DateTime(0, 15, 0), actor1)) == 0);
+	}
+	
+	@Test
+	public void constructEvent_allRegisteredActors() {
+		clock.constructEvent(new DateTime(0, 9, 0), actor1);
+		clock.constructEvent(new DateTime(0, 10, 0), actor2);
+		Mockito.verify(actor1).activate();
+		Mockito.verify(actor2, Mockito.never()).activate();
+	}
+	
+	@Test
+	public void constructEvent_allRegisteredActorsFireAll() {
+		clock.constructEvent(new DateTime(0, 9, 0), actor1);
+		clock.constructEvent(new DateTime(0, 9, 0), actor2);
+		Mockito.verify(actor1).activate();
+		Mockito.verify(actor2).activate();
+	}
+	
+	@Test
+	public void constructEvent_multipleFromSameActor() {
+		clock.constructEvent(new DateTime(0, 9, 0), actor1);
+		exception.expect(IllegalArgumentException.class);
+		clock.constructEvent(new DateTime(0, 8, 0), actor1);
+	}
+	
+	@Test
+	public void unregister_nullActor() {
+		exception.expect(IllegalArgumentException.class);
+		clock.unregister(null);
+	}
+	
+	@Test
+	public void constructEvent_unregister() {
+		clock.register(actor3);
+		clock.constructEvent(new DateTime(0, 10, 0), actor1);
+		clock.constructEvent(new DateTime(0, 9, 0), actor2);
 		
-		spiedClock.update(t1);
-		Mockito.verify(spiedClock).incrementTime(t1);
+		clock.unregister(actor2);
+		Set<EventActor> registeredActors = Whitebox.getInternalState(clock, "registeredActors");
+		assertFalse(registeredActors.contains(actor2));
+		PriorityQueue<TimeEvent> eventQueue = Whitebox.getInternalState(clock, "eventQueue");
+		assertTrue(eventQueue.size() < 2);
+		TimeEvent peeked = eventQueue.peek();
+		EventActor peekedActor = Whitebox.getInternalState(peeked, EventActor.class);
+		assertFalse(peekedActor == actor2);
+	}
+	
+	@Test
+	public void removeEventForActor_noEvent() {
+		exception.expect(IllegalArgumentException.class);
+		clock.removeEventForActor(actor1);
+	}
+	
+	@Test
+	public void removeEventForActor_legit() {
+		clock.constructEvent(new DateTime(0, 9, 0), actor1);
+		clock.removeEventForActor(actor1);
+		PriorityQueue<TimeEvent> eventQueue = Whitebox.getInternalState(clock, "eventQueue");
+		assertTrue(eventQueue.isEmpty());
 	}
 }

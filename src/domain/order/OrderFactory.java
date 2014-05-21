@@ -7,7 +7,7 @@ import domain.Manufacturer;
 import domain.car.Option;
 import domain.car.Specification;
 import domain.car.Model;
-import domain.productionSchedule.TimeObserver;
+import domain.clock.TimeObserver;
 
 /** 
  * The OrderFactory provides a centralised interface for making Orders within 

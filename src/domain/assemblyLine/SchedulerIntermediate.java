@@ -9,12 +9,12 @@ import com.google.common.base.Optional;
 
 import domain.DateTime;
 import domain.Manufacturer;
+import domain.clock.TimeObserver;
 import domain.order.Order;
 import domain.order.OrderView;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
 import domain.productionSchedule.ProductionScheduleFacade;
-import domain.productionSchedule.TimeObserver;
 
 /**
  * The SchedulerIntermediate serves as layer between the ProductionSchedule, only
