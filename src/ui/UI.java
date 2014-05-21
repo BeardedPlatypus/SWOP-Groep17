@@ -70,7 +70,7 @@ public class UI {
 		boolean exitRequest = false;
 		while(!exitRequest){
 			showMainMenu();
-			int choice = this.helper.getIntFromUser(1, 8);
+			int choice = this.helper.getIntFromUser(1, 9);
 			switch(choice){
 			case 1:
 				orderNewCarRoutine();
@@ -94,6 +94,9 @@ public class UI {
 				orderSingleTaskRoutine();
 				break;
 			case 8:
+				changeOperationalStatusRoutine();
+				break;
+			case 9:
 				exitRequest = true;
 				break;
 			default:
@@ -166,6 +169,12 @@ public class UI {
 	private void orderSingleTaskRoutine() {
 		OrderSingleTaskUIPart uiPart = new OrderSingleTaskUIPart(
 				this.facade.getOrderSingleTaskHandler(),this.helper);
+		uiPart.run();
+	}
+
+	private void changeOperationalStatusRoutine() {
+		ChangeOperationelStatusUIPart uiPart = new ChangeOperationelStatusUIPart(
+				this.facade.getChangeOperationalStatusHandler(),this.helper);
 		uiPart.run();
 	}
 

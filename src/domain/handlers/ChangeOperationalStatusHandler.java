@@ -61,4 +61,19 @@ public class ChangeOperationalStatusHandler {
 		//TODO set state in AssemblyLine
 	}
 	
+	/**
+	 * Get a list with the states of all assemblylines. The list contains only
+	 * states. These states are in order of how the assemblyLines occur on the
+	 * assemblyFloor.
+	 * 
+	 * One can thus imply that the states are in the correct order relative to
+	 * the assemblylines in the system.
+	 * 
+	 * @return a list of AssemblyLineStates of the AssemblyLines in the system,
+	 * 		in their actual respective order in the system.
+	 */
+	public List<IAssemblyLineState> getAssemblyLineStates(){
+		return this.getManufacturer().getCurrentLineStates();
+	}
+	
 }

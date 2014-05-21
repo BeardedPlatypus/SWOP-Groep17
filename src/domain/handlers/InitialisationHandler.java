@@ -424,6 +424,7 @@ public class InitialisationHandler {
 
 		//----------------------------------------------------------------------
 		// Initialise Handlers
+		//----------------------------------------------------------------------
 
 		AdaptSchedulingAlgorithmHandler algorithmHandler = 
 				new AdaptSchedulingAlgorithmHandler(manufacturer);
@@ -439,10 +440,12 @@ public class InitialisationHandler {
 				new OrderSingleTaskHandler(manufacturer);
 		PerformAssemblyTaskHandler performHandler =
 				new PerformAssemblyTaskHandler(manufacturer);
-		//----------------------------------------------------------------------
+		ChangeOperationalStatusHandler changeHandler =
+				new ChangeOperationalStatusHandler(manufacturer);
 
 		//----------------------------------------------------------------------
 		// Initialise DomainFacade
+		//----------------------------------------------------------------------
 
 		this.domainFacade = new DomainFacade(
 				algorithmHandler,
@@ -451,8 +454,8 @@ public class InitialisationHandler {
 				prodStatHandler,
 				newOrderHandler,
 				singleTaskHandler,
-				performHandler);
-		//----------------------------------------------------------------------
+				performHandler,
+				changeHandler);
 
 	}
 

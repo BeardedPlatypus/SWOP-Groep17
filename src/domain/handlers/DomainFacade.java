@@ -48,7 +48,8 @@ public class DomainFacade {
 			CheckProductionStatisticsHandler prodStatHandler,
 			NewOrderSessionHandler newOrderHandler,
 			OrderSingleTaskHandler singleTaskHandler,
-			PerformAssemblyTaskHandler performHandler)
+			PerformAssemblyTaskHandler performHandler,
+			ChangeOperationalStatusHandler changeHandler)
 					throws IllegalArgumentException
 					{
 		if(algorithmHandler == null)
@@ -65,6 +66,8 @@ public class DomainFacade {
 			throw new IllegalArgumentException("Handler should not be null!");
 		if(performHandler == null)
 			throw new IllegalArgumentException("Handler should not be null!");
+		if(changeHandler == null)
+			throw new IllegalArgumentException("Handler should not be null!");
 		this.schedulingAlgorithmHandler = algorithmHandler;
 		this.assemblyLineStatusHandler = assemblyLineStatusHandler;
 		this.orderDetailsHandler = orderDetailsHandler;
@@ -72,6 +75,7 @@ public class DomainFacade {
 		this.newOrderSessionHandler = newOrderHandler;
 		this.orderSingleTaskHandler = singleTaskHandler;
 		this.performAssemblyTaskHandler = performHandler;
+		this.changeOperationalStatusHandler = changeHandler;
 	}
 
 	//-------------------------------------------------------------------------
@@ -158,6 +162,18 @@ public class DomainFacade {
 	public AssemblyLineStatusHandler getAssemblyLineStatusHandler() {
 		return this.assemblyLineStatusHandler;
 	}
+	
+	/**
+	 * Get the ChangeOperationalStatusHandler.
+	 * This is both for internal use, and in the case a developer wants to write
+	 * a UI based on the handlers themselves, for better specialization of the
+	 * different parts of the UI.
+	 * 
+	 * @return the ChangeOperationalStatusHandler
+	 */
+	public ChangeOperationalStatusHandler getChangeOperationalStatusHandler() {
+		return this.changeOperationalStatusHandler;
+	}
 
 	/**	The facade's PerformAssemblyTaskHandler */
 	private final PerformAssemblyTaskHandler performAssemblyTaskHandler;
@@ -180,6 +196,9 @@ public class DomainFacade {
 	/**	The facade's AssemblyLineStatusHandler */
 	private final AssemblyLineStatusHandler assemblyLineStatusHandler;
 
+	/**	The facade's ChangeOperationalStatusHandler */
+	private final ChangeOperationalStatusHandler changeOperationalStatusHandler;
+	
 	//-------------------------------------------------------------------------
 	// Class Methods
 	//-------------------------------------------------------------------------
@@ -744,6 +763,7 @@ public class DomainFacade {
 	public int getAmountOfTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
 		return this.getAssemblyLineStatusHandler().getAmountOfTasksAtWorkPost(workPostNumber);
 	}
+
 	
 
 	//--------------------------------------------------------------------------
