@@ -26,7 +26,7 @@ public interface EventConsumer {
 	 * @throws IllegalArgumentException
 	 * 		actor was not previously registered
 	 */
-	public void constructEvent(DateTime timeToElapse, Optional<EventActor> actor) throws IllegalArgumentException;
+	public void constructEvent(DateTime timeToElapse, EventActor actor) throws IllegalArgumentException;
 	
 	/**
 	 * Register the specified actor as source of new events

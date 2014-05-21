@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import domain.DateTime;
-import domain.productionSchedule.TimeObserver;
 
 public class ClockTest {
 	

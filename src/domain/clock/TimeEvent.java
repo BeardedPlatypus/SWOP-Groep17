@@ -27,7 +27,7 @@ public class TimeEvent implements Comparable<TimeEvent> {
 	 * @throws IllegalArgumentException
 	 * 		actor is null
 	 */
-	public TimeEvent(DateTime newTime, Optional<EventActor> actor) throws IllegalArgumentException{
+	public TimeEvent(DateTime newTime, EventActor actor) throws IllegalArgumentException{
 		if (newTime == null) {
 			throw new IllegalArgumentException("Cannot initialise TimeEvent with"
 					+ "null DateTime");
@@ -55,19 +55,19 @@ public class TimeEvent implements Comparable<TimeEvent> {
 	/**
 	 * @return The object that takes an action when the event is executed
 	 */
-	private Optional<EventActor> getActor() {
+	private EventActor getActor() {
 		return actor;
 	}
 	
 	public boolean hasActor(EventActor actor) {
-		return this.getActor().isPresent() && this.getActor().get().equals(actor);
+		return this.getActor().equals(actor);
 	}
 
 	/** New time of the system */
 	private final DateTime newTime;
 	
 	/** Delegate for execution */
-	private final Optional<EventActor> actor;
+	private final EventActor actor;
 	
 	//--------------------------------------------------------------------------
 	// Class Methods
@@ -76,10 +76,8 @@ public class TimeEvent implements Comparable<TimeEvent> {
 	/**
 	 * Execute this TimeEvent.
 	 */
-	public void activate(){
-		if (this.getActor().isPresent()) {
-			this.getActor().get().activate();
-		}
+	public void activate() {
+			this.getActor().activate();
 	}
 	
 	//--------- Event Overriding ---------//

@@ -44,16 +44,16 @@ public class TimeEventTest {
 		otherTime = new DateTime(0, 12, 0);
 		earlierTime = new DateTime(0, 6, 0);
 		
-		oneEvent = new TimeEvent(oneTime, Optional.fromNullable(actor));
-		otherEvent = new TimeEvent(otherTime, Optional.fromNullable(otherActor));
-		laterEvent = new TimeEvent(otherTime, Optional.fromNullable(actor));
-		earlierEvent = new TimeEvent(earlierTime, Optional.fromNullable(actor));
+		oneEvent = new TimeEvent(oneTime, actor);
+		otherEvent = new TimeEvent(otherTime, otherActor);
+		laterEvent = new TimeEvent(otherTime, actor);
+		earlierEvent = new TimeEvent(earlierTime, actor);
 	}
 
 	@Test
 	public void constructor_nullDateTime() {
 		expected.expect(IllegalArgumentException.class);
-		new TimeEvent(null, Optional.fromNullable(actor));
+		new TimeEvent(null, actor);
 	}
 	
 	@Test
@@ -64,10 +64,10 @@ public class TimeEventTest {
 	
 	@Test
 	public void constructor_valid() {
-		TimeEvent event = new TimeEvent(oneTime, Optional.fromNullable(actor));
+		TimeEvent event = new TimeEvent(oneTime, actor);
 		assertEquals(oneTime, event.getGlobalTime());
-		Optional<EventActor> fromEventActor = Whitebox.getInternalState(event, "actor");
-		assertEquals(actor, fromEventActor.get());
+		EventActor fromEventActor = Whitebox.getInternalState(event, "actor");
+		assertEquals(actor, fromEventActor);
 	}
 	
 	@Test
@@ -109,7 +109,7 @@ public class TimeEventTest {
 	
 	@Test
 	public void compareTo_equal() {
-		TimeEvent sameTime = new TimeEvent(oneTime, Optional.fromNullable(otherActor));
+		TimeEvent sameTime = new TimeEvent(oneTime, otherActor);
 		assertEquals(0, oneEvent.compareTo(sameTime));
 	}
 	

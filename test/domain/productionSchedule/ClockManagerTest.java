@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import domain.DateTime;
+import domain.clock.TimeObserver;
 
 /**
  * @author Martinus Wilhelmus Tegelaers
@@ -116,7 +117,7 @@ public class ClockManagerTest {
 	// TimeSubject methods.
 	//--------------------------------------------------------------------------
 	/**
-	 * Test method for {@link domain.productionSchedule.ClockManager#attachTimeObserver(domain.productionSchedule.TimeObserver)}.
+	 * Test method for {@link domain.productionSchedule.ClockManager#attachTimeObserver(domain.clock.TimeObserver)}.
 	 */
 	@Test
 	public void testAttachTimeObserver() {
@@ -139,7 +140,7 @@ public class ClockManagerTest {
 	}
 	
 	/**
-	 * Test method for {@link domain.productionSchedule.ClockManager#attachTimeObserver(domain.productionSchedule.TimeObserver)}.
+	 * Test method for {@link domain.productionSchedule.ClockManager#attachTimeObserver(domain.clock.TimeObserver)}.
 	 */
 	@Test
 	public void testAttachTimeObserverSame() {
@@ -159,7 +160,7 @@ public class ClockManagerTest {
 	}
 	
 	/**
-	 * Test method for {@link domain.productionSchedule.ClockManager#attachTimeObserver(domain.productionSchedule.TimeObserver)}.
+	 * Test method for {@link domain.productionSchedule.ClockManager#attachTimeObserver(domain.clock.TimeObserver)}.
 	 */
 	@Test
 	public void testAttachTimeObserverNull() {
@@ -171,7 +172,7 @@ public class ClockManagerTest {
 
 	//--------------------------------------------------------------------------
 	/**
-	 * Test method for {@link domain.productionSchedule.ClockManager#detachTimeObserver(domain.productionSchedule.TimeObserver)}.
+	 * Test method for {@link domain.productionSchedule.ClockManager#detachTimeObserver(domain.clock.TimeObserver)}.
 	 */
 	@Test
 	public void testDetachTimeObserverNullEmpty() {

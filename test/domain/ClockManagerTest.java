@@ -9,8 +9,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import domain.clock.TimeObserver;
 import domain.productionSchedule.ClockManager;
-import domain.productionSchedule.TimeObserver;
 import domain.statistics.StatisticsLogger;
 
 public class ClockManagerTest {

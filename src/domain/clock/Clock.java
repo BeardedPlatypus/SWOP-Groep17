@@ -11,12 +11,19 @@ import java.util.Set;
 import com.google.common.base.Optional;
 
 import domain.DateTime;
-import domain.productionSchedule.TimeObserver;
-import domain.productionSchedule.TimeSubject;
 
+/**
+ * The ClockManager is the object that manages the internal Clock of the whole
+ * system.
+ * When the time gets updated it notifies all its TimeObservers, through the 
+ * TimeSubject interface. 
+ * 
+ * @author Thomas Vochten, Martinus Wilhelmus Tegelaers
+ * 
+ * @invariant | this.getCurrentTime != null  
+ *
+ */
 public class Clock implements TimeSubject, EventConsumer{
-	
-	//TODO: queue, int met aantal updators, echte globaltime
 
 	//--------------------------------------------------------------------------
 	// Constructor
@@ -46,7 +53,14 @@ public class Clock implements TimeSubject, EventConsumer{
 	@Override
 	public void attachTimeObserver(TimeObserver t)
 			throws IllegalArgumentException {
-		this.getObserversPrivate().add(t);
+		if (t == null) {
+			throw new IllegalArgumentException("Observer cannot be null");
+		}
+		
+		if (!this.observers.contains(t)) { 
+			this.observers.add(t); 
+		}
+		t.update(this.getCurrentTime());
 	}
 	
 	/**
@@ -62,8 +76,11 @@ public class Clock implements TimeSubject, EventConsumer{
 	}
 
 	@Override
-	public void detachTimeObserver(TimeObserver t) {
-		this.getObserversPrivate().remove(t);
+	public void detachTimeObserver(TimeObserver t) throws IllegalArgumentException {
+		if (t == null) {
+			throw new IllegalArgumentException("Observer cannot be null");
+		}
+		this.observers.remove(t);
 	}
 
 	@Override
@@ -182,7 +199,7 @@ public class Clock implements TimeSubject, EventConsumer{
 	}
 
 	@Override
-	public void constructEvent(DateTime timeToElapse, Optional<EventActor> actor) throws IllegalArgumentException {
+	public void constructEvent(DateTime timeToElapse, EventActor actor) throws IllegalArgumentException {
 		if (timeToElapse == null) {
 			throw new IllegalArgumentException("Cannot construct event with null elapsedTime");
 		}
