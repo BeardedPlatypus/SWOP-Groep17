@@ -17,28 +17,111 @@ import domain.order.Order;
  *
  */
 public class VirtualAssemblyLine {
+	//--------------------------------------------------------------------------
+	// Constructor
+	//--------------------------------------------------------------------------
 	/**
 	 * Construct a new VirtualAssemblyLine with the giving taskTypeSequence and
 	 * current state of the AssemblyLine.
 	 */
 	public VirtualAssemblyLine(TaskType[] taskTypeSequence,
-			List<Optional<Order>> curState) {
+			List<Optional<Order>> curState) throws IllegalArgumentException {
+		
+		
 		this.taskTypeSequence = taskTypeSequence;
-		this.curState = new ArrayList<>(curState);
+		
+		List<Optional<VirtualAssProc>> list = new ArrayList<>();
+		for (Optional<Order> o : curState) {
+			if (o.isPresent()) {
+				list.add(Optional.of(new VirtualAssProc(o.get())));
+			} else {
+				list.add(Optional.<VirtualAssProc> absent());
+			}
+		}
+		this.curState = list;
 	}
 
 	// --------------------------------------------------------------------------
 	// timeToFinish methods and related sub functions.
 	// --------------------------------------------------------------------------
-	public DateTime timeToFinish(List<Order> inputOrders) {
-		List<Optional<Order>> orderSeq = this
-				.getNewAssemblyLineOrderSeq(inputOrders);
+	public DateTime timeToFinish(List<Order> inputOrders) throws IllegalArgumentException {
+		if (inputOrders == null || inputOrders.contains(null)) {
+			throw new IllegalArgumentException("The input orders cannot be null or contain null.");
+		}
+		
+		int offset = inputOrders.size();
+		List<Optional<VirtualAssProc>> orderSeq = this.getNewAssemblyLineOrderSeq(inputOrders);
 		TaskType[] taskTypeSeq = this.getTaskTypeSequence();
 		
+		DateTime res = new DateTime(0, 0, 0);
 		
-		return null;
+		while (!orderSeqIsFinished(orderSeq)) {
+			res = res.addTime(0, 0, minutesToFinishCurStep(orderSeq, offset, taskTypeSeq));
+			advanceOrderSeq(orderSeq, offset, taskTypeSeq);
+		}
+		
+		return res;
 	}
 
+	//--------------------------------------------------------------------------
+	protected boolean orderSeqIsFinished(List<Optional<VirtualAssProc>> orderSeq) {
+		for (Optional<VirtualAssProc> v : orderSeq) {
+			if (v.isPresent()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	protected int minutesToFinishCurStep(List<Optional<VirtualAssProc>> orderSeq,
+									   int offset,
+									   TaskType[] taskTypeSeq) {
+		int timeStepMinutes = 0;
+		for(int i = 0; i < taskTypeSeq.length; i++) {
+			Optional<VirtualAssProc> proc = orderSeq.get(i + offset);
+			if (proc.isPresent()) {
+				int timeTask = proc.get().getMinutesOnPostOfType(taskTypeSeq[i]);
+				timeStepMinutes = Math.max(timeStepMinutes, timeTask);
+			}
+		}
+		return timeStepMinutes;
+	}
+	
+	protected void advanceOrderSeq(List<Optional<VirtualAssProc>> orderSeq,
+								   int offset,
+								   TaskType[] taskTypeSeq) {
+		//Remove last element.
+		orderSeq.set((orderSeq.size()-1), Optional.<VirtualAssProc> absent());
+		
+		//Set all procedures to not finished.
+		for (Optional<VirtualAssProc> v : orderSeq) {
+			if (v.isPresent()) {
+				v.get().setFinished(false);
+			}
+		}
+		
+		//Start shifting
+		boolean hasShifted;
+		do {
+			hasShifted = false;
+			// Because we removed the last instance we know for sure it is absent.
+			for(int i = 0; i < orderSeq.size() - 1; i++) {
+				Optional<VirtualAssProc> v = orderSeq.get(i);
+				if (v.isPresent() && !v.get().hasFinished() && !orderSeq.get(i+1).isPresent()) {
+					orderSeq.set(i+1, v);
+					orderSeq.set(i, Optional.<VirtualAssProc> absent());
+					hasShifted = true;
+					
+					if ((i+1) - offset >= 0 && v.get().getMinutesOnPostOfType(taskTypeSeq[i+1]) > 0) {
+						v.get().setFinished(true);
+					}
+				}
+			}
+		} while(hasShifted);
+		
+	}
+	
+	//--------------------------------------------------------------------------
 	/**
 	 * Get a new List containing first the specified inputOrders, followed by
 	 * the (optional) orders of the cur state of this VirtualAssemblyLine.
@@ -53,17 +136,16 @@ public class VirtualAssemblyLine {
 	 * @throws IllegalArgumentException
 	 *             | inputOrders == null || inputOrders.contains(null)
 	 */
-	private List<Optional<Order>> getNewAssemblyLineOrderSeq(
-			List<Order> inputOrders) throws IllegalArgumentException {
+	private List<Optional<VirtualAssProc>> getNewAssemblyLineOrderSeq(List<Order> inputOrders) throws IllegalArgumentException {
 		if (inputOrders == null || inputOrders.contains(null)) {
 			throw new IllegalArgumentException(
 					"The input orders cannot be null or contain null.");
 		}
 
-		List<Optional<Order>> newAssemblyLineOrderSeq = new ArrayList<>();
+		List<Optional<VirtualAssProc>> newAssemblyLineOrderSeq = new ArrayList<>();
 
 		for (Order order : inputOrders) {
-			newAssemblyLineOrderSeq.add(Optional.of(order));
+			newAssemblyLineOrderSeq.add(Optional.of(new VirtualAssProc(order)));
 		}
 
 		newAssemblyLineOrderSeq.addAll(this.getCurState());
@@ -78,12 +160,12 @@ public class VirtualAssemblyLine {
 	 * 
 	 * @return The current state of Orders on this VirtualAssemblyLine.
 	 */
-	private List<Optional<Order>> getCurState() {
+	private List<Optional<VirtualAssProc>> getCurState() {
 		return this.curState;
 	}
 
 	/** List of the current position of orders on the VirtualAssemblyLine. */
-	private final List<Optional<Order>> curState;
+	private final List<Optional<VirtualAssProc>> curState;
 
 	// --------------------------------------------------------------------------
 	/**
