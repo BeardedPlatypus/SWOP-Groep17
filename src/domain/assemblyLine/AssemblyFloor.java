@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import domain.order.Order;
+import domain.statistics.StatisticsLogger;
 
 /**
  * A class representing a workfloor containing a number of assemblylines.
@@ -88,5 +89,19 @@ public class AssemblyFloor {
 	 */
 	public void unidleLineFor(Order order){
 		//TODO
+	}
+
+	public List<AssemblyLineView> getAssemblyLineViews() {
+		//FIXME
+		return null;
+	}
+
+	public void setStatisticsLogger(StatisticsLogger logger) {
+		//FIXME
+	}
+
+	public String getStatisticsReport() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

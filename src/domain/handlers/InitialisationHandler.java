@@ -5,8 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import domain.assemblyLine.AssemblyFloor;
 import domain.assemblyLine.AssemblyLine;
 import domain.assemblyLine.SchedulerIntermediate;
+import domain.DateTime;
 import domain.Manufacturer;
 import domain.assemblyLine.TaskType;
 import domain.car.CarModel;
@@ -14,12 +16,11 @@ import domain.car.Model;
 import domain.car.ModelCatalog;
 import domain.car.Option;
 import domain.car.OptionCategory;
+import domain.clock.Clock;
 import domain.order.CompletedOrderCatalog;
 import domain.order.OrderFactory;
 import domain.order.SingleTaskCatalog;
 import domain.order.StandardOrder;
-import domain.productionSchedule.ClockManager;
-import domain.productionSchedule.ProductionScheduleFacade;
 import domain.productionSchedule.SchedulerContext;
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
 import domain.productionSchedule.strategy.FifoStrategy;
@@ -370,15 +371,18 @@ public class InitialisationHandler {
 		CompletedOrderCatalog  complCat = new CompletedOrderCatalog();
 
 		//----------------------------------------------------------------------
+		// Initialise the Clock
+		//----------------------------------------------------------------------
+
+		//TODO initialise clock
+		DateTime start = new DateTime(0, 6, 0);
+		Clock clock = new Clock(start);
+		
+		//----------------------------------------------------------------------
 		// Initialise the ProductionSchedule
 		//----------------------------------------------------------------------
 
-		ClockManager clockMan = new ClockManager();
-		List<TaskType> types = new ArrayList<>();
-		types.add(TaskType.BODY);
-		types.add(TaskType.ACCESSORIES);
-		SchedulerContext schedCont = new SchedulerContext(new FifoStrategy<StandardOrder>(), types);
-		ProductionScheduleFacade schedFacade = new ProductionScheduleFacade(clockMan, schedCont);
+		//TODO initialise Production schedule
 
 
 		//----------------------------------------------------------------------
@@ -388,24 +392,35 @@ public class InitialisationHandler {
 		OrderFactory orderFact = new OrderFactory();
 		
 		//----------------------------------------------------------------------
-		// Initialise AssemblyLine
+		// Initialise AssemblyLines
 		//----------------------------------------------------------------------
 
-		//FIXME
-		AssemblyLine line = new AssemblyLine(null, null);
+		//TODO Build assembly line facades and floor
+		
+		AssemblyFloor floor = new AssemblyFloor();
+
+		//SchedulerIntermediate inter = new SchedulerIntermediate(line);
+		
+		//TODO add statistics logger
+		
+		
 		StatisticsLogger logger = new StatisticsLogger();
 		CarsProducedRegistrar prodRegistrar = new CarsProducedRegistrar();
 		logger.addRegistrar(prodRegistrar);
 		DelayRegistrar delayRegistrar = new DelayRegistrar();
 		logger.addRegistrar(delayRegistrar);
-		line.setStatisticsLogger(logger);
+		floor.setStatisticsLogger(logger);
 
-		SchedulerIntermediate inter = new SchedulerIntermediate(line);
+		
 
-		clockMan.attachTimeObserver(logger);
-		clockMan.attachTimeObserver(orderFact);
-		clockMan.attachTimeObserver(complCat);
-		clockMan.attachTimeObserver(inter);
+		//----------------------------------------------------------------------
+		// Attach Observers
+		//----------------------------------------------------------------------
+		
+		clock.attachTimeObserver(logger);
+		clock.attachTimeObserver(orderFact);
+		clock.attachTimeObserver(complCat);
+		//clock.attachTimeObserver(inter);
 
 		//----------------------------------------------------------------------
 		// Initialise Manufacturer
@@ -417,10 +432,9 @@ public class InitialisationHandler {
 				complCat,
 				modelCatalog,
 				restrictionsMan,
-				schedFacade,
 				orderFact,
-				line,
-				inter);
+				floor,
+				clock);
 
 		//----------------------------------------------------------------------
 		// Initialise Handlers
