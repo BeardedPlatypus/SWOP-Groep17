@@ -9,7 +9,7 @@ import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.car.Model;
 import domain.handlers.DomainFacade;
-import exceptions.IllegalCarOptionCombinationException;
+import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
 
@@ -39,7 +39,7 @@ public class InteractionSimulator {
 		facade.startNewOrderSession();
 		
 		//select first car model
-		Model chosenModel = facade.getCarModels().get(0);
+		Model chosenModel = facade.getVehicleModels().get(0);
 		facade.chooseModel(chosenModel);
 		
 		//select compatible options
@@ -81,7 +81,7 @@ public class InteractionSimulator {
 			try {
 				facade.submitOrder();
 			} catch (IllegalStateException | IllegalArgumentException
-					| IllegalCarOptionCombinationException
+					| IllegalVehicleOptionCombinationException
 					| OptionRestrictionException e) {
 				e.printStackTrace();
 			}

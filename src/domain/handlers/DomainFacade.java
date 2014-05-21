@@ -11,7 +11,7 @@ import domain.car.OptionCategory;
 import domain.car.Specification;
 import domain.order.OrderView;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
-import exceptions.IllegalCarOptionCombinationException;
+import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
@@ -432,8 +432,8 @@ public class DomainFacade {
 	 * 
 	 * @return a list of all possible Car Models for the system
 	 */
-	public List<Model> getCarModels(){
-		return this.getNewOrderSessionHandler().getCarModels();
+	public List<Model> getVehicleModels(){
+		return this.getNewOrderSessionHandler().getVehicleModels();
 	}
 
 	/**
@@ -532,14 +532,14 @@ public class DomainFacade {
 	 * 		If no model has been chosen
 	 * @throws IllegalStateException
 	 * 		If there are unfulfilled OptionCategories
-	 * @throws IllegalCarOptionCombinationException 
+	 * @throws IllegalVehicleOptionCombinationException 
 	 * 		When the chosen options are not valid with given model
 	 * @throws OptionRestrictionException
 	 * 		When the set of options does not meet the system's restrictions
 	 * @throws IllegalStateException
 	 * 		When the order was already submitted
 	 */
-	public void submitOrder() throws IllegalStateException, IllegalArgumentException, IllegalCarOptionCombinationException, OptionRestrictionException{
+	public void submitOrder() throws IllegalStateException, IllegalArgumentException, IllegalVehicleOptionCombinationException, OptionRestrictionException{
 		this.getNewOrderSessionHandler().submitOrder();
 
 	}

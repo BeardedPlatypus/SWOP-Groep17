@@ -3,7 +3,7 @@ package domain;
 import java.util.List;
 
 import domain.restrictions.OptionRestrictionManager;
-import exceptions.IllegalCarOptionCombinationException;
+import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
 import domain.assemblyLine.AssemblyLine;
@@ -428,11 +428,11 @@ public class Manufacturer {
 	 * 		The given options to check with the model
 	 * @throws IllegalArgumentException
 	 * 		When either of the parameters is or contains null
-	 * @throws IllegalCarOptionCombinationException 
+	 * @throws IllegalVehicleOptionCombinationException 
 	 * 		When the list of options is not valid with given model
 	 */
 	private boolean checkOrderRestrictionValidity(Model model, List<Option> options)
-			throws IllegalArgumentException, IllegalCarOptionCombinationException
+			throws IllegalArgumentException, IllegalVehicleOptionCombinationException
 	{
 		if(model == null)
 			throw new IllegalArgumentException("Model schould not be null");
@@ -441,7 +441,7 @@ public class Manufacturer {
 		if(options.contains(null))
 			throw new IllegalArgumentException("Options list should not contain null.");
 		if(!model.checkOptionsValidity(options))
-			throw new IllegalCarOptionCombinationException("These options do not match given model.");
+			throw new IllegalVehicleOptionCombinationException("These options do not match given model.");
 		if(!this.getOptionRestrictionManager().checkValidity(model,options))
 			return false;
 		return true;
@@ -487,7 +487,7 @@ public class Manufacturer {
 	 * 
 	 * @return the new order, made from the arguments
 	 * 
-	 * @throws IllegalCarOptionCombinationException 
+	 * @throws IllegalVehicleOptionCombinationException 
 	 * 		When the list of options is not valid with given model
 	 * @throws IllegalArgumentException
 	 * 		When either of the parameters is or contains null
@@ -496,7 +496,7 @@ public class Manufacturer {
 	 */
 	public OrderView submitStandardOrder(Model model, List<Option> options)
 			throws IllegalArgumentException,
-			IllegalCarOptionCombinationException,
+			IllegalVehicleOptionCombinationException,
 			OptionRestrictionException
 	{
 		if(model == null)

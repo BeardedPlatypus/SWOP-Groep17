@@ -73,7 +73,7 @@ public class UI {
 			int choice = this.helper.getIntFromUser(1, 9);
 			switch(choice){
 			case 1:
-				orderNewCarRoutine();
+				orderNewVehicleRoutine();
 				break;
 			case 2:
 				checkOrderRoutine();
@@ -116,7 +116,7 @@ public class UI {
 		System.out.println("Welcome to the assembly system.");
 		System.out.println(helper.SEPERATOR);
 		System.out.println("Choose one of the options below:");
-		System.out.println("(1) I would like to log in as Garage Holder to order a new car");
+		System.out.println("(1) I would like to log in as Garage Holder to order a new vehicle");
 		System.out.println("(2) I would like to log in as Garage Holder to check one of the orders");
 		System.out.println("(3) I would like to log in as Mechanic to perform a task at my workpost");
 		System.out.println("(4) I would like to log in as Mechanic to check the status of the AssemblyLine");
@@ -130,8 +130,8 @@ public class UI {
 	// Usecase parts
 	//--------------------------------------------------------------------------
 
-	private void orderNewCarRoutine() {
-		OrderNewCarUIPart uiPart = new OrderNewCarUIPart(
+	private void orderNewVehicleRoutine() {
+		OrderNewVehicleUIPart uiPart = new OrderNewVehicleUIPart(
 				this.facade.getNewOrderSessionHandler(),this.helper);
 		uiPart.run();
 	}
