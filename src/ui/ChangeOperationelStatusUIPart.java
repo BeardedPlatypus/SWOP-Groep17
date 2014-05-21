@@ -66,9 +66,21 @@ public class ChangeOperationelStatusUIPart {
 			printCurrentStates();
 			System.out.println(helper.SEPERATOR);
 			printQuitOrChange();
-			
+			int choice = this.helper.getIntFromUser(1, 2);
+			if(choice==1){
+				int amountOfLines = this.partHandler.getAssemblyLineStates().size();
+				System.out.println("Which line would you like to change the "
+						+ "status for? (1 to " + amountOfLines
+						+ ")");
+				int lineChoice = this.helper.getIntFromUser(1, amountOfLines);
+				System.out.println(this.helper.SEPERATOR);
+				changeLineStatus(lineChoice);
+			} else {
+				exitMenu = true;
+			}
 		}
 	}
+
 
 	private void printQuitOrChange() {
 		System.out.println("What do you want to do?");
@@ -81,5 +93,21 @@ public class ChangeOperationelStatusUIPart {
 		for(int i = 1; i<= states.size(); i++){
 			System.out.println("Assemblyline " + i + ": " + states.get(i).getName());
 		}
+	}
+	
+
+	private void changeLineStatus(int lineChoice) {
+		System.out.println("The current status of assembly line" + lineChoice +" is:");
+		System.out.println("\t" + this.getHandler().getAssemblyLineStates().get(lineChoice));
+		System.out.println("What should be the new status for assembly line "
+				+ lineChoice + "?");
+		List<IAssemblyLineState> states = this.getHandler().getAvailableStates();
+		for(int i = 1; i<= states.size(); i++){
+			System.out.println(i + ") " + states.get(i).getName());
+		}
+		int stateChoice = this.helper.getIntFromUser(1, states.size());
+		System.out.println("The new status of assembly line " + lineChoice + " is:");
+		System.out.println("\t"+states.get(stateChoice));
+		this.getHandler().setAssemblyLineState(lineChoice, stateChoice);
 	}
 }
