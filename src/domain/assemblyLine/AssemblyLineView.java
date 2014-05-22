@@ -45,7 +45,7 @@ public interface AssemblyLineView {
 	 * 
 	 * @return A list of immutable containers for all respective WorkPosts in their order.
 	 */
-	public List<WorkPostView> getWorkPostContainers();
+	public List<WorkPostView> getWorkPostViews();
 	
 	/**
 	 * Return if this AssemblyLine is currently empty. 

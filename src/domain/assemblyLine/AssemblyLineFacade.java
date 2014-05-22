@@ -146,8 +146,8 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	 * 
 	 * @return A list of immutable containers for all respective WorkPosts in their order.
 	 */
-	public List<WorkPostView> getWorkPostContainers() {
-		return this.getLine().getWorkPostContainers();
+	public List<WorkPostView> getWorkPostViews() {
+		return this.getLine().getWorkPostViews();
 	}
 
 	/**

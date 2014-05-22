@@ -18,7 +18,7 @@ import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.order.Order;
 import domain.order.OrderSession;
-import exceptions.IllegalCarOptionCombinationException;
+import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
@@ -132,7 +132,7 @@ public class OrderSessionTest {
 	@Test
 	public void testSubmitOrder()
 			throws IllegalArgumentException,
-			IllegalCarOptionCombinationException,
+			IllegalVehicleOptionCombinationException,
 			OptionRestrictionException
 	{
 		Mockito.when(mockMan.isValidModel(mockModel)).thenReturn(true);
@@ -144,7 +144,7 @@ public class OrderSessionTest {
 	@Test
 	public void testSubmitOrderNoModel()
 			throws IllegalArgumentException,
-			IllegalCarOptionCombinationException,
+			IllegalVehicleOptionCombinationException,
 			OptionRestrictionException
 	{
 		exception.expect(IllegalStateException.class);
@@ -154,7 +154,7 @@ public class OrderSessionTest {
 	@Test
 	public void testSubmitOrderAlreadySubmitted()
 			throws IllegalArgumentException,
-			IllegalCarOptionCombinationException,
+			IllegalVehicleOptionCombinationException,
 			OptionRestrictionException
 	{
 		exception.expect(IllegalStateException.class);
@@ -168,7 +168,7 @@ public class OrderSessionTest {
 	@Test
 	public void testGetETA() 
 			throws IllegalArgumentException, 
-			IllegalCarOptionCombinationException, 
+			IllegalVehicleOptionCombinationException, 
 			OptionRestrictionException,
 			OrderDoesNotExistException {
 		Mockito.when(mockMan.isValidModel(mockModel)).thenReturn(true);

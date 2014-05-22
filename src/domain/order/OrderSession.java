@@ -9,7 +9,7 @@ import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.car.Model;
-import exceptions.IllegalCarOptionCombinationException;
+import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
@@ -235,8 +235,8 @@ public class OrderSession {
 	 * @pre
 	 * 		this.getManufacturer != null
 	 */
-	public List<Model> getCarModels(){
-		return this.getManufacturer().getCarModels();
+	public List<Model> getVehicleModels(){
+		return this.getManufacturer().getVehicleModels();
 	}
 
 	/**
@@ -263,7 +263,7 @@ public class OrderSession {
 	 * Submit the current state of this session to the system, to form an order.
 	 * The order is then saved in this session, so the ETA can be calculated.
 	 * 
-	 * @throws IllegalCarOptionCombinationException 
+	 * @throws IllegalVehicleOptionCombinationException 
 	 * 		When the chosen options are not valid with given model
 	 * @throws OptionRestrictionException
 	 * 		When the set of options does not meet the system's restrictions
@@ -273,7 +273,7 @@ public class OrderSession {
 	 * 		When the order was already submitted
 	 */
 	public void submitOrder() throws IllegalArgumentException,
-									 IllegalCarOptionCombinationException,
+									 IllegalVehicleOptionCombinationException,
 									 OptionRestrictionException,
 									 IllegalStateException
 	{

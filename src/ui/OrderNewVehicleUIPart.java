@@ -6,12 +6,11 @@ import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.car.Specification;
-import domain.car.Model;
 import domain.handlers.NewOrderSessionHandler;
 import domain.order.OrderView;
 import exceptions.OptionRestrictionException;
 
-public class OrderNewCarUIPart {
+public class OrderNewVehicleUIPart {
 
 
 	//--------------------------------------------------------------------------
@@ -28,7 +27,7 @@ public class OrderNewCarUIPart {
 	 * @throws IllegalArgumentException
 	 * 		If either of the parameters is null
 	 */
-	public OrderNewCarUIPart(NewOrderSessionHandler handler, UIHelper helper)
+	public OrderNewVehicleUIPart(NewOrderSessionHandler handler, UIHelper helper)
 			throws IllegalArgumentException{
 		if(handler == null)
 			throw new IllegalArgumentException("Handler can not be null!");
@@ -62,7 +61,7 @@ public class OrderNewCarUIPart {
 	//--------------------------------------------------------------------------
 
 	/**
-	 * Runs the routine for ordering a new car.
+	 * Runs the routine for ordering a new vehicle.
 	 * Until the exit choice is taken on the ordermenu the possible models are printed,
 	 * and after choosing one, the specs are collected and a new model is made if the user
 	 * hasn't canceled during the specs.
@@ -77,13 +76,13 @@ public class OrderNewCarUIPart {
 			List<OrderView> pendingOrders = getHandler().getPendingOrders();
 			visualiseCompletedAndPendingOrders(completedOrders,pendingOrders);
 			System.out.println("What do you want to do?:" + helper.CRLF + 
-					"1) Order a new car" + helper.CRLF + "2) Exit this menu");
+					"1) Order a new vehicle" + helper.CRLF + "2) Exit this menu");
 			int choice = helper.getIntFromUser(1, 2);
 			if(choice == 2){
 				exitMenu = true;
 			} else {
 				this.getHandler().startNewOrderSession();
-				List<Model> orderModels = getHandler().getCarModels();
+				List<Model> orderModels = getHandler().getVehicleModels();
 				int modelChoice = getModelChoice(orderModels);
 				this.getHandler().chooseModel(orderModels.get(modelChoice));
 				boolean continueOrder = setOptions();
