@@ -20,7 +20,7 @@ public class VirtualAssProc {
 	 * @throws IllegalArgumentException | order == null.
 	 */
 	public VirtualAssProc(Order order) throws IllegalArgumentException {
-		if (this.order == null)
+		if (order == null)
 			throw new IllegalArgumentException("Order cannot be null");
 			
 		this.order = order;
@@ -45,7 +45,7 @@ public class VirtualAssProc {
 	 * 
 	 * @return the Order of this VirtualAssProc.
 	 */
-	private Order getOrder() {
+	protected Order getOrder() {
 		return this.order;
 	}
 	

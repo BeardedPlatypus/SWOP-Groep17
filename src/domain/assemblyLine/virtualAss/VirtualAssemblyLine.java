@@ -23,10 +23,32 @@ public class VirtualAssemblyLine {
 	/**
 	 * Construct a new VirtualAssemblyLine with the giving taskTypeSequence and
 	 * current state of the AssemblyLine.
+	 * 
+	 * @param taskTypeSequence
+	 * 		The sequence of tasks of this new VirtualAssemblyLine. 
+	 * @param curState
+	 * 		The current list of orders on this VirtualAssemblyLine.
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		| curState == null || curState contains null
+	 * 		| taskTypeSequence == null || taskTypeSequence.length == 0
 	 */
 	public VirtualAssemblyLine(TaskType[] taskTypeSequence,
 			List<Optional<Order>> curState) throws IllegalArgumentException {
+		if (curState == null || curState.contains(null)) {
+			throw new IllegalArgumentException("The curState cannot be null or contain null.");
+		}
+		if (taskTypeSequence == null || taskTypeSequence.length == 0) {
+			throw new IllegalArgumentException("taskTypeSequence cannot be null or zero.");
+		}
+		if (curState.size() != taskTypeSequence.length) {
+			throw new IllegalArgumentException("curState and taskTypeSequence have to be the same length.");
+		}
 		
+		for (int i = 0; i < taskTypeSequence.length; i++) {
+			if (taskTypeSequence[i] == null) 
+				throw new IllegalArgumentException("NO NULLS, VERY BAD.");
+		}
 		
 		this.taskTypeSequence = taskTypeSequence;
 		
@@ -112,7 +134,7 @@ public class VirtualAssemblyLine {
 					orderSeq.set(i, Optional.<VirtualAssProc> absent());
 					hasShifted = true;
 					
-					if ((i+1) - offset >= 0 && v.get().getMinutesOnPostOfType(taskTypeSeq[i+1]) > 0) {
+					if ((i+1) - offset >= 0 && v.get().getMinutesOnPostOfType(taskTypeSeq[i+1-offset]) > 0) {
 						v.get().setFinished(true);
 					}
 				}
