@@ -39,6 +39,7 @@ import domain.order.Order;
 import domain.order.OrderView;
 import domain.statistics.ProcedureStatistics;
 import domain.statistics.StatisticsLogger;
+import exceptions.OrdersNotEmptyWhenAdvanceException;
 
 @RunWith(PowerMockRunner.class)
 public class AssemblyLineTest {
@@ -363,6 +364,21 @@ public class AssemblyLineTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void completeTask_ordersNotEmptyWhenAdvance() {
+		Option newOption = new Option(TaskType.BODY, "har", "dar");
+		Specification newSpec = new Specification(Arrays.asList(newOption));
+		Mockito.when(newOrder.getSpecifications()).thenReturn(newSpec);
+		
+		assemblyLine.completeWorkpostTask(0, 0, 20);
+		assemblyLine.completeWorkpostTask(2, 0, 60);
+		assemblyLine.completeWorkpostTask(3, 0, 40);
+		
+		assertTrue(assemblyLine.canAdvance());
+		expected.expect(OrdersNotEmptyWhenAdvanceException.class);
+		assemblyLine.advance(new ArrayList<Order>(Arrays.asList(newOrder, newOrder)));
 	}
 	
 	@Test

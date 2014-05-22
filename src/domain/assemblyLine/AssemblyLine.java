@@ -12,6 +12,7 @@ import domain.order.Order;
 import domain.order.OrderView;
 import domain.statistics.ProcedureStatistics;
 import domain.statistics.StatisticsLogger;
+import exceptions.OrdersNotEmptyWhenAdvanceException;
 
 /**
  * A class depicting an AssemblyLine in the system. An AssemblyLine is composed 
@@ -441,13 +442,19 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 		canAdvance() == false
 	 * @throws IllegalArgumentException
 	 * 		orders is null or contains null
+	 * @throws OrdersNotEmptyWhenAdvanceException
+	 * 		The list of orders was not empty when advance is finished
 	 */
 	public void advance(List<Order> orders) throws IllegalStateException,
-		IllegalArgumentException {
+		IllegalArgumentException, OrdersNotEmptyWhenAdvanceException {
 		if (! this.canAdvance()) {
 			throw new IllegalStateException("Cannot advance AssemblyLine");
 		}
 		this.tryAdvance(this.getElapsedTime(), orders);
+		if (! orders.isEmpty()) {
+			throw new OrdersNotEmptyWhenAdvanceException("Fatal error: "
+					+ "list of Orders was not empty after advance was finished");
+		}
 		this.resetFinishedAssemblyCounter();
 	}
 	
