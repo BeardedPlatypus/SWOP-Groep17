@@ -12,6 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -332,7 +333,7 @@ public class AssemblyLineTest {
 	@Test
 	public void completeWorkPostTask_simulateAdvance() {
 //		Mockito.when(newOrder.getMinutesPerPost()).thenReturn(60);
-		Option newOption = new Option(TaskType.BODY, "har", "dar");
+		Option newOption = new Option(TaskType.DRIVETRAIN, "har", "dar");
 		Specification newSpec = new Specification(Arrays.asList(newOption));
 		Mockito.when(newOrder.getSpecifications()).thenReturn(newSpec);
 		
@@ -352,13 +353,13 @@ public class AssemblyLineTest {
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(1), "minutesOfWork"));
 			assertEquals(0, Whitebox.getInternalState(workPosts.get(2), "minutesOfWork"));
 	
-			assertTrue(workPosts.get(0).getAssemblyProcedure().isPresent());
+			assertTrue(workPosts.get(2).getAssemblyProcedure().isPresent());
+			assertEquals(Optional.absent(), workPosts.get(0).getAssemblyProcedure());
 			assertEquals(Optional.absent(), workPosts.get(1).getAssemblyProcedure());
-			assertEquals(Optional.absent(), workPosts.get(2).getAssemblyProcedure());
 			assertEquals(Optional.absent(), workPosts.get(3).getAssemblyProcedure());
 			assertEquals(Optional.absent(), workPosts.get(4).getAssemblyProcedure());
 			
-			assertEquals(newOrder, workPosts.get(0).getAssemblyProcedure().get().getOrder());
+			assertEquals(newOrder, workPosts.get(2).getAssemblyProcedure().get().getOrder());
 			assertEquals(-120, procedure3.makeStatisticsEvent().getDelay());
 			assertEquals(0, Whitebox.getInternalState(assemblyLine, "finishedAssemblyCounter"));
 			Mockito.verify(logger, Mockito.times(3)).updateCompletedOrder(Matchers.isA(CompletedOrderEvent.class));
@@ -392,5 +393,16 @@ public class AssemblyLineTest {
 	public void containsTest_false() {
 		assertFalse(assemblyLine.contains(notOnAssemblyLine));
 	}
+	
+	@Test
+	public void handleFinishedAssemblyProcedureTest() {
+		task1.setCompleted(true);
+		assemblyLine.handleFinishedAssemblyProcedure(Optional.fromNullable(procedure1));
+		ArgumentCaptor<CompletedOrderEvent> arg = ArgumentCaptor.forClass(CompletedOrderEvent.class);
+		Mockito.verify(cat).updateCompletedOrder(arg.capture());
+		assertEquals(order, arg.getValue().getCompletedOrder());
+		assertEquals(-180, arg.getValue().getProcedureStatistics().getDelay());
+	}
+	
 
 }
