@@ -4,7 +4,7 @@ import java.util.List;
 
 import domain.Manufacturer;
 import domain.assemblyLine.AssemblyLineState;
-import domain.assemblyLine.IAssemblyLineState;
+import domain.assemblyLine.AssemblyLineStateView;
 
 /**
  * This handler fulfills the "Change Assembly Line's Operational Status"
@@ -44,7 +44,7 @@ public class ChangeOperationalStatusHandler {
 	 * 
 	 * @return The AssemblyLineStates
 	 */
-	public List<IAssemblyLineState> getAvailableStates() {
+	public List<AssemblyLineStateView> getAvailableStates() {
 		return this.getManufacturer().getAvailableStates();
 	}
 	
@@ -72,7 +72,7 @@ public class ChangeOperationalStatusHandler {
 	 * @return a list of AssemblyLineStates of the AssemblyLines in the system,
 	 * 		in their actual respective order in the system.
 	 */
-	public List<IAssemblyLineState> getAssemblyLineStates(){
+	public List<AssemblyLineStateView> getAssemblyLineStates(){
 		return this.getManufacturer().getCurrentLineStates();
 	}
 	

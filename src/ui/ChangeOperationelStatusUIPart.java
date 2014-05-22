@@ -2,7 +2,7 @@ package ui;
 
 import java.util.List;
 
-import domain.assemblyLine.IAssemblyLineState;
+import domain.assemblyLine.AssemblyLineStateView;
 import domain.handlers.ChangeOperationalStatusHandler;
 
 public class ChangeOperationelStatusUIPart {
@@ -89,7 +89,7 @@ public class ChangeOperationelStatusUIPart {
 	}
 
 	private void printCurrentStates() {
-		List<IAssemblyLineState> states = this.getHandler().getAssemblyLineStates();
+		List<AssemblyLineStateView> states = this.getHandler().getAssemblyLineStates();
 		for(int i = 1; i<= states.size(); i++){
 			System.out.println("Assemblyline " + i + ": " + states.get(i).getName());
 		}
@@ -101,7 +101,7 @@ public class ChangeOperationelStatusUIPart {
 		System.out.println("\t" + this.getHandler().getAssemblyLineStates().get(lineChoice));
 		System.out.println("What should be the new status for assembly line "
 				+ lineChoice + "?");
-		List<IAssemblyLineState> states = this.getHandler().getAvailableStates();
+		List<AssemblyLineStateView> states = this.getHandler().getAvailableStates();
 		for(int i = 1; i<= states.size(); i++){
 			System.out.println(i + ") " + states.get(i).getName());
 		}

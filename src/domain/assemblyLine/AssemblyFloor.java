@@ -5,6 +5,7 @@ import java.util.List;
 
 import domain.Manufacturer;
 import domain.order.Order;
+import domain.order.OrderView;
 import domain.statistics.StatisticsLogger;
 
 /**
@@ -92,9 +93,6 @@ public class AssemblyFloor {
 		//TODO
 	}
 
-	public List<AssemblyLineView> getAssemblyLineViews() {
-		return new ArrayList<AssemblyLineView>(lines);
-	}
 
 	public void setStatisticsLogger(StatisticsLogger logger) {
 		//FIXME
@@ -113,9 +111,38 @@ public class AssemblyFloor {
 		
 	}
 
+
+	public List<OrderView> getActiveOrderContainers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	//--------- Perform Assembly Tasks methods ---------//
+
+
+	public List<AssemblyLineView> getAssemblyLineViews() {
+		return new ArrayList<AssemblyLineView>(lines);
+	}
+	
+	public List<WorkPostView> getWorkPostViewsAt(int lineNb) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public List<AssemblyTaskView> getAssemblyTasksAtPost(int lineNum, int postNum) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
 	public void completeWorkpostTask(int lineNumber, int workPostNumber,
 			int taskNumber, int minutes) {
 		// TODO Auto-generated method stub
 		
 	}
+
+	//----- end of Perform Assembly Tasks methods -----//
+
+
+
 }

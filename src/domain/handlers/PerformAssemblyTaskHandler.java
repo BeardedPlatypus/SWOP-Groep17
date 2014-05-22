@@ -5,6 +5,7 @@ import java.util.List;
 import domain.Manufacturer;
 import domain.assemblyLine.AssemblyLineView;
 import domain.assemblyLine.AssemblyTaskView;
+import domain.assemblyLine.WorkPostView;
 
 /**
  * Coordinates with the outside world in order to complete assembly tasks of a single WorkPost.
@@ -54,20 +55,22 @@ public class PerformAssemblyTaskHandler {
 		return this.getManufacturer().getAssemblyLineViews();
 	}
 
-//	/**
-//	 * Get the AssemblyTaskContainers of the specified work post.
-//	 * 
-//	 * @param workPostNumber
-//	 * 		The work post of interest.
-//	 * 
-//	 * @return The AssemblyTaskContainers at the specified work post.
-//	 * 
-//	 * @throws IllegalArgumentException
-//	 * 		workPostNumber refers to a work post that does not exist.
-//	 */
-//	public List<AssemblyTaskView> getAssemblyTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
-//		return this.getManufacturer().getAssemblyTasksAtPost(workPostNumber);
-//	}
+	/**
+	 * Get the AssemblyTaskContainers of the specified work post.
+	 * 
+	 * @param workPostNumber
+	 * 		The work post of interest.
+	 * 
+	 * @return The AssemblyTaskContainers at the specified work post.
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		workPostNumber refers to a work post that does not exist.
+	 */
+	public List<AssemblyTaskView> getAssemblyTasksAtWorkPost(int lineNb,
+			int postNb) {
+		// TODO Auto-generated method stub
+		return this.getManufacturer().getAssemblyTasksAtPost(lineNb, postNb);
+	}
 
 	/**
 	 * Perform the specified taskNumber at the specified WorkPost.
@@ -90,4 +93,11 @@ public class PerformAssemblyTaskHandler {
 	public void completeWorkpostTask(int lineNumber, int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException {
 		this.getManufacturer().completeWorkpostTask(lineNumber, workPostNumber, taskNumber, minutes);
 	}
+
+	public List<WorkPostView> getWorkPosts(int lineNb) {
+		// TODO Auto-generated method stub
+		return this.getManufacturer().getWorkPostsAt(lineNb);
+	}
+
+
 }

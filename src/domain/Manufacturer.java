@@ -8,6 +8,8 @@ import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
 import domain.assemblyLine.AssemblyFloor;
 import domain.assemblyLine.AssemblyLine;
+import domain.assemblyLine.AssemblyLineState;
+import domain.assemblyLine.AssemblyLineStateView;
 import domain.assemblyLine.AssemblyLineView;
 import domain.assemblyLine.AssemblyTaskView;
 import domain.assemblyLine.SchedulerIntermediate;
@@ -28,7 +30,6 @@ import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
 import domain.productionSchedule.SchedulerContext;
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
-import domain.productionSchedule.strategy.SchedulingStrategy;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
 
 /**
@@ -155,12 +156,12 @@ public class Manufacturer {
 		//TODO: DIVERT THIS TO THE STATISTICS
 		// http://content.artofmanliness.com/uploads//2010/10/snidely-whiplash.jpg
 		
-		if(this.getProductionSchedule().contains(order))
-			return this.getProductionSchedule().getEstimatedCompletionTime(order);
-		if(this.getAssemblyFloor().contains(order))
-			return this.getAssemblyFloor().getEstimatedCompletionTime(order);
-		if(this.getCompletedOrderCatalog().contains(order))
-			return this.getCompletedOrderCatalog().getCompletionTime(order);
+//		if(this.getProductionSchedule().contains(order))
+//			return this.getProductionSchedule().getEstimatedCompletionTime(order);
+//		if(this.getAssemblyFloor().contains(order))
+//			return this.getAssemblyFloor().getEstimatedCompletionTime(order);
+//		if(this.getCompletedOrderCatalog().contains(order))
+//			return this.getCompletedOrderCatalog().getCompletionTime(order);
 		throw new OrderDoesNotExistException("Order was not found in the system.");
 	}
 	
@@ -316,8 +317,7 @@ public class Manufacturer {
 		this.getProductionSchedule().addNewSingleTaskOrder(order);
 		
 		//TODO Fix the unidling in the floor
-		if (this.getSchedulerIntermediate().isIdle()) 
-			this.getSchedulerIntermediate().unIdle();
+		this.getAssemblyFloor().unidleLineFor(order);
 		
 		return order;
 	}
@@ -528,8 +528,7 @@ public class Manufacturer {
 		this.getProductionSchedule().addNewStandardOrder(newOrder);
 		
 		//TODO fix unidling in the floor
-		if (this.getSchedulerIntermediate().isIdle()) 
-			this.getSchedulerIntermediate().unIdle();
+		this.getAssemblyFloor().unidleLineFor(newOrder);
 		
 		return newOrder;
 	}
@@ -559,6 +558,13 @@ public class Manufacturer {
 		//TODO set this up as required
 		return this.getAssemblyFloor().getAssemblyLineViews();
 	}
+	
+
+
+	public List<WorkPostView> getWorkPostsAt(int lineNb) {
+		// TODO Auto-generated method stub
+		return this.getAssemblyFloor().getWorkPostViewsAt(lineNb);
+	}
 
 	/**
 	 * Ask the AssemblyLine for the AssemblyTaskContainers at the specified
@@ -571,9 +577,9 @@ public class Manufacturer {
 	 * @throws IllegalArgumentException
 	 * 		See {@link AssemblyLine#getAssemblyTasksAtPost(int) getAssemblyTasksAtPost(int)}
 	 */
-	public List<AssemblyTaskView> getAssemblyTasksAtPost(int postNum) throws IllegalArgumentException {
+	public List<AssemblyTaskView> getAssemblyTasksAtPost(int lineNum, int postNum) throws IllegalArgumentException {
 		//TODO also add layer of indirection
-		return this.getAssemblyFloor().getAssemblyTasksAtPost(postNum);
+		return this.getAssemblyFloor().getAssemblyTasksAtPost(lineNum, postNum);
 	}
 
 	/**
@@ -605,6 +611,30 @@ public class Manufacturer {
 		//TODO add layer of indirection
 		return this.getAssemblyFloor().getActiveOrderContainers();
 	}
+	
+
+	//--------- Assembly States ---------//
+
+	public List<AssemblyLineStateView> getAvailableStates() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	public AssemblyLineState getStateInstance(int stateNum) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	public List<AssemblyLineStateView> getCurrentLineStates() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	//----- end of Assembly States -----//
 
 	//--------------------------------------------------------------------------
 	// Completed Order Methods
@@ -681,5 +711,6 @@ public class Manufacturer {
 	public String getStatisticsReport() {
 		return this.getAssemblyFloor().getStatisticsReport();
 	}
+
 
 }
