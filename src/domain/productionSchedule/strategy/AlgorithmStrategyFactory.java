@@ -5,6 +5,7 @@ import java.util.List;
 
 import domain.car.Option;
 import domain.car.Specification;
+import domain.order.StandardOrder;
 
 /**
  * The AlgorithmStrategyFactory methods provides methods for getting each specific
@@ -29,7 +30,7 @@ public class AlgorithmStrategyFactory {
 		List<Option> emptyOptions = new ArrayList<Option>();
 		Specification emptySpec = new Specification(emptyOptions);
 		
-		result.add(new BatchStrategy(emptySpec));
+		result.add(new BatchStrategy<StandardOrder>(emptySpec));
 		
 		return result;
 	}
@@ -39,8 +40,8 @@ public class AlgorithmStrategyFactory {
 	 * 
 	 * @return a FIFO SchedulingStrategy
 	 */
-	public SchedulingStrategy getFifoStrategy() {
-		return new FifoStrategy();
+	public SchedulingStrategy<StandardOrder> getFifoStrategy() {
+		return new FifoStrategy<StandardOrder>();
 	}
 	
 	/**
@@ -51,8 +52,8 @@ public class AlgorithmStrategyFactory {
 	 * @throws IllegalArgumentException
 	 * 		spec is null
 	 */
-	public SchedulingStrategy getBatchStrategy(Specification spec) throws IllegalArgumentException {
-		return new BatchStrategy(spec);
+	public SchedulingStrategy<StandardOrder> getBatchStrategy(Specification spec) throws IllegalArgumentException {
+		return new BatchStrategy<StandardOrder>(spec);
 	}
 
 }

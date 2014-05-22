@@ -3,8 +3,6 @@ package domain.assemblyLine;
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.Manufacturer;
-import domain.order.Order;
 import domain.order.OrderView;
 import domain.statistics.StatisticsLogger;
 
@@ -23,9 +21,11 @@ public class AssemblyFloor {
 	/**
 	 * Construct a new and empty assemblyFloor, containing no AssemblyLines.
 	 */
-	public AssemblyFloor(){
+	public AssemblyFloor(StatisticsLogger logger){
+		if (logger == null)
+			throw new IllegalArgumentException("logger can not be null!");
 		this.lines = new ArrayList<>();
-		this.logger = new StatisticsLogger();
+		this.logger = logger;
 	}
 	
 	/**
@@ -35,13 +35,16 @@ public class AssemblyFloor {
 	 * 		The lines that are on this new AssemblyFloor
 	 * @throws IllegalArgumentException
 	 */
-	public AssemblyFloor(List<AssemblyLineFacade> lines)
+	public AssemblyFloor(List<AssemblyLineFacade> lines, StatisticsLogger logger)
 			throws IllegalArgumentException{
 		if (lines == null)
 			throw new IllegalArgumentException("lines can not be null!");
 		if (lines.contains(null))
 			throw new IllegalArgumentException("lines can not contain null!");
+		if (logger == null)
+			throw new IllegalArgumentException("logger can not be null!");
 		this.lines = new ArrayList<>(lines);
+		this.logger = logger;
 	}
 	
 	//--------------------------------------------------------------------------
@@ -74,6 +77,15 @@ public class AssemblyFloor {
 	public List<AssemblyLineView> getLineViews(){
 		return new ArrayList<AssemblyLineView>(this.lines);
 	}
+
+	/**
+	 * Get the lines of this Floor for internal use.
+	 * 
+	 * @return the assembly lines of this floor
+	 */
+	private List<AssemblyLineFacade> getLines() {
+		return this.lines;
+	}
 	
 	/**
 	 * Add the specified AssemblyLineFacade to this AssemblyFloor
@@ -101,78 +113,108 @@ public class AssemblyFloor {
 	//--------------------------------------------------------------------------
 	// AssemblyFloor and AssemblyLine methods
 	//--------------------------------------------------------------------------
-	
+
 	/**
-	 * If possible, unidle an assemblyline that is currently idle and can fully
-	 * process given order. If no such assemblyline exists, nothing happens.
-	 * Maximum one assemblyline is unidled.
+	 * Get the StatisticsLogger of this class for internal use
 	 * 
-	 * @param order
-	 * 		The order the unidled assemblyline has to be able to process
+	 * @return
 	 */
-	public void unidleLineFor(Order order){
-		//TODO
+	private StatisticsLogger getStatisticsLogger(){
+		return this.logger;
 	}
-
-
-	private StatisticsLogger logger; 
 	
-	/**
-	 * Set the StatisticsLogger of this AssemblyFloor to the specified StatisticsLogger
-	 * 
-	 * @param logger
-	 * 		The logger to set
-	 * @throws IllegalArgumentException
-	 * 		logger is null
-	 */
-	public void setStatisticsLogger(StatisticsLogger logger) throws IllegalArgumentException {
-		if (logger == null) {
-			throw new IllegalArgumentException("Cannot set null StatisticsLogger in AssemblyFloor");
-		}
-		this.logger = logger;
-	}
+	/** StatisticsLogger for all assemblyLines */
+	private final StatisticsLogger logger; 
 
+	/**
+	 * Get a report on the statistics of this assemblyFloor.
+	 * 
+	 * @return 
+	 * 		A report that takes the form of a String object. The client is responsible
+	 * 		for deriving meaning from that report.
+	 */
 	public String getStatisticsReport() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getStatisticsLogger().getReport();
 	}
 
-	public void setManufacturer(Manufacturer manufacturer) {
-		// TODO Set everything correctly
-		// Binary from line to manuf?
-		// from controller to manuf?
-		// from this to manuf?
-		
-	}
-
-
+	/**
+	 * Get a list with all orders that are currently active on the assembly lines.
+	 * 
+	 * The orders are immutable
+	 * 
+	 * @return a list with all orders on the assembly lines
+	 */
 	public List<OrderView> getActiveOrderContainers() {
-		// TODO Auto-generated method stub
-		return null;
+		List<OrderView> result = new ArrayList<>();
+		for(AssemblyLineFacade fac : this.getLines()){
+			result.addAll(fac.getActiveOrderContainers());
+		}
+		return result;
 	}
 
 
 	//--------- Perform Assembly Tasks methods ---------//
-
-
-	public List<AssemblyLineView> getAssemblyLineViews() {
-		return new ArrayList<AssemblyLineView>(lines);
+	
+	/**
+	 * Get the workposts on the assemblyLine with given index.
+	 * 
+	 * The workposts are immutable.
+	 * 
+	 * @param lineNb
+	 * 		The index for the desired assemblyLine
+	 * 
+	 * @return a list with the desired workposts
+	 */
+	public List<WorkPostView> getWorkPostViewsAt(int lineNb) throws IllegalArgumentException{
+		if(lineNb<0 || lineNb >= getLineViews().size())
+			throw new IllegalArgumentException("Not a valid index for an assemblyline.");
+		return this.getLines().get(lineNb).getWorkPostViews();
 	}
 	
-	public List<WorkPostView> getWorkPostViewsAt(int lineNb) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public List<AssemblyTaskView> getAssemblyTasksAtPost(int lineNum, int postNum) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * Get the assembly tasks on given workpost on given assembly line.
+	 * 
+	 * The tasks are immutable.
+	 * 
+	 * @param lineNb
+	 * 		The index of the desired assembly line
+	 * @param postNb
+	 * 		The index of the desired workpost on the desired assembly line
+	 *
+	 * @return the list of tasks on the desired workpost
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		When the index of the assembly line or workpost is not a legal value
+	 */
+	public List<AssemblyTaskView> getAssemblyTasksAtPost(int lineNb, int postNb) 
+		throws IllegalArgumentException{
+		if(lineNb<0 || lineNb >= getLineViews().size())
+			throw new IllegalArgumentException("Not a valid index for an assemblyline.");
+		return this.getLines().get(lineNb).getAssemblyTasksAtPost(postNb);
 	}
 	
 
-	public void completeWorkpostTask(int lineNumber, int workPostNumber,
-			int taskNumber, int minutes) {
-		// TODO Auto-generated method stub
-		
+	/**
+	 * Set the task with given index on workpost with given index of assemblyline
+	 * with given index as complete.
+	 * 
+	 * @param lineNb
+	 * 		The index of desired assemblyLine
+	 * @param postNb
+	 * 		The index of the desired workpost
+	 * @param taskNb
+	 * 		The index of the desired task
+	 * @param minutes
+	 * 		The amount of minutes spent on the task
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		if one of the indices is not legal
+	 */
+	public void completeWorkpostTask(int lineNb, int postNb, int taskNb,
+			int minutes) throws IllegalArgumentException{
+		if(lineNb<0 || lineNb >= getLineViews().size())
+			throw new IllegalArgumentException("Not a valid index for an assemblyline.");
+		this.getLines().get(lineNb).completeWorkpostTask(postNb, taskNb, minutes);;
 	}
 
 	//----- end of Perform Assembly Tasks methods -----//

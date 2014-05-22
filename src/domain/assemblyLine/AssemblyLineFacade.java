@@ -251,15 +251,6 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	public void setStatisticsLogger(StatisticsLogger logger) throws IllegalArgumentException {
 		this.getLine().setStatisticsLogger(logger);
 	}
-	
-	/**
-	 * Get a report on the statistical variables watched by this AssemblyLine
-	 * 
-	 * @return A report in the form of a String.
-	 */
-	public String getStatisticsReport() {
-		return this.getLine().getStatisticsReport();
-	}
 
 	//----- end of AssemblyLine methods -----//
 	

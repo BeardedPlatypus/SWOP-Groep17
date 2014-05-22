@@ -113,7 +113,6 @@ public class Manufacturer {
 
 
 		this.orderFactory.setManufacturer(this);
-		this.assemblyFloor.setManufacturer(this);
 
 	}
 	
@@ -317,7 +316,6 @@ public class Manufacturer {
 		this.getProductionSchedule().addNewSingleTaskOrder(order);
 		
 		//TODO Fix the unidling in the floor
-		this.getAssemblyFloor().unidleLineFor(order);
 		
 		return order;
 	}
@@ -528,7 +526,6 @@ public class Manufacturer {
 		this.getProductionSchedule().addNewStandardOrder(newOrder);
 		
 		//TODO fix unidling in the floor
-		this.getAssemblyFloor().unidleLineFor(newOrder);
 		
 		return newOrder;
 	}
@@ -556,7 +553,7 @@ public class Manufacturer {
 	 */
 	public List<AssemblyLineView> getAssemblyLineViews() {
 		//TODO set this up as required
-		return this.getAssemblyFloor().getAssemblyLineViews();
+		return this.getAssemblyFloor().getLineViews();
 	}
 	
 
