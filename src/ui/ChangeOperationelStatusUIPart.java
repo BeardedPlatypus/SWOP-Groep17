@@ -2,7 +2,7 @@ package ui;
 
 import java.util.List;
 
-import domain.assemblyLine.AssemblyLineStateView;
+import domain.assembly_line.AssemblyLineStateView;
 import domain.handlers.ChangeOperationalStatusHandler;
 
 public class ChangeOperationelStatusUIPart {

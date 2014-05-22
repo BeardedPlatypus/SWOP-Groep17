@@ -19,7 +19,7 @@ import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
 import domain.productionSchedule.strategy.BatchStrategy;
 import domain.car.Model;
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
 import domain.productionSchedule.strategy.FifoStrategy;
 
 public class SchedulerContextTest {

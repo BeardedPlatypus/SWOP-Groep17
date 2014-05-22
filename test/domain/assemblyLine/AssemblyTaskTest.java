@@ -11,8 +11,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import domain.assemblyLine.AssemblyTask;
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.AssemblyTask;
+import domain.assembly_line.TaskType;
 import domain.car.Option;
 
 public class AssemblyTaskTest {

@@ -10,6 +10,14 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import domain.assembly_line.ActiveState;
+import domain.assembly_line.AssemblyLine;
+import domain.assembly_line.AssemblyLineState;
+import domain.assembly_line.BrokenState;
+import domain.assembly_line.MaintenanceState;
+import domain.assembly_line.OperationalState;
+import domain.assembly_line.StateCatalog;
+
 public class StateCatalogTest {
 
 	@Rule public ExpectedException expected = ExpectedException.none();

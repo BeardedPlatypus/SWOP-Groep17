@@ -22,6 +22,14 @@ import org.powermock.modules.junit4.*;
 import com.google.common.base.Optional;
 
 import domain.DateTime;
+import domain.assembly_line.ActiveState;
+import domain.assembly_line.AssemblyLine;
+import domain.assembly_line.AssemblyProcedure;
+import domain.assembly_line.AssemblyTask;
+import domain.assembly_line.IdleState;
+import domain.assembly_line.LayoutManipulator;
+import domain.assembly_line.TaskType;
+import domain.assembly_line.WorkPost;
 import domain.car.Option;
 import domain.order.Order;
 

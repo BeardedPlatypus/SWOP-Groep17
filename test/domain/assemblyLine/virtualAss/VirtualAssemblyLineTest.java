@@ -18,7 +18,9 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import domain.DateTime;
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
+import domain.assembly_line.virtualAss.VirtualAssProc;
+import domain.assembly_line.virtualAss.VirtualAssemblyLine;
 import domain.car.Model;
 import domain.car.Specification;
 import domain.order.Order;

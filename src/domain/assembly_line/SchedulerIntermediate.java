@@ -1,4 +1,4 @@
-package domain.assemblyLine;
+package domain.assembly_line;
 
 import java.util.ArrayList;
 import java.util.Enumeration;

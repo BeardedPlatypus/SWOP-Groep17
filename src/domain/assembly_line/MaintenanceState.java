@@ -1,4 +1,4 @@
-package domain.assemblyLine;
+package domain.assembly_line;
 
 import com.google.common.base.Optional;
 

@@ -1,4 +1,4 @@
-package domain.assemblyLine;
+package domain.assembly_line;
 
 //TODO update class documentation.
 /**

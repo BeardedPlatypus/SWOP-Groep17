@@ -23,12 +23,12 @@ import org.powermock.reflect.Whitebox;
 
 import com.google.common.base.Optional;
 
-import domain.assemblyLine.AssemblyProcedure;
-import domain.assemblyLine.AssemblyTask;
-import domain.assemblyLine.AssemblyTaskView;
-import domain.assemblyLine.TaskType;
-import domain.assemblyLine.WorkPost;
-import domain.assemblyLine.WorkPostObserver;
+import domain.assembly_line.AssemblyProcedure;
+import domain.assembly_line.AssemblyTask;
+import domain.assembly_line.AssemblyTaskView;
+import domain.assembly_line.TaskType;
+import domain.assembly_line.WorkPost;
+import domain.assembly_line.WorkPostObserver;
 import domain.car.Option;
 import domain.order.Order;
 

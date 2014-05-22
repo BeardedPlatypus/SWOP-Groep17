@@ -3,9 +3,9 @@ package ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.assemblyLine.AssemblyLineView;
-import domain.assemblyLine.AssemblyTaskView;
-import domain.assemblyLine.WorkPostView;
+import domain.assembly_line.AssemblyLineView;
+import domain.assembly_line.AssemblyTaskView;
+import domain.assembly_line.WorkPostView;
 import domain.handlers.PerformAssemblyTaskHandler;
 
 public class PerformAssemblyTasksUIPart {

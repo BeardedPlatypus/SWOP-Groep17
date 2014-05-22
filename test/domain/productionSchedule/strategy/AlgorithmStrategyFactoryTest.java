@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.powermock.reflect.Whitebox;
 import org.powermock.modules.junit4.*;
 
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
 import domain.car.Option;
 import domain.car.Specification;
 

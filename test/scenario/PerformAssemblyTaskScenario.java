@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import domain.InteractionSimulator;
-import domain.assemblyLine.AssemblyTaskView;
+import domain.assembly_line.AssemblyTaskView;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
 

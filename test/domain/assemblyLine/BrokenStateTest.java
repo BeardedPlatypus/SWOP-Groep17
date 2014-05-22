@@ -12,6 +12,8 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import domain.assembly_line.AssemblyLine;
+import domain.assembly_line.BrokenState;
 import domain.order.Order;
 
 public class BrokenStateTest {

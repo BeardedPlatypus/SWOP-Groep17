@@ -1,4 +1,4 @@
-package domain.assemblyLine;
+package domain.assembly_line;
 
 /**
  * Interface for objects that have an interest in knowing when a WorkPost

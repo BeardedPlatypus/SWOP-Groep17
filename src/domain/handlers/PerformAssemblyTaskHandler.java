@@ -3,9 +3,9 @@ package domain.handlers;
 import java.util.List;
 
 import domain.Manufacturer;
-import domain.assemblyLine.AssemblyLineView;
-import domain.assemblyLine.AssemblyTaskView;
-import domain.assemblyLine.WorkPostView;
+import domain.assembly_line.AssemblyLineView;
+import domain.assembly_line.AssemblyTaskView;
+import domain.assembly_line.WorkPostView;
 
 /**
  * Coordinates with the outside world in order to complete assembly tasks of a single WorkPost.

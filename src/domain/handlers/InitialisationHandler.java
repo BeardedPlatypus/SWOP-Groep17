@@ -5,13 +5,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import domain.assemblyLine.AssemblyFloor;
-import domain.assemblyLine.AssemblyLine;
-import domain.assemblyLine.AssemblyLineBuilder;
-import domain.assemblyLine.AssemblyLineFacade;
 import domain.DateTime;
 import domain.Manufacturer;
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.AssemblyFloor;
+import domain.assembly_line.AssemblyLine;
+import domain.assembly_line.AssemblyLineBuilder;
+import domain.assembly_line.AssemblyLineFacade;
+import domain.assembly_line.TaskType;
 import domain.car.CarModel;
 import domain.car.Model;
 import domain.car.ModelCatalog;

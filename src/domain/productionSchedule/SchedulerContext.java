@@ -10,7 +10,7 @@ import com.google.common.base.Optional;
 
 import domain.car.Model;
 import domain.car.Specification;
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
 import domain.order.Order;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;

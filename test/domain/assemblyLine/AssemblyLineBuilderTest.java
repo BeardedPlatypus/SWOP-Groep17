@@ -17,6 +17,10 @@ import org.powermock.reflect.Whitebox;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import domain.Manufacturer;
+import domain.assembly_line.AssemblyLine;
+import domain.assembly_line.AssemblyLineBuilder;
+import domain.assembly_line.TaskType;
+import domain.assembly_line.WorkPost;
 import domain.car.CarModel;
 import domain.car.Model;
 import domain.car.OptionCategory;

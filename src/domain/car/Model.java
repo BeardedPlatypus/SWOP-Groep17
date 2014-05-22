@@ -3,7 +3,7 @@ package domain.car;
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
 import util.annotations.Immutable;
 import exceptions.NoOptionCategoriesRemainingException;
 

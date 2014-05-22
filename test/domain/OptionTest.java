@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.MockitoAnnotations;
 
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
 import domain.car.Option;
 
 public class OptionTest {

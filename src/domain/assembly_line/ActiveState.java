@@ -1,4 +1,4 @@
-package domain.assemblyLine;
+package domain.assembly_line;
 
 class ActiveState extends OperationalState {
 

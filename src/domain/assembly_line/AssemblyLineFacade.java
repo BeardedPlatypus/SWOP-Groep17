@@ -1,4 +1,4 @@
-package domain.assemblyLine;
+package domain.assembly_line;
 
 import java.util.List;
 
@@ -227,29 +227,6 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	 */
 	public AssemblyProcedure makeAssemblyProcedure(Optional<Order> order) {
 		return this.getLine().makeAssemblyProcedure(order);
-	}
-
-	/**
-	 * Get this AssemblyLine's OrderSelector,
-	 * which determines which Orders this AssemblyLine can handle
-	 * 
-	 * @return The order selector.
-	 */
-	public OrderAcceptanceChecker getOrderSelector() {
-		return this.getLine().getOrderSelector();
-	}
-
-	
-	/**
-	 * Set this AssemblyLine's StatisticsLogger to the specified StatisticsLogger
-	 * 
-	 * @param logger
-	 * 		The StatisticsLogger of interest
-	 * @throws IllegalArgumentException
-	 * 		logger is null
-	 */
-	public void setStatisticsLogger(StatisticsLogger logger) throws IllegalArgumentException {
-		this.getLine().setStatisticsLogger(logger);
 	}
 
 	//----- end of AssemblyLine methods -----//

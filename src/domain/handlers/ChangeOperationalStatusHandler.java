@@ -3,8 +3,8 @@ package domain.handlers;
 import java.util.List;
 
 import domain.Manufacturer;
-import domain.assemblyLine.AssemblyLineState;
-import domain.assemblyLine.AssemblyLineStateView;
+import domain.assembly_line.AssemblyLineState;
+import domain.assembly_line.AssemblyLineStateView;
 
 /**
  * This handler fulfills the "Change Assembly Line's Operational Status"

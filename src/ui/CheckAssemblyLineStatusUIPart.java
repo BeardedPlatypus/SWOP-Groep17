@@ -2,9 +2,9 @@ package ui;
 
 import java.util.List;
 
-import domain.assemblyLine.AssemblyLineView;
-import domain.assemblyLine.AssemblyTaskView;
-import domain.assemblyLine.WorkPostView;
+import domain.assembly_line.AssemblyLineView;
+import domain.assembly_line.AssemblyTaskView;
+import domain.assembly_line.WorkPostView;
 import domain.handlers.AssemblyLineStatusHandler;
 
 public class CheckAssemblyLineStatusUIPart {

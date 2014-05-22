@@ -13,7 +13,7 @@ import org.powermock.modules.junit4.*;
 
 import domain.DateTime;
 import domain.Manufacturer;
-import domain.assemblyLine.AssemblyLine;
+import domain.assembly_line.AssemblyLine;
 import domain.handlers.CheckProductionStatisticsHandler;
 import domain.statistics.CarsProducedRegistrar;
 import domain.statistics.DelayRegistrar;

@@ -9,8 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import domain.InteractionSimulator;
-import domain.assemblyLine.AssemblyTaskView;
-import domain.assemblyLine.WorkPostView;
+import domain.assembly_line.AssemblyTaskView;
+import domain.assembly_line.WorkPostView;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
 

@@ -1,4 +1,4 @@
-package domain.assemblyLine;
+package domain.assembly_line;
 
 /**
  * When an AssemblyLine is operational, it is capable of completing tasks

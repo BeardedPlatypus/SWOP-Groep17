@@ -1,4 +1,4 @@
-package domain.assemblyLine.virtualAss;
+package domain.assembly_line.virtualAss;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.common.base.Optional;
 
 import domain.DateTime;
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
 import domain.order.Order;
 
 /**

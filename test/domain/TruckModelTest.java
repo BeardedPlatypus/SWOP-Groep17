@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
 import domain.car.OptionCategory;
 import domain.car.TruckModel;
 

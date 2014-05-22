@@ -9,6 +9,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import domain.assembly_line.LayoutFactory;
+import domain.assembly_line.TaskType;
+import domain.assembly_line.WorkPost;
 import domain.car.CarModel;
 import domain.car.OptionCategory;
 import domain.car.TruckModel;

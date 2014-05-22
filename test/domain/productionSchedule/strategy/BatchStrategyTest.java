@@ -16,7 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 
 import domain.DateTime;
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
 import domain.car.Option;
 import domain.car.Specification;
 import domain.car.Model;

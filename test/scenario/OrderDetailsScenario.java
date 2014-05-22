@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import domain.DateTime;
 import domain.Manufacturer;
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
 import domain.car.CarModel;
 import domain.car.Model;
 import domain.car.Option;

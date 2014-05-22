@@ -3,7 +3,7 @@ package domain.handlers;
 import java.util.List;
 
 import domain.Manufacturer;
-import domain.assemblyLine.AssemblyLineView;
+import domain.assembly_line.AssemblyLineView;
 
 /**
  * Coordinates with the outside world in order to view the assembly line status.
