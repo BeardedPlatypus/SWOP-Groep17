@@ -219,16 +219,16 @@ public abstract class AssemblyLineState implements AssemblyLineStateView {
 		this.getAssemblyLine().handleFinishedAssemblyProcedure(procedure);
 	}
 	
-	/**
-	 * Ask the ProductionSchedule for the next Order the AssemblyLine can process
-	 * and consumes it.
-	 * 
-	 * @return The next Order
-	 */
-	protected Optional<Order> popNextOrderFromSchedule() {
-		this.checkAssemblyLineSet();
-		return this.getAssemblyLine().popNextOrderFromSchedule();
-	}
+//	/**
+//	 * Ask the ProductionSchedule for the next Order the AssemblyLine can process
+//	 * and consumes it.
+//	 * 
+//	 * @return The next Order
+//	 */
+//	protected Optional<Order> popNextOrderFromSchedule() {
+//		this.checkAssemblyLineSet();
+//		return this.getAssemblyLine().popNextOrderFromSchedule();
+//	}
 	
 	/**
 	 * Set the state of this AssemblyLineState's AssemblyLine

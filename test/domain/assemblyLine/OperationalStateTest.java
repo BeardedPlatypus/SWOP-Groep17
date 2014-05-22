@@ -30,7 +30,7 @@ public class OperationalStateTest {
 	AssemblyLine line;
 	@Mock Order mockOrder;
 	@Mock Manufacturer manufacturer;
-	@Mock SchedulerIntermediate sched;
+	//@Mock SchedulerIntermediate sched;
 	List<WorkPost> workPosts;
 	
 	AssemblyTask task0;
@@ -56,7 +56,7 @@ public class OperationalStateTest {
 		workPosts.add(new WorkPost(TaskType.DRIVETRAIN, 1));
 		workPosts.add(new WorkPost(TaskType.ACCESSORIES, 2));
 		
-		line = new AssemblyLine(workPosts, new OrderAcceptanceChecker(new ArrayList<Model>()), sched);
+		line = new AssemblyLine(workPosts, new ArrayList<Model>(Arrays.asList(model)));
 		line.setManufacturer(manufacturer);
 		
 		task0 = new AssemblyTask(new Option(TaskType.BODY, "john", "doe"), 0);

@@ -1,6 +1,7 @@
 package domain.assemblyLine;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Optional;
@@ -8,7 +9,11 @@ import com.google.common.base.Optional;
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.assemblyLine.virtualAss.VirtualAssemblyLine;
+import domain.car.Model;
 import domain.car.Specification;
+import domain.order.CompletedOrderEvent;
+import domain.order.CompletedOrderObserver;
+import domain.order.CompletedOrderSubject;
 import domain.order.Order;
 import domain.order.OrderView;
 import domain.statistics.ProcedureStatistics;
@@ -24,7 +29,7 @@ import exceptions.OrdersNotEmptyWhenAdvanceException;
  * 
  * @author Thomas Vochten, Frederik Goovaerts, Martinus Wilhelmus Tegelaers
  */
-public class AssemblyLine implements WorkPostObserver {
+public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -41,35 +46,35 @@ public class AssemblyLine implements WorkPostObserver {
 	 * @throws IllegalArgumentException
 	 * 		workPosts == null || workPosts.isEmpty()
 	 * @throws IllegalArgumentException
-	 * 		schedulerIntermediate == null
-	 * @throws IllegalArgumentException
-	 * 		orderSelector == null
+	 * 		models is null or models is empty
 	 */
-	public AssemblyLine(List<WorkPost> workPosts, OrderAcceptanceChecker orderSelector,
-			SchedulerIntermediate schedulerIntermediate)
+	public AssemblyLine(List<WorkPost> workPosts, List<Model> models)
 		throws IllegalArgumentException {
 		if (workPosts == null || workPosts.isEmpty()) {
 			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
 					+ "without any WorkPosts");
 		}
-		if (orderSelector == null) {
+		if (models == null || models.isEmpty()) {
 			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
-					+ "with null order selector");
+					+ "with empty model list");
 		}
-		if (schedulerIntermediate == null) {
-			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
-					+ "with null SchedulerIntermediate");
-		}
+//		if (schedulerIntermediate == null) {
+//			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
+//					+ "with null SchedulerIntermediate");
+//		}
 		
 		this.workPosts = workPosts;
 		for (WorkPost workPost : workPosts) {
 			workPost.register(this);
 		}
 		
-		this.orderSelector = orderSelector;
+		this.acceptedModels = Collections.unmodifiableList(models);
 		this.elapsedTime = new DateTime(0, 0, 0);
-		this.schedulerIntermediate = schedulerIntermediate;
-		schedulerIntermediate.setAssemblyLine(this);
+		
+//		this.schedulerIntermediate = schedulerIntermediate;
+//		schedulerIntermediate.setAssemblyLine(this);
+		
+		this.observers = new ArrayList<CompletedOrderObserver>();
 		this.initialiseState();
 	}	
 	
@@ -267,6 +272,18 @@ public class AssemblyLine implements WorkPostObserver {
 	List<WorkPost> getWorkPosts() {
 		return new ArrayList<WorkPost>(this.workPosts);
 	}
+	
+	/**
+	 * @return The TaskTypes of this AssemblyLine's WorkPosts
+	 */
+	public List<TaskType> getTaskTypes() {
+		List<TaskType> toReturn = new ArrayList<TaskType>();
+		for (WorkPost workPost : this.getWorkPosts()) {
+			toReturn.add(workPost.getTaskType());
+		}
+		
+		return toReturn;
+	}
 
 	/** 
 	 * Get the size of this AssemblyLine.
@@ -431,7 +448,6 @@ public class AssemblyLine implements WorkPostObserver {
 	 */
 	private void tryAdvance(DateTime elapsedTime, List<Order> orders) throws IllegalStateException{
 		this.getCurrentState().advanceAssemblyLine(orders);
-		this.getManufacturer().incrementTime(elapsedTime);
 		this.setElapsedTime(new DateTime(0, 0, 0));
 	}
 	
@@ -459,42 +475,42 @@ public class AssemblyLine implements WorkPostObserver {
 		this.resetFinishedAssemblyCounter();
 	}
 	
-	/** Source of new Orders. */
-	private SchedulerIntermediate schedulerIntermediate;
+//	/** Source of new Orders. */
+//	private SchedulerIntermediate schedulerIntermediate;
+//	
+//	/**
+//	 * @return the SchedulerIntermediate
+//	 */
+//	private SchedulerIntermediate getSchedulerIntermediate() {
+//		return this.schedulerIntermediate;
+//	}
+//	
+//	/**
+//	 * Set the SchedulerIntermediate to the specified SchedulerIntermediate
+//	 * 
+//	 * @param schedulerIntermediate
+//	 * 		The new SchedulerIntermediate
+//	 * @throws IllegalArgumentException
+//	 * 		schedulerIntermediate is null
+//	 */
+//	public void setSchedulerIntermediate(SchedulerIntermediate schedulerIntermediate)
+//		throws IllegalArgumentException {
+//		if (schedulerIntermediate == null) {
+//			throw new IllegalArgumentException("Cannot set null SchedulerIntermediate"
+//					+ "in AssemblyLine");
+//		}
+//		this.schedulerIntermediate = schedulerIntermediate;
+//	}
 	
-	/**
-	 * @return the SchedulerIntermediate
-	 */
-	private SchedulerIntermediate getSchedulerIntermediate() {
-		return this.schedulerIntermediate;
-	}
-	
-	/**
-	 * Set the SchedulerIntermediate to the specified SchedulerIntermediate
-	 * 
-	 * @param schedulerIntermediate
-	 * 		The new SchedulerIntermediate
-	 * @throws IllegalArgumentException
-	 * 		schedulerIntermediate is null
-	 */
-	public void setSchedulerIntermediate(SchedulerIntermediate schedulerIntermediate)
-		throws IllegalArgumentException {
-		if (schedulerIntermediate == null) {
-			throw new IllegalArgumentException("Cannot set null SchedulerIntermediate"
-					+ "in AssemblyLine");
-		}
-		this.schedulerIntermediate = schedulerIntermediate;
-	}
-	
-	/**
-	 * Ask the SchedulerIntermediate for the next Order
-	 * 
-	 * @return The next Order
-	 */
-	Optional<Order> popNextOrderFromSchedule() {
-		//TODO ask the AssemblyLineController
-		return this.getSchedulerIntermediate().popNextOrderFromSchedule();
-	}
+//	/**
+//	 * Ask the SchedulerIntermediate for the next Order
+//	 * 
+//	 * @return The next Order
+//	 */
+//	Optional<Order> popNextOrderFromSchedule() {
+//		//TODO ask the AssemblyLineController
+//		return this.getSchedulerIntermediate().popNextOrderFromSchedule();
+//	}
 	
 	/**
 	 * Call this method when advancing to handle the AssemblyProcedure that
@@ -508,9 +524,9 @@ public class AssemblyLine implements WorkPostObserver {
 		}
 		
 		ProcedureStatistics stats = finishedProcedure.get().makeStatisticsEvent();
-		this.addStatistics(stats);
-		
-		this.getManufacturer().addToCompleteOrders(finishedProcedure.get().getOrder());
+		CompletedOrderEvent event = new CompletedOrderEvent(finishedProcedure.get().getOrder(),
+				stats);
+		this.notifyOrderComplete(event);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -594,21 +610,29 @@ public class AssemblyLine implements WorkPostObserver {
 		return toReturn;
 	}
 	
-	//--------------------------------------------------------------------------
-	// OrderSelector variables and methods
-	//--------------------------------------------------------------------------
-	/** Determines which Orders this AssemblyLine can handle */
-	private final OrderAcceptanceChecker orderSelector;
+	/** The Models that this AssemblyLine can accept */
+	private final List<Model> acceptedModels;
 	
 	/**
-	 * Get this AssemblyLine's OrderSelector,
-	 * which determines which Orders this AssemblyLine can handle
-	 * 
-	 * @return The order selector.
+	 * @return The Models that this AssemblyLine can accept
 	 */
-	public OrderAcceptanceChecker getOrderSelector() {
-		return this.orderSelector;
+	public List<Model> getAcceptedModels() {
+		return this.acceptedModels;
 	}
+	
+	/**
+	 * Indicate whether this AssemblyLine can accept Orders with the specified
+	 * Model.
+	 * 
+	 * @param model
+	 * 		The Model to check for
+	 * @return AssemblyLine can handle Orders with model
+	 */
+	public boolean hasModel(Model model) {
+		return this.getAcceptedModels().contains(model);
+	}
+	
+	
 	
 	/**
 	 * Calculate the time in minutes that the order is expected to spend
@@ -626,64 +650,66 @@ public class AssemblyLine implements WorkPostObserver {
 	}
 	
 	//--------------------------------------------------------------------------
-	// Statistics logger and related methods
+	// Rolling AssemblyProcedure off the line
 	//--------------------------------------------------------------------------
-	/** The statistics logger of this assembly line. */
-	private StatisticsLogger statisticsLogger;
+	/** The CompletedOrderObservers */
+	private List<CompletedOrderObserver> observers;
 	
 	/**
-	 * Get this AssemblyLine's StatisticsLogger
-	 * 
-	 * @return The StatisticsLogger
+	 * @return The CompletedOrderObservers
 	 */
-	private StatisticsLogger getStatisticsLogger() {
-		return this.statisticsLogger;
+	private List<CompletedOrderObserver> getObservers() {
+		return this.observers;
 	}
-	
-	/**
-	 * Set this AssemblyLine's StatisticsLogger to the specified StatisticsLogger
-	 * 
-	 * @param logger
-	 * 		The StatisticsLogger of interest
-	 * @throws IllegalArgumentException
-	 * 		logger is null
-	 */
-	public void setStatisticsLogger(StatisticsLogger logger) throws IllegalArgumentException {
-		if (logger == null) {
-			throw new IllegalArgumentException("Cannot set logger to null.");
+
+	@Override
+	public void attachObserver(CompletedOrderObserver observer)
+			throws IllegalArgumentException {
+		if (observer == null) {
+			throw new IllegalArgumentException("Cannot attach null observer");
 		}
-		this.statisticsLogger = logger;
+		this.getObservers().add(observer);
 	}
-	
-	/**
-	 * Get a report on the statistical variables watched by this AssemblyLine
-	 * 
-	 * @return A report in the form of a String.
-	 */
-	public String getStatisticsReport() {
-		if (this.getStatisticsLogger() == null) {
-			return "Not currently recording statistics";
-		}
-		return this.getStatisticsLogger().getReport();
+
+	@Override
+	public void detachObserver(CompletedOrderObserver observer) {
+		this.getObservers().remove(observer);
 	}
-	
-	/**
-	 * Pass the specified ProcedureStatistics onto the StatisticsLogger
-	 * 
-	 * @param stats
-	 * 		A new statistical event
-	 */
-	private void addStatistics(ProcedureStatistics stats) {
-		if (this.getStatisticsLogger() == null) {
-			return;
+
+	@Override
+	public void notifyOrderComplete(CompletedOrderEvent event)
+			throws IllegalArgumentException {
+		for (CompletedOrderObserver obs : this.getObservers()) {
+			obs.updateCompletedOrder(event);
 		}
-		this.getStatisticsLogger().addStatistics(stats);
 	}
 	
 	//--------------------------------------------------------------------------
 	// Virtual
 	//--------------------------------------------------------------------------
+	/**
+	 * Construct a new VirtualAssemblyLine that represents the current state of 
+	 * this AssemblyLine
+	 * 
+	 * @return A new VirtualAssemblyLine representing the current state of this
+	 * 		   Assemblyline.
+	 */
 	public VirtualAssemblyLine newVirtualAssemblyLine() {
-		
+		TaskType[] t = new TaskType[this.getAssemblyLineSize()];
+		return new VirtualAssemblyLine(this.getTaskTypes().toArray(t), this.getOrdersPerWorkStation());
+	}
+	
+	/**
+	 * Get a list of the length of the number of the workposts specifying the 
+	 * order if they have one. 
+	 * 
+	 * @return A list of the length of the number of the workposts with the corresponding order if it exists.
+	 */
+	public List<Optional<Order>> getOrdersPerWorkStation() {
+		List<Optional<Order>> result = new ArrayList<>();
+		for (WorkPost wp : this.getWorkPosts()) {
+			result.add(wp.getOrder());
+		}
+		return result;
 	}
 }

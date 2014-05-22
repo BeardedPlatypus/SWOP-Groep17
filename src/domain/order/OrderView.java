@@ -3,6 +3,7 @@ package domain.order;
 import com.google.common.base.Optional;
 
 import domain.DateTime;
+import domain.assemblyLine.TaskType;
 import domain.car.Specification;
 import domain.car.Model;
 
@@ -64,5 +65,4 @@ public interface OrderView {
 	 * 		| !this.isCompleted()
 	 */
 	public DateTime getCompletionTime() throws IllegalStateException;
-
 }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import domain.DateTime;
+import domain.order.CompletedOrderEvent;
+import domain.order.CompletedOrderObserver;
 import domain.statistics.Registrar;
 import domain.clock.TimeObserver;
 
@@ -12,7 +14,7 @@ import domain.clock.TimeObserver;
  * @author Thomas Vochten
  *
  */
-public class StatisticsLogger implements TimeObserver {
+public class StatisticsLogger implements TimeObserver, CompletedOrderObserver {
 	
 	//--------------------------------------------------------------------------
 	// Constructor
@@ -89,5 +91,13 @@ public class StatisticsLogger implements TimeObserver {
 		for (RegistrarWithWorkingDay registrar : this.getRegistrars()) {
 			registrar.switchDay(dayNumber);
 		}
+	}
+	
+	// -------------------------------------------------------------------------
+	
+	@Override
+	public void updateCompletedOrder(CompletedOrderEvent event)
+			throws IllegalArgumentException {
+		this.addStatistics(event.getProcedureStatistics());
 	}
 }

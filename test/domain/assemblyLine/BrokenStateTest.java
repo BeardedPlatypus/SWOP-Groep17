@@ -44,10 +44,10 @@ public class BrokenStateTest {
 		state.advanceAssemblyLine(new ArrayList<Order>());
 	}
 	
-	@Test
-	public void popNextOrderFromScheduleTest() {
-		expected.expect(IllegalStateException.class);
-		state.popNextOrderFromSchedule();
-	}
+//	@Test
+//	public void popNextOrderFromScheduleTest() {
+//		expected.expect(IllegalStateException.class);
+//		state.popNextOrderFromSchedule();
+//	}
 
 }

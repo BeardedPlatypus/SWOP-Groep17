@@ -24,14 +24,16 @@ public class AssemblyLineBuilder {
 	 * 		manufacturer is null
 	 */
 	public AssemblyLineBuilder() throws IllegalArgumentException {
+		
+		//TODO Manufacturer necessary?
 //		if (manufacturer == null) {
 //			throw new IllegalArgumentException("Cannot initialise an "
 //					+ "AssemblyLineBuilder with null manufacturer");
 //		}
 		this.desiredModels = new ArrayList<Model>();
-//		this.manufacturer = manufacturer;
+		//this.manufacturer = manufacturer;
 	}
-	
+//	
 //	/** The manufacturer of the new AssemblyLine. */
 //	private Manufacturer manufacturer;
 //	
@@ -108,7 +110,7 @@ public class AssemblyLineBuilder {
 	 * @throws IllegalArgumentException
 	 * 		See {@link AssemblyLine#AssemblyLine(List<WorkPost), OrderAcceptanceChecker, SchedulerIntermediate) AssemblyLine(List<WorkPost), OrderAcceptanceChecker, SchedulerIntermediate)}
 	 */
-	public AssemblyLine buildAssemblyLine(SchedulerIntermediate schedulerIntermediate)
+	public AssemblyLine buildAssemblyLine()
 			throws IllegalStateException {
 		if (! this.canBuildAssemblyLine()) {
 			throw new IllegalStateException("The AssemblyLineBuilder could"
@@ -117,9 +119,8 @@ public class AssemblyLineBuilder {
 		
 		LayoutFactory layoutFactory = new LayoutFactory();
 		
-		OrderAcceptanceChecker orderSelector = new OrderAcceptanceChecker(this.getDesiredModels());
 		List<WorkPost> workPosts = layoutFactory.makeLayout(this.getDesiredModels());
 		
-		return new AssemblyLine(workPosts, orderSelector, schedulerIntermediate);
+		return new AssemblyLine(workPosts, this.getDesiredModels());
 	}
 }

@@ -199,7 +199,7 @@ public class WorkPost implements WorkPostView {
 	 * @return The OrderContainer
 	 */
 	public OrderView getOrderView() {
-	return this.getAssemblyProcedure().get().getOrder();
+		return this.getAssemblyProcedure().get().getOrder();
 	}
 	
 	/**
@@ -228,6 +228,18 @@ public class WorkPost implements WorkPostView {
 		return order.getMinutesOnPostOfType(this.getTaskType());
 	}
 	
+	/**
+	 * Get the Order of this WorkPost if it exists.
+	 *   
+	 * @return The Order of this WorkPost if it exists.
+	 */
+	Optional<Order> getOrder() {
+		if (this.getAssemblyProcedure().isPresent()) {
+			return Optional.of(this.getAssemblyProcedure().get().getOrder());
+		} else {
+			return Optional.<Order> absent();
+		}
+	}
 	//--------------------------------------------------------------------------
 	// State management
 	//--------------------------------------------------------------------------

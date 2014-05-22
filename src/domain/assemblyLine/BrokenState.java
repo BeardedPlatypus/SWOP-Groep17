@@ -45,15 +45,15 @@ public class BrokenState extends AssemblyLineState {
 				+ "if it is broken");
 	}
 	
-	/**
-	 * Throw IllegalStateException as the AssemblyLine cannot process
-	 * new orders in this state.
-	 */
-	@Override
-	protected Optional<Order> popNextOrderFromSchedule() throws IllegalStateException {
-		throw new IllegalStateException("Cannot consume next order"
-				+ "if the assembly line is broken");
-	}
+//	/**
+//	 * Throw IllegalStateException as the AssemblyLine cannot process
+//	 * new orders in this state.
+//	 */
+//	@Override
+//	protected Optional<Order> popNextOrderFromSchedule() throws IllegalStateException {
+//		throw new IllegalStateException("Cannot consume next order"
+//				+ "if the assembly line is broken");
+//	}
 	
 	@Override
 	protected void ensureStateConsistency() {

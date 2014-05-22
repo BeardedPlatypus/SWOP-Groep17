@@ -25,11 +25,11 @@ public class MaintenanceState extends AssemblyLineState {
 		return new MaintenanceState();
 	}
 
-	@Override
-	protected Optional<Order> popNextOrderFromSchedule() {
-		//FIXME optional?
-		return Optional.absent();
-	}
+//	@Override
+//	protected Optional<Order> popNextOrderFromSchedule() {
+//		//FIXME optional?
+//		return Optional.absent();
+//	}
 	
 	private DateTime timeOfLastAdvance;
 	
