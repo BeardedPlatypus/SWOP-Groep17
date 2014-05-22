@@ -22,7 +22,8 @@ public class StatisticsLogger implements TimeObserver, CompletedOrderObserver {
 	 * Initialises a new StatisticsLogger. It will have no registrars at first.
 	 */
 	public StatisticsLogger() {
-		this.registrars = new ArrayList<RegistrarWithWorkingDay>();
+		this.registrarsWorkingDay = new ArrayList<RegistrarWithWorkingDay>();
+		this.registrars = new ArrayList<Registrar>();
 	}
 
 	//--------------------------------------------------------------------------
@@ -34,7 +35,10 @@ public class StatisticsLogger implements TimeObserver, CompletedOrderObserver {
 	 * 		The statistical event to report.
 	 */
 	public void addStatistics(ProcedureStatistics statistics) {
-		for (RegistrarWithWorkingDay registrar : this.getRegistrars()) {
+		for (RegistrarWithWorkingDay registrar : this.getRegistrarsWorkingDay()) {
+			registrar.addStatistics(statistics);
+		}
+		for (Registrar registrar : this.getRegistrars()) {
 			registrar.addStatistics(statistics);
 		}
 	}
@@ -47,7 +51,10 @@ public class StatisticsLogger implements TimeObserver, CompletedOrderObserver {
 	 */
 	public String getReport() {
 		StringBuilder report = new StringBuilder();
-		for (RegistrarWithWorkingDay registrar : this.getRegistrars()) {
+		for (RegistrarWithWorkingDay registrar : this.getRegistrarsWorkingDay()) {
+			report.append(registrar.getStatistics());
+		}
+		for (Registrar registrar : this.getRegistrars()) {
 			report.append(registrar.getStatistics());
 		}
 		return report.toString();
@@ -56,23 +63,55 @@ public class StatisticsLogger implements TimeObserver, CompletedOrderObserver {
 	//--------------------------------------------------------------------------
 	// Manipulating registrars
 	//--------------------------------------------------------------------------
-	/** Registrar objects that this StatisticsLogger passes events to. */
-	private List<RegistrarWithWorkingDay> registrars;
+	/** Registrar objects that this StatisticsLogger passes events to,
+	 * with a notion of the day */
+	private List<RegistrarWithWorkingDay> registrarsWorkingDay;
+	
+	/** Registrar objects that this StatisticsLogger passes events to */
+	private List<Registrar> registrars;
+	
+	/**
+	 * Get the list of RegistrarWithWorkingDays that this StatisticsLogger passes events to.
+	 * @return The RegistrarWithWorkingDays
+	 */
+	private List<RegistrarWithWorkingDay> getRegistrarsWorkingDay() {
+		return this.registrarsWorkingDay;
+	}
 	
 	/**
 	 * Get the list of Registrars that this StatisticsLogger passes events to.
 	 * @return The Registrars
 	 */
-	private List<RegistrarWithWorkingDay> getRegistrars() {
+	private List<Registrar> getRegistrars() {
 		return this.registrars;
 	}
 	
 	/**
+	 * Add a RegistrarWithWorkingDay to this StatisticsLogger.
+	 * @param registrar
+	 * 		RegistrarWithWorkingDay to be added to this StatisticsLogger
+	 * @throws IllegalArgumentException
+	 * 		registrar is null
+	 */
+	public void addRegistrar(RegistrarWithWorkingDay registrar) throws IllegalArgumentException {
+		if (registrar == null) {
+			throw new IllegalArgumentException("Cannot add null Registrar to StatisticsLogger");
+		}
+		this.getRegistrarsWorkingDay().add(registrar);
+	}
+	
+	/**
 	 * Add a Registrar to this StatisticsLogger.
+	 * 
 	 * @param registrar
 	 * 		Registrar to be added to this StatisticsLogger
+	 * @throws IllegalArgumentException
+	 * 		registrar is null
 	 */
-	public void addRegistrar(RegistrarWithWorkingDay registrar) {
+	public void addRegistrar(Registrar registrar) throws IllegalArgumentException {
+		if (registrar == null) {
+			throw new IllegalArgumentException("Cannot add null Registrar to StatisticsLogger");
+		}
 		this.getRegistrars().add(registrar);
 	}
 	
@@ -82,12 +121,12 @@ public class StatisticsLogger implements TimeObserver, CompletedOrderObserver {
 	@Override
 	public void update(DateTime time) {
 		int dayNumber = time.getDays();
-		for (RegistrarWithWorkingDay registrar : this.getRegistrars()) {
+		for (RegistrarWithWorkingDay registrar : this.getRegistrarsWorkingDay()) {
 			if (! registrar.isValidDay(dayNumber)) {
 				return;
 			}
 		}
-		for (RegistrarWithWorkingDay registrar : this.getRegistrars()) {
+		for (RegistrarWithWorkingDay registrar : this.getRegistrarsWorkingDay()) {
 			registrar.switchDay(dayNumber);
 		}
 	}
