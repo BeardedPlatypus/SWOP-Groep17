@@ -396,12 +396,13 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void handleFinishedAssemblyProcedureTest() {
-		task1.setCompleted(true);
+		assemblyLine.getCurrentState().completeWorkpostTask(0, 0, 0);
+		procedure1.addToElapsedMinutes(190);
 		assemblyLine.handleFinishedAssemblyProcedure(Optional.fromNullable(procedure1));
 		ArgumentCaptor<CompletedOrderEvent> arg = ArgumentCaptor.forClass(CompletedOrderEvent.class);
 		Mockito.verify(cat).updateCompletedOrder(arg.capture());
 		assertEquals(order, arg.getValue().getCompletedOrder());
-		assertEquals(-180, arg.getValue().getProcedureStatistics().getDelay());
+		assertEquals(10, arg.getValue().getProcedureStatistics().getDelay());
 	}
 	
 
