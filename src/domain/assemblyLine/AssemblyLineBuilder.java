@@ -23,27 +23,29 @@ public class AssemblyLineBuilder {
 	 * @throws IllegalArgumentException
 	 * 		manufacturer is null
 	 */
-	public AssemblyLineBuilder(Manufacturer manufacturer) throws IllegalArgumentException {
-		if (manufacturer == null) {
-			throw new IllegalArgumentException("Cannot initialise an "
-					+ "AssemblyLineBuilder with null manufacturer");
-		}
+	public AssemblyLineBuilder() throws IllegalArgumentException {
+		
+		//TODO Manufacturer necessary?
+//		if (manufacturer == null) {
+//			throw new IllegalArgumentException("Cannot initialise an "
+//					+ "AssemblyLineBuilder with null manufacturer");
+//		}
 		this.desiredModels = new ArrayList<Model>();
-		this.manufacturer = manufacturer;
+		//this.manufacturer = manufacturer;
 	}
-	
-	/** The manufacturer of the new AssemblyLine. */
-	private Manufacturer manufacturer;
-	
-	/**
-	 * Get the Manufacturer of any new AssemblyLines built by this
-	 * AssemblyLineBuilder
-	 * 
-	 * @return The manufacturer
-	 */
-	private Manufacturer getManufacturer() {
-		return this.manufacturer;
-	}
+//	
+//	/** The manufacturer of the new AssemblyLine. */
+//	private Manufacturer manufacturer;
+//	
+//	/**
+//	 * Get the Manufacturer of any new AssemblyLines built by this
+//	 * AssemblyLineBuilder
+//	 * 
+//	 * @return The manufacturer
+//	 */
+//	private Manufacturer getManufacturer() {
+//		return this.manufacturer;
+//	}
 	
 	/** List of Models that the new AssemblyLine is expected to handle */
 	private List<Model> desiredModels;
