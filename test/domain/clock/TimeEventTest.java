@@ -72,25 +72,23 @@ public class TimeEventTest {
 	
 	@Test
 	public void activate_test() {
-//		TimeEvent spiedEvent = Mockito.spy(oneEvent);
-//		spiedEvent.activate();
 		oneEvent.activate();
 		Mockito.verify(actor).activate();
 	}
 	
-	@Test
-	public void overrides_True() {
-		assertTrue(oneEvent.overridesEvent(laterEvent));
-		assertTrue(earlierEvent.overridesEvent(oneEvent));
-	}
-	
-	@Test
-	public void overrides_False() {
-		assertFalse(oneEvent.overridesEvent(otherEvent));
-		assertFalse(otherEvent.overridesEvent(oneEvent));
-		assertFalse(oneEvent.overridesEvent(oneEvent));
-		assertFalse(oneEvent.overridesEvent(earlierEvent));
-	}
+//	@Test
+//	public void overrides_True() {
+//		assertTrue(oneEvent.overridesEvent(laterEvent));
+//		assertTrue(earlierEvent.overridesEvent(oneEvent));
+//	}
+//	
+//	@Test
+//	public void overrides_False() {
+//		assertFalse(oneEvent.overridesEvent(otherEvent));
+//		assertFalse(otherEvent.overridesEvent(oneEvent));
+//		assertTrue(oneEvent.overridesEvent(oneEvent));
+//		assertFalse(oneEvent.overridesEvent(earlierEvent));
+//	}
 	
 	@Test
 	public void hasActor_true() {
@@ -105,6 +103,16 @@ public class TimeEventTest {
 	@Test
 	public void compareTo_smaller() {
 		assertTrue(oneEvent.compareTo(otherEvent) < 0);
+	}
+	
+	@Test
+	public void haveSameActor_true() {
+		assertTrue(oneEvent.haveSameActor(earlierEvent));
+	}
+	
+	@Test
+	public void haveSameActor_false() {
+		assertFalse(oneEvent.haveSameActor(otherEvent));
 	}
 	
 	@Test

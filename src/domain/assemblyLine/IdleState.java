@@ -1,5 +1,9 @@
 package domain.assemblyLine;
 
+import java.util.List;
+
+import domain.order.Order;
+
 class IdleState extends OperationalState {
 
 	@Override
@@ -11,15 +15,9 @@ class IdleState extends OperationalState {
 	public String getName() {
 		return "Operational (idle)";
 	}
-
-	@Override
-	protected void advanceAssemblyLine() {
-		// disallow AssemblyLine advancements if idle
-	}
 	
 	@Override
 	protected void finaliseSetState() {
 		
 	}
-
 }

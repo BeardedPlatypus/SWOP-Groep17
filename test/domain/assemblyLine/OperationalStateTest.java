@@ -79,5 +79,22 @@ public class OperationalStateTest {
 		line.setCurrentState(new OperationalState());
 		assertEquals(new ActiveState(), line.getCurrentState());
 	}
+	
+	@Test
+	public void advanceAssemblyLine_active() {
+		workPosts.get(0).setAssemblyProcedure(Optional.fromNullable(proc0));
+		workPosts.get(1).setAssemblyProcedure(Optional.fromNullable(proc1));
+		line.setCurrentState(new OperationalState());
+		workPosts.get(0).completeTask(0, 60);
+		assertEquals(new ActiveState(), line.getCurrentState());
+	}
 
+	@Test
+	public void advanceAssemblyLine_idle() {
+		workPosts.get(0).setAssemblyProcedure(Optional.fromNullable(proc0));
+		line.setCurrentState(new OperationalState());
+		workPosts.get(0).completeTask(0, 60);
+		line.getCurrentState().advanceAssemblyLine(new ArrayList<Order>());
+		assertEquals(new IdleState(), line.getCurrentState());
+	}
 }

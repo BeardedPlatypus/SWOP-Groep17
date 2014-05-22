@@ -1,5 +1,7 @@
 package domain.assemblyLine;
 
+import java.util.List;
+
 import com.google.common.base.Optional;
 
 import domain.order.Order;
@@ -38,7 +40,7 @@ public class BrokenState extends AssemblyLineState {
 	 * in this state.
 	 */
 	@Override
-	void advanceAssemblyLine() throws IllegalStateException {
+	void advanceAssemblyLine(List<Order> orders) throws IllegalStateException {
 		throw new IllegalStateException("Cannot advance assembly line"
 				+ "if it is broken");
 	}

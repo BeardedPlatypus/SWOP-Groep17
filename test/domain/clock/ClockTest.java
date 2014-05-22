@@ -339,6 +339,12 @@ public class ClockTest {
 	}
 	
 	@Test
+	public void removeEventForActor_nullActor() {
+		exception.expect(IllegalArgumentException.class);
+		clock.removeEventForActor(null);
+	}
+	
+	@Test
 	public void removeEventForActor_legit() {
 		clock.constructEvent(new DateTime(0, 9, 0), actor1);
 		clock.removeEventForActor(actor1);
