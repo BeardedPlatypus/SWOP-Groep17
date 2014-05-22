@@ -33,6 +33,7 @@ import domain.assemblyLine.TaskType;
 import domain.assemblyLine.WorkPost;
 import domain.assemblyLine.WorkPostView;
 import domain.assemblyLine.WorkPostObserver;
+import domain.car.Model;
 import domain.car.Option;
 import domain.car.Specification;
 import domain.order.CompletedOrderCatalog;
@@ -74,8 +75,10 @@ public class AssemblyLineTest {
 	
 	@Mock Order newOrder;
 	@Mock StatisticsLogger logger;
-	@Mock OrderAcceptanceChecker orderSelector;
 	@Mock CompletedOrderCatalog cat;
+	
+	@Mock Model model;
+	List<Model> modelList;
 	
 	List<WorkPost> workPosts;
 	
@@ -89,6 +92,8 @@ public class AssemblyLineTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		
+		modelList = new ArrayList<Model>();
+		modelList.add(model);
 		List<AssemblyProcedure> procedures = new ArrayList<AssemblyProcedure>();
 		
 		option1 = new Option(TaskType.BODY, "kaworu", "jesus");
@@ -126,7 +131,7 @@ public class AssemblyLineTest {
 		//Optional<Order> absentOrder = Optional.absent();
 		//Mockito.when(sched.popNextOrderFromSchedule()).thenReturn(absentOrder);
 		
-		assemblyLine = new AssemblyLine(workPosts, orderSelector);
+		assemblyLine = new AssemblyLine(workPosts, modelList);
 		assemblyLine.attachObserver(cat);
 		assemblyLine.attachObserver(logger);
 		
@@ -142,19 +147,25 @@ public class AssemblyLineTest {
 	@Test
 	public void constructor_nullWorkPosts() {
 		expected.expect(IllegalArgumentException.class);
-		new AssemblyLine(null, orderSelector);
+		new AssemblyLine(null, modelList);
 	}
 	
 	@Test
 	public void constructor_emptyWorkPosts() {
 		expected.expect(IllegalArgumentException.class);
-		new AssemblyLine(new ArrayList<WorkPost>(), orderSelector);
+		new AssemblyLine(new ArrayList<WorkPost>(), modelList);
 	}
 	
 	@Test
-	public void constructor_nullOrderSelector() {
+	public void constructor_nullModels() {
 		expected.expect(IllegalArgumentException.class);
 		new AssemblyLine(workPosts, null);
+	}
+	
+	@Test
+	public void constructor_emptyModels() {
+		expected.expect(IllegalArgumentException.class);
+		new AssemblyLine(workPosts, new ArrayList<Model>());
 	}
 	
 //	@Test
@@ -167,13 +178,13 @@ public class AssemblyLineTest {
 	public void constructor_idleState() {
 		List<WorkPost> workPosts = new ArrayList<WorkPost>();
 		workPosts.add(new WorkPost(TaskType.BODY, 0));
-		AssemblyLine line = new AssemblyLine(workPosts, orderSelector);
+		AssemblyLine line = new AssemblyLine(workPosts, modelList);
 		assertEquals(IdleState.class, line.getCurrentState().getClass());
 	}
 	
 	@Test
 	public void constructor_CheckWorkpostsInitialised() {
-		AssemblyLine assemblyLine = new AssemblyLine(workPosts, orderSelector);
+		AssemblyLine assemblyLine = new AssemblyLine(workPosts, modelList);
 		assemblyLine.setManufacturer(manufacturer);
 		AssemblyLine spiedAssemblyLine = PowerMockito.spy(assemblyLine);
 		
@@ -186,6 +197,7 @@ public class AssemblyLineTest {
 		@SuppressWarnings("unchecked")
 		List<WorkPostObserver> observers = (ArrayList<WorkPostObserver>) Whitebox.getInternalState(workPosts.get(0), "observers");
 		assertEquals(assemblyLine, observers.get(1));
+		assertTrue(assemblyLine.getAcceptedModels().contains(model));
 	}
 	
 	@Test
@@ -254,7 +266,7 @@ public class AssemblyLineTest {
 	public void isEmpty_true() {
 		List<WorkPost> workPosts = new ArrayList<WorkPost>();
 		workPosts.add(new WorkPost(TaskType.BODY, 0));
-		assertTrue(new AssemblyLine(workPosts, orderSelector).isEmpty());
+		assertTrue(new AssemblyLine(workPosts, modelList).isEmpty());
 	}
 	
 	@Test
