@@ -537,13 +537,20 @@ public class InitialisationHandler {
 		// Attach Observers
 		//----------------------------------------------------------------------
 		
+		
+		//TODO meer timeobservers?
 		//Timeobservers
 		clock.attachTimeObserver(logger);
 		clock.attachTimeObserver(orderFact);
 		clock.attachTimeObserver(complCat);
-		//clock.attachTimeObserver(inter);
 
-		//assembly
+		//CompletedOrderObservers
+		line1.attachObserver(logger);
+		line1.attachObserver(complCat);
+		line2.attachObserver(logger);
+		line2.attachObserver(complCat);
+		line3.attachObserver(logger);
+		line3.attachObserver(complCat);
 		
 		//----------------------------------------------------------------------
 		// Initialise Manufacturer
