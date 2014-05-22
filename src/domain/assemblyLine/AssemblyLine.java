@@ -7,6 +7,7 @@ import com.google.common.base.Optional;
 
 import domain.DateTime;
 import domain.Manufacturer;
+import domain.assemblyLine.virtualAss.VirtualAssemblyLine;
 import domain.car.Specification;
 import domain.order.Order;
 import domain.order.OrderView;
@@ -677,5 +678,12 @@ public class AssemblyLine implements WorkPostObserver {
 			return;
 		}
 		this.getStatisticsLogger().addStatistics(stats);
+	}
+	
+	//--------------------------------------------------------------------------
+	// Virtual
+	//--------------------------------------------------------------------------
+	public VirtualAssemblyLine newVirtualAssemblyLine() {
+		
 	}
 }

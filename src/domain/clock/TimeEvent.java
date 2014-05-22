@@ -1,11 +1,9 @@
 package domain.clock;
 
-import com.google.common.base.Optional;
-
 import domain.DateTime;
 
 /**
- * Class which represents an occuring event with the time of occurence.
+ * Class which represents an occurring event with the time of occurrence.
  * 
  * @author Thomas Vochten, Frederik Goovaerts
  *
