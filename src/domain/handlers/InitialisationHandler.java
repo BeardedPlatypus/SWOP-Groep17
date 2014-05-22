@@ -32,6 +32,8 @@ import domain.restrictions.RequiredOptionSetRestriction;
 import domain.restrictions.Restriction;
 import domain.statistics.CarsProducedRegistrar;
 import domain.statistics.DelayRegistrar;
+import domain.statistics.EstimatedProductionTimeRegistrar;
+import domain.statistics.EstimatedTimeCatalog;
 import domain.statistics.StatisticsLogger;
 
 /**
@@ -529,9 +531,18 @@ public class InitialisationHandler {
 		logger.addRegistrar(prodRegistrar);
 		DelayRegistrar delayRegistrar = new DelayRegistrar();
 		logger.addRegistrar(delayRegistrar);
+		EstimatedProductionTimeRegistrar estTimeReg =
+				new EstimatedProductionTimeRegistrar(clock);
+		//TODO this has to be allowed
+		logger.addRegistrar(estTimeReg);
 		
 		//TODO Fix this floor constructor
 		AssemblyFloor floor = new AssemblyFloor(lines, logger);
+		
+		//--------------------------------------------------------------------------
+		// Initialise Completion Estimator
+		//--------------------------------------------------------------------------
+		EstimatedTimeCatalog estTimeCat = new EstimatedTimeCatalog(estTimeReg);
 
 		//----------------------------------------------------------------------
 		// Attach Observers
@@ -565,7 +576,8 @@ public class InitialisationHandler {
 				orderFact,
 				floor,
 				clock,
-				schedule);
+				schedule,
+				estTimeCat);
 
 		//----------------------------------------------------------------------
 		// Initialise Handlers

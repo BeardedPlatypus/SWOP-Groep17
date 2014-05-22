@@ -269,7 +269,7 @@ public class AssemblyProcedure implements AssemblyProcedureView {
 			throw new IllegalStateException("Cannot record statistical information"
 					+ "of an unfinished AssemblyProcedure");
 		}
-		return new ProcedureStatistics(this.calculateDelay());
+		return new ProcedureStatistics(this.calculateDelay(), this.getOrder());
 	}
 	
 
