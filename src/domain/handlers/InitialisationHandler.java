@@ -8,7 +8,7 @@ import java.util.Set;
 import domain.assemblyLine.AssemblyFloor;
 import domain.assemblyLine.AssemblyLine;
 import domain.assemblyLine.AssemblyLineBuilder;
-import domain.assemblyLine.SchedulerIntermediate;
+import domain.assemblyLine.AssemblyLineFacade;
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.assemblyLine.TaskType;
@@ -507,31 +507,31 @@ public class InitialisationHandler {
 		// Initialise AssemblyLines
 		//----------------------------------------------------------------------
 
-		//TODO Build assembly line facades and floor
 		AssemblyLineBuilder proBuilder = new AssemblyLineBuilder();
-		List<AssemblyLine> lines = new ArrayList<>();
+		List<AssemblyLineFacade> lines = new ArrayList<>();
 		
 		proBuilder.addToDesiredModels(modelA);
 		proBuilder.addToDesiredModels(modelB);
-		AssemblyLine line1 = proBuilder.buildAssemblyLine(null)
+		AssemblyLine line1 = proBuilder.buildAssemblyLine();
+		proBuilder.addToDesiredModels(modelC);
+		AssemblyLine line2 = proBuilder.buildAssemblyLine();
+		proBuilder.addToDesiredModels(modelX);
+		proBuilder.addToDesiredModels(modelY);
+		AssemblyLine line3 = proBuilder.buildAssemblyLine();
 		
-		
-		
-		AssemblyFloor floor = new AssemblyFloor();
-
-		//SchedulerIntermediate inter = new SchedulerIntermediate(line);
-		
-		//TODO add statistics logger
-		
+		//TODO FIXME YOLO
+		lines.add(new AssemblyLineFacade(line1, null));
+		lines.add(new AssemblyLineFacade(line2, null));
+		lines.add(new AssemblyLineFacade(line3, null));		
 		
 		StatisticsLogger logger = new StatisticsLogger();
 		CarsProducedRegistrar prodRegistrar = new CarsProducedRegistrar();
 		logger.addRegistrar(prodRegistrar);
 		DelayRegistrar delayRegistrar = new DelayRegistrar();
 		logger.addRegistrar(delayRegistrar);
-		floor.setStatisticsLogger(logger);
-
 		
+		//TODO Fix this floor constructor
+		AssemblyFloor floor = new AssemblyFloor(lines, logger);
 
 		//----------------------------------------------------------------------
 		// Attach Observers
