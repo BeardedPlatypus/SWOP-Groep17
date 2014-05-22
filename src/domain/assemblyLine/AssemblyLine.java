@@ -12,6 +12,7 @@ import domain.order.Order;
 import domain.order.OrderView;
 import domain.statistics.ProcedureStatistics;
 import domain.statistics.StatisticsLogger;
+import exceptions.OrdersNotEmptyWhenAdvanceException;
 
 /**
  * A class depicting an AssemblyLine in the system. An AssemblyLine is composed 
@@ -420,28 +421,40 @@ public class AssemblyLine implements WorkPostObserver {
 	 * Request a new order from the {@link Manufacturer} for the first WorkPost. 
 	 * 
 	 * @param elapsedTime
-	 * 		The time that has elapsed since the last advancement, in minutes. 
+	 * 		The time that has elapsed since the last advancement, in minutes.
+	 * @param orders
+	 * 		Orders to put on the AssemblyLine 
 	 * @throws IllegalStateException
 	 * 		When there is still a finished assembly ready to be collected before
 	 * 		the shifting of the WorkPosts.
 	 */
-	private void tryAdvance(DateTime elapsedTime) throws IllegalStateException{
-		this.getCurrentState().advanceAssemblyLine();
+	private void tryAdvance(DateTime elapsedTime, List<Order> orders) throws IllegalStateException{
+		this.getCurrentState().advanceAssemblyLine(orders);
 		this.getManufacturer().incrementTime(elapsedTime);
 		this.setElapsedTime(new DateTime(0, 0, 0));
 	}
 	
 	/**
-	 * Explicitly tell this AssemblyLine to advance.
+	 * Explicitly tell this AssemblyLine to advance, thereby putting the
+	 * specified Orders on the line.
 	 * 
 	 * @throws IllegalStateException
 	 * 		canAdvance() == false
+	 * @throws IllegalArgumentException
+	 * 		orders is null or contains null
+	 * @throws OrdersNotEmptyWhenAdvanceException
+	 * 		The list of orders was not empty when advance is finished
 	 */
-	public void advance() throws IllegalStateException {
+	public void advance(List<Order> orders) throws IllegalStateException,
+		IllegalArgumentException, OrdersNotEmptyWhenAdvanceException {
 		if (! this.canAdvance()) {
 			throw new IllegalStateException("Cannot advance AssemblyLine");
 		}
-		this.tryAdvance(this.getElapsedTime());
+		this.tryAdvance(this.getElapsedTime(), orders);
+		if (! orders.isEmpty()) {
+			throw new OrdersNotEmptyWhenAdvanceException("Fatal error: "
+					+ "list of Orders was not empty after advance was finished");
+		}
 		this.resetFinishedAssemblyCounter();
 	}
 	

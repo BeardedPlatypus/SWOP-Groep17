@@ -23,6 +23,7 @@ public class LayoutFactoryTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		
 	}
 
 	@Before

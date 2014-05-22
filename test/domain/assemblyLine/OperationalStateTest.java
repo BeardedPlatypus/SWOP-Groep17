@@ -30,6 +30,7 @@ public class OperationalStateTest {
 	AssemblyLine line;
 	@Mock Order mockOrder;
 	@Mock Manufacturer manufacturer;
+	@Mock SchedulerIntermediate sched;
 	List<WorkPost> workPosts;
 	
 	AssemblyTask task0;
@@ -55,7 +56,8 @@ public class OperationalStateTest {
 		workPosts.add(new WorkPost(TaskType.DRIVETRAIN, 1));
 		workPosts.add(new WorkPost(TaskType.ACCESSORIES, 2));
 		
-		line = new AssemblyLine(workPosts, new OrderAcceptanceChecker(new ArrayList<Model>()));
+		line = new AssemblyLine(workPosts, new OrderAcceptanceChecker(new ArrayList<Model>()), sched);
+		line.setManufacturer(manufacturer);
 		
 		task0 = new AssemblyTask(new Option(TaskType.BODY, "john", "doe"), 0);
 		task1 = new AssemblyTask(new Option(TaskType.DRIVETRAIN, "jane", "doe"), 0);
@@ -80,12 +82,21 @@ public class OperationalStateTest {
 	}
 	
 	@Test
-	public void setState_orderWaiting() {
-		Order order = new StandardOrder(model, new Specification(bodyOption), 0, new DateTime(0, 6, 0));
-		AssemblyLine spiedLine = Mockito.spy(line);
-		Mockito.when(spiedLine.popNextOrderFromSchedule()).thenReturn(Optional.fromNullable(order));
-		spiedLine.setCurrentState(new OperationalState());
-		assertEquals(new ActiveState(), spiedLine.getCurrentState());
+	public void advanceAssemblyLine_active() {
+		Order newOrder = new StandardOrder(model, new Specification(new ArrayList<Option>(Arrays.asList(bodyOption))), 60, new DateTime(0, 6, 0));
+		workPosts.get(0).setAssemblyProcedure(Optional.fromNullable(proc0));
+		line.setCurrentState(new OperationalState());
+		workPosts.get(0).completeTask(0, 60);
+		line.advance(new ArrayList<Order>(Arrays.asList(newOrder)));
+		assertEquals(new ActiveState(), line.getCurrentState());
 	}
 
+	@Test
+	public void advanceAssemblyLine_idle() {
+		workPosts.get(0).setAssemblyProcedure(Optional.fromNullable(proc0));
+		line.setCurrentState(new OperationalState());
+		workPosts.get(0).completeTask(0, 60);
+		line.getCurrentState().advanceAssemblyLine(new ArrayList<Order>());
+		assertEquals(new IdleState(), line.getCurrentState());
+	}
 }

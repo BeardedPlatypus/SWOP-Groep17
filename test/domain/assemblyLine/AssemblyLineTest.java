@@ -39,6 +39,7 @@ import domain.order.Order;
 import domain.order.OrderView;
 import domain.statistics.ProcedureStatistics;
 import domain.statistics.StatisticsLogger;
+import exceptions.OrdersNotEmptyWhenAdvanceException;
 
 @RunWith(PowerMockRunner.class)
 public class AssemblyLineTest {
@@ -128,7 +129,7 @@ public class AssemblyLineTest {
 		
 		for (int i = 0; i < assemblyLine.getAssemblyLineSize(); i++)
 		{
-			WorkPost wp = (WorkPost) assemblyLine.getWorkPostContainers().get(i);
+			WorkPost wp = (WorkPost) assemblyLine.getWorkPostViews().get(i);
 			Whitebox.invokeMethod(wp, "setAssemblyProcedure", Optional.fromNullable(procedures.get(i)));
 		}
 		
@@ -175,7 +176,7 @@ public class AssemblyLineTest {
 		
 		List<WorkPost> workPosts = new ArrayList<WorkPost>();
 		for (int i = 0; i < spiedAssemblyLine.getAssemblyLineSize(); i++) {
-			workPosts.add((WorkPost) PowerMockito.spy(spiedAssemblyLine.getWorkPostContainers().get(i)));
+			workPosts.add((WorkPost) PowerMockito.spy(spiedAssemblyLine.getWorkPostViews().get(i)));
 		}
 		
 		assertEquals(manufacturer, Whitebox.getInternalState(spiedAssemblyLine, Manufacturer.class));
@@ -218,7 +219,7 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void getWorkPostContainersTest() {
-		List<WorkPostView> containers = assemblyLine.getWorkPostContainers();
+		List<WorkPostView> containers = assemblyLine.getWorkPostViews();
 		assertTrue(containers.contains(workPosts.get(0)));
 		assertTrue(containers.contains(workPosts.get(1)));
 		assertTrue(containers.contains(workPosts.get(2)));
@@ -328,7 +329,6 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void completeWorkPostTask_simulateAdvance() {
-		Mockito.when(sched.popNextOrderFromSchedule()).thenReturn(Optional.fromNullable(newOrder));
 //		Mockito.when(newOrder.getMinutesPerPost()).thenReturn(60);
 		Option newOption = new Option(TaskType.BODY, "har", "dar");
 		Specification newSpec = new Specification(Arrays.asList(newOption));
@@ -339,7 +339,7 @@ public class AssemblyLineTest {
 		assemblyLine.completeWorkpostTask(3, 0, 40);
 		
 		assertTrue(assemblyLine.canAdvance());
-		assemblyLine.advance();
+		assemblyLine.advance(new ArrayList<Order>(Arrays.asList(newOrder)));
 		
 		try {
 			assertEquals(60, Whitebox.getInternalState(procedure1, "elapsedMinutes"));
@@ -364,6 +364,21 @@ public class AssemblyLineTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void completeTask_ordersNotEmptyWhenAdvance() {
+		Option newOption = new Option(TaskType.BODY, "har", "dar");
+		Specification newSpec = new Specification(Arrays.asList(newOption));
+		Mockito.when(newOrder.getSpecifications()).thenReturn(newSpec);
+		
+		assemblyLine.completeWorkpostTask(0, 0, 20);
+		assemblyLine.completeWorkpostTask(2, 0, 60);
+		assemblyLine.completeWorkpostTask(3, 0, 40);
+		
+		assertTrue(assemblyLine.canAdvance());
+		expected.expect(OrdersNotEmptyWhenAdvanceException.class);
+		assemblyLine.advance(new ArrayList<Order>(Arrays.asList(newOrder, newOrder)));
 	}
 	
 	@Test

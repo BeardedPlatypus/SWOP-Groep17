@@ -86,19 +86,19 @@ public class TimeEvent implements Comparable<TimeEvent> {
 	
 	//--------- Event Overriding ---------//
 
-	/**
-	 * Indicate whether this TimeEvent overrides the other TimeEvent
-	 * 
-	 * @param otherEvent
-	 * 		The TimeEvent that this TimeEvent potentially overrides
-	 * @return True if both TimeEvents have the same EventActor
-	 * 		and this TimeEvent's DateTime is smaller than the other TimeEvent's
-	 * 		DateTime 
-	 */
-	public boolean overridesEvent(TimeEvent otherEvent){
-		return this.getActor().equals(otherEvent.getActor())
-				&& this.getGlobalTime().compareTo(otherEvent.getGlobalTime()) <= 0;
-	}
+//	/**
+//	 * Indicate whether this TimeEvent overrides the other TimeEvent
+//	 * 
+//	 * @param otherEvent
+//	 * 		The TimeEvent that this TimeEvent potentially overrides
+//	 * @return True if both TimeEvents have the same EventActor
+//	 * 		and this TimeEvent's DateTime is smaller than the other TimeEvent's
+//	 * 		DateTime 
+//	 */
+//	public boolean overridesEvent(TimeEvent otherEvent){
+//		return this.getActor().equals(otherEvent.getActor())
+//				&& this.getGlobalTime().compareTo(otherEvent.getGlobalTime()) <= 0;
+//	}
 
 	//----- end of Event Overriding -----//
 	

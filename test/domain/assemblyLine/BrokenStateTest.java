@@ -2,6 +2,8 @@ package domain.assemblyLine;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -9,6 +11,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import domain.order.Order;
 
 public class BrokenStateTest {
 	
@@ -37,7 +41,7 @@ public class BrokenStateTest {
 	@Test
 	public void advanceAssemblyLineTest() {
 		expected.expect(IllegalStateException.class);
-		state.advanceAssemblyLine();
+		state.advanceAssemblyLine(new ArrayList<Order>());
 	}
 	
 	@Test

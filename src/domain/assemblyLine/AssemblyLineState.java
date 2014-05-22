@@ -1,5 +1,7 @@
 package domain.assemblyLine;
 
+import java.util.List;
+
 import com.google.common.base.Optional;
 
 import domain.DateTime;
@@ -94,10 +96,13 @@ public abstract class AssemblyLineState implements AssemblyLineStateView {
 	 * 
 	 * @throws IllegalStateException
 	 * 		assemblyLineIsSet() == false
+	 * @throws IllegalArgumentException
+	 * 		orders is null or contains null
 	 */
-	void advanceAssemblyLine() throws IllegalStateException {
+	void advanceAssemblyLine(List<Order> orders) throws IllegalStateException,
+		IllegalArgumentException {
 		this.checkAssemblyLineSet();
-		this.getLayoutManipulator().advanceAssemblyLine();
+		this.getLayoutManipulator().advanceAssemblyLine(orders);
 	}
 	
 	/**

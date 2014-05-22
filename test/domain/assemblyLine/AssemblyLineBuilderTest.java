@@ -55,20 +55,20 @@ public class AssemblyLineBuilderTest {
 		carModel2 = new CarModel("to the God of Death?", new ArrayList<OptionCategory>(), 70);
 		truckModel = new TruckModel("Not today!", new ArrayList<OptionCategory>(), 60, 90, 45);
 		
-		builder = new AssemblyLineBuilder(manufacturer);
+		builder = new AssemblyLineBuilder();
 	}
 
-	@Test
-	public void constructor_nullManufacturer() {
-		expected.expect(IllegalArgumentException.class);
-		AssemblyLineBuilder builder = new AssemblyLineBuilder(null);
-	}
+//	@Test
+//	public void constructor_nullManufacturer() {
+//		expected.expect(IllegalArgumentException.class);
+//		AssemblyLineBuilder builder = new AssemblyLineBuilder(null);
+//	}
 	
-	@Test
-	public void constructor_valid() {
-		AssemblyLineBuilder builder = new AssemblyLineBuilder(manufacturer);
-		assertEquals(manufacturer, Whitebox.getInternalState(builder, Manufacturer.class));
-	}
+//	@Test
+//	public void constructor_valid() {
+//		AssemblyLineBuilder builder = new AssemblyLineBuilder();
+//		assertEquals(manufacturer, Whitebox.getInternalState(builder, Manufacturer.class));
+//	}
 	
 	@Test
 	public void addModelTest() {
@@ -117,5 +117,12 @@ public class AssemblyLineBuilderTest {
 		for (TaskType type : TaskType.values()) {
 			assertTrue(types.contains(type));
 		}
+	}
+	
+	@Test
+	public void clearModelsTest() {
+		builder.addToDesiredModels(carModel1);
+		builder.clearModels();
+		assertFalse(builder.canBuildAssemblyLine());
 	}
 }

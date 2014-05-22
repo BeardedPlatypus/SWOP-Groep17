@@ -84,6 +84,13 @@ public class AssemblyLineBuilder {
 	}
 	
 	/**
+	 * Remove all previously added models.
+	 */
+	public void clearModels() {
+		this.getDesiredModels().clear();
+	}
+	
+	/**
 	 * Determine whether this AssemblyLineBuilder is ready to build a new
 	 * AssemblyLine.
 	 * 

@@ -203,10 +203,16 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	//--------------------------------------------------------------------------
 	
 	/**
-	 * Explicitly tell this AssemblyLine to advance.
+	 * Explicitly tell this AssemblyLine to advance, putting the specified
+	 * Orders on the line.
+	 * 
+	 * @param order
+	 * 		Orders to put on the line
+	 * @throws IllegalArgumentException
+	 * 		orders is null or contains null
 	 */
-	public void advance() {
-		this.getLine().advance();
+	public void advance(List<Order> orders) {
+		this.getLine().advance(orders);
 	}
 
 	//--------------------------------------------------------------------------
