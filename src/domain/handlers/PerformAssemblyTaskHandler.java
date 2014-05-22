@@ -3,8 +3,9 @@ package domain.handlers;
 import java.util.List;
 
 import domain.Manufacturer;
-import domain.assemblyLine.AssemblyTaskContainer;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.AssemblyLineView;
+import domain.assemblyLine.AssemblyTaskView;
+import domain.assemblyLine.WorkPostView;
 
 /**
  * Coordinates with the outside world in order to complete assembly tasks of a single WorkPost.
@@ -50,8 +51,8 @@ public class PerformAssemblyTaskHandler {
 	 * 
 	 * @return the WorkPostContainers of the ASsemblyLine's WorkPosts
 	 */
-	public List<WorkPostContainer> getWorkPosts() {
-		return this.getManufacturer().getWorkPostContainers();
+	public List<AssemblyLineView> getAssemblyLines() {
+		return this.getManufacturer().getAssemblyLineViews();
 	}
 
 	/**
@@ -65,8 +66,10 @@ public class PerformAssemblyTaskHandler {
 	 * @throws IllegalArgumentException
 	 * 		workPostNumber refers to a work post that does not exist.
 	 */
-	public List<AssemblyTaskContainer> getAssemblyTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
-		return this.getManufacturer().getAssemblyTasksAtPost(workPostNumber);
+	public List<AssemblyTaskView> getAssemblyTasksAtWorkPost(int lineNb,
+			int postNb) {
+		// TODO Auto-generated method stub
+		return this.getManufacturer().getAssemblyTasksAtPost(lineNb, postNb);
 	}
 
 	/**
@@ -87,7 +90,14 @@ public class PerformAssemblyTaskHandler {
 	 * 		taskNumber refers to a task with a type incompatible with the given
 	 * 		work post.
 	 */
-	public void completeWorkpostTask(int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException {
-		this.getManufacturer().completeWorkpostTask(workPostNumber, taskNumber, minutes);
+	public void completeWorkpostTask(int lineNumber, int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException {
+		this.getManufacturer().completeWorkpostTask(lineNumber, workPostNumber, taskNumber, minutes);
 	}
+
+	public List<WorkPostView> getWorkPosts(int lineNb) {
+		// TODO Auto-generated method stub
+		return this.getManufacturer().getWorkPostsAt(lineNb);
+	}
+
+
 }

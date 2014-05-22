@@ -3,13 +3,13 @@ package domain;
 import java.util.LinkedList;
 import java.util.List;
 
-import domain.assemblyLine.AssemblyTaskContainer;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.AssemblyTaskView;
+import domain.assemblyLine.WorkPostView;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.car.Model;
 import domain.handlers.DomainFacade;
-import exceptions.IllegalCarOptionCombinationException;
+import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
 
@@ -39,7 +39,7 @@ public class InteractionSimulator {
 		facade.startNewOrderSession();
 		
 		//select first car model
-		Model chosenModel = facade.getCarModels().get(0);
+		Model chosenModel = facade.getVehicleModels().get(0);
 		facade.chooseModel(chosenModel);
 		
 		//select compatible options
@@ -81,7 +81,7 @@ public class InteractionSimulator {
 			try {
 				facade.submitOrder();
 			} catch (IllegalStateException | IllegalArgumentException
-					| IllegalCarOptionCombinationException
+					| IllegalVehicleOptionCombinationException
 					| OptionRestrictionException e) {
 				e.printStackTrace();
 			}
@@ -124,9 +124,9 @@ public class InteractionSimulator {
 		//do numberOfTimes
 		for(int i = 0; i < numberOfTimes; i++){
 			//for each work post
-			for(WorkPostContainer wp : facade.getWorkPosts()){
+			for(WorkPostView wp : facade.getWorkPosts()){
 				//and each task at that work post
-				for(AssemblyTaskContainer task : wp.getMatchingAssemblyTasks()){
+				for(AssemblyTaskView task : wp.getMatchingAssemblyTasks()){
 					//set uncompleted tasks to have been completed in 50 minutes
 					if(!task.isCompleted()){
 						facade.completeWorkpostTask(wp.getWorkPostNum(), task.getTaskNumber(), timeSpentPerTask);
@@ -141,7 +141,7 @@ public class InteractionSimulator {
 	 * tasks if there not enough unfinished tasks. Tasks are set to have been completed in the given number of minutes.
 	 */
 	public void simulateCompleteTasksOnWorkPost(int numberOfTasks, int workPostNumber, int timeSpentPerTask){
-		List<AssemblyTaskContainer> tasks = facade.getWorkPost(workPostNumber).getMatchingAssemblyTasks();
+		List<AssemblyTaskView> tasks = facade.getWorkPost(workPostNumber).getMatchingAssemblyTasks();
 		int finished = 0;
 		for(int i = 0; i < tasks.size() && finished < numberOfTasks; i++){
 			if(!tasks.get(i).isCompleted()){

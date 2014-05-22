@@ -8,22 +8,22 @@ package exceptions;
  * 
  * @author Frederik Goovaerts
  */
-public class IllegalCarOptionCombinationException extends AssemAssistException{
+public class IllegalVehicleOptionCombinationException extends AssemAssistException{
 
 	/**
 	 * UID this class uses for serialisability
 	 */
 	private static final long serialVersionUID = -3166385477991199340L;
 
-	public IllegalCarOptionCombinationException() {
+	public IllegalVehicleOptionCombinationException() {
 		super();
 	}
 	
-	public IllegalCarOptionCombinationException(String message) {
+	public IllegalVehicleOptionCombinationException(String message) {
 		super(message);
 	}
 	
-	public IllegalCarOptionCombinationException(String message, Throwable cause) {
+	public IllegalVehicleOptionCombinationException(String message, Throwable cause) {
 		super(message, cause);
 	}
 }

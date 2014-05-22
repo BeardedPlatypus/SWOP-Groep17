@@ -6,8 +6,7 @@ import domain.DateTime;
 import domain.Manufacturer;
 import domain.car.Option;
 import domain.car.OptionCategory;
-import domain.order.Order;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.order.SingleOrderSession;
 import exceptions.OrderDoesNotExistException;
 
@@ -121,9 +120,9 @@ public class OrderSingleTaskHandler {
 	 * @throws 	IllegalStateException
 	 *			If there is no active new order session.
 	 */
-	public OrderContainer submitSingleTaskOrder() throws IllegalStateException {
+	public OrderView submitSingleTaskOrder() throws IllegalStateException {
 		if(isRunningOrderSession()){
-			OrderContainer submittedOrder = getCurrentOrderSession().submitSingleTaskOrder();
+			OrderView submittedOrder = getCurrentOrderSession().submitSingleTaskOrder();
 			currentOrderSession = null;
 			return submittedOrder;
 		} else {
@@ -140,7 +139,7 @@ public class OrderSingleTaskHandler {
 	 * @throws  OrderDoesNotExistException 
 	 * 			If the order does not exist.
 	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order) throws  OrderDoesNotExistException {
+	public DateTime getEstimatedCompletionTime(OrderView order) throws  OrderDoesNotExistException {
 		return getManufacturer().getEstimatedCompletionTime(order);
 	}
 	

@@ -3,16 +3,15 @@ package domain.handlers;
 import java.util.List;
 
 import domain.DateTime;
-import domain.assemblyLine.AssemblyTaskContainer;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.AssemblyTaskView;
+import domain.assemblyLine.WorkPostView;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.car.Specification;
-import domain.car.Model;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
-import exceptions.IllegalCarOptionCombinationException;
+import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
@@ -49,7 +48,8 @@ public class DomainFacade {
 			CheckProductionStatisticsHandler prodStatHandler,
 			NewOrderSessionHandler newOrderHandler,
 			OrderSingleTaskHandler singleTaskHandler,
-			PerformAssemblyTaskHandler performHandler)
+			PerformAssemblyTaskHandler performHandler,
+			ChangeOperationalStatusHandler changeHandler)
 					throws IllegalArgumentException
 					{
 		if(algorithmHandler == null)
@@ -66,6 +66,8 @@ public class DomainFacade {
 			throw new IllegalArgumentException("Handler should not be null!");
 		if(performHandler == null)
 			throw new IllegalArgumentException("Handler should not be null!");
+		if(changeHandler == null)
+			throw new IllegalArgumentException("Handler should not be null!");
 		this.schedulingAlgorithmHandler = algorithmHandler;
 		this.assemblyLineStatusHandler = assemblyLineStatusHandler;
 		this.orderDetailsHandler = orderDetailsHandler;
@@ -73,6 +75,7 @@ public class DomainFacade {
 		this.newOrderSessionHandler = newOrderHandler;
 		this.orderSingleTaskHandler = singleTaskHandler;
 		this.performAssemblyTaskHandler = performHandler;
+		this.changeOperationalStatusHandler = changeHandler;
 	}
 
 	//-------------------------------------------------------------------------
@@ -159,6 +162,18 @@ public class DomainFacade {
 	public AssemblyLineStatusHandler getAssemblyLineStatusHandler() {
 		return this.assemblyLineStatusHandler;
 	}
+	
+	/**
+	 * Get the ChangeOperationalStatusHandler.
+	 * This is both for internal use, and in the case a developer wants to write
+	 * a UI based on the handlers themselves, for better specialization of the
+	 * different parts of the UI.
+	 * 
+	 * @return the ChangeOperationalStatusHandler
+	 */
+	public ChangeOperationalStatusHandler getChangeOperationalStatusHandler() {
+		return this.changeOperationalStatusHandler;
+	}
 
 	/**	The facade's PerformAssemblyTaskHandler */
 	private final PerformAssemblyTaskHandler performAssemblyTaskHandler;
@@ -181,6 +196,9 @@ public class DomainFacade {
 	/**	The facade's AssemblyLineStatusHandler */
 	private final AssemblyLineStatusHandler assemblyLineStatusHandler;
 
+	/**	The facade's ChangeOperationalStatusHandler */
+	private final ChangeOperationalStatusHandler changeOperationalStatusHandler;
+	
 	//-------------------------------------------------------------------------
 	// Class Methods
 	//-------------------------------------------------------------------------
@@ -225,7 +243,7 @@ public class DomainFacade {
 	 * 
 	 * @return a copy of the completed orders snapshot list.
 	 */
-	public List<OrderContainer> getCompletedOrdersContainers(){
+	public List<OrderView> getCompletedOrdersContainers(){
 		return this.getCheckOrderDetailsHandler().getCompletedOrdersContainers();
 	}
 	
@@ -235,7 +253,7 @@ public class DomainFacade {
 	 * 
 	 * @return a copy of the pending orders snapshot list.
 	 */
-	public List<OrderContainer> getPendingOrdersContainers(){
+	public List<OrderView> getPendingOrdersContainers(){
 		return this.getCheckOrderDetailsHandler().getPendingOrdersContainers();
 	}
 	
@@ -375,7 +393,7 @@ public class DomainFacade {
 	 * 
 	 * @return the list of pending orders in the system
 	 */
-	public List<OrderContainer> getPendingOrders(){
+	public List<OrderView> getPendingOrders(){
 		return this.getNewOrderSessionHandler().getPendingOrders();
 	}
 
@@ -387,7 +405,7 @@ public class DomainFacade {
 	 * 
 	 * @return the list of completed orders in the system
 	 */
-	public List<OrderContainer> getCompletedOrders(){
+	public List<OrderView> getCompletedOrders(){
 		return this.getNewOrderSessionHandler().getCompletedOrders();
 	}
 	
@@ -414,8 +432,8 @@ public class DomainFacade {
 	 * 
 	 * @return a list of all possible Car Models for the system
 	 */
-	public List<Model> getCarModels(){
-		return this.getNewOrderSessionHandler().getCarModels();
+	public List<Model> getVehicleModels(){
+		return this.getNewOrderSessionHandler().getVehicleModels();
 	}
 
 	/**
@@ -481,6 +499,26 @@ public class DomainFacade {
 			throw new IllegalArgumentException("Option can not be null.");
 		this.getNewOrderSessionHandler().selectOption(option);
 	}
+	
+	/**
+	 * Check whether given model and options match, and the options pass the
+	 * system's restriction checks.
+	 * 
+	 * @param model
+	 * 		The model to check for
+	 * @param options
+	 * 		The options to check for
+	 * 
+	 * @return whether given model and options match, and the options pass the
+	 * 		system's restriction checks
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		When either of the arguments is or contains null
+	 */
+	public boolean isFullyValidOptionSet(Model model, List<Option> options)
+			throws IllegalArgumentException{
+		return this.getNewOrderSessionHandler().isFullyValidOptionSet(model, options);
+	}
 
 	/**
 	 * Submit the order composed by the active OrderSession, and return
@@ -494,14 +532,14 @@ public class DomainFacade {
 	 * 		If no model has been chosen
 	 * @throws IllegalStateException
 	 * 		If there are unfulfilled OptionCategories
-	 * @throws IllegalCarOptionCombinationException 
+	 * @throws IllegalVehicleOptionCombinationException 
 	 * 		When the chosen options are not valid with given model
 	 * @throws OptionRestrictionException
 	 * 		When the set of options does not meet the system's restrictions
 	 * @throws IllegalStateException
 	 * 		When the order was already submitted
 	 */
-	public void submitOrder() throws IllegalStateException, IllegalArgumentException, IllegalCarOptionCombinationException, OptionRestrictionException{
+	public void submitOrder() throws IllegalStateException, IllegalArgumentException, IllegalVehicleOptionCombinationException, OptionRestrictionException{
 		this.getNewOrderSessionHandler().submitOrder();
 
 	}
@@ -583,7 +621,7 @@ public class DomainFacade {
 	 * @throws 	IllegalStateException
 	 *			If there is no active new order session.
 	 */
-	public OrderContainer submitSingleTaskOrder() throws IllegalStateException {
+	public OrderView submitSingleTaskOrder() throws IllegalStateException {
 		return this.getOrderSingleTaskHandler().submitSingleTaskOrder();
 	}
 
@@ -596,7 +634,7 @@ public class DomainFacade {
 	 * @throws  OrderDoesNotExistException 
 	 * 			If the order does not exist.
 	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order)
+	public DateTime getEstimatedCompletionTime(OrderView order)
 			throws OrderDoesNotExistException {
 		return this.getOrderSingleTaskHandler().getEstimatedCompletionTime(order);
 	}
@@ -621,7 +659,7 @@ public class DomainFacade {
 	 * 
 	 * @return the WorkPostContainers of the ASsemblyLine's WorkPosts
 	 */
-	public List<WorkPostContainer> getWorkPosts() {
+	public List<WorkPostView> getWorkPosts() {
 		return this.getPerformAssemblyTaskHandler().getWorkPosts();
 	}
 
@@ -636,7 +674,7 @@ public class DomainFacade {
 	 * @throws IllegalArgumentException
 	 * 		workPostNumber refers to a work post that does not exist.
 	 */
-	public List<AssemblyTaskContainer> getAssemblyTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
+	public List<AssemblyTaskView> getAssemblyTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
 		return this.getPerformAssemblyTaskHandler().getAssemblyTasksAtWorkPost(workPostNumber);
 	}
 
@@ -672,7 +710,7 @@ public class DomainFacade {
 	 * 
 	 * @return List of work post containers.
 	 */
-	public List<WorkPostContainer> getStatusWorkPosts() {
+	public List<WorkPostView> getStatusWorkPosts() {
 		return this.getAssemblyLineStatusHandler().getWorkPosts();
 	}
 	
@@ -695,7 +733,7 @@ public class DomainFacade {
 	 * @throws	IllegalArgumentException
 	 * 			If the given index does not satisfy the preconditions.
 	 */
-	public WorkPostContainer getWorkPost(int workPostNumber) throws IllegalArgumentException {
+	public WorkPostView getWorkPost(int workPostNumber) throws IllegalArgumentException {
 		return this.getAssemblyLineStatusHandler().getWorkPost(workPostNumber);
 	}
 	
@@ -709,7 +747,7 @@ public class DomainFacade {
 	 * @throws	IllegalArgumentException
 	 * 			If the given index does not satisfy the preconditions.
 	 */
-	public List<AssemblyTaskContainer> getTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
+	public List<AssemblyTaskView> getTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
 		return this.getAssemblyLineStatusHandler().getTasksAtWorkPost(workPostNumber);
 	}
 	
@@ -725,6 +763,7 @@ public class DomainFacade {
 	public int getAmountOfTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
 		return this.getAssemblyLineStatusHandler().getAmountOfTasksAtWorkPost(workPostNumber);
 	}
+
 	
 
 	//--------------------------------------------------------------------------

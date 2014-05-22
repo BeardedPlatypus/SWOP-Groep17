@@ -388,28 +388,27 @@ public class SchedulerContextTest {
 	//--------------------------------------------------------------------------
 	// Specification-related methods
 	//--------------------------------------------------------------------------
-	//FIXME: THOMAS THIS TEST IS IN A UNACCEPTABLE CONDITION. UNACCEPTABLE!!!
-//	@Test
-//	public void getEligibleBatchesTest() {
-//		Model model = new CarModel("test", new ArrayList<OptionCategory>(), 60);
-//		Option option1 = new Option(TaskType.BODY, "john", "doe");
-//		Option option2 = new Option(TaskType.DRIVETRAIN, "you", "what");
-//		Specification correctSpec = new Specification(new ArrayList<Option>(Arrays
-//				.asList(option1, option2)));
-//		Specification incorrectSpec = new Specification(new ArrayList<Option>(Arrays
-//				.asList(option1)));
-//		StandardOrder goodOrder = new StandardOrder(model, correctSpec, 0, new DateTime(0, 0, 0));
-//		StandardOrder badOrder = new StandardOrder(model, incorrectSpec, 1, new DateTime(1, 0, 0));
-//		List<StandardOrder> queue = new ArrayList<StandardOrder>();
-//		for (int i = 0; i < 2; i++) {
-//			queue.add(badOrder);
-//		}
-//		for (int i = 0; i < 3; i++) {
-//			queue.add(goodOrder);
-//		}
-//		Whitebox.setInternalState(schedCon, "orderQueue", queue);
-//		List<Specification> specs = schedCon.getEligibleBatches();
-//		assertTrue(specs.contains(correctSpec));
-//		assertFalse(specs.contains(incorrectSpec));
-//	}
+	@Test
+	public void getEligibleBatchesTest() {
+		Model model = new CarModel("test", new ArrayList<OptionCategory>(), 60);
+		Option option1 = new Option(TaskType.BODY, "john", "doe");
+		Option option2 = new Option(TaskType.DRIVETRAIN, "you", "what");
+		Specification correctSpec = new Specification(new ArrayList<Option>(Arrays
+				.asList(option1, option2)));
+		Specification incorrectSpec = new Specification(new ArrayList<Option>(Arrays
+				.asList(option1)));
+		StandardOrder goodOrder = new StandardOrder(model, correctSpec, 0, new DateTime(0, 0, 0));
+		StandardOrder badOrder = new StandardOrder(model, incorrectSpec, 1, new DateTime(1, 0, 0));
+		List<StandardOrder> queue = new ArrayList<StandardOrder>();
+		for (int i = 0; i < 2; i++) {
+			queue.add(badOrder);
+		}
+		for (int i = 0; i < 3; i++) {
+			queue.add(goodOrder);
+		}
+		Whitebox.setInternalState(schedCon, "standardOrderQueue", queue);
+		List<Specification> specs = schedCon.getEligibleBatches();
+		assertTrue(specs.contains(correctSpec));
+		assertFalse(specs.contains(incorrectSpec));
+	}
 }

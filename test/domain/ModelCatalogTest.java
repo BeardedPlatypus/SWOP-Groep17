@@ -17,7 +17,6 @@ import org.mockito.MockitoAnnotations;
 
 import domain.car.Model;
 import domain.car.ModelCatalog;
-import domain.car.Model;
 
 /**
  * @author Frederik Goovaerts

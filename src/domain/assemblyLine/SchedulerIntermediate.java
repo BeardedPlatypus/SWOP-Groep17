@@ -5,14 +5,16 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.base.Optional;
+
 import domain.DateTime;
 import domain.Manufacturer;
+import domain.clock.TimeObserver;
 import domain.order.Order;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
 import domain.productionSchedule.ProductionScheduleFacade;
-import domain.productionSchedule.TimeObserver;
 
 /**
  * The SchedulerIntermediate serves as layer between the ProductionSchedule, only
@@ -26,7 +28,7 @@ import domain.productionSchedule.TimeObserver;
  * @author Martinus Wilhelmus Tegelaers
  *
  */
-public class SchedulerIntermediate implements TimeObserver{
+public class SchedulerIntermediate implements TimeObserver {
 	public SchedulerIntermediate(AssemblyLine assemblyLine) {
 		this.assemblyLine = assemblyLine;
 		this.setCurrentTime(new DateTime(0, 0, 0));
@@ -167,6 +169,11 @@ public class SchedulerIntermediate implements TimeObserver{
 		}
 			
 	}	
+	
+	Optional<Order> popNextOrderFromSchedule() {
+		//FIXME
+		return null;
+	}
 		
 	public boolean isIdle() {
 		return this.isIdle;
@@ -357,18 +364,22 @@ public class SchedulerIntermediate implements TimeObserver{
 	private final static int WORKHOURS = FINISHHOUR - STARTHOUR;
 
 
-	public DateTime getEstimatedCompletionTime(OrderContainer order) {
+	public DateTime getEstimatedCompletionTime(OrderView order) {
 		AssemblyLine line = this.getAssemblyLine();
-		List<WorkPostContainer> posts = line.getWorkPostContainers();
+		List<WorkPostView> posts = line.getWorkPostContainers();
 		for (int i = 0; i < posts.size(); i++) {
 			if(!posts.get(i).isEmpty()){
-				if (posts.get(i).getAssemblyProcedureContainer().getOrderContainer().equals(order)) {
+				if (posts.get(i).getAssemblyProcedureView().getOrderView().equals(order)) {
 					int hours = line.getAssemblyLineSize() - (i);
 					return this.getCurrentTime().addTime(0, hours, 0);
 				}
 			}
 		}
 		throw new IllegalStateException("Order was not found on AssemblyLine.");
+	}
+
+	public void setAssemblyLine(AssemblyLine assemblyLine2) {
+		//TODO auto-generated method
 	}
 
 }

@@ -17,7 +17,7 @@ import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.handlers.OrderSingleTaskHandler;
 import domain.order.Order;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.order.SingleOrderSession;
 import exceptions.OrderDoesNotExistException;
 /**
@@ -27,7 +27,7 @@ import exceptions.OrderDoesNotExistException;
 @RunWith(MockitoJUnitRunner.class )
 public class OrderSingleTaskHandlerTest {
 	@Mock Manufacturer mockManufacturer;
-	@Mock OrderContainer orderContainer;
+	@Mock OrderView orderContainer;
 	@Mock Order order;
 	@Mock Option option;
 	@Mock SingleOrderSession singleOrderSession;

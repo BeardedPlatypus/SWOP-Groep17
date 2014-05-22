@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import domain.InteractionSimulator;
-import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.AssemblyTaskView;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
 
@@ -56,9 +56,9 @@ public class PerformAssemblyTaskScenario {
 		 * Step 3: The system presents an overview of the pending assembly tasks
 		 *         for the car at the current work post.
 		 */
-		List<AssemblyTaskContainer> tasks = facade.getAssemblyTasksAtWorkPost(2);
+		List<AssemblyTaskView> tasks = facade.getAssemblyTasksAtWorkPost(2);
 		assertTrue(tasks.size() > 0);
-		for(AssemblyTaskContainer task : tasks){
+		for(AssemblyTaskView task : tasks){
 			assertFalse(task.isCompleted());
 		}
 		/*
@@ -69,7 +69,7 @@ public class PerformAssemblyTaskScenario {
 		 *         when the assembly task is finished together with the time it took him
 		 *         to finish the job.
 		 */
-		AssemblyTaskContainer firstTask = tasks.get(0);
+		AssemblyTaskView firstTask = tasks.get(0);
 		facade.completeWorkpostTask(2, firstTask.getTaskNumber(), 60);
 		tasks = facade.getAssemblyTasksAtWorkPost(2);
 		assertTrue(tasks.get(0).isCompleted());
@@ -92,7 +92,7 @@ public class PerformAssemblyTaskScenario {
 	public void scenarioTest_allTasksFinished() {
 		//Complete all tasks at the first two workposts...
 		for(int i = 0; i < 2; i++){
-			for(AssemblyTaskContainer task : facade.getAssemblyTasksAtWorkPost(i)){
+			for(AssemblyTaskView task : facade.getAssemblyTasksAtWorkPost(i)){
 				assertFalse(task.isCompleted());
 				facade.completeWorkpostTask(i, task.getTaskNumber(), 60);
 				assertTrue(task.isCompleted());
@@ -100,9 +100,9 @@ public class PerformAssemblyTaskScenario {
 			assertTrue(facade.getWorkPost(i).isFinished());
 		}
 		//Complete all tasks at the second work post except the second one.
-		List<AssemblyTaskContainer> tasks = facade.getAssemblyTasksAtWorkPost(2);
+		List<AssemblyTaskView> tasks = facade.getAssemblyTasksAtWorkPost(2);
 		for(int i = 0; i < tasks.size(); i++){
-			AssemblyTaskContainer assTask = tasks.get(i);
+			AssemblyTaskView assTask = tasks.get(i);
 			if(i != 1 && (!assTask.isCompleted())){
 				facade.completeWorkpostTask(2, assTask.getTaskNumber(), 60);
 			}
@@ -133,7 +133,7 @@ public class PerformAssemblyTaskScenario {
 		 *         when the assembly task is finished together with the time it took him
 		 *         to finish the job.
 		 */
-		AssemblyTaskContainer secondTask = tasks.get(1);
+		AssemblyTaskView secondTask = tasks.get(1);
 		facade.completeWorkpostTask(2, secondTask.getTaskNumber(), 60);
 		assertTrue(secondTask.isCompleted());
 		
@@ -143,7 +143,7 @@ public class PerformAssemblyTaskScenario {
 		 *    pending assembly tasks for the car at the current work post.
 		 */
 		assertFalse(facade.getWorkPost(2).isFinished());
-		for(AssemblyTaskContainer task: facade.getAssemblyTasksAtWorkPost(2)){
+		for(AssemblyTaskView task: facade.getAssemblyTasksAtWorkPost(2)){
 			assertFalse(task.isCompleted());
 		}
 		

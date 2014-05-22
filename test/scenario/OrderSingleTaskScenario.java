@@ -12,7 +12,7 @@ import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.handlers.InitialisationHandler;
 import domain.handlers.DomainFacade;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import exceptions.OrderDoesNotExistException;
 
 /**
@@ -51,7 +51,7 @@ public class OrderSingleTaskScenario {
 		facade.specifyDeadline(1, 2, 3);
 		
 		//6. The system stores the new order and updates the production schedule.
-		OrderContainer submittedOrder = facade.submitSingleTaskOrder();
+		OrderView submittedOrder = facade.submitSingleTaskOrder();
 		assertNotNull(submittedOrder);
 		
 		//7. The system presents an estimated completion date for the new order.

@@ -1,32 +1,35 @@
 package domain;
 
-import java.util.Comparator;
 import java.util.List;
 
 import domain.restrictions.OptionRestrictionManager;
-import exceptions.IllegalCarOptionCombinationException;
+import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
+import domain.assemblyLine.AssemblyFloor;
 import domain.assemblyLine.AssemblyLine;
-import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.AssemblyLineState;
+import domain.assemblyLine.AssemblyLineStateView;
+import domain.assemblyLine.AssemblyLineView;
+import domain.assemblyLine.AssemblyTaskView;
 import domain.assemblyLine.SchedulerIntermediate;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.WorkPostView;
 import domain.car.ModelCatalog;
 import domain.car.Option;
 import domain.car.Specification;
 import domain.car.Model;
+import domain.clock.Clock;
 import domain.order.CompletedOrderCatalog;
 import domain.order.Order;
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 import domain.order.OrderFactory;
 import domain.order.OrderSession;
 import domain.order.SingleOrderSession;
 import domain.order.SingleTaskCatalog;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
-import domain.productionSchedule.ProductionScheduleFacade;
+import domain.productionSchedule.SchedulerContext;
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
-import domain.productionSchedule.strategy.SchedulingStrategy;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
 
 /**
@@ -37,6 +40,8 @@ import domain.productionSchedule.strategy.SchedulingStrategyView;
  * @author Martinus Wilhelmus Tegelaers, Frederik Goovaerts
  */
 public class Manufacturer {
+
+
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -54,10 +59,15 @@ public class Manufacturer {
 	 * 		The {@link ModelCatalog} for the new {@link Manufacturer}
 	 * @param optionRestMan
 	 * 		The {@link OptionRestrictionManager} for the new {@link Manufacturer}
-	 * @param assemblyLine
+	 * @param floor
 	 * 		The {@link AssemblyLine} for the new {@link Manufacturer}
+	 * @param clock
+	 * 		The {@link SchedulerIntermediate} for the new {@link Manufacturer}
+	 * @param schedule 
 	 * @param prodSched
 	 * 		The {@link ProductionScheduleFacade} for the new {@link Manufacturer}
+	 * @param inter 
+	 * @param line 
 	 * @throws IllegalArgumentException
 	 * 		If any of the parameters is null
 	 */
@@ -66,8 +76,10 @@ public class Manufacturer {
 						CompletedOrderCatalog completedCat,
 						ModelCatalog modelCat,
 						OptionRestrictionManager optionRestMan,
-						ProductionScheduleFacade prodSched,
-						OrderFactory orderFactory)
+						OrderFactory orderFactory,
+						AssemblyFloor floor,
+						Clock clock,
+						SchedulerContext schedule)
 						throws IllegalArgumentException
 	{
 		if(stratFact == null)
@@ -80,20 +92,31 @@ public class Manufacturer {
 			throw new IllegalArgumentException("ModelCatalog should not be null.");
 		if(optionRestMan == null)
 			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
-		if(prodSched == null)
-			throw new IllegalArgumentException("ProductionScheduleFacade should not be null.");
+		if(orderFactory == null)
+			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+		if(floor == null)
+			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+		if(clock == null)
+			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+		if(schedule == null)
+			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
 		
 		this.algorithmStrategyFactory = stratFact;
 		this.singleTaskCatalog = singleCat;
 		this.completedOrderCatalog = completedCat;
 		this.modelCatalog = modelCat;
 		this.optionRestrictionManager = optionRestMan;
-		this.productionScheduleFacade = prodSched;
 		this.orderFactory = orderFactory;
+		this.assemblyFloor = floor;
+		this.clock = clock;
+		this.schedulerContext = schedule;
+
+
+		this.orderFactory.setManufacturer(this);
+		this.assemblyFloor.setManufacturer(this);
+
 	}
 	
-	/** The SingleTaskCatalog of this Manufacturer. */
-	private final SingleTaskCatalog singleTaskCatalog;
 
 	
 	//--------------------------------------------------------------------------
@@ -106,8 +129,8 @@ public class Manufacturer {
 	 * 
 	 * @return the list of pending orders in the system
 	 */
-	public List<OrderContainer> getPendingOrderContainers() {
-		List<OrderContainer> pending = this.getAssemblingPendingOrderContainers();
+	public List<OrderView> getPendingOrderContainers() {
+		List<OrderView> pending = this.getAssemblingPendingOrderContainers();
 		pending.addAll(this.getSchedulePendingOrderContainers());
 		return pending;
 	}
@@ -129,15 +152,16 @@ public class Manufacturer {
 	 * @throws OrderDoesNotExistException
 	 * 		When the order is not found in the system.
 	 */
-	//TODO Aan elkaar knopen
-	//FIXME FIX EVERYTHING
-	public DateTime getEstimatedCompletionTime(OrderContainer order) throws OrderDoesNotExistException{
-		if(this.getProductionSchedule().contains(order))
-			return this.getProductionSchedule().getEstimatedCompletionTime(order);
-		if(this.getAssemblyLine().contains(order))
-			return this.getSchedulerIntermediate().getEstimatedCompletionTime(order);
-		if(this.getCompletedOrderCatalog().contains(order))
-			return this.getCompletedOrderCatalog().getCompletionTime(order);
+	public DateTime getEstimatedCompletionTime(OrderView order) throws OrderDoesNotExistException{
+		//TODO: DIVERT THIS TO THE STATISTICS
+		// http://content.artofmanliness.com/uploads//2010/10/snidely-whiplash.jpg
+		
+//		if(this.getProductionSchedule().contains(order))
+//			return this.getProductionSchedule().getEstimatedCompletionTime(order);
+//		if(this.getAssemblyFloor().contains(order))
+//			return this.getAssemblyFloor().getEstimatedCompletionTime(order);
+//		if(this.getCompletedOrderCatalog().contains(order))
+//			return this.getCompletedOrderCatalog().getCompletionTime(order);
 		throw new OrderDoesNotExistException("Order was not found in the system.");
 	}
 	
@@ -157,15 +181,15 @@ public class Manufacturer {
 		return this.algorithmStrategyFactory;
 	}
 	
-	/**
-	 * Set a new SchedulingStrategy of the ProductionSchedule subsystem.
-	 * 
-	 * @param strat
-	 * 		The new SchedulingStrategy of this Manufacturer's ProductionSchedule subsystem.
-	 */
-	public void setNewSchedulingAlgorithm(SchedulingStrategy strat) {
-		this.getProductionSchedule().setNewSchedulingAlgorithm(strat);
-	}
+//	/**
+//	 * Set a new SchedulingStrategy of the ProductionSchedule subsystem.
+//	 * 
+//	 * @param strat
+//	 * 		The new SchedulingStrategy of this Manufacturer's ProductionSchedule subsystem.
+//	 */
+//	public void setNewSchedulingAlgorithm(SchedulingStrategy strat) {
+//		this.getProductionSchedule().setNewSchedulingAlgorithm(strat);
+//	}
 	
 	/**
 	 * Get a list of SchedulingStrategyViews of all available SchedulingAlgorithms
@@ -182,14 +206,14 @@ public class Manufacturer {
 	 * @return The SchedulingAlgorithm
 	 */
 	public SchedulingStrategyView getCurrentAlgorithm() {
-		return this.getProductionSchedule().getCurrentSchedulingAlgorithm();
+		return this.getProductionSchedule().getCurrentSchedulingStrategy();
 	}
 	
 	/**
 	 * Set the currently used SchedulingAlgorithm to the FIFO algorithm
 	 */
 	public void setFifoAlgorithm() {
-		this.getProductionSchedule().setNewSchedulingAlgorithm(
+		this.getProductionSchedule().setSchedulingStrategy(
 				this.getAlgorithmFactory().getFifoStrategy());
 	}
 	
@@ -212,7 +236,7 @@ public class Manufacturer {
 	 * 		batch is null
 	 */
 	public void setBatchAlgorithm(Specification batch) throws IllegalArgumentException {
-		this.getProductionSchedule().setNewSchedulingAlgorithm(
+		this.getProductionSchedule().setSchedulingStrategy(
 				this.getAlgorithmFactory().getBatchStrategy(batch));
 	}
 
@@ -257,6 +281,19 @@ public class Manufacturer {
 		return new SingleOrderSession(this, this.singleTaskCatalog);
 	}
 	
+	
+	/**
+	 * Get the {@link SingleTaskCatalog} of this {@link Manufacturer}.
+	 * 
+	 * @return the {@link SingleTaskCatalog}.
+	 */
+	public SingleTaskCatalog getSingleTaskCatalog(){
+		return this.singleTaskCatalog;
+	}
+
+	/** The SingleTaskCatalog of this Manufacturer. */
+	private final SingleTaskCatalog singleTaskCatalog;
+	
 	/**
 	 * Submit the parameters for a single task order to the production schedule.
 	 * We expect the schedule to make an order and schedule it. The schedule
@@ -275,12 +312,12 @@ public class Manufacturer {
 	 * @throws IllegalArgumentException
 	 * 		If either of the arguments is null
 	 */
-	public OrderContainer submitSingleTaskOrder(Option option, DateTime deadline) {
+	public OrderView submitSingleTaskOrder(Option option, DateTime deadline) {
 		SingleTaskOrder order = this.getOrderFactory().makeNewSingleTaskOrder(deadline, option);
-		this.getProductionSchedule().submitSingleTaskOrder(order);
+		this.getProductionSchedule().addNewSingleTaskOrder(order);
 		
-		if (this.getSchedulerIntermediate().isIdle()) 
-			this.getSchedulerIntermediate().unIdle();
+		//TODO Fix the unidling in the floor
+		this.getAssemblyFloor().unidleLineFor(order);
 		
 		return order;
 	}
@@ -321,7 +358,7 @@ public class Manufacturer {
 	 * 
 	 * @return a list of the available Models in the system
 	 */
-	public List<Model> getCarModels() {
+	public List<Model> getVehicleModels() {
 		return this.getModelCatalog().getModels();
 	}
 	
@@ -407,11 +444,11 @@ public class Manufacturer {
 	 * 		The given options to check with the model
 	 * @throws IllegalArgumentException
 	 * 		When either of the parameters is or contains null
-	 * @throws IllegalCarOptionCombinationException 
+	 * @throws IllegalVehicleOptionCombinationException 
 	 * 		When the list of options is not valid with given model
 	 */
-	public boolean checkOrderValidity(Model model, List<Option> options)
-			throws IllegalArgumentException, IllegalCarOptionCombinationException
+	private boolean checkOrderRestrictionValidity(Model model, List<Option> options)
+			throws IllegalArgumentException, IllegalVehicleOptionCombinationException
 	{
 		if(model == null)
 			throw new IllegalArgumentException("Model schould not be null");
@@ -420,7 +457,7 @@ public class Manufacturer {
 		if(options.contains(null))
 			throw new IllegalArgumentException("Options list should not contain null.");
 		if(!model.checkOptionsValidity(options))
-			throw new IllegalCarOptionCombinationException("These options do not match given model.");
+			throw new IllegalVehicleOptionCombinationException("These options do not match given model.");
 		if(!this.getOptionRestrictionManager().checkValidity(model,options))
 			return false;
 		return true;
@@ -428,30 +465,30 @@ public class Manufacturer {
 	
 
 	//--------------------------------------------------------------------------
-	// ProductionScheduleFacade related variables and methods. 
+	// ProductionSchedule related variables and methods. 
 	//--------------------------------------------------------------------------
 	/**
 	 * Get the ProductionSchedule of this Manufacturer.
 	 * 
 	 * @return The ProductionSchedule of this Manufacturer. 
 	 */
-	public ProductionScheduleFacade getProductionSchedule() {
-		return this.productionScheduleFacade;
+	public SchedulerContext getProductionSchedule() {
+		return this.schedulerContext;
 	}
 	
 	/** Interface into production schedule functionality. */
-	private final ProductionScheduleFacade productionScheduleFacade;
+	private final SchedulerContext schedulerContext;
 
 	//--------------------------------------------------------------------------
 
 
 	/**
-	 * Get a list of pending {@link OrderContainer}s in the productionSchedule.
+	 * Get a list of pending {@link OrderView}s in the productionSchedule.
 	 * 
 	 * @return List of pending order containers in the productionSchedule.
 	 */
-	private List<OrderContainer> getSchedulePendingOrderContainers() {
-		return this.getProductionSchedule().getPendingStandardOrderContainers();
+	private List<OrderView> getSchedulePendingOrderContainers() {
+		return this.getProductionSchedule().getPendingStandardOrders();
 	}
 	
 	/**
@@ -466,16 +503,16 @@ public class Manufacturer {
 	 * 
 	 * @return the new order, made from the arguments
 	 * 
-	 * @throws IllegalCarOptionCombinationException 
+	 * @throws IllegalVehicleOptionCombinationException 
 	 * 		When the list of options is not valid with given model
 	 * @throws IllegalArgumentException
 	 * 		When either of the parameters is or contains null
 	 * @throws OptionRestrictionException
 	 * 		When the set of options does not meet the system's restrictions
 	 */
-	public OrderContainer submitStandardOrder(Model model, List<Option> options)
+	public OrderView submitStandardOrder(Model model, List<Option> options)
 			throws IllegalArgumentException,
-			IllegalCarOptionCombinationException,
+			IllegalVehicleOptionCombinationException,
 			OptionRestrictionException
 	{
 		if(model == null)
@@ -484,75 +521,32 @@ public class Manufacturer {
 			throw new IllegalArgumentException("Options list should not be null.");
 		if(options.contains(null))
 			throw new IllegalArgumentException("Options list should not contain null.");
-		if(!checkOrderValidity(model, options))
+		if(!checkOrderRestrictionValidity(model, options))
 			throw new OptionRestrictionException("Options do not meet Restriction criteria.");
 		Specification orderSpecs = model.makeSpecification(options);
 		StandardOrder newOrder = this.getOrderFactory().makeNewStandardOrder(model, orderSpecs);
-		this.getProductionSchedule().submitStandardOrder(newOrder);
+		this.getProductionSchedule().addNewStandardOrder(newOrder);
 		
-		if (this.getSchedulerIntermediate().isIdle()) 
-			this.getSchedulerIntermediate().unIdle();
+		//TODO fix unidling in the floor
+		this.getAssemblyFloor().unidleLineFor(newOrder);
 		
 		return newOrder;
 	}
 
 	
 	//--------------------------------------------------------------------------
-	// AssemblyLine-related variables and methods
+	// AssemblyFloor and AssemblyLine-related variables and methods
 	//--------------------------------------------------------------------------
-	/** This Manufacturer's AssemblyLine */
-	private AssemblyLine assemblyLine;
+	/** This Manufacturer's AssemblyFloor */
+	private final AssemblyFloor assemblyFloor;
 
 	/**
-	 * Get the AssemblyLine of this Manufacturer.
+	 * Get the AssemblyFloor of this Manufacturer.
 	 * 
-	 * @return The AssemblyLine
+	 * @return The AssemblyFloor
 	 */
-	private AssemblyLine getAssemblyLine() {
-		return this.assemblyLine;
-	}
-
-	/**
-	 * Set this Manufacturer's AssemblyLine to the specified AssemblyLine
-	 * 
-	 * @param assemblyLine
-	 * 		The AssemblyLine
-	 * @throws IllegalArgumentException
-	 * 		assemblyLine is null
-	 */
-	public void setAssemblyLine(AssemblyLine assemblyLine) throws IllegalArgumentException {
-		if (assemblyLine == null) {
-			throw new IllegalArgumentException("Cannot set AssemblyLine in Manufacturer to null");
-		}
-		this.assemblyLine = assemblyLine;
-	}
-	
-	/** This Manufacturer's AssemblyLine */
-	private SchedulerIntermediate lineIntermediate;
-
-	/**
-	 * Get the AssemblyLine of this Manufacturer.
-	 * 
-	 * @return The AssemblyLine
-	 */
-	public SchedulerIntermediate getSchedulerIntermediate() {
-		return this.lineIntermediate;
-	}
-
-	/**
-	 * Set this Manufacturer's AssemblyLine to the specified AssemblyLine
-	 * 
-	 * @param assemblyLine
-	 * 		The AssemblyLine
-	 * @throws IllegalArgumentException
-	 * 		assemblyLine is null
-	 */
-	public void setSchedulerIntermediate(SchedulerIntermediate schedulerIntermediate)
-			throws IllegalArgumentException {
-		if (schedulerIntermediate == null) {
-			throw new IllegalArgumentException("Cannot set SchedulerIntermediate in Manufacturer to null");
-		}
-		this.lineIntermediate = schedulerIntermediate;
+	private AssemblyFloor getAssemblyFloor() {
+		return this.assemblyFloor;
 	}
 
 	/**
@@ -560,8 +554,16 @@ public class Manufacturer {
 	 * 
 	 * @return The WorkPostContainers
 	 */
-	public List<WorkPostContainer> getWorkPostContainers() {
-		return this.getAssemblyLine().getWorkPostContainers();
+	public List<AssemblyLineView> getAssemblyLineViews() {
+		//TODO set this up as required
+		return this.getAssemblyFloor().getAssemblyLineViews();
+	}
+	
+
+
+	public List<WorkPostView> getWorkPostsAt(int lineNb) {
+		// TODO Auto-generated method stub
+		return this.getAssemblyFloor().getWorkPostViewsAt(lineNb);
 	}
 
 	/**
@@ -575,8 +577,9 @@ public class Manufacturer {
 	 * @throws IllegalArgumentException
 	 * 		See {@link AssemblyLine#getAssemblyTasksAtPost(int) getAssemblyTasksAtPost(int)}
 	 */
-	public List<AssemblyTaskContainer> getAssemblyTasksAtPost(int postNum) throws IllegalArgumentException {
-		return this.getAssemblyLine().getAssemblyTasksAtPost(postNum);
+	public List<AssemblyTaskView> getAssemblyTasksAtPost(int lineNum, int postNum) throws IllegalArgumentException {
+		//TODO also add layer of indirection
+		return this.getAssemblyFloor().getAssemblyTasksAtPost(lineNum, postNum);
 	}
 
 	/**
@@ -594,19 +597,44 @@ public class Manufacturer {
 	 * @throws IllegalStateException
 	 * 		See {@link AssemblyLine#completeWorkpostTask(int, int, int) completeWorkpostTask(int, int, int)}
 	 */
-	public void completeWorkpostTask(int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException,
+	public void completeWorkpostTask(int lineNumber, int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException,
 	IllegalStateException {
-		this.getAssemblyLine().completeWorkpostTask(workPostNumber, taskNumber, minutes);
+		this.getAssemblyFloor().completeWorkpostTask(lineNumber, workPostNumber, taskNumber, minutes);
 	}
 	
 	/**
-	 * Get a list of pending {@link OrderContainer}s on the assembly line. 
+	 * Get a list of pending {@link OrderView}s on the assembly line. 
 	 * 
 	 * @return List of pending order containers on the assembly line.
 	 */
-	private List<OrderContainer> getAssemblingPendingOrderContainers() {
-		return this.getAssemblyLine().getActiveOrderContainers();
+	private List<OrderView> getAssemblingPendingOrderContainers() {
+		//TODO add layer of indirection
+		return this.getAssemblyFloor().getActiveOrderContainers();
 	}
+	
+
+	//--------- Assembly States ---------//
+
+	public List<AssemblyLineStateView> getAvailableStates() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	public AssemblyLineState getStateInstance(int stateNum) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	public List<AssemblyLineStateView> getCurrentLineStates() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	//----- end of Assembly States -----//
 
 	//--------------------------------------------------------------------------
 	// Completed Order Methods
@@ -648,13 +676,17 @@ public class Manufacturer {
 	 * 
 	 * @return the list of completed orders in the system
 	 */
-	public List<OrderContainer> getCompletedOrderContainers() {
+	public List<OrderView> getCompletedOrderContainers() {
 		return this.getCompletedOrderCatalog().getCompletedOrderContainers();
 	}
 	
 	//--------------------------------------------------------------------------
-	// Time-related methods
+	// Clock and Time-related methods
 	//--------------------------------------------------------------------------
+
+	/** The manufacturer's clock */
+	private final Clock clock;
+	
 	/**
 	 * Increments the time with the specified DateTime
 	 * 
@@ -662,7 +694,9 @@ public class Manufacturer {
 	 * 		The time to increment with
 	 */
 	public void incrementTime(DateTime dt) {
-		this.getProductionSchedule().incrementTime(dt);
+		
+		//TODO how does this impact the clock? Put this away for good?
+		//this.getProductionSchedule().incrementTime(dt);
 	}
 
 	//--------------------------------------------------------------------------
@@ -675,7 +709,8 @@ public class Manufacturer {
 	 * @return The report
 	 */
 	public String getStatisticsReport() {
-		return this.getAssemblyLine().getStatisticsReport();
+		return this.getAssemblyFloor().getStatisticsReport();
 	}
+
 
 }

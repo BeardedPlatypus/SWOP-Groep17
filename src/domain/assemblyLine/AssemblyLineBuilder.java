@@ -23,27 +23,27 @@ public class AssemblyLineBuilder {
 	 * @throws IllegalArgumentException
 	 * 		manufacturer is null
 	 */
-	public AssemblyLineBuilder(Manufacturer manufacturer) throws IllegalArgumentException {
-		if (manufacturer == null) {
-			throw new IllegalArgumentException("Cannot initialise an "
-					+ "AssemblyLineBuilder with null manufacturer");
-		}
+	public AssemblyLineBuilder() throws IllegalArgumentException {
+//		if (manufacturer == null) {
+//			throw new IllegalArgumentException("Cannot initialise an "
+//					+ "AssemblyLineBuilder with null manufacturer");
+//		}
 		this.desiredModels = new ArrayList<Model>();
-		this.manufacturer = manufacturer;
+//		this.manufacturer = manufacturer;
 	}
 	
-	/** The manufacturer of the new AssemblyLine. */
-	private Manufacturer manufacturer;
-	
-	/**
-	 * Get the Manufacturer of any new AssemblyLines built by this
-	 * AssemblyLineBuilder
-	 * 
-	 * @return The manufacturer
-	 */
-	private Manufacturer getManufacturer() {
-		return this.manufacturer;
-	}
+//	/** The manufacturer of the new AssemblyLine. */
+//	private Manufacturer manufacturer;
+//	
+//	/**
+//	 * Get the Manufacturer of any new AssemblyLines built by this
+//	 * AssemblyLineBuilder
+//	 * 
+//	 * @return The manufacturer
+//	 */
+//	private Manufacturer getManufacturer() {
+//		return this.manufacturer;
+//	}
 	
 	/** List of Models that the new AssemblyLine is expected to handle */
 	private List<Model> desiredModels;
@@ -82,6 +82,13 @@ public class AssemblyLineBuilder {
 	}
 	
 	/**
+	 * Remove all previously added models.
+	 */
+	public void clearModels() {
+		this.getDesiredModels().clear();
+	}
+	
+	/**
 	 * Determine whether this AssemblyLineBuilder is ready to build a new
 	 * AssemblyLine.
 	 * 
@@ -98,8 +105,11 @@ public class AssemblyLineBuilder {
 	 * @return A new AssemblyLine that can handle the earlier added models
 	 * @throws IllegalStateException
 	 * 		canBuildAssemblyLine() is false
+	 * @throws IllegalArgumentException
+	 * 		See {@link AssemblyLine#AssemblyLine(List<WorkPost), OrderAcceptanceChecker, SchedulerIntermediate) AssemblyLine(List<WorkPost), OrderAcceptanceChecker, SchedulerIntermediate)}
 	 */
-	public AssemblyLine buildAssemblyLine() throws IllegalStateException {
+	public AssemblyLine buildAssemblyLine(SchedulerIntermediate schedulerIntermediate)
+			throws IllegalStateException {
 		if (! this.canBuildAssemblyLine()) {
 			throw new IllegalStateException("The AssemblyLineBuilder could"
 					+ "not yet build a new AssemblyLine");
@@ -110,6 +120,6 @@ public class AssemblyLineBuilder {
 		OrderAcceptanceChecker orderSelector = new OrderAcceptanceChecker(this.getDesiredModels());
 		List<WorkPost> workPosts = layoutFactory.makeLayout(this.getDesiredModels());
 		
-		return new AssemblyLine(this.getManufacturer(), workPosts, orderSelector);
+		return new AssemblyLine(workPosts, orderSelector, schedulerIntermediate);
 	}
 }

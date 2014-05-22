@@ -2,8 +2,9 @@ package ui;
 
 import java.util.List;
 
-import domain.assemblyLine.AssemblyTaskContainer;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.AssemblyLineView;
+import domain.assemblyLine.AssemblyTaskView;
+import domain.assemblyLine.WorkPostView;
 import domain.handlers.AssemblyLineStatusHandler;
 
 public class CheckAssemblyLineStatusUIPart {
@@ -60,20 +61,25 @@ public class CheckAssemblyLineStatusUIPart {
 	 * and then asks the user to press enter.
 	 */
 	public void run(){
-		System.out.println("Current overview of the Assembly Line:");
+		System.out.println("Current overview of the Assembly Lines:");
 		System.out.println(helper.SEPERATOR);
-		List<WorkPostContainer> posts = getHandler().getWorkPosts();
-		for(WorkPostContainer post : posts){
-			System.out.println("Workpost " + post.getName() + " with tasks:");
-			try{
-				List<AssemblyTaskContainer> tasks = post.getAssemblyProcedureContainer().getAssemblyTasks();
-				for(AssemblyTaskContainer task : tasks){
-					System.out.println("\t" + task.getOptionName() + "(" + task.isCompleted() + ")");
+		List<AssemblyLineView> lines = getHandler().getLineViews();
+		for(int i = 0; i<lines.size(); i++){
+			AssemblyLineView line = lines.get(i);
+			System.out.println("Assembly line " + (i+1));
+			List<WorkPostView> posts = line.getWorkPostViews();
+			for(WorkPostView post : posts){
+				System.out.println("Workpost " + post.getName() + " with tasks:");
+				try{
+					List<AssemblyTaskView> tasks = post.getAssemblyProcedureView().getAssemblyTasks();
+					for(AssemblyTaskView task : tasks){
+						System.out.println("\t" + task.getOptionName() + "(" + task.isCompleted() + ")");
+					}
+				} catch(IllegalStateException e) {
+					System.out.println("\tNone");
 				}
-			}catch(IllegalStateException e){
-				System.out.println("\tNone");
+				System.out.println(helper.SEPERATOR);
 			}
-			System.out.println(helper.SEPERATOR);
 		}
 		helper.getEnter();
 	}

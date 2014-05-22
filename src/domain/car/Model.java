@@ -271,7 +271,13 @@ public abstract class Model {
 	
 	/** The amount of time in minutes that cars of this model are expected to spend
 	 * on each WorkPost unless specified otherwise */
-	protected final int minsPerWorkPost;
+	private final int minsPerWorkPost;
+	
+	/** Get the amount of time in minutes that cars of this model are expected to spend
+	 * on each WorkPost unless specified otherwise */
+	protected int getMinsPerWorkPost() {
+		return this.minsPerWorkPost;
+	}
 	
 	/**
 	 * Calculate the amount of minutes that vehicles of this model

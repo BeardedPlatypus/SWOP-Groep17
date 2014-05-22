@@ -20,10 +20,10 @@ import domain.Manufacturer;
 import domain.assemblyLine.AssemblyLine;
 import domain.assemblyLine.AssemblyProcedure;
 import domain.assemblyLine.AssemblyTask;
-import domain.assemblyLine.AssemblyTaskContainer;
+import domain.assemblyLine.AssemblyTaskView;
 import domain.assemblyLine.TaskType;
 import domain.assemblyLine.WorkPost;
-import domain.assemblyLine.WorkPostContainer;
+import domain.assemblyLine.WorkPostView;
 import domain.car.Option;
 import domain.handlers.AssemblyLineStatusHandler;
 import domain.order.Order;
@@ -88,8 +88,8 @@ public class CheckAssemblyLineStatusScenario {
 		// --- Only getting the information is tested, formatting is the responsibility 
 		// of the UI ---
 		assertEquals(3, handler.getAmountOfWorkPosts());
-		List<AssemblyTaskContainer> tasks;
-		List<WorkPostContainer> containers = handler.getWorkPosts();
+		List<AssemblyTaskView> tasks;
+		List<WorkPostView> containers = handler.getWorkPosts();
 		assertEquals(handler.getWorkPost(0), containers.get(0));
 		assertFalse(workPosts.get(0).isFinished());
 		assertTrue(workPosts.get(1).isEmpty());

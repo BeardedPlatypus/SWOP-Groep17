@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import domain.DateTime;
-import domain.productionSchedule.TimeObserver;
+import domain.clock.TimeObserver;
 
 /**
  * Catalog which contains completed orders of the system.
@@ -39,8 +39,8 @@ public class CompletedOrderCatalog implements TimeObserver{
 	 * 
 	 * @return a list of the completed Orders as containers
 	 */
-	public List<OrderContainer> getCompletedOrderContainers() {
-		return new ArrayList<OrderContainer>(completedOrders);
+	public List<OrderView> getCompletedOrderContainers() {
+		return new ArrayList<OrderView>(completedOrders);
 	}
 	
 	/**
@@ -77,7 +77,7 @@ public class CompletedOrderCatalog implements TimeObserver{
 	 * 
 	 * @return whether the option is present
 	 */
-	public boolean contains(OrderContainer order) {
+	public boolean contains(OrderView order) {
 		return this.getCompletedOrderContainers().contains(order);
 	}
 	
@@ -99,7 +99,7 @@ public class CompletedOrderCatalog implements TimeObserver{
 	 * @throws IllegalStateException
 	 * 		when the order is not completed or not in the catalog
 	 */
-	public DateTime getCompletionTime(OrderContainer order)
+	public DateTime getCompletionTime(OrderView order)
 			throws IllegalArgumentException,
 			IllegalStateException
 	{

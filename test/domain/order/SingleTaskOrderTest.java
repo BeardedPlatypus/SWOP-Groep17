@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import domain.DateTime;
+import domain.assemblyLine.TaskType;
 import domain.car.Specification;
 import domain.car.Model;
 
@@ -64,24 +65,28 @@ public class SingleTaskOrderTest {
 	@Test 
 	public void test_constructorIllegalArgumentExceptionModel() {
 		exception.expect(IllegalArgumentException.class);
+		@SuppressWarnings("unused")
 		Order test = new SingleTaskOrder(null, spectacles, 0, submission1, deadline1);
 	}
 	
 	@Test
 	public void test_constructorIllegalArgumentExceptionSpecs() {
 		exception.expect(IllegalArgumentException.class);
+		@SuppressWarnings("unused")
 		Order test = new SingleTaskOrder(mockSuperModel, null, 0, submission1, deadline1);
 	}
 
 	@Test
 	public void test_constructorIllegalArgumentExceptionSubmissiontime() {
 		exception.expect(IllegalArgumentException.class);
+		@SuppressWarnings("unused")
 		Order test = new SingleTaskOrder(mockSuperModel, spectacles, 0, null, deadline1);
 	}
 	
 	@Test
 	public void test_constructorIllegalArgumentExceptionDeadline() {
 		exception.expect(IllegalArgumentException.class);
+		@SuppressWarnings("unused")
 		Order test = new SingleTaskOrder(mockSuperModel, spectacles, 0, submission1, null);
 	}
 	
@@ -118,6 +123,12 @@ public class SingleTaskOrderTest {
 		assertEquals(true, spiedOrder.isCompleted());
 	}
 	
+	@Test
+	public void testMinutesAtPost() {
+		Mockito.when(mockSuperModel2.getMinsOnWorkPostOfType(TaskType.ACCESSORIES)).thenReturn(30);
+		assertEquals(order1.getMinutesOnPostOfType(TaskType.ACCESSORIES), 30);
+	}
+
 	//--------------------------------------------------------------------------
 	// Completion Time setter and getters.
 	//--------------------------------------------------------------------------

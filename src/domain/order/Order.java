@@ -28,7 +28,7 @@ import domain.car.Model;
  * @invariant order.getSubmissionTime() != null
  * @invariant order.getModel().isValidSpecification(order.getSpecifications())
  */
-public abstract class Order implements OrderContainer {
+public abstract class Order implements OrderView {
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -216,6 +216,17 @@ public abstract class Order implements OrderContainer {
 	/** The model of this Order. */
 	public final Model model;
 	
+// DEPRECATED
+//	/**
+//	 * Get the amount of minutes that the ordered car is expected to spend
+//	 * at each work post.
+//	 * 
+//	 * @return The amount of minutes
+//	 */
+//	public int getMinutesPerPost() {
+//		return this.getModel().getMinsPerWorkPost();
+//	}
+
 	/**
 	 * Get the amount of minutes that the ordered car is expected to spend
 	 * at the workpost of the specified workPostType
@@ -267,4 +278,5 @@ public abstract class Order implements OrderContainer {
 			return false;
 		return true;
 	}
+
 }

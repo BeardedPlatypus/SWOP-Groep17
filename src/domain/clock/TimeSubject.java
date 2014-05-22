@@ -1,4 +1,4 @@
-package domain.productionSchedule;
+package domain.clock;
 
 import java.util.List;
 
@@ -37,8 +37,11 @@ public interface TimeSubject {
 	 * 
 	 * @precondition t observes this TimeSubject
 	 * @postcondition t no longer observes this TimeSubject
+	 * @throws IllegalArgumentException
+	 * 		t is null
+	 * 
 	 */
-	public void detachTimeObserver(TimeObserver t);
+	public void detachTimeObserver(TimeObserver t) throws IllegalArgumentException;
 	
 	/**
 	 * Notify all TimeObservers that observe this TimeSubject with the new time 

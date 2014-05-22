@@ -2,28 +2,28 @@ package domain.assemblyLine;
 
 import java.util.List;
 
-import domain.order.OrderContainer;
+import domain.order.OrderView;
 
 /**
- * AssemblyProcedureContainer is a view object that provides an immutable interface
+ * AssemblyProcedureView is a view object that provides an immutable interface
  * for accessing AssemblyProcedures. 
  *
  * @author Martinus Wilhelmus Tegelaers, Thomas Vochten
  */
-public interface AssemblyProcedureContainer {
+public interface AssemblyProcedureView {
 	/**
 	 * Get the order fulfilled by this assembly procedure.
 	 * 
 	 * @return The OrderView of this AssemblyProcedure.
 	 */
-	public OrderContainer getOrderContainer();
+	public OrderView getOrderView();
 	
 	/**
-	 * Get the AssemblyTaskContainers of this AssemblyProcedure.
+	 * Get the AssemblyTaskViews of this AssemblyProcedure.
 	 * 
-	 * @return The AssemblyTaskContainers of this AssemblyProcedure.
+	 * @return The AssemblyTaskViews of this AssemblyProcedure.
 	 */
-	public List<AssemblyTaskContainer> getAssemblyTasks();
+	public List<AssemblyTaskView> getAssemblyTasks();
 	
 	/**
 	 * Get the AssemblyTaskContainers of this AssemblyProcedure that match the specified TaskType. 
@@ -33,5 +33,5 @@ public interface AssemblyProcedureContainer {
 	 * 
 	 * @return A list of AssemblyTaskContainers that match the specified TaskType
 	 */
-	public List<AssemblyTaskContainer> getAssemblyTasks(TaskType taskType);
+	public List<AssemblyTaskView> getAssemblyTasks(TaskType taskType);
 }
