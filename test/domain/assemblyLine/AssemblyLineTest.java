@@ -35,6 +35,8 @@ import domain.assemblyLine.WorkPostView;
 import domain.assemblyLine.WorkPostObserver;
 import domain.car.Option;
 import domain.car.Specification;
+import domain.order.CompletedOrderCatalog;
+import domain.order.CompletedOrderEvent;
 import domain.order.Order;
 import domain.order.OrderView;
 import domain.statistics.ProcedureStatistics;
@@ -73,6 +75,7 @@ public class AssemblyLineTest {
 	@Mock Order newOrder;
 	@Mock StatisticsLogger logger;
 	@Mock OrderAcceptanceChecker orderSelector;
+	@Mock CompletedOrderCatalog cat;
 	
 	List<WorkPost> workPosts;
 	
@@ -124,8 +127,8 @@ public class AssemblyLineTest {
 		Mockito.when(sched.popNextOrderFromSchedule()).thenReturn(absentOrder);
 		
 		assemblyLine = new AssemblyLine(workPosts, orderSelector, sched);
-		assemblyLine.setManufacturer(manufacturer);
-		assemblyLine.setStatisticsLogger(logger);
+		assemblyLine.attachObserver(cat);
+		assemblyLine.attachObserver(logger);
 		
 		for (int i = 0; i < assemblyLine.getAssemblyLineSize(); i++)
 		{
@@ -359,8 +362,8 @@ public class AssemblyLineTest {
 			assertEquals(newOrder, workPosts.get(0).getAssemblyProcedure().get().getOrder());
 			assertEquals(-120, procedure3.makeStatisticsEvent().getDelay());
 			assertEquals(0, Whitebox.getInternalState(assemblyLine, "finishedAssemblyCounter"));
-			Mockito.verify(logger, Mockito.times(3)).addStatistics(Matchers.isA(ProcedureStatistics.class));
-			Mockito.verify(manufacturer).addToCompleteOrders(order3);
+			Mockito.verify(logger, Mockito.times(3)).updateCompletedOrder(Matchers.isA(CompletedOrderEvent.class));
+			Mockito.verify(cat, Mockito.times(3)).updateCompletedOrder(Matchers.isA(CompletedOrderEvent.class));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -389,20 +392,6 @@ public class AssemblyLineTest {
 	@Test
 	public void containsTest_false() {
 		assertFalse(assemblyLine.contains(notOnAssemblyLine));
-	}
-	
-	@Test
-	public void setLogger_null() {
-		AssemblyLine line = new AssemblyLine(workPosts, orderSelector, sched);
-		expected.expect(IllegalArgumentException.class);
-		line.setStatisticsLogger(null);
-	}
-	
-	@Test
-	public void setLogger_valid() {
-		AssemblyLine line = new AssemblyLine(workPosts, orderSelector, sched);
-		line.setStatisticsLogger(logger);
-		assertEquals(logger, Whitebox.getInternalState(line, StatisticsLogger.class));
 	}
 
 }

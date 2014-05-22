@@ -25,6 +25,7 @@ public class AssemblyFloor {
 	 */
 	public AssemblyFloor(){
 		this.lines = new ArrayList<>();
+		this.logger = new StatisticsLogger();
 	}
 	
 	/**
@@ -74,6 +75,26 @@ public class AssemblyFloor {
 		return new ArrayList<AssemblyLineView>(this.lines);
 	}
 	
+	/**
+	 * Add the specified AssemblyLineFacade to this AssemblyFloor
+	 * 
+	 * @param line
+	 * 		The line to add
+	 * @throws IllegalArgumentException
+	 * 		line is null
+	 * @throws IllegalArgumentException
+	 * 		line was previously added to floor
+	 */
+	public void addAssemblyLine(AssemblyLineFacade line) throws IllegalArgumentException {
+		if (line == null) {
+			throw new IllegalArgumentException("Cannot add null AssemblyLine to AssemblyFloor");
+		}
+		if (this.lines.contains(line)) {
+			throw new IllegalArgumentException("Cannot add line more than once to AssemblyFloor");
+		}
+		this.lines.add(line);
+	}
+	
 	/** a list with all assemblylines of this floor */
 	private List<AssemblyLineFacade> lines;
 	
@@ -94,8 +115,21 @@ public class AssemblyFloor {
 	}
 
 
-	public void setStatisticsLogger(StatisticsLogger logger) {
-		//FIXME
+	private StatisticsLogger logger; 
+	
+	/**
+	 * Set the StatisticsLogger of this AssemblyFloor to the specified StatisticsLogger
+	 * 
+	 * @param logger
+	 * 		The logger to set
+	 * @throws IllegalArgumentException
+	 * 		logger is null
+	 */
+	public void setStatisticsLogger(StatisticsLogger logger) throws IllegalArgumentException {
+		if (logger == null) {
+			throw new IllegalArgumentException("Cannot set null StatisticsLogger in AssemblyFloor");
+		}
+		this.logger = logger;
 	}
 
 	public String getStatisticsReport() {

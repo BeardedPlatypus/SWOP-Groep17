@@ -8,6 +8,9 @@ import com.google.common.base.Optional;
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.car.Specification;
+import domain.order.CompletedOrderEvent;
+import domain.order.CompletedOrderObserver;
+import domain.order.CompletedOrderSubject;
 import domain.order.Order;
 import domain.order.OrderView;
 import domain.statistics.ProcedureStatistics;
@@ -23,7 +26,7 @@ import exceptions.OrdersNotEmptyWhenAdvanceException;
  * 
  * @author Thomas Vochten, Frederik Goovaerts, Martinus Wilhelmus Tegelaers
  */
-public class AssemblyLine implements WorkPostObserver {
+public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -69,6 +72,7 @@ public class AssemblyLine implements WorkPostObserver {
 		this.elapsedTime = new DateTime(0, 0, 0);
 		this.schedulerIntermediate = schedulerIntermediate;
 		schedulerIntermediate.setAssemblyLine(this);
+		this.observers = new ArrayList<CompletedOrderObserver>();
 		this.initialiseState();
 	}	
 	
@@ -430,7 +434,6 @@ public class AssemblyLine implements WorkPostObserver {
 	 */
 	private void tryAdvance(DateTime elapsedTime, List<Order> orders) throws IllegalStateException{
 		this.getCurrentState().advanceAssemblyLine(orders);
-		this.getManufacturer().incrementTime(elapsedTime);
 		this.setElapsedTime(new DateTime(0, 0, 0));
 	}
 	
@@ -507,9 +510,9 @@ public class AssemblyLine implements WorkPostObserver {
 		}
 		
 		ProcedureStatistics stats = finishedProcedure.get().makeStatisticsEvent();
-		this.addStatistics(stats);
-		
-		this.getManufacturer().addToCompleteOrders(finishedProcedure.get().getOrder());
+		CompletedOrderEvent event = new CompletedOrderEvent(finishedProcedure.get().getOrder(),
+				stats);
+		this.notifyOrderComplete(event);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -625,57 +628,37 @@ public class AssemblyLine implements WorkPostObserver {
 	}
 	
 	//--------------------------------------------------------------------------
-	// Statistics logger and related methods
+	// Rolling AssemblyProcedure off the line
 	//--------------------------------------------------------------------------
-	/** The statistics logger of this assembly line. */
-	private StatisticsLogger statisticsLogger;
+	/** The CompletedOrderObservers */
+	private List<CompletedOrderObserver> observers;
 	
 	/**
-	 * Get this AssemblyLine's StatisticsLogger
-	 * 
-	 * @return The StatisticsLogger
+	 * @return The CompletedOrderObservers
 	 */
-	private StatisticsLogger getStatisticsLogger() {
-		return this.statisticsLogger;
+	private List<CompletedOrderObserver> getObservers() {
+		return this.observers;
 	}
-	
-	/**
-	 * Set this AssemblyLine's StatisticsLogger to the specified StatisticsLogger
-	 * 
-	 * @param logger
-	 * 		The StatisticsLogger of interest
-	 * @throws IllegalArgumentException
-	 * 		logger is null
-	 */
-	public void setStatisticsLogger(StatisticsLogger logger) throws IllegalArgumentException {
-		if (logger == null) {
-			throw new IllegalArgumentException("Cannot set logger to null.");
+
+	@Override
+	public void attachObserver(CompletedOrderObserver observer)
+			throws IllegalArgumentException {
+		if (observer == null) {
+			throw new IllegalArgumentException("Cannot attach null observer");
 		}
-		this.statisticsLogger = logger;
+		this.getObservers().add(observer);
 	}
-	
-	/**
-	 * Get a report on the statistical variables watched by this AssemblyLine
-	 * 
-	 * @return A report in the form of a String.
-	 */
-	public String getStatisticsReport() {
-		if (this.getStatisticsLogger() == null) {
-			return "Not currently recording statistics";
-		}
-		return this.getStatisticsLogger().getReport();
+
+	@Override
+	public void detachObserver(CompletedOrderObserver observer) {
+		this.getObservers().remove(observer);
 	}
-	
-	/**
-	 * Pass the specified ProcedureStatistics onto the StatisticsLogger
-	 * 
-	 * @param stats
-	 * 		A new statistical event
-	 */
-	private void addStatistics(ProcedureStatistics stats) {
-		if (this.getStatisticsLogger() == null) {
-			return;
+
+	@Override
+	public void notifyOrderComplete(CompletedOrderEvent event)
+			throws IllegalArgumentException {
+		for (CompletedOrderObserver obs : this.getObservers()) {
+			obs.updateCompletedOrder(event);
 		}
-		this.getStatisticsLogger().addStatistics(stats);
 	}
 }

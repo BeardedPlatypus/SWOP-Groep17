@@ -11,7 +11,7 @@ import domain.clock.TimeObserver;
  * 
  * @author Thomas Vochten, Frederik Goovaerts
  */
-public class CompletedOrderCatalog implements TimeObserver{
+public class CompletedOrderCatalog implements TimeObserver, CompletedOrderObserver {
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -139,6 +139,12 @@ public class CompletedOrderCatalog implements TimeObserver{
 	
 
 	//--------------------------------------------------------------------------
-
+	@Override
+	public void updateCompletedOrder(CompletedOrderEvent event) throws IllegalArgumentException {
+		if (event == null) {
+			throw new IllegalArgumentException("Cannot update with null event");
+		}
+		this.addCompletedOrder(event.getCompletedOrder());
+	}
 	
 }
