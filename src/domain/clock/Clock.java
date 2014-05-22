@@ -18,9 +18,14 @@ import domain.DateTime;
  * 
  * @author Thomas Vochten, Martinus Wilhelmus Tegelaers
  * 
- * @invariant | this.getCurrentTime != null  
+ * @invariant | this.getCurrentTime != null
+ * @invariant For each actor in the set of registered actors, there is at most
+ *  			one event scheduled in the event queue.
+ * @invariant There are at most getRegisteredActors().size() events scheduled
+ * 				at any one time.  
  *
  */
+//TODO refactor event queue management into new class?
 public class Clock implements TimeSubject, EventConsumer{
 
 	//--------------------------------------------------------------------------
@@ -48,6 +53,12 @@ public class Clock implements TimeSubject, EventConsumer{
 	/** Objects observing this Clock */
 	private List<TimeObserver> observers;
 	
+	//--------------------------------------------------------------------------
+	// Time-related methods
+	//--------------------------------------------------------------------------
+	/** Global system time */
+	private DateTime time;
+
 	@Override
 	public void attachTimeObserver(TimeObserver t)
 			throws IllegalArgumentException {
@@ -88,6 +99,13 @@ public class Clock implements TimeSubject, EventConsumer{
 		}
 	}
 	
+	/**
+	 * @return The current time of the system.
+	 */
+	public DateTime getCurrentTime() {
+		return this.time;
+	}
+
 	//--------------------------------------------------------------------------
 	// Event queue related methods and variables
 	//--------------------------------------------------------------------------
@@ -170,19 +188,6 @@ public class Clock implements TimeSubject, EventConsumer{
 				it.remove();
 			}
 		}
-	}
-	
-	//--------------------------------------------------------------------------
-	// Time-related methods
-	//--------------------------------------------------------------------------
-	/** Global system time */
-	private DateTime time;
-	
-	/**
-	 * @return The current time of the system.
-	 */
-	public DateTime getCurrentTime() {
-		return this.time;
 	}
 	
 	/**
