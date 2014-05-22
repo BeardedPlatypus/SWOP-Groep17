@@ -9,7 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import domain.Manufacturer;
+import domain.order.StandardOrder;
 import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
+import domain.productionSchedule.strategy.BatchStrategy;
 import domain.productionSchedule.strategy.SchedulingStrategyView;
 import domain.car.Option;
 import domain.car.Specification;
@@ -71,6 +73,7 @@ public class AdaptSchedulingAlgorithmScenario extends TestCase {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testBatchFlow() {
 		//1. The user wants to select an alternative scheduling algorithm.
@@ -102,7 +105,12 @@ public class AdaptSchedulingAlgorithmScenario extends TestCase {
 		// Check if batch algorithm is indeed used. 
 		SchedulingStrategyView setAlg = facade.getCurrentAlgorithm();
 		assertEquals(setAlg.getName(), "Batch strategy");
+		BatchStrategy<StandardOrder> usedAlg = (BatchStrategy<StandardOrder>) setAlg;
 		
 		// Check if orders are indeed ordered by the batch algorithm
+		List<StandardOrder> cont = manufacturer.getProductionSchedule().getStandardOrderQueue();
+		for (int i = 1; i < cont.size(); i++) {
+			assertTrue(usedAlg.compare(cont.get(i - 1), cont.get(i)) <= 0);
+		}
 	}
 }

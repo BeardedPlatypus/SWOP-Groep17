@@ -26,28 +26,16 @@ import domain.assemblyLine.WorkPost;
 import domain.assemblyLine.WorkPostView;
 import domain.car.Option;
 import domain.handlers.AssemblyLineStatusHandler;
+import domain.handlers.DomainFacade;
+import domain.handlers.InitialisationHandler;
 import domain.order.Order;
 
 @RunWith(PowerMockRunner.class)
 public class CheckAssemblyLineStatusScenario {
 	
-	AssemblyLine assemblyLine;
-	
-	List<WorkPost> workPosts;
-	
-	AssemblyProcedure procedure1;
-	AssemblyProcedure procedure2;
-	
-	AssemblyTask task1;
-	AssemblyTask task2;
-	AssemblyTask task3;
-	AssemblyTask task4;
-	
-	@Mock Manufacturer manufacturer;
-	@Mock Order order1;
-	@Mock Order order2;
-	
 	AssemblyLineStatusHandler handler;
+	InitialisationHandler init;
+	DomainFacade facade;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -57,26 +45,9 @@ public class CheckAssemblyLineStatusScenario {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		
-		assemblyLine = new AssemblyLine(manufacturer);
-		workPosts = Whitebox.invokeMethod(assemblyLine, "getWorkPosts");
-		
-		task1 = new AssemblyTask(new Option(TaskType.BODY, "john", "doe"), 0);
-		task1.setCompleted(true);
-		task2 = new AssemblyTask(new Option(TaskType.BODY, "jane", "doe"), 1);
-		
-		task3 = new AssemblyTask(new Option(TaskType.ACCESSORIES, "wut", "wot"), 3);
-		task3.setCompleted(true);
-		task4 = new AssemblyTask(new Option(TaskType.ACCESSORIES, "yes", "no"), 4);
-		
-		procedure1 = new AssemblyProcedure(order1, new ArrayList<AssemblyTask>(Arrays.asList(task1, task2)), 120);
-		procedure2 = new AssemblyProcedure(order2, new ArrayList<AssemblyTask>(Arrays.asList(task3, task4)), 120);
-		
-		Whitebox.setInternalState(workPosts.get(0), "activeAssembly", procedure1);
-		Whitebox.setInternalState(workPosts.get(2), "activeAssembly", procedure2);
-		
-		PowerMockito.doReturn(assemblyLine).when(manufacturer, "getAssemblyLine");
-		
-		
+		init = new InitialisationHandler();
+		facade = init.getDomainFacade();
+		handler = facade.getAssemblyLineStatusHandler();
 	}
 
 	@Test
