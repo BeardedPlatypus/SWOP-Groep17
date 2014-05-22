@@ -57,6 +57,7 @@ public class OperationalStateTest {
 		workPosts.add(new WorkPost(TaskType.ACCESSORIES, 2));
 		
 		line = new AssemblyLine(workPosts, new OrderAcceptanceChecker(new ArrayList<Model>()), sched);
+		line.setManufacturer(manufacturer);
 		
 		task0 = new AssemblyTask(new Option(TaskType.BODY, "john", "doe"), 0);
 		task1 = new AssemblyTask(new Option(TaskType.DRIVETRAIN, "jane", "doe"), 0);
@@ -82,10 +83,11 @@ public class OperationalStateTest {
 	
 	@Test
 	public void advanceAssemblyLine_active() {
+		Order newOrder = new StandardOrder(model, new Specification(new ArrayList<Option>(Arrays.asList(bodyOption))), 60, new DateTime(0, 6, 0));
 		workPosts.get(0).setAssemblyProcedure(Optional.fromNullable(proc0));
-		workPosts.get(1).setAssemblyProcedure(Optional.fromNullable(proc1));
 		line.setCurrentState(new OperationalState());
 		workPosts.get(0).completeTask(0, 60);
+		line.advance(new ArrayList<Order>(Arrays.asList(newOrder)));
 		assertEquals(new ActiveState(), line.getCurrentState());
 	}
 

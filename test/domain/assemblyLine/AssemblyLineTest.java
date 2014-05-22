@@ -128,7 +128,7 @@ public class AssemblyLineTest {
 		
 		for (int i = 0; i < assemblyLine.getAssemblyLineSize(); i++)
 		{
-			WorkPost wp = (WorkPost) assemblyLine.getWorkPostContainers().get(i);
+			WorkPost wp = (WorkPost) assemblyLine.getWorkPostViews().get(i);
 			Whitebox.invokeMethod(wp, "setAssemblyProcedure", Optional.fromNullable(procedures.get(i)));
 		}
 		
@@ -175,7 +175,7 @@ public class AssemblyLineTest {
 		
 		List<WorkPost> workPosts = new ArrayList<WorkPost>();
 		for (int i = 0; i < spiedAssemblyLine.getAssemblyLineSize(); i++) {
-			workPosts.add((WorkPost) PowerMockito.spy(spiedAssemblyLine.getWorkPostContainers().get(i)));
+			workPosts.add((WorkPost) PowerMockito.spy(spiedAssemblyLine.getWorkPostViews().get(i)));
 		}
 		
 		assertEquals(manufacturer, Whitebox.getInternalState(spiedAssemblyLine, Manufacturer.class));
@@ -218,7 +218,7 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void getWorkPostContainersTest() {
-		List<WorkPostView> containers = assemblyLine.getWorkPostContainers();
+		List<WorkPostView> containers = assemblyLine.getWorkPostViews();
 		assertTrue(containers.contains(workPosts.get(0)));
 		assertTrue(containers.contains(workPosts.get(1)));
 		assertTrue(containers.contains(workPosts.get(2)));
