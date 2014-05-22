@@ -47,8 +47,7 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 	 * @throws IllegalArgumentException
 	 * 		orderSelector == null
 	 */
-	public AssemblyLine(List<WorkPost> workPosts, OrderAcceptanceChecker orderSelector,
-			SchedulerIntermediate schedulerIntermediate)
+	public AssemblyLine(List<WorkPost> workPosts, OrderAcceptanceChecker orderSelector)
 		throws IllegalArgumentException {
 		if (workPosts == null || workPosts.isEmpty()) {
 			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
@@ -58,10 +57,10 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
 					+ "with null order selector");
 		}
-		if (schedulerIntermediate == null) {
-			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
-					+ "with null SchedulerIntermediate");
-		}
+//		if (schedulerIntermediate == null) {
+//			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
+//					+ "with null SchedulerIntermediate");
+//		}
 		
 		this.workPosts = workPosts;
 		for (WorkPost workPost : workPosts) {
@@ -70,8 +69,10 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 		
 		this.orderSelector = orderSelector;
 		this.elapsedTime = new DateTime(0, 0, 0);
-		this.schedulerIntermediate = schedulerIntermediate;
-		schedulerIntermediate.setAssemblyLine(this);
+		
+//		this.schedulerIntermediate = schedulerIntermediate;
+//		schedulerIntermediate.setAssemblyLine(this);
+		
 		this.observers = new ArrayList<CompletedOrderObserver>();
 		this.initialiseState();
 	}	
@@ -461,42 +462,42 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 		this.resetFinishedAssemblyCounter();
 	}
 	
-	/** Source of new Orders. */
-	private SchedulerIntermediate schedulerIntermediate;
+//	/** Source of new Orders. */
+//	private SchedulerIntermediate schedulerIntermediate;
+//	
+//	/**
+//	 * @return the SchedulerIntermediate
+//	 */
+//	private SchedulerIntermediate getSchedulerIntermediate() {
+//		return this.schedulerIntermediate;
+//	}
+//	
+//	/**
+//	 * Set the SchedulerIntermediate to the specified SchedulerIntermediate
+//	 * 
+//	 * @param schedulerIntermediate
+//	 * 		The new SchedulerIntermediate
+//	 * @throws IllegalArgumentException
+//	 * 		schedulerIntermediate is null
+//	 */
+//	public void setSchedulerIntermediate(SchedulerIntermediate schedulerIntermediate)
+//		throws IllegalArgumentException {
+//		if (schedulerIntermediate == null) {
+//			throw new IllegalArgumentException("Cannot set null SchedulerIntermediate"
+//					+ "in AssemblyLine");
+//		}
+//		this.schedulerIntermediate = schedulerIntermediate;
+//	}
 	
-	/**
-	 * @return the SchedulerIntermediate
-	 */
-	private SchedulerIntermediate getSchedulerIntermediate() {
-		return this.schedulerIntermediate;
-	}
-	
-	/**
-	 * Set the SchedulerIntermediate to the specified SchedulerIntermediate
-	 * 
-	 * @param schedulerIntermediate
-	 * 		The new SchedulerIntermediate
-	 * @throws IllegalArgumentException
-	 * 		schedulerIntermediate is null
-	 */
-	public void setSchedulerIntermediate(SchedulerIntermediate schedulerIntermediate)
-		throws IllegalArgumentException {
-		if (schedulerIntermediate == null) {
-			throw new IllegalArgumentException("Cannot set null SchedulerIntermediate"
-					+ "in AssemblyLine");
-		}
-		this.schedulerIntermediate = schedulerIntermediate;
-	}
-	
-	/**
-	 * Ask the SchedulerIntermediate for the next Order
-	 * 
-	 * @return The next Order
-	 */
-	Optional<Order> popNextOrderFromSchedule() {
-		//TODO ask the AssemblyLineController
-		return this.getSchedulerIntermediate().popNextOrderFromSchedule();
-	}
+//	/**
+//	 * Ask the SchedulerIntermediate for the next Order
+//	 * 
+//	 * @return The next Order
+//	 */
+//	Optional<Order> popNextOrderFromSchedule() {
+//		//TODO ask the AssemblyLineController
+//		return this.getSchedulerIntermediate().popNextOrderFromSchedule();
+//	}
 	
 	/**
 	 * Call this method when advancing to handle the AssemblyProcedure that

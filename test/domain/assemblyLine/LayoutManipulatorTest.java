@@ -161,7 +161,7 @@ public class LayoutManipulatorTest {
 		workPosts.get(0).setAssemblyProcedure(Optional.fromNullable(proc0));
 		task0.setCompleted(true);
 		
-		Mockito.when(assemblyLine.popNextOrderFromSchedule()).thenReturn(Optional.fromNullable(order));
+//		Mockito.when(assemblyLine.popNextOrderFromSchedule()).thenReturn(Optional.fromNullable(order));
 		Mockito.when(assemblyLine.makeAssemblyProcedure(Optional.fromNullable(order))).thenReturn(newProc);
 		
 		man.advanceAssemblyLine(new ArrayList<Order>(Arrays.asList(order)));
@@ -208,7 +208,7 @@ public class LayoutManipulatorTest {
 	@Test
 	public void AssemblyLineAdvance_singleTaskOrder() {
 		Order order = new SingleTaskOrder(model, new Specification(accOption), 0, new DateTime(0, 6, 0), new DateTime(1, 6, 0));
-		Mockito.when(assemblyLine.popNextOrderFromSchedule()).thenReturn(Optional.fromNullable(order));
+//		Mockito.when(assemblyLine.popNextOrderFromSchedule()).thenReturn(Optional.fromNullable(order));
 		
 		AssemblyProcedure proc = new AssemblyProcedure(order, new ArrayList<AssemblyTask>(Arrays.asList(new AssemblyTask(accOption, 0))), 60);
 		Mockito.when(assemblyLine.makeAssemblyProcedure(Optional.fromNullable(order))).thenReturn(proc);
