@@ -2,10 +2,6 @@ package domain.productionSchedule;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -14,7 +10,6 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.reflect.Whitebox;
 
 import com.google.common.base.Optional;
 
@@ -23,11 +18,6 @@ import domain.order.Order;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
 import domain.productionSchedule.strategy.BatchStrategy;
-import domain.car.CarModel;
-import domain.car.Model;
-import domain.car.Option;
-import domain.car.OptionCategory;
-import domain.car.Specification;
 import domain.car.Model;
 import domain.assemblyLine.TaskType;
 import domain.productionSchedule.strategy.FifoStrategy;
