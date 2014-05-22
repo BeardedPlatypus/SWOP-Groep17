@@ -54,15 +54,18 @@ public class DateTime implements Comparable<DateTime>{
 	 * @return {<sanitised days>, <sanitised hours>, <sanitised minutes>}
 	 */
 	public static int[] sanitise(int days, int hours, int minutes) {
-		long temp = days * 1440 + hours * 60 + minutes;
+		return sanitise(days * 1440 + hours * 60 + minutes);
 		
-		if (temp <= 0)
+	}
+	
+	public static int[] sanitise(long minutes) {
+		if (minutes <= 0)
 			return new int[]{0, 0, 0};
 		
 		int[] result = new int[3];
-		result[0] = (int) (temp / 1440);
-		result[1] = (int) ((temp % 1440) / 60);
-		result[2] = (int) (temp % 60);
+		result[0] = (int) (minutes / 1440);
+		result[1] = (int) ((minutes % 1440) / 60);
+		result[2] = (int) (minutes % 60);
 		return result;
 	}
 	
@@ -175,6 +178,18 @@ public class DateTime implements Comparable<DateTime>{
 	public DateTime subtractTime(DateTime dt) {
 		return this.subtractTime(dt.getDays(), dt.getHours(), dt.getMinutes());
 	}
+	
+	/**
+	 * Potato quality multiplies.
+	 * 
+	 * @param s
+	 * 		this potato.
+	 * @return potato.
+	 */
+	public DateTime multiplyWithScalar(double s) {
+		int[] val = sanitise(Math.round(this.getInMinutes() * s));
+		return new DateTime(val[0], val[1], val[2]);
+	}
 
 	//--------------------------------------------------------------------------
 	// Comparable interface. 
@@ -183,7 +198,7 @@ public class DateTime implements Comparable<DateTime>{
 	public int compareTo(DateTime that) {
 		return Long.compare(this.getInMinutes(), that.getInMinutes());
 	}
-	
+	 
 	//--------------------------------------------------------------------------
 	// Generic Object methods. 
 	//--------------------------------------------------------------------------
