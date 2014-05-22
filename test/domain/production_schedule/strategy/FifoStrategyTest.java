@@ -1,4 +1,4 @@
-package domain.productionSchedule.strategy;
+package domain.production_schedule.strategy;
 
 import static org.junit.Assert.*;
 
@@ -21,6 +21,7 @@ import domain.car.Specification;
 import domain.car.Model;
 import domain.order.Order;
 import domain.order.StandardOrder;
+import domain.production_schedule.strategy.FifoStrategy;
 
 @RunWith(PowerMockRunner.class)
 public class FifoStrategyTest {

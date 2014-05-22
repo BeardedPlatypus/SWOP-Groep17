@@ -1,4 +1,4 @@
-package domain.productionSchedule;
+package domain.production_schedule;
 
 import java.util.HashSet;
 import java.util.Set;

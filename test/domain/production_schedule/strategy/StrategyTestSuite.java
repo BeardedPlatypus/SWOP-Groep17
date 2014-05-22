@@ -1,4 +1,4 @@
-package domain.productionSchedule.strategy;
+package domain.production_schedule.strategy;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

@@ -14,7 +14,7 @@ import domain.order.Order;
 import domain.order.OrderView;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
-import domain.productionSchedule.ProductionScheduleFacade;
+import domain.production_schedule.ProductionScheduleFacade;
 
 /**
  * The SchedulerIntermediate serves as layer between the ProductionSchedule, only

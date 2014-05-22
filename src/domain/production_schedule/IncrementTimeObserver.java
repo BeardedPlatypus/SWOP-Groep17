@@ -1,4 +1,4 @@
-package domain.productionSchedule;
+package domain.production_schedule;
 
 import domain.DateTime;
 

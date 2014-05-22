@@ -4,7 +4,7 @@ import java.util.List;
 
 import domain.Manufacturer;
 import domain.car.Specification;
-import domain.productionSchedule.strategy.SchedulingStrategyView;
+import domain.production_schedule.strategy.SchedulingStrategyView;
 
 /**
  * Class responsible for viewing the current scheduling algorithm and changing

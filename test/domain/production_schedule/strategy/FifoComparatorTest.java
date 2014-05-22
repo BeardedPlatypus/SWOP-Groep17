@@ -1,4 +1,4 @@
-package domain.productionSchedule.strategy;
+package domain.production_schedule.strategy;
 
 import static org.junit.Assert.*;
 
@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 
 import domain.DateTime;
 import domain.order.Order;
+import domain.production_schedule.strategy.FifoComparator;
 
 public class FifoComparatorTest {
 	

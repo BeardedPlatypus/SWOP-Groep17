@@ -1,4 +1,4 @@
-package domain.productionSchedule;
+package domain.production_schedule;
 
 import static org.junit.Assert.*;
 
@@ -22,14 +22,16 @@ import domain.DateTime;
 import domain.order.Order;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
-import domain.productionSchedule.strategy.BatchStrategy;
 import domain.car.CarModel;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.car.Specification;
 import domain.assembly_line.TaskType;
-import domain.productionSchedule.strategy.FifoStrategy;
+import domain.production_schedule.OrderRequest;
+import domain.production_schedule.SchedulerContext;
+import domain.production_schedule.strategy.BatchStrategy;
+import domain.production_schedule.strategy.FifoStrategy;
 
 public class SchedulerContextTest {
 	//--------------------------------------------------------------------------

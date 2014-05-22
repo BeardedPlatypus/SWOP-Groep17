@@ -1,4 +1,4 @@
-package domain.productionSchedule.strategy;
+package domain.production_schedule.strategy;
 
 import java.util.ArrayList;
 import java.util.List;

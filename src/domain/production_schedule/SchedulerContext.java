@@ -1,4 +1,4 @@
-package domain.productionSchedule;
+package domain.production_schedule;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import domain.order.Order;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
 import domain.order.OrderView;
-import domain.productionSchedule.strategy.SchedulingStrategy;
+import domain.production_schedule.strategy.SchedulingStrategy;
 
 /**
  * The SchedulerContext handles the scheduling of all orders of this system.

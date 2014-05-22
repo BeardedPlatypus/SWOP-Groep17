@@ -1,4 +1,4 @@
-package domain.assembly_line.virtualAss;
+package domain.assembly_line.virtual;
 
 import domain.assembly_line.TaskType;
 import domain.order.Order;

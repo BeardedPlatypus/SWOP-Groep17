@@ -7,8 +7,8 @@ import org.junit.runners.Suite.SuiteClasses;
 import domain.assembly_line.AssemblyLineTestSuite;
 import domain.handlers.HandlersTestSuite;
 import domain.order.OrderTestSuite;
-import domain.productionSchedule.ProductionScheduleTestSuite;
-import domain.productionSchedule.strategy.StrategyTestSuite;
+import domain.production_schedule.ProductionScheduleTestSuite;
+import domain.production_schedule.strategy.StrategyTestSuite;
 import domain.restrictions.RestrictionsTestSuite;
 
 @RunWith(Suite.class)

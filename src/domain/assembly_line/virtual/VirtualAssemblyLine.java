@@ -1,4 +1,4 @@
-package domain.assembly_line.virtualAss;
+package domain.assembly_line.virtual;
 
 import java.util.ArrayList;
 import java.util.List;

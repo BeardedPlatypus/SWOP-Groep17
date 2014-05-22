@@ -8,7 +8,7 @@ import com.google.common.base.Optional;
 
 import domain.DateTime;
 import domain.Manufacturer;
-import domain.assembly_line.virtualAss.VirtualAssemblyLine;
+import domain.assembly_line.virtual.VirtualAssemblyLine;
 import domain.car.Model;
 import domain.car.Specification;
 import domain.order.CompletedOrderEvent;

@@ -5,7 +5,7 @@ import java.util.List;
 import domain.car.Option;
 import domain.car.Specification;
 import domain.handlers.AdaptSchedulingAlgorithmHandler;
-import domain.productionSchedule.strategy.SchedulingStrategyView;
+import domain.production_schedule.strategy.SchedulingStrategyView;
 
 public class AdaptSchedulingAlgorithmUIPart {
 

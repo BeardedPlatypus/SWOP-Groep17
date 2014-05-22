@@ -10,9 +10,9 @@ import org.junit.Test;
 
 import domain.Manufacturer;
 import domain.order.StandardOrder;
-import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
-import domain.productionSchedule.strategy.BatchStrategy;
-import domain.productionSchedule.strategy.SchedulingStrategyView;
+import domain.production_schedule.strategy.AlgorithmStrategyFactory;
+import domain.production_schedule.strategy.BatchStrategy;
+import domain.production_schedule.strategy.SchedulingStrategyView;
 import domain.car.Option;
 import domain.car.Specification;
 import domain.handlers.AdaptSchedulingAlgorithmHandler;

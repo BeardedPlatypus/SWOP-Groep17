@@ -1,4 +1,4 @@
-package domain.productionSchedule;
+package domain.production_schedule;
 
 import static org.junit.Assert.*;
 
@@ -13,6 +13,7 @@ import org.mockito.Mock;
 
 import domain.assembly_line.TaskType;
 import domain.car.Model;
+import domain.production_schedule.OrderRequest;
 
 /**
  * @author Martinus Wilhelmus Tegelaers

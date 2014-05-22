@@ -10,7 +10,7 @@ import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.car.Specification;
 import domain.order.OrderView;
-import domain.productionSchedule.strategy.SchedulingStrategyView;
+import domain.production_schedule.strategy.SchedulingStrategyView;
 import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;

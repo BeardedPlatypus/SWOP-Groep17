@@ -1,4 +1,4 @@
-package domain.productionSchedule.strategy;
+package domain.production_schedule.strategy;
 
 import static org.junit.Assert.*;
 
@@ -16,6 +16,12 @@ import org.powermock.modules.junit4.*;
 import domain.assembly_line.TaskType;
 import domain.car.Option;
 import domain.car.Specification;
+import domain.production_schedule.strategy.AlgorithmStrategyFactory;
+import domain.production_schedule.strategy.BatchComparator;
+import domain.production_schedule.strategy.BatchStrategy;
+import domain.production_schedule.strategy.FifoStrategy;
+import domain.production_schedule.strategy.SchedulingStrategy;
+import domain.production_schedule.strategy.SchedulingStrategyView;
 
 @RunWith(PowerMockRunner.class)
 public class AlgorithmStrategyFactoryTest {

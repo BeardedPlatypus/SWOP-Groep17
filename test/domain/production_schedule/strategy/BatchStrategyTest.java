@@ -1,4 +1,4 @@
-package domain.productionSchedule.strategy;
+package domain.production_schedule.strategy;
 
 import static org.junit.Assert.*;
 
@@ -22,6 +22,8 @@ import domain.car.Specification;
 import domain.car.Model;
 import domain.order.Order;
 import domain.order.StandardOrder;
+import domain.production_schedule.strategy.BatchComparator;
+import domain.production_schedule.strategy.BatchStrategy;
 
 public class BatchStrategyTest {
 	

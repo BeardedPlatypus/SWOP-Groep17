@@ -1,9 +1,8 @@
-package domain.productionSchedule.strategy;
+package domain.production_schedule.strategy;
 
 import java.util.Collections;
 import java.util.List;
 
-import domain.car.Specification;
 import domain.order.Order;
 
 /**
@@ -11,39 +10,32 @@ import domain.order.Order;
  * @author Martinus Wilhelmus Tegelaers, Thomas Vochten
  *
  */
-public class BatchStrategy<O extends Order> extends SchedulingStrategy<O> {
+public class FifoStrategy<O extends Order> extends SchedulingStrategy<O> {
+	
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
 	/**
-	 * Initialise a new BatchStrategy with the specified Specification
-	 * 
-	 * @param specs
-	 * 		The Specification used to compare Orders
-	 * @throws IllegalArgumentException
-	 * 		specs is null
+	 * Initialise a new FifoStrategy
 	 */
-	public BatchStrategy(Specification specs) throws IllegalArgumentException {
-		if (specs == null) {
-			throw new IllegalArgumentException("Cannot initialise a BatchStrategy"
-					+ "with null specs");
-		}
-		this.comparator = new BatchComparator(specs);
+	public FifoStrategy() {
+		this.comparator = new FifoComparator();
 	}
 	
 	//--------------------------------------------------------------------------
-	// Scheduling Strategy methods.
+	// SchedulingStrategy methods.
 	//--------------------------------------------------------------------------
+	
 	@Override
 	public String getName() {
-		return "Batch strategy";
+		return "First-in first-out strategy";
 	}
-
+	
 	@Override
 	public int compare(O o, O p) {
 		return this.getComparator().compare(o, p);
 	}
-
+	
 	@Override
 	public void sort(List<O> orderQueue) {
 		Collections.sort(orderQueue, this.getComparator());
@@ -51,22 +43,16 @@ public class BatchStrategy<O extends Order> extends SchedulingStrategy<O> {
 
 	@Override
 	public boolean isDone(List<O> orderQueue) {
-		return ! this.getComparator().getSpecification()
-				.equals(orderQueue.get(0).getSpecifications());
+		return false;
 	}
 	
 	//--------------------------------------------------------------------------
 	// Comparator methods
 	//--------------------------------------------------------------------------
-	 /** The comparator used to compare Orders. */
-	private BatchComparator comparator;
+	/** The comparator used to compare orders. */
+	private FifoComparator comparator;
 	
-	/**
-	 * Get this BatchStrategy's BatchComparator.
-	 * 
-	 * @return The BatchComparator
-	 */
-	private BatchComparator getComparator() {
+	private FifoComparator getComparator() {
 		return this.comparator;
 	}
 }

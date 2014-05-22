@@ -28,9 +28,9 @@ import domain.order.SingleOrderSession;
 import domain.order.SingleTaskCatalog;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
-import domain.productionSchedule.SchedulerContext;
-import domain.productionSchedule.strategy.AlgorithmStrategyFactory;
-import domain.productionSchedule.strategy.SchedulingStrategyView;
+import domain.production_schedule.SchedulerContext;
+import domain.production_schedule.strategy.AlgorithmStrategyFactory;
+import domain.production_schedule.strategy.SchedulingStrategyView;
 
 /**
  * A class which represents the book-keeping body of the system.

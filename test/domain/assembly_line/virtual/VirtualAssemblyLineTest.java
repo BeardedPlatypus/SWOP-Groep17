@@ -1,4 +1,4 @@
-package domain.assembly_line.virtualAss;
+package domain.assembly_line.virtual;
 
 import static org.junit.Assert.*;
 
@@ -19,8 +19,8 @@ import com.google.common.collect.Lists;
 
 import domain.DateTime;
 import domain.assembly_line.TaskType;
-import domain.assembly_line.virtualAss.VirtualAssProc;
-import domain.assembly_line.virtualAss.VirtualAssemblyLine;
+import domain.assembly_line.virtual.VirtualAssProc;
+import domain.assembly_line.virtual.VirtualAssemblyLine;
 import domain.car.Model;
 import domain.car.Specification;
 import domain.order.Order;

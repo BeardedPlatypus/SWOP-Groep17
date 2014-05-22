@@ -1,4 +1,4 @@
-package domain.productionSchedule.strategy;
+package domain.production_schedule.strategy;
 
 import static org.junit.Assert.*;
 
@@ -18,6 +18,7 @@ import domain.assembly_line.TaskType;
 import domain.car.Option;
 import domain.car.Specification;
 import domain.order.Order;
+import domain.production_schedule.strategy.BatchComparator;
 
 /**
  * @author SimSla
