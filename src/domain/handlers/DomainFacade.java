@@ -3,6 +3,7 @@ package domain.handlers;
 import java.util.List;
 
 import domain.DateTime;
+import domain.assembly_line.AssemblyLineView;
 import domain.assembly_line.AssemblyTaskView;
 import domain.assembly_line.WorkPostView;
 import domain.car.Model;
@@ -659,8 +660,8 @@ public class DomainFacade {
 	 * 
 	 * @return the WorkPostContainers of the ASsemblyLine's WorkPosts
 	 */
-	public List<WorkPostView> getWorkPosts() {
-		return this.getPerformAssemblyTaskHandler().getWorkPosts();
+	public List<WorkPostView> getWorkPosts(int postNb) {
+		return this.getPerformAssemblyTaskHandler().getWorkPosts(postNb);
 	}
 
 	/**
@@ -674,8 +675,9 @@ public class DomainFacade {
 	 * @throws IllegalArgumentException
 	 * 		workPostNumber refers to a work post that does not exist.
 	 */
-	public List<AssemblyTaskView> getAssemblyTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
-		return this.getPerformAssemblyTaskHandler().getAssemblyTasksAtWorkPost(workPostNumber);
+	public List<AssemblyTaskView> getAssemblyTasksAtWorkPost(int lineNb, 
+			int postNb) throws IllegalArgumentException {
+		return this.getPerformAssemblyTaskHandler().getAssemblyTasksAtWorkPost(lineNb, postNb);
 	}
 
 	/**
@@ -696,8 +698,9 @@ public class DomainFacade {
 	 * 		taskNumber refers to a task with a type incompatible with the given
 	 * 		work post.
 	 */
-	public void completeWorkpostTask(int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException {
-		this.getPerformAssemblyTaskHandler().completeWorkpostTask(workPostNumber, taskNumber, minutes);
+	public void completeWorkpostTask(int lineNb, int workPostNumber, int taskNumber, 
+			int minutes) throws IllegalArgumentException {
+		this.getPerformAssemblyTaskHandler().completeWorkpostTask(lineNb, workPostNumber, taskNumber, minutes);
 	}
 
 	//--------------------------------------------------------------------------
@@ -705,65 +708,16 @@ public class DomainFacade {
 	//--------------------------------------------------------------------------
 	// AsemblyLine Status methods
 	
-	/**
-	 * Returns a list of work post containers, containing information about the assembly line status.
-	 * 
-	 * @return List of work post containers.
-	 */
-	public List<WorkPostView> getStatusWorkPosts() {
-		return this.getAssemblyLineStatusHandler().getWorkPosts();
-	}
-	
-	/**
-	 * Returns the amount of different work posts on the assembly line.
-	 * 
-	 * @return Amount of work posts.
-	 */
-	public int getAmountOfWorkPosts() {
-		return this.getAssemblyLineStatusHandler().getAmountOfWorkPosts();
-	}
-	
-	/**
-	 * Retrieves a single work post from the list of work posts using the given index.
-	 * 
-	 * @param 	workPostNumber
-	 * 			The index of the work post.
-	 * @pre		workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts()
-	 * @return	The work post situated at the given index.
-	 * @throws	IllegalArgumentException
-	 * 			If the given index does not satisfy the preconditions.
-	 */
-	public WorkPostView getWorkPost(int workPostNumber) throws IllegalArgumentException {
-		return this.getAssemblyLineStatusHandler().getWorkPost(workPostNumber);
-	}
-	
-	/**
-	 * Retrieves a list of tasks at the work post identified by the given index.
-	 * 
-	 * @param 	workPostNumber
-	 * 			The index of the work post.
-	 * @pre		workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts()
-	 * @return	List of tasks at that work post.
-	 * @throws	IllegalArgumentException
-	 * 			If the given index does not satisfy the preconditions.
-	 */
-	public List<AssemblyTaskView> getTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
-		return this.getAssemblyLineStatusHandler().getTasksAtWorkPost(workPostNumber);
-	}
-	
-	/**
-	 * Returns the amount of different tasks at the work post identified by the given index.
-	 * 
-	 * @param 	workPostNumber
-	 * 			The index of the work post.
-	 * @return	Amount of tasks at that work post.
-	 * @throws	IllegalArgumentException
-	 * 			If the given index does not satisfy the preconditions.
-	 */
-	public int getAmountOfTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
-		return this.getAssemblyLineStatusHandler().getAmountOfTasksAtWorkPost(workPostNumber);
-	}
 
+	/**
+	 * Return a list of all assemblylines in the system.
+	 * These are immutable and can be inspected.
+	 * 
+	 * @return all assemblylines in the system
+	 */
+	public List<AssemblyLineView> getLineViews() {
+		return this.getAssemblyLineStatusHandler().getLineViews();
+	}
 	
 
 	//--------------------------------------------------------------------------

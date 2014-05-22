@@ -208,7 +208,8 @@ public class InitialDataLoader {
 	 */
 	public void simulateCompleteAllOrders(){
 		while(this.getDomainFacade().getPendingOrders().size() > 0){
-			simulateCompleteAllTasksOnAssemblyLine(1);
+			for(int i=0; i<this.getDomainFacade().getLineViews().size();i++)
+				simulateCompleteAllTasksOnAssemblyLine(i,1);
 		}
 	}
 	
@@ -218,8 +219,8 @@ public class InitialDataLoader {
 	 * 
 	 * @param numberOfTimes
 	 */
-	public void simulateCompleteAllTasksOnAssemblyLine(int numberOfTimes) {
-		simulateCompleteAllTasksOnAssemblyLine(numberOfTimes, 40);
+	public void simulateCompleteAllTasksOnAssemblyLine(int lineNb, int numberOfTimes) {
+		simulateCompleteAllTasksOnAssemblyLine(lineNb, numberOfTimes, 40);
 	}
 	
 	/**
@@ -228,13 +229,13 @@ public class InitialDataLoader {
 	 * 
 	 * @param numberOfTimes
 	 */
-	public void simulateCompleteAllTasksOnAssemblyLine(int numberOfTimes,
+	public void simulateCompleteAllTasksOnAssemblyLine(int lineNb, int numberOfTimes,
 			int timeSpentPerTask) {
 		for(int i = 0; i < numberOfTimes; i++){
-			for(WorkPostView wp : this.getDomainFacade().getWorkPosts()){
+			for(WorkPostView wp : this.getDomainFacade().getWorkPosts(lineNb)){
 				for(AssemblyTaskView task : wp.getMatchingAssemblyTasks()){
 					if(!task.isCompleted()){
-						this.getDomainFacade().completeWorkpostTask(
+						this.getDomainFacade().completeWorkpostTask( lineNb,
 								wp.getWorkPostNum(), task.getTaskNumber(),
 								timeSpentPerTask);
 					}

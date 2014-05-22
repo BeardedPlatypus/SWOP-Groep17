@@ -42,6 +42,12 @@ public class AssemblyLineStatusHandler {
 		return manufacturer;
 	}
 
+	/**
+	 * Return a list of all assemblylines in the system.
+	 * These are immutable and can be inspected.
+	 * 
+	 * @return all assemblylines in the system
+	 */
 	public List<AssemblyLineView> getLineViews() {
 		return this.getManufacturer().getAssemblyLineViews();
 	}
