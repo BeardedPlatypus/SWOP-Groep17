@@ -489,16 +489,12 @@ public class InitialisationHandler {
 		//----------------------------------------------------------------------
 		// Initialise the Clock
 		//----------------------------------------------------------------------
-
-		//TODO initialise clock
 		DateTime start = new DateTime(0, 6, 0);
 		Clock clock = new Clock(start);
 		
 		//----------------------------------------------------------------------
 		// Initialise the ProductionSchedule
 		//----------------------------------------------------------------------
-
-		//TODO initialise Production schedule
 		SchedulerContext schedule = new SchedulerContext(new FifoStrategy<StandardOrder>());
 
 		//----------------------------------------------------------------------
@@ -516,6 +512,8 @@ public class InitialisationHandler {
 		List<AssemblyLine> lines = new ArrayList<>();
 		
 		proBuilder.addToDesiredModels(modelA);
+		proBuilder.addToDesiredModels(modelB);
+		AssemblyLine line1 = proBuilder.buildAssemblyLine(null)
 		
 		
 		

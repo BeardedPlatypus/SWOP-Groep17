@@ -485,15 +485,15 @@ public class AssemblyLine implements WorkPostObserver {
 		this.schedulerIntermediate = schedulerIntermediate;
 	}
 	
-	/**
-	 * Ask the SchedulerIntermediate for the next Order
-	 * 
-	 * @return The next Order
-	 */
-	Optional<Order> popNextOrderFromSchedule() {
-		//TODO ask the AssemblyLineController
-		return this.getSchedulerIntermediate().popNextOrderFromSchedule();
-	}
+//	/**
+//	 * Ask the SchedulerIntermediate for the next Order
+//	 * 
+//	 * @return The next Order
+//	 */
+//	Optional<Order> popNextOrderFromSchedule() {
+//		//TODO ask the AssemblyLineController
+//		return this.getSchedulerIntermediate().popNextOrderFromSchedule();
+//	}
 	
 	/**
 	 * Call this method when advancing to handle the AssemblyProcedure that
