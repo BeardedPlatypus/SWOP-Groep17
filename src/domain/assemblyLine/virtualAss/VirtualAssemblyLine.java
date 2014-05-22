@@ -66,6 +66,17 @@ public class VirtualAssemblyLine {
 	// --------------------------------------------------------------------------
 	// timeToFinish methods and related sub functions.
 	// --------------------------------------------------------------------------
+	/**
+	 * Calculate the time to finish the current set of orders plus the specified orders.
+	 * 
+	 * @param inputOrders
+	 * 		The sequence of orders that should be scheduled next. Last is scheduled first.
+	 * 
+	 * @return The time it would take to completely finish the specified set of orders plus the specified orders.
+	 * 
+	 * @throws IllegalArgumentException
+	 * 			| inputOrders == null or inputOrders contains null
+	 */
 	public DateTime timeToFinish(List<Order> inputOrders) throws IllegalArgumentException {
 		if (inputOrders == null || inputOrders.contains(null)) {
 			throw new IllegalArgumentException("The input orders cannot be null or contain null.");
@@ -86,6 +97,15 @@ public class VirtualAssemblyLine {
 	}
 
 	//--------------------------------------------------------------------------
+	/**
+	 * Check if the specified sequence of orders is finished.
+	 * Because these methods are for internal use only, the input arguments are
+	 * not checked for null.
+	 * 
+	 * @param orderSeq
+	 * 		The sequence of orders.
+	 * @return True if the set of orders is finished, false otherwise.
+	 */
 	protected boolean orderSeqIsFinished(List<Optional<VirtualAssProc>> orderSeq) {
 		for (Optional<VirtualAssProc> v : orderSeq) {
 			if (v.isPresent()) {
@@ -95,6 +115,19 @@ public class VirtualAssemblyLine {
 		return true;
 	}
 	
+	/**
+	 * Calculate the time in minutes to finish the current step of this orderSeq, 
+	 * based on the taskTypeSeq and the offset.
+	 * 
+	 * @param orderSeq
+	 * 		The list of orders that represent the band and unscheduled orders.
+	 * @param offset
+	 * 		The number of items not on the band.
+	 * @param taskTypeSeq
+	 * 		The sequence of TaskTypes of this virtual AssemblyLine.
+	 * 
+	 * @return The time to finish this current step in minutes.
+	 */
 	protected int minutesToFinishCurStep(List<Optional<VirtualAssProc>> orderSeq,
 									   int offset,
 									   TaskType[] taskTypeSeq) {
@@ -109,6 +142,20 @@ public class VirtualAssemblyLine {
 		return timeStepMinutes;
 	}
 	
+	/**
+	 * Advance the current orderSeq one step similar to the way the AssemblyLine 
+	 * moves the orders. 
+	 * 
+	 * @param orderSeq
+	 * 		The list of orders that represent the band and unscheduled orders.
+	 * @param offset
+	 * 		The number of items not on the band.
+	 * @param taskTypeSeq
+	 * 		The sequence of TaskTypes of this virtual AssemblyLine.
+	 * 
+	 * @postcondition each order on the orderSeq is shifted such that it 
+	 * 				  represents the state after an advance of the AssemblyLine
+	 */
 	protected void advanceOrderSeq(List<Optional<VirtualAssProc>> orderSeq,
 								   int offset,
 								   TaskType[] taskTypeSeq) {

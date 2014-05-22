@@ -8,6 +8,7 @@ import com.google.common.base.Optional;
 
 import domain.DateTime;
 import domain.Manufacturer;
+import domain.assemblyLine.virtualAss.VirtualAssemblyLine;
 import domain.car.Model;
 import domain.car.Specification;
 import domain.order.CompletedOrderEvent;
@@ -681,5 +682,34 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 		for (CompletedOrderObserver obs : this.getObservers()) {
 			obs.updateCompletedOrder(event);
 		}
+	}
+	
+	//--------------------------------------------------------------------------
+	// Virtual
+	//--------------------------------------------------------------------------
+	/**
+	 * Construct a new VirtualAssemblyLine that represents the current state of 
+	 * this AssemblyLine
+	 * 
+	 * @return A new VirtualAssemblyLine representing the current state of this
+	 * 		   Assemblyline.
+	 */
+	public VirtualAssemblyLine newVirtualAssemblyLine() {
+		TaskType[] t = new TaskType[this.getAssemblyLineSize()];
+		return new VirtualAssemblyLine(this.getTaskTypes().toArray(t), this.getOrdersPerWorkStation());
+	}
+	
+	/**
+	 * Get a list of the length of the number of the workposts specifying the 
+	 * order if they have one. 
+	 * 
+	 * @return A list of the length of the number of the workposts with the corresponding order if it exists.
+	 */
+	public List<Optional<Order>> getOrdersPerWorkStation() {
+		List<Optional<Order>> result = new ArrayList<>();
+		for (WorkPost wp : this.getWorkPosts()) {
+			result.add(wp.getOrder());
+		}
+		return result;
 	}
 }
