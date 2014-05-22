@@ -1,5 +1,7 @@
 package domain.assemblyLine;
 
+import java.util.List;
+
 import com.google.common.base.Optional;
 
 import domain.DateTime;
@@ -38,12 +40,21 @@ public class LayoutManipulator {
 	 * Advance the AssemblyLine such that no AssemblyProcedures can skip
 	 * their WorkPosts
 	 * 
+	 * @param orders
+	 * 		The orders to put on the AssemblyLine
 	 * @throws IllegalStateException
 	 * 		Concrete state does not allow the AssemblyLine to advance
+	 * @throws IllegalArgumentException
+	 * 		orders is null or contains null
 	 */
-	void advanceAssemblyLine() throws IllegalStateException {
+	void advanceAssemblyLine(List<Order> orders) throws IllegalStateException,
+		IllegalArgumentException {
+		if (! this.isValidListOrders(orders)) {
+			throw new IllegalArgumentException("Cannot advance AssemblyLine with"
+					+ "null orders");
+		}
 		this.initialWorkPostShift();
-		this.shiftLoop();
+		this.shiftLoop(orders);
 		this.getState().ensureStateConsistency();
 	}
 	
@@ -74,7 +85,7 @@ public class LayoutManipulator {
 	 * AssemblyLine individually until no more AssemblyProcedures can skip
 	 * a WorkPost and until the first WorkPost has an active AssemblyProcedure.
 	 */
-	private void shiftLoop() {
+	private void shiftLoop(List<Order> orders) {
 		boolean loopHadAnEffect;
 		do {
 			loopHadAnEffect = false;
@@ -82,7 +93,7 @@ public class LayoutManipulator {
 				this.rollFinishedAssemblyProcedureOffLine();
 			}
 			if (this.getFirstWorkPost().isEmpty()) {
-				loopHadAnEffect = this.putNextOrderOnFirstWorkPost();
+				loopHadAnEffect = this.putNextOrderOnFirstWorkPost(orders);
 			}
 			for (int i = this.getAssemblyLineSize() - 1; i > 0; i--) {
 				loopHadAnEffect = this.workPostShiftStep(i, i - 1) || loopHadAnEffect;
@@ -107,8 +118,8 @@ public class LayoutManipulator {
 	 * 
 	 * @return The first WorkPost is no longer empty
 	 */
-	private boolean putNextOrderOnFirstWorkPost() {
-		Optional<Order> nextOrder = this.popNextOrderFromSchedule();
+	private boolean putNextOrderOnFirstWorkPost(List<Order> orders) {
+		Optional<Order> nextOrder = this.popNextOrderFromSchedule(orders);
 		if (nextOrder != null && nextOrder.isPresent()) {
 			AssemblyProcedure nextProcedure = this.makeAssemblyProcedure(nextOrder);
 			this.getFirstWorkPost().setAssemblyProcedure(Optional.fromNullable(nextProcedure));
@@ -210,9 +221,24 @@ public class LayoutManipulator {
 	}
 	
 	/**
-	 * See {@link AssemblyLineState#popNextOrderFromSchedule() popNextOrderFromSchedule()}
+	 * Take a new Order from the given list of Orders
 	 */
-	private Optional<Order> popNextOrderFromSchedule() {
-		return this.getState().popNextOrderFromSchedule();
+	private Optional<Order> popNextOrderFromSchedule(List<Order> orders) {
+		if (orders.isEmpty()) {
+			return Optional.absent();
+		} else {
+			return Optional.fromNullable(orders.remove(0));
+		}
+	}
+	
+	/**
+	 * The list of orders cannot be null or contain null
+	 * 
+	 * @param orders
+	 * 		The list of orders to check
+	 * @return orders is not null and does not contain null
+	 */
+	private boolean isValidListOrders(List<Order> orders) {
+		return ! (orders == null || orders.contains(null));
 	}
 }

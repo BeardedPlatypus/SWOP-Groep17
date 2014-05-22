@@ -21,20 +21,6 @@ public class OperationalState extends AssemblyLineState {
 	@Override
 	protected void finaliseSetState() {
 		if (super.isEmpty()) {
-			this.checkSetIdleState();
-		}
-		else {
-			super.setState(new ActiveState());
-		}
-	}
-	
-	/**
-	 * If the AssemblyLine is empty, advance the assembly line and then
-	 * check if it is still empty.
-	 */
-	private void checkSetIdleState() {
-		super.advanceAssemblyLine();
-		if (super.isEmpty()) {
 			super.setState(new IdleState());
 		}
 		else {

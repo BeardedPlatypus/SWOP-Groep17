@@ -109,12 +109,12 @@ public class ActiveStateTest {
 		task0.setCompleted(true);
 		task1.setCompleted(true);
 		task2.setCompleted(true);
-		state.advanceAssemblyLine();
+		state.advanceAssemblyLine(new ArrayList<Order>());
 		assertEquals(Optional.absent(), workPosts.get(0).getAssemblyProcedure());
 		assertEquals(Optional.absent(), workPosts.get(1).getAssemblyProcedure());
 		assertEquals(Optional.absent(), workPosts.get(2).getAssemblyProcedure());
 		Mockito.when(line.isEmpty()).thenReturn(true);
-		state.advanceAssemblyLine();
+		state.advanceAssemblyLine(new ArrayList<Order>());
 		try {
 			PowerMockito.verifyPrivate(line).invoke("setCurrentState", new IdleState());
 		} catch (Exception e) {
@@ -124,7 +124,7 @@ public class ActiveStateTest {
 	
 	@Test
 	public void ensureConsistentState_stillActive() {
-		state.advanceAssemblyLine();
+		state.advanceAssemblyLine(new ArrayList<Order>());
 		try {
 			PowerMockito.verifyPrivate(line, Mockito.never()).invoke("setCurrentState", new IdleState());
 			PowerMockito.verifyPrivate(line, Mockito.never()).invoke("setCurrentState", new ActiveState());

@@ -8,7 +8,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -26,6 +28,8 @@ import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
 
 public class LayoutManipulatorTest {
+	
+	@Rule public ExpectedException expected = ExpectedException.none();
 	
 	LayoutManipulator man;
 	
@@ -56,7 +60,6 @@ public class LayoutManipulatorTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		
-		Mockito.when(assemblyLine.popNextOrderFromSchedule()).thenReturn(null);
 		Mockito.when(assemblyLine.getElapsedTime()).thenReturn(new DateTime(0, 0, 60));
 		
 		bodyOption = new Option(TaskType.BODY, "Body", "Fuck the Kingsguard");
@@ -139,7 +142,7 @@ public class LayoutManipulatorTest {
 		workPosts.get(3).setAssemblyProcedure(Optional.fromNullable(proc3));
 		workPosts.get(4).setAssemblyProcedure(Optional.fromNullable(proc4));
 		
-		man.advanceAssemblyLine();
+		man.advanceAssemblyLine(new ArrayList<Order>());
 		assertEquals(Optional.absent(), workPosts.get(0).getAssemblyProcedure());
 		assertEquals(proc0, workPosts.get(1).getAssemblyProcedure().get());
 		assertEquals(proc1, workPosts.get(2).getAssemblyProcedure().get());
@@ -161,7 +164,7 @@ public class LayoutManipulatorTest {
 		Mockito.when(assemblyLine.popNextOrderFromSchedule()).thenReturn(Optional.fromNullable(order));
 		Mockito.when(assemblyLine.makeAssemblyProcedure(Optional.fromNullable(order))).thenReturn(newProc);
 		
-		man.advanceAssemblyLine();
+		man.advanceAssemblyLine(new ArrayList<Order>(Arrays.asList(order)));
 		assertEquals(newProc, workPosts.get(0).getAssemblyProcedure().get());
 		assertEquals(proc0, workPosts.get(1).getAssemblyProcedure().get());
 	}
@@ -181,7 +184,7 @@ public class LayoutManipulatorTest {
 		workPosts.get(0).setAssemblyProcedure(Optional.fromNullable(proc0));
 		workPosts.get(3).setAssemblyProcedure(Optional.fromNullable(proc1));
 		
-		man.advanceAssemblyLine();
+		man.advanceAssemblyLine(new ArrayList<Order>());
 		
 		assertEquals(proc0, workPosts.get(3).getAssemblyProcedure().get());
 		assertEquals(proc1, workPosts.get(4).getAssemblyProcedure().get());
@@ -195,7 +198,7 @@ public class LayoutManipulatorTest {
 		
 		workPosts.get(3).setAssemblyProcedure(Optional.fromNullable(proc0));
 		
-		man.advanceAssemblyLine();
+		man.advanceAssemblyLine(new ArrayList<Order>());
 		
 		assertEquals(Optional.absent(), workPosts.get(3).getAssemblyProcedure());
 		assertEquals(Optional.absent(), workPosts.get(4).getAssemblyProcedure());
@@ -210,8 +213,21 @@ public class LayoutManipulatorTest {
 		AssemblyProcedure proc = new AssemblyProcedure(order, new ArrayList<AssemblyTask>(Arrays.asList(new AssemblyTask(accOption, 0))), 60);
 		Mockito.when(assemblyLine.makeAssemblyProcedure(Optional.fromNullable(order))).thenReturn(proc);
 		
-		man.advanceAssemblyLine();
+		man.advanceAssemblyLine(new ArrayList<Order>(Arrays.asList(order)));
 		assertEquals(proc, workPosts.get(3).getAssemblyProcedure().get());
+	}
+	
+	@Test
+	public void advanceAssemblyLine_nullList() {
+		expected.expect(IllegalArgumentException.class);
+		man.advanceAssemblyLine(null);
+	}
+	
+	@Test
+	public void advanceAssemblyLine_nullInList() {
+		expected.expect(IllegalArgumentException.class);
+		Order order = null;
+		man.advanceAssemblyLine(new ArrayList<Order>(Arrays.asList(order)));
 	}
 	
 	public AssemblyTask cloneTask(AssemblyTask task) {

@@ -328,7 +328,6 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void completeWorkPostTask_simulateAdvance() {
-		Mockito.when(sched.popNextOrderFromSchedule()).thenReturn(Optional.fromNullable(newOrder));
 //		Mockito.when(newOrder.getMinutesPerPost()).thenReturn(60);
 		Option newOption = new Option(TaskType.BODY, "har", "dar");
 		Specification newSpec = new Specification(Arrays.asList(newOption));
@@ -339,7 +338,7 @@ public class AssemblyLineTest {
 		assemblyLine.completeWorkpostTask(3, 0, 40);
 		
 		assertTrue(assemblyLine.canAdvance());
-		assemblyLine.advance();
+		assemblyLine.advance(new ArrayList<Order>(Arrays.asList(newOrder)));
 		
 		try {
 			assertEquals(60, Whitebox.getInternalState(procedure1, "elapsedMinutes"));
