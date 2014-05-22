@@ -1,12 +1,15 @@
 package domain.assemblyLine;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Optional;
 
 import domain.DateTime;
 import domain.Manufacturer;
+import domain.assemblyLine.virtualAss.VirtualAssemblyLine;
+import domain.car.Model;
 import domain.car.Specification;
 import domain.order.CompletedOrderEvent;
 import domain.order.CompletedOrderObserver;
@@ -43,19 +46,17 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 	 * @throws IllegalArgumentException
 	 * 		workPosts == null || workPosts.isEmpty()
 	 * @throws IllegalArgumentException
-	 * 		schedulerIntermediate == null
-	 * @throws IllegalArgumentException
-	 * 		orderSelector == null
+	 * 		models is null or models is empty
 	 */
-	public AssemblyLine(List<WorkPost> workPosts, OrderAcceptanceChecker orderSelector)
+	public AssemblyLine(List<WorkPost> workPosts, List<Model> models)
 		throws IllegalArgumentException {
 		if (workPosts == null || workPosts.isEmpty()) {
 			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
 					+ "without any WorkPosts");
 		}
-		if (orderSelector == null) {
+		if (models == null || models.isEmpty()) {
 			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
-					+ "with null order selector");
+					+ "with empty model list");
 		}
 //		if (schedulerIntermediate == null) {
 //			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
@@ -67,7 +68,7 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 			workPost.register(this);
 		}
 		
-		this.orderSelector = orderSelector;
+		this.acceptedModels = Collections.unmodifiableList(models);
 		this.elapsedTime = new DateTime(0, 0, 0);
 		
 //		this.schedulerIntermediate = schedulerIntermediate;
@@ -270,6 +271,18 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 	 */
 	List<WorkPost> getWorkPosts() {
 		return new ArrayList<WorkPost>(this.workPosts);
+	}
+	
+	/**
+	 * @return The TaskTypes of this AssemblyLine's WorkPosts
+	 */
+	public List<TaskType> getTaskTypes() {
+		List<TaskType> toReturn = new ArrayList<TaskType>();
+		for (WorkPost workPost : this.getWorkPosts()) {
+			toReturn.add(workPost.getTaskType());
+		}
+		
+		return toReturn;
 	}
 
 	/** 
@@ -597,21 +610,29 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 		return toReturn;
 	}
 	
-	//--------------------------------------------------------------------------
-	// OrderSelector variables and methods
-	//--------------------------------------------------------------------------
-	/** Determines which Orders this AssemblyLine can handle */
-	private final OrderAcceptanceChecker orderSelector;
+	/** The Models that this AssemblyLine can accept */
+	private final List<Model> acceptedModels;
 	
 	/**
-	 * Get this AssemblyLine's OrderSelector,
-	 * which determines which Orders this AssemblyLine can handle
-	 * 
-	 * @return The order selector.
+	 * @return The Models that this AssemblyLine can accept
 	 */
-	public OrderAcceptanceChecker getOrderSelector() {
-		return this.orderSelector;
+	public List<Model> getAcceptedModels() {
+		return this.acceptedModels;
 	}
+	
+	/**
+	 * Indicate whether this AssemblyLine can accept Orders with the specified
+	 * Model.
+	 * 
+	 * @param model
+	 * 		The Model to check for
+	 * @return AssemblyLine can handle Orders with model
+	 */
+	public boolean hasModel(Model model) {
+		return this.getAcceptedModels().contains(model);
+	}
+	
+	
 	
 	/**
 	 * Calculate the time in minutes that the order is expected to spend
@@ -661,5 +682,34 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 		for (CompletedOrderObserver obs : this.getObservers()) {
 			obs.updateCompletedOrder(event);
 		}
+	}
+	
+	//--------------------------------------------------------------------------
+	// Virtual
+	//--------------------------------------------------------------------------
+	/**
+	 * Construct a new VirtualAssemblyLine that represents the current state of 
+	 * this AssemblyLine
+	 * 
+	 * @return A new VirtualAssemblyLine representing the current state of this
+	 * 		   Assemblyline.
+	 */
+	public VirtualAssemblyLine newVirtualAssemblyLine() {
+		TaskType[] t = new TaskType[this.getAssemblyLineSize()];
+		return new VirtualAssemblyLine(this.getTaskTypes().toArray(t), this.getOrdersPerWorkStation());
+	}
+	
+	/**
+	 * Get a list of the length of the number of the workposts specifying the 
+	 * order if they have one. 
+	 * 
+	 * @return A list of the length of the number of the workposts with the corresponding order if it exists.
+	 */
+	public List<Optional<Order>> getOrdersPerWorkStation() {
+		List<Optional<Order>> result = new ArrayList<>();
+		for (WorkPost wp : this.getWorkPosts()) {
+			result.add(wp.getOrder());
+		}
+		return result;
 	}
 }
