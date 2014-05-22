@@ -67,7 +67,7 @@ public class InitialisationHandler {
 				"Mount the Sport body on the car.");
 		Option bodyPlatformOption = new Option(TaskType.BODY, "Platform Body",
 				"Mount the Platform body on the truck.");
-		Option bodyClosedOption = new Option(TaskType.BODY, "Platform Body",
+		Option bodyClosedOption = new Option(TaskType.BODY, "Closed Body",
 				"Mount the Closed body on the truck.");
 		// -- Paint
 		Option paintRedOption = new Option(TaskType.BODY, "Red Paint", "Paint the car red.");
@@ -395,9 +395,9 @@ public class InitialisationHandler {
 		modelYCategories.add(modelYSeatsCategory);
 		modelYCategories.add(modelYSpoilerCategory);
 		modelYCategories.add(modelYWheelsCategory);
-		modelXCategories.add(certificationCategory);
-		modelXCategories.add(toolStorageCategory);
-		modelXCategories.add(cargoProtectionCategory);
+		modelYCategories.add(certificationCategory);
+		modelYCategories.add(toolStorageCategory);
+		modelYCategories.add(cargoProtectionCategory);
 		Model modelY = new CarModel("Model Y", modelYCategories, 60);
 		
 		Model singleTaskModel = new CarModel("Single Task Order",
