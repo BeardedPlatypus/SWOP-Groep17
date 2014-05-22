@@ -55,7 +55,7 @@ public class CheckAssemblyLineStatusScenario {
 		// Step 1: The user wants to check the current status of the assembly line
 		// --- Responsibility of the UI ---
 		// Step 2: The system presents an overview of the current assembly line status,
-		// including pending and nished tasks at each work post.
+		// including pending and finished tasks at each work post.
 		// --- Only getting the information is tested, formatting is the responsibility 
 		// of the UI ---
 		assertEquals(3, handler.getAmountOfWorkPosts());

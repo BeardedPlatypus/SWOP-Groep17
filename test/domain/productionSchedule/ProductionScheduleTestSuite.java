@@ -5,8 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ ClockManagerTest.class,
-				SchedulerContextTest.class })
+@SuiteClasses({ SchedulerContextTest.class })
 public class ProductionScheduleTestSuite {
 
 }
