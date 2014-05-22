@@ -110,7 +110,7 @@ public class AssemblyLineBuilder {
 	 * @throws IllegalArgumentException
 	 * 		See {@link AssemblyLine#AssemblyLine(List<WorkPost), OrderAcceptanceChecker, SchedulerIntermediate) AssemblyLine(List<WorkPost), OrderAcceptanceChecker, SchedulerIntermediate)}
 	 */
-	public AssemblyLine buildAssemblyLine(SchedulerIntermediate schedulerIntermediate)
+	public AssemblyLine buildAssemblyLine()
 			throws IllegalStateException {
 		if (! this.canBuildAssemblyLine()) {
 			throw new IllegalStateException("The AssemblyLineBuilder could"
@@ -122,6 +122,6 @@ public class AssemblyLineBuilder {
 		OrderAcceptanceChecker orderSelector = new OrderAcceptanceChecker(this.getDesiredModels());
 		List<WorkPost> workPosts = layoutFactory.makeLayout(this.getDesiredModels());
 		
-		return new AssemblyLine(workPosts, orderSelector, schedulerIntermediate);
+		return new AssemblyLine(workPosts, orderSelector);
 	}
 }

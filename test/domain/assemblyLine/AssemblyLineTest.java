@@ -26,7 +26,6 @@ import domain.DateTime;
 import domain.Manufacturer;
 import domain.assemblyLine.AssemblyLine;
 import domain.assemblyLine.AssemblyProcedure;
-import domain.assemblyLine.AssemblyProcedureView;
 import domain.assemblyLine.AssemblyTask;
 import domain.assemblyLine.AssemblyTaskView;
 import domain.assemblyLine.TaskType;
@@ -47,7 +46,7 @@ public class AssemblyLineTest {
 	@Rule public ExpectedException expected = ExpectedException.none();
 	
 	@Mock Manufacturer manufacturer;
-	@Mock SchedulerIntermediate sched;
+	//@Mock SchedulerIntermediate sched;
 	
 	AssemblyProcedure procedure1;
 	AssemblyProcedure procedure2;
@@ -120,10 +119,10 @@ public class AssemblyLineTest {
 		workPosts.add(new WorkPost(TaskType.ACCESSORIES, 3));
 		workPosts.add(new WorkPost(TaskType.CERTIFICATION, 4));
 		
-		Optional<Order> absentOrder = Optional.absent();
-		Mockito.when(sched.popNextOrderFromSchedule()).thenReturn(absentOrder);
+		//Optional<Order> absentOrder = Optional.absent();
+		//Mockito.when(sched.popNextOrderFromSchedule()).thenReturn(absentOrder);
 		
-		assemblyLine = new AssemblyLine(workPosts, orderSelector, sched);
+		assemblyLine = new AssemblyLine(workPosts, orderSelector);
 		assemblyLine.setManufacturer(manufacturer);
 		assemblyLine.setStatisticsLogger(logger);
 		
@@ -139,38 +138,38 @@ public class AssemblyLineTest {
 	@Test
 	public void constructor_nullWorkPosts() {
 		expected.expect(IllegalArgumentException.class);
-		new AssemblyLine(null, orderSelector, sched);
+		new AssemblyLine(null, orderSelector);
 	}
 	
 	@Test
 	public void constructor_emptyWorkPosts() {
 		expected.expect(IllegalArgumentException.class);
-		new AssemblyLine(new ArrayList<WorkPost>(), orderSelector, sched);
+		new AssemblyLine(new ArrayList<WorkPost>(), orderSelector);
 	}
 	
 	@Test
 	public void constructor_nullOrderSelector() {
 		expected.expect(IllegalArgumentException.class);
-		new AssemblyLine(workPosts, null, sched);
+		new AssemblyLine(workPosts, null);
 	}
 	
-	@Test
-	public void constructor_nullSchedulerIntermediate() {
-		expected.expect(IllegalArgumentException.class);
-		new AssemblyLine(workPosts, orderSelector, null);
-	}
+//	@Test
+//	public void constructor_nullSchedulerIntermediate() {
+//		expected.expect(IllegalArgumentException.class);
+//		new AssemblyLine(workPosts, orderSelector);
+//	}
 	
 	@Test
 	public void constructor_idleState() {
 		List<WorkPost> workPosts = new ArrayList<WorkPost>();
 		workPosts.add(new WorkPost(TaskType.BODY, 0));
-		AssemblyLine line = new AssemblyLine(workPosts, orderSelector, sched);
+		AssemblyLine line = new AssemblyLine(workPosts, orderSelector);
 		assertEquals(IdleState.class, line.getCurrentState().getClass());
 	}
 	
 	@Test
 	public void constructor_CheckWorkpostsInitialised() {
-		AssemblyLine assemblyLine = new AssemblyLine(workPosts, orderSelector, sched);
+		AssemblyLine assemblyLine = new AssemblyLine(workPosts, orderSelector);
 		assemblyLine.setManufacturer(manufacturer);
 		AssemblyLine spiedAssemblyLine = PowerMockito.spy(assemblyLine);
 		
@@ -251,7 +250,7 @@ public class AssemblyLineTest {
 	public void isEmpty_true() {
 		List<WorkPost> workPosts = new ArrayList<WorkPost>();
 		workPosts.add(new WorkPost(TaskType.BODY, 0));
-		assertTrue(new AssemblyLine(workPosts, orderSelector, sched).isEmpty());
+		assertTrue(new AssemblyLine(workPosts, orderSelector).isEmpty());
 	}
 	
 	@Test
@@ -393,14 +392,14 @@ public class AssemblyLineTest {
 	
 	@Test
 	public void setLogger_null() {
-		AssemblyLine line = new AssemblyLine(workPosts, orderSelector, sched);
+		AssemblyLine line = new AssemblyLine(workPosts, orderSelector);
 		expected.expect(IllegalArgumentException.class);
 		line.setStatisticsLogger(null);
 	}
 	
 	@Test
 	public void setLogger_valid() {
-		AssemblyLine line = new AssemblyLine(workPosts, orderSelector, sched);
+		AssemblyLine line = new AssemblyLine(workPosts, orderSelector);
 		line.setStatisticsLogger(logger);
 		assertEquals(logger, Whitebox.getInternalState(line, StatisticsLogger.class));
 	}
