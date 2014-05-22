@@ -12,7 +12,7 @@ import domain.order.Order;
  * @author Thomas Vochten
  *
  */
-public abstract class AssemblyLineState implements IAssemblyLineState {
+public abstract class AssemblyLineState implements AssemblyLineStateView {
 	
 	/**
 	 * Initialise a new AssemblyLineState

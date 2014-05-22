@@ -218,7 +218,7 @@ public class AssemblyLine implements WorkPostObserver {
 	 * 
 	 * @return A list of immutable containers for all respective WorkPosts in their order.
 	 */
-	public List<WorkPostView> getWorkPostContainers() {
+	public List<WorkPostView> getWorkPostViews() {
 		return new ArrayList<WorkPostView>(workPosts);
 	}
 

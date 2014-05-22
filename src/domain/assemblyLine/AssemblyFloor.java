@@ -3,7 +3,10 @@ package domain.assemblyLine;
 import java.util.ArrayList;
 import java.util.List;
 
+import domain.Manufacturer;
 import domain.order.Order;
+import domain.order.OrderView;
+import domain.statistics.StatisticsLogger;
 
 /**
  * A class representing a workfloor containing a number of assemblylines.
@@ -89,4 +92,57 @@ public class AssemblyFloor {
 	public void unidleLineFor(Order order){
 		//TODO
 	}
+
+
+	public void setStatisticsLogger(StatisticsLogger logger) {
+		//FIXME
+	}
+
+	public String getStatisticsReport() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setManufacturer(Manufacturer manufacturer) {
+		// TODO Set everything correctly
+		// Binary from line to manuf?
+		// from controller to manuf?
+		// from this to manuf?
+		
+	}
+
+
+	public List<OrderView> getActiveOrderContainers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	//--------- Perform Assembly Tasks methods ---------//
+
+
+	public List<AssemblyLineView> getAssemblyLineViews() {
+		return new ArrayList<AssemblyLineView>(lines);
+	}
+	
+	public List<WorkPostView> getWorkPostViewsAt(int lineNb) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public List<AssemblyTaskView> getAssemblyTasksAtPost(int lineNum, int postNum) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+	public void completeWorkpostTask(int lineNumber, int workPostNumber,
+			int taskNumber, int minutes) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	//----- end of Perform Assembly Tasks methods -----//
+
+
+
 }

@@ -104,7 +104,7 @@ public class InitialDataLoader {
 		
 		//start new order session
 		this.getDomainFacade().startNewOrderSession();
-		Model chosenModel = this.getDomainFacade().getCarModels().get(0);
+		Model chosenModel = this.getDomainFacade().getVehicleModels().get(0);
 		this.getDomainFacade().chooseModel(chosenModel);
 		
 		//select compatible options
@@ -149,7 +149,7 @@ public class InitialDataLoader {
 		Random rand = new Random();
 		
 		for(int i=0;i<numberOfOrders;i++){
-			List<Model> models = this.getDomainFacade().getCarModels();
+			List<Model> models = this.getDomainFacade().getVehicleModels();
 			Model chosenModel = models.get(rand.nextInt(models.size()));
 			placeRandomStandardOrderOfModel(1, chosenModel);
 		}

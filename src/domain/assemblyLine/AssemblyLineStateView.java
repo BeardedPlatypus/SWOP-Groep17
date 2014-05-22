@@ -6,7 +6,7 @@ package domain.assemblyLine;
  * @author Thomas Vochten
  *
  */
-public interface IAssemblyLineState {
+public interface AssemblyLineStateView {
 	
 	/**
 	 * Get the AssemblyLineState's name.

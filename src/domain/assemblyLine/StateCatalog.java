@@ -27,8 +27,8 @@ public class StateCatalog {
 	 * 
 	 * @return The states
 	 */
-	public List<IAssemblyLineState> getAvailableStates() {
-		return new ArrayList<IAssemblyLineState>(this.getStates());
+	public List<AssemblyLineStateView> getAvailableStates() {
+		return new ArrayList<AssemblyLineStateView>(this.getStates());
 	}
 	
 	/**

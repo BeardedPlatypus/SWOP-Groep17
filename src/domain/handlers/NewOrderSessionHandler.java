@@ -10,7 +10,7 @@ import domain.car.OptionCategory;
 import domain.car.Specification;
 import domain.order.OrderView;
 import domain.order.OrderSession;
-import exceptions.IllegalCarOptionCombinationException;
+import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
@@ -111,17 +111,17 @@ public class NewOrderSessionHandler {
 	}
 	
 	/**
-	 * Return a list of available car models.
+	 * Return a list of available vehicle models.
 	 * 
-	 * @return List of available car models.
+	 * @return List of available vehicle models.
 	 * 
 	 * @throws IllegalStateException
 	 *		If there is no active new order session.
 	 */
-	public List<Model> getCarModels() throws IllegalStateException {
+	public List<Model> getVehicleModels() throws IllegalStateException {
 		if(!isRunningNewOrderSession())
 			throw new IllegalStateException("No active order session.");
-		return getCurrentOrderSession().getCarModels();
+		return getCurrentOrderSession().getVehicleModels();
 	}
 	/**
 	 * Check to see if we're currently running a new order session.
@@ -142,7 +142,7 @@ public class NewOrderSessionHandler {
 	 * Select the model passed as the argument in the active new order session.
 	 * 
 	 * @param model
-	 * 		The car model to create an order for.
+	 * 		The vehicle model to create an order for.
 	 * @throws IllegalStateException
 	 *		If there is no active new order session.
 	  @throws IllegalArgumentException
@@ -230,14 +230,14 @@ public class NewOrderSessionHandler {
 	 * 		If no model has been chosen
 	 * @throws IllegalStateException
 	 * 		If there are unfulfilled OptionCategories
-	 * @throws IllegalCarOptionCombinationException 
+	 * @throws IllegalVehicleOptionCombinationException 
 	 * 		When the chosen options are not valid with given model
 	 * @throws OptionRestrictionException
 	 * 		When the set of options does not meet the system's restrictions
 	 * @throws IllegalStateException
 	 * 		When the order was already submitted
 	 */
-	public void submitOrder() throws IllegalStateException, IllegalArgumentException, IllegalCarOptionCombinationException, OptionRestrictionException {
+	public void submitOrder() throws IllegalStateException, IllegalArgumentException, IllegalVehicleOptionCombinationException, OptionRestrictionException {
 		if(!isRunningNewOrderSession())
 			throw new IllegalStateException("No active order session.");
 		getCurrentOrderSession().submitOrder();

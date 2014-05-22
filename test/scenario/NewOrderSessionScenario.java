@@ -18,7 +18,7 @@ import domain.car.Model;
 import domain.handlers.InitialisationHandler;
 import domain.handlers.NewOrderSessionHandler;
 import domain.order.OrderView;
-import exceptions.IllegalCarOptionCombinationException;
+import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
@@ -51,7 +51,7 @@ public class NewOrderSessionScenario {
 		
 		//2. The user indicates he wants to place a new car order. ==HAPPENS IN UI==
 		//3. The system shows a list of available car models.
-		List<Model> models = orderHandler.getCarModels();	
+		List<Model> models = orderHandler.getVehicleModels();	
 		assertTrue(!models.isEmpty());
 		
 		//4. The user indicates the car model he wishes to order.
@@ -109,7 +109,7 @@ public class NewOrderSessionScenario {
 		try {
 			orderHandler.submitOrder();
 		} catch (IllegalStateException | IllegalArgumentException
-				| IllegalCarOptionCombinationException
+				| IllegalVehicleOptionCombinationException
 				| OptionRestrictionException e) {
 			fail();
 		}
@@ -150,7 +150,7 @@ public class NewOrderSessionScenario {
 		
 		//2. The user indicates he wants to place a new car order. ==HAPPENS IN UI==
 		//3. The system shows a list of available car models.
-		List<Model> models = orderHandler.getCarModels();	
+		List<Model> models = orderHandler.getVehicleModels();	
 		assertTrue(!models.isEmpty());
 		
 		//4. The user indicates the car model he wishes to order.
