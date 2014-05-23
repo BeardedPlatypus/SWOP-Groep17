@@ -11,6 +11,7 @@ import domain.DateTime;
 import domain.Manufacturer;
 import domain.assembly_line.virtual.VirtualAssemblyLine;
 import domain.car.Model;
+import domain.clock.Clock;
 import domain.clock.EventActor;
 import domain.clock.EventConsumer;
 import domain.order.Order;
@@ -30,8 +31,17 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
-	public AssemblyLineController(AssemblyLine assemblyLine) {
-		this.assemblyLine = assemblyLine;
+	public AssemblyLineController(SchedulerContext schedulerContext, 
+								  Clock clock) {
+		if (clock == null) {
+			throw new IllegalArgumentException("Clock cannot be null.");
+		}
+		if (schedulerContext == null) {
+			throw new IllegalArgumentException("schedulerContext cannot be null.");
+		}
+		
+		this.schedulerContext = schedulerContext;
+		this.clock = clock;
 	}
 	
 	//--------------------------------------------------------------------------
@@ -46,18 +56,26 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 		return this.assemblyLine;
 	}
 	
-	/** The AssemblyLine of this AssemblyLineController. */
-	private final AssemblyLine assemblyLine;
-	
-	//--------------------------------------------------------------------------
-	// Manufacturer
-	//--------------------------------------------------------------------------
-	private Manufacturer getManufacturer() {
-		return this.manufacturer;
+	/**
+	 * Set the AssemblyLine of this AssemblyLineController to newAssemblyLine.
+	 * 
+	 * @param newAssemblyLine
+	 * 		The new AssemblyLine of this AssemblyLineController.
+	 * 
+	 * @postcondition | (new this).getAssemblyLineController == newAssemblyLine
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		| newAssemblyLine == null
+	 */
+	void setAssemblyLine(AssemblyLine newAssemblyLine) throws IllegalArgumentException {
+		if (newAssemblyLine == null) {
+			throw new IllegalArgumentException("potato cannot be null.");
+		}
+		this.assemblyLine = newAssemblyLine;
 	}
 	
-	/** The manufacturer of this AssemblyLineController. */
-	private final Manufacturer manufacturer;
+	/** The AssemblyLine of this AssemblyLineController. */
+	private AssemblyLine assemblyLine;
 	
 	//--------------------------------------------------------------------------
 	// SchedulerContext
@@ -87,7 +105,7 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 		}
 		
 		// Get time. 
-		DateTime currentTime = null; //TODO get time here. 
+		DateTime currentTime = this.getClock().getCurrentTime();  
 		
 		// Check if day should end.
 		if (timeExceedsToday(currentTime)) {
@@ -108,8 +126,8 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 						
 						if (!timeExceedsToday(currentTime.addTime(timeToSchedule))) {
 							resultOrders.add(standardOrder.get());
-							this.addSingleTaskOrders(resultOrders);
-							this.getAssemblyLine().advance(resultOrders);							
+							resultOrders = this.addSingleTaskOrders(resultOrders, virt);
+							this.advance(resultOrders);							
 						} else {
 							this.scheduleDeadline(deadline, virt, resultOrders, currentTime);						
 						}
@@ -128,7 +146,7 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 					if (!timeExceedsToday(currentTime.addTime(timeToSchedule))) {
 						// Can schedule standardOrder
 						resultOrders.add(standardOrder.get());
-						this.getAssemblyLine().advance(resultOrders);
+						this.advance(resultOrders);
 					} else {
 						this.wrapUpDay(currentTime);
 					}
@@ -139,13 +157,13 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 						this.goToIdle();
 					else {
 						// advance the line without orders.
-						this.getAssemblyLine().advance(new ArrayList<Order>());
+						this.advance(new ArrayList<Order>());
 					}
 				}
 			}			
 		} else {
 			//AssemblyLine does not accept orders.
-			this.getAssemblyLine().advance(new ArrayList<Order>());
+			this.advance(new ArrayList<Order>());
 		}
 	}
 	
@@ -158,16 +176,53 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 
 		if (!timeExceedsToday(currentTime.addTime(timeToScheduleDeadLine))) {
 			resultOrders.add(deadline.get());
-			this.addSingleTaskOrders(resultOrders);
-			this.getAssemblyLine().advance(resultOrders);
+			resultOrders = this.addSingleTaskOrders(resultOrders, virt);
+			this.advance(resultOrders);
 		} else {
-			this.addSingleTaskOrders(resultOrders);
+			resultOrders = this.addSingleTaskOrders(resultOrders, virt);
 			if (resultOrders.isEmpty()) {	
 				this.wrapUpDay(currentTime);
 			} else {
-				this.getAssemblyLine().advance(resultOrders);
+				this.advance(resultOrders);
 			}
 		}						
+	}
+	
+	protected List<Order> addSingleTaskOrders(List<Order> resultOrders,  
+			                                  VirtualAssemblyLine virt) {
+		DateTime t = virt.timeToFinish(resultOrders);
+		
+		List<TaskType> taskTypes = this.getAssemblyLine().getTaskTypes();
+		taskTypes = Lists.reverse(taskTypes);
+		
+		List<Order> result = new ArrayList<Order>();
+		
+		for (TaskType task : taskTypes) {
+			TaskType[] tl = {task};
+			Optional<Order> o = this.getSchedulerContext().getOrder(new OrderRequest(tl));
+			
+			if (o.isPresent()) {
+				List<Order> temp = new ArrayList<Order>(resultOrders);
+				temp.add(o.get());
+				temp.addAll(result);
+				
+				DateTime potato = virt.timeToFinish(temp);
+				if (potato.equals(t)) {
+					result.add(0, o.get());
+				}
+			}
+		}
+		List<Order> returnResults = new ArrayList<Order>(resultOrders);		
+		returnResults.addAll(result);
+		return returnResults;
+	}
+
+	protected void advance(List<Order> l) {
+		for (Order o : l) {
+			this.getSchedulerContext().removeOrder(o);
+		}
+		
+		this.getAssemblyLine().advance(Lists.reverse(l));
 	}
 	
 	//--------------------------------------------------------------------------
@@ -287,7 +342,6 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 		}
 	}
 
-	
 	protected void scheduleEndDay(DateTime curTime) {
 		// calculate overtime.
 		int newOverTime = this.getOverTime() - (WORKHOURS * 60 - 
@@ -299,11 +353,26 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 		this.getEventConsumer().constructEvent(timeTillNextDay, this);
 	}
 	
+	/**
+	 * Get the EventConsumer that this AssemblyLineController submits its events to
+	 * 
+	 * @return The EventConsumer that this AssemblyLineController submits its events.
+	 */
 	private EventConsumer getEventConsumer() {
-		return this.eventConsumer;
+		return this.getClock();
 	}
 	
-	private final EventConsumer eventConsumer;
+	/**
+	 * Get the Clock of this system.
+	 * 
+	 * @return The Clock of this sytem.
+	 */
+	private Clock getClock() {
+		return this.clock;
+	}
+	
+	/** The Clock of this AssemblyLineController. */
+	private final Clock clock;
 	
 	//--------------------------------------------------------------------------
 	// Overtime

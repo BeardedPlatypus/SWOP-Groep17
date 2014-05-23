@@ -449,6 +449,21 @@ public class SchedulerContext implements OrderSubject {
 		this.notifyNewOrder();
 	}
 	
+	/**
+	 * Remove the specified order from this SchedulerContext.
+	 * 
+	 * @param order
+	 * 		potato.
+	 */
+	public void removeOrder(Order order) {
+		if (order == null) {
+			throw new IllegalArgumentException("Dit hoeft volgens thomas niet, maar ik heb honger.");
+		}
+		
+		this.getSingleTaskOrderQueueRaw().remove(order);
+		this.getStandardOrderQueueRaw().remove(order);
+	}
+	
 	//--------------------------------------------------------------------------
 	/**
 	 * Check if the specified Order is a valid pending Order to be scheduled.
