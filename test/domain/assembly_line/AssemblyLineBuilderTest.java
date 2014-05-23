@@ -25,12 +25,13 @@ import domain.car.CarModel;
 import domain.car.Model;
 import domain.car.OptionCategory;
 import domain.car.TruckModel;
+import domain.clock.Clock;
 
 @RunWith(PowerMockRunner.class)
 public class AssemblyLineBuilderTest {
 	
 	@Rule ExpectedException expected = ExpectedException.none();
-	
+	@Mock Clock mockDeKlokMock;
 	@Mock Manufacturer manufacturer;
 	//@Mock SchedulerIntermediate sched;
 	AssemblyLineBuilder builder;
@@ -93,7 +94,7 @@ public class AssemblyLineBuilderTest {
 	@Test
 	public void buildAssemblyLineTest_noModels() {
 		expected.expect(IllegalStateException.class);
-		builder.buildAssemblyLine();
+		builder.buildAssemblyLine(mockDeKlokMock);
 	}
 
 	@Test
@@ -101,8 +102,7 @@ public class AssemblyLineBuilderTest {
 		builder.addToDesiredModels(carModel1);
 		builder.addToDesiredModels(truckModel);
 		
-		AssemblyLine line = builder.buildAssemblyLine();
-		assertEquals(null, Whitebox.getInternalState(line, Manufacturer.class));
+		AssemblyLine line = builder.buildAssemblyLine(mockDeKlokMock);
 		
 		List<Model> allowedModels = line.getAcceptedModels();
 		assertTrue(allowedModels.contains(carModel1));
