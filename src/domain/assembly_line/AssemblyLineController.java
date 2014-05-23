@@ -162,6 +162,25 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 		}
 	}
 	
+	/**
+	 * Schedule the next SingleTaskOrder with the closest deadline.
+	 * 		If it can be scheduled today, it and all SingleTaskOrders that do 
+	 * 		not increase production time
+	 * 
+	 * 		If it cannot be scheduled today all SingleTaskOrders that do 
+	 * 		not increase production time without adding the next deadline singleTaskOrder.
+	 * 
+	 * 		If no SingleTaskOrders can be scheduled, the wrap up is called.
+	 * 
+	 * @param deadline
+	 * 		The deadline SingleTaskOrder that is next to be scheduled.
+	 * @param virt
+	 * 		The VirtualAssemblyLine of this AssemblyLineController's AssemblyLine.
+	 * @param resultOrders
+	 * 		The current result orders. (wut?)
+	 * @param currentTime
+	 * 		The current time of this system.
+	 */
 	protected void scheduleDeadline(Optional<Order> deadline, 
 			VirtualAssemblyLine virt, 
 			List<Order> resultOrders,
@@ -183,6 +202,18 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 		}						
 	}
 	
+	/**
+	 * get a List containing the resultOrders and any SingleTaskOrders that could
+	 * be added to the resultOrders that do not increase production time. 
+	 * 
+	 * @param resultOrders
+	 * 		The orders that are going to be scheduled.
+	 * @param virt
+	 * 		The VirtualAssemblyLine of this AssemblyLineCalculator's AssemblyLine.
+	 * 
+	 * @return A list containing the resultOrders and any SingleTaskOrders that 
+	 * could be added to the resultOrders.
+	 */
 	protected List<Order> addSingleTaskOrders(List<Order> resultOrders,  
 			                                  VirtualAssemblyLine virt) {
 		DateTime t = virt.timeToFinish(resultOrders);
@@ -212,6 +243,13 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 		return returnResults;
 	}
 
+	/** 
+	 * Remove obtained orders from the SchedulingContext and pass the orders to
+	 * this AssemblyLineContext's AssemblyLine.
+	 * 
+	 * @param l
+	 * 		The list of orders that is next.
+	 */
 	protected void advance(List<Order> l) {
 		for (Order o : l) {
 			this.getSchedulerContext().removeOrder(o);
@@ -223,6 +261,10 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 	//--------------------------------------------------------------------------
 	// Potato methods
 	//--------------------------------------------------------------------------
+	/**
+	 * Set this AssemblyLineController to operational, if the state of this AssemblyLine
+	 * allows it.
+	 */
 	public void setToOperational() {
 		if (this.getAssemblyLine().getCurrentState().canRestoreToOperational()) {
 			this.getEventConsumer().unregister(this);
@@ -235,19 +277,39 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 	//--------------------------------------------------------------------------
 	// State-related methods.
 	//--------------------------------------------------------------------------
+	/**
+	 * Change the State of this AssemblyLine to state.
+	 * 
+	 * @param state
+	 * 		the new state of this AssemblyLine.
+	 */
 	public void changeState(AssemblyLineState state) {
 		this.setNextState(Optional.of(state));
 	}
 	
+	/**
+	 * Internal method that switches the state of this AssemblyLine to the 
+	 * scheduled State.
+	 */
 	private void switchState() {
 		this.getAssemblyLine().setCurrentState(this.getNewState().get());
 		this.setNextState(Optional.<AssemblyLineState> absent());
 	}
 	
+	/**
+	 * Check if a new state is requested.
+	 * 
+	 * @return If a new state is requested.
+	 */
 	private boolean hasNewState() {
 		return this.getNewState().isPresent();
 	}
 	
+	/**
+	 * Get the (optional) new state of this AssemblyLine
+	 * 
+	 * @return the new state of this AssemblyLine.
+	 */
 	private Optional<AssemblyLineState> getNewState() {
 		return this.newState;
 	}
@@ -323,6 +385,13 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 	//--------------------------------------------------------------------------
 	// Scheduling
 	//--------------------------------------------------------------------------
+	/**
+	 * Either schedule an EndDay if the AssemblyLine is empty or advance the 
+	 * assemblyLine without adding new orders.
+	 * 
+	 * @param curTime
+	 * 		The current time of the system.
+	 */
 	protected void wrapUpDay(DateTime curTime) { 
 		if (this.getAssemblyLine().isEmpty()) {
 			this.scheduleEndDay(curTime);
@@ -331,6 +400,12 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 		}
 	}
 
+	/**
+	 * Schedule a new EndDay, by adding an event to the Clock that moves the time
+	 * by DateTime(curTime.days + 1, 6.00, 0).subtract(curTime.)
+	 * @param curTime
+	 * 		The current time of this system.
+	 */
 	protected void scheduleEndDay(DateTime curTime) {
 		// calculate overtime.
 		int newOverTime = this.getOverTime() - (WORKHOURS * 60 - 
