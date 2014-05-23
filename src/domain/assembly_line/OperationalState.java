@@ -51,4 +51,9 @@ public class OperationalState extends AssemblyLineState {
 		return true;
 	}
 
+	@Override
+	boolean canRestoreToOperational() {
+		return false;
+	}
+
 }

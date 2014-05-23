@@ -219,6 +219,18 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 		
 		this.getAssemblyLine().advance(Lists.reverse(l));
 	}
+	
+	//--------------------------------------------------------------------------
+	// Potato methods
+	//--------------------------------------------------------------------------
+	public void setToOperational() {
+		if (this.getAssemblyLine().getCurrentState().canRestoreToOperational()) {
+			this.getEventConsumer().unregister(this);
+			this.getEventConsumer().register(this);
+			
+			this.activate();
+		}
+	}
 		
 	//--------------------------------------------------------------------------
 	// State-related methods.

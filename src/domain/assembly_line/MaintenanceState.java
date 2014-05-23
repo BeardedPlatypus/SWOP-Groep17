@@ -75,4 +75,9 @@ public class MaintenanceState extends AssemblyLineState {
 			this.getAssemblyLine().getEventConsumer().constructEvent(new DateTime(0, 4, 0), this.getAssemblyLine().getAssemblyLineController());
 		}
 	}
+
+	@Override
+	boolean canRestoreToOperational() {
+		return true;
+	}
 }

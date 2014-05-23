@@ -170,6 +170,8 @@ public class Clock implements TimeSubject, EventConsumer{
 		
 		this.getRegisteredActors().remove(actor);
 		this.purgeEventsFromActor(actor);
+		
+		this.checkFireEvent();
 	}
 	
 	/**

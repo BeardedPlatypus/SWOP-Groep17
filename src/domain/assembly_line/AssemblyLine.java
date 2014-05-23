@@ -108,7 +108,7 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 	 * @throws IllegalArgumentException
 	 * 		| newAssemblyLineController == null
 	 */
-	void setAssemblyLine(AssemblyLineController newAssemblyLineController) throws IllegalArgumentException {
+	void setAssemblyLineController(AssemblyLineController newAssemblyLineController) throws IllegalArgumentException {
 		if (newAssemblyLineController == null) {
 			throw new IllegalArgumentException("potato cannot be null.");
 		}

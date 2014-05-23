@@ -40,9 +40,8 @@ public class BrokenState extends AssemblyLineState {
 	 * in this state.
 	 */
 	@Override
-	void advanceAssemblyLine(List<Order> orders) throws IllegalStateException {
-		throw new IllegalStateException("Cannot advance assembly line"
-				+ "if it is broken");
+	void advanceAssemblyLine(List<Order> orders) {
+		this.getAssemblyLine().getEventConsumer().unregister(this.getAssemblyLine().getAssemblyLineController());
 	}
 	
 //	/**
@@ -77,5 +76,12 @@ public class BrokenState extends AssemblyLineState {
 	boolean acceptsOrders() {
 		return false;
 	}
+
+	@Override
+	boolean canRestoreToOperational() {
+		return true;
+	}
+	
+	
 
 }
