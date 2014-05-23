@@ -19,6 +19,7 @@ import domain.car.Model;
 import domain.car.ModelCatalog;
 import domain.car.Option;
 import domain.car.OptionCategory;
+import domain.car.TruckModel;
 import domain.clock.Clock;
 import domain.clock.ClockManipulator;
 import domain.initialdata.InitialDataLoader;
@@ -387,7 +388,7 @@ public class InitialisationHandler {
 		modelXCategories.add(certificationCategory);
 		modelXCategories.add(toolStorageCategory);
 		modelXCategories.add(cargoProtectionCategory);
-		Model modelX = new CarModel("Model X", modelXCategories, 60);
+		Model modelX = new TruckModel("Model X", modelXCategories, 60, 90, 30);
 
 		List<OptionCategory> modelYCategories = new ArrayList<>();
 		modelYCategories.add(modelYAircoCategory);
@@ -401,7 +402,7 @@ public class InitialisationHandler {
 		modelYCategories.add(certificationCategory);
 		modelYCategories.add(toolStorageCategory);
 		modelYCategories.add(cargoProtectionCategory);
-		Model modelY = new CarModel("Model Y", modelYCategories, 60);
+		Model modelY = new TruckModel("Model Y", modelYCategories, 60, 120, 45);
 		
 		Model singleTaskModel = new CarModel("Single Task Order",
 				new ArrayList<OptionCategory>(), 60);
@@ -548,10 +549,13 @@ public class InitialisationHandler {
 		proBuilder.addToDesiredModels(modelY);
 		AssemblyLine line3 = proBuilder.buildAssemblyLine(clock);
 		
-		//TODO FIXME YOLO
-		lines.add(new AssemblyLineFacade(line1, new AssemblyLineController(schedule, clock)));
-		lines.add(new AssemblyLineFacade(line2, new AssemblyLineController(schedule, clock)));
-		lines.add(new AssemblyLineFacade(line3, new AssemblyLineController(schedule, clock)));		
+		AssemblyLineController line1Controller =  new AssemblyLineController(schedule, clock);
+		AssemblyLineController line2Controller =  new AssemblyLineController(schedule, clock);
+		AssemblyLineController line3Controller =  new AssemblyLineController(schedule, clock);
+		
+		lines.add(new AssemblyLineFacade(line1, line1Controller));
+		lines.add(new AssemblyLineFacade(line2, line2Controller));
+		lines.add(new AssemblyLineFacade(line3, line3Controller));		
 		
 		StatisticsLogger logger = new StatisticsLogger();
 		CarsProducedRegistrar prodRegistrar = new CarsProducedRegistrar();
@@ -560,10 +564,7 @@ public class InitialisationHandler {
 		logger.addRegistrar(delayRegistrar);
 		EstimatedProductionTimeRegistrar estTimeReg =
 				new EstimatedProductionTimeRegistrar(clock);
-		//TODO this has to be allowed
 		logger.addRegistrar(estTimeReg);
-		
-		//TODO Fix this floor constructor
 		AssemblyFloor floor = new AssemblyFloor(lines, logger);
 		
 		//--------------------------------------------------------------------------
@@ -575,8 +576,6 @@ public class InitialisationHandler {
 		// Attach Observers
 		//----------------------------------------------------------------------
 		
-		
-		//TODO meer timeobservers?
 		//Timeobservers
 		clock.attachTimeObserver(logger);
 		clock.attachTimeObserver(orderFact);
@@ -589,6 +588,18 @@ public class InitialisationHandler {
 		line2.attachObserver(complCat);
 		line3.attachObserver(logger);
 		line3.attachObserver(complCat);
+		
+		schedule.attachOrderObserver(line1Controller);
+		schedule.attachOrderObserver(line2Controller);
+		schedule.attachOrderObserver(line3Controller);
+		
+		clock.register(line1Controller);
+		clock.register(line2Controller);
+		clock.register(line3Controller);
+		
+//		clock.constructEvent(new DateTime(0, 0, 0), line1Controller);
+//		clock.constructEvent(new DateTime(0, 0, 0), line2Controller);
+//		clock.constructEvent(new DateTime(0, 0, 0), line3Controller);
 		
 		//----------------------------------------------------------------------
 		// Initialise Manufacturer

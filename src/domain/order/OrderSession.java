@@ -287,6 +287,8 @@ public class OrderSession {
 					submitStandardOrder(this.getModel(),
 							allDesiredOptions);
 			this.setOrder(generatedOrder);
+			System.out.println("Order Made, estimated completion time is:");
+			System.out.println(this.getETA());
 		} catch (IllegalArgumentException e){
 			throw new IllegalStateException("Session is not valid (yet).");
 		}

@@ -498,7 +498,8 @@ public class SchedulerContext implements OrderSubject {
 
 	@Override
 	public void notifyNewOrder() {
-		for(OrderObserver o: this.getOrderObserversRaw()) {
+		List<OrderObserver> tempO = new ArrayList<>(this.getOrderObserversRaw());
+		for(OrderObserver o: tempO) {
 			o.notifyOrder();
 		}
 	}

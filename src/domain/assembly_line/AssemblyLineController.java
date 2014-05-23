@@ -470,10 +470,12 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 	public void notifyOrder() throws IllegalArgumentException { //FIXME maybe not too nice to assume an order can only have one Scheduler.
 		Optional<Order> standardOrder = this.requestStandardOrder();
 		if (standardOrder.isPresent()) {
+			this.getSchedulerContext().removeOrder(standardOrder.get());
 			this.goToActive(standardOrder.get());
 		} else {
 			Optional<Order> singleTaskOrder = this.requestDeadlineOrder();
 			if (singleTaskOrder.isPresent()) {
+				this.getSchedulerContext().removeOrder(singleTaskOrder.get());
 				this.goToActive(singleTaskOrder.get());
 			}
 		}
