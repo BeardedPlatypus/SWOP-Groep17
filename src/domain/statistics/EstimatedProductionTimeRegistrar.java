@@ -37,6 +37,7 @@ public class EstimatedProductionTimeRegistrar implements Registrar {
 		if (clock == null)
 			throw new IllegalArgumentException("clock can not be null!");
 		this.clock = clock;
+		this.completionTimes = new HashMap<>();
 	}
 	
 	//--------------------------------------------------------------------------

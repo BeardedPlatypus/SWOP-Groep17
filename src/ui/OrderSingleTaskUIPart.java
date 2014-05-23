@@ -99,10 +99,10 @@ public class OrderSingleTaskUIPart {
 	 */
 	private int getCategoryChoice(List<OptionCategory> categories) {
 		System.out.println("Please choose the type of task you want to order:");
-		for(int i = 0; i<categories.size(); i++){
-			System.out.println(i + ") " + categories.get(i).getName());
+		for(int i = 1; i<=categories.size(); i++){
+			System.out.println(i + ") " + categories.get(i-1).getName());
 		}
-		return helper.getIntFromUser(1, categories.size());
+		return helper.getIntFromUser(1, categories.size())-1;
 	}
 	
 
