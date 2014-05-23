@@ -70,10 +70,10 @@ public class UI {
 		boolean exitRequest = false;
 		while(!exitRequest){
 			showMainMenu();
-			int choice = this.helper.getIntFromUser(1, 8);
+			int choice = this.helper.getIntFromUser(1, 9);
 			switch(choice){
 			case 1:
-				orderNewCarRoutine();
+				orderNewVehicleRoutine();
 				break;
 			case 2:
 				checkOrderRoutine();
@@ -91,9 +91,12 @@ public class UI {
 				adaptSchedulingAgorithmRoutine();
 				break;
 			case 7:
-				orderSingleTaskRoutine();
+				changeOperationalStatusRoutine();
 				break;
 			case 8:
+				orderSingleTaskRoutine();
+				break;
+			case 9:
 				exitRequest = true;
 				break;
 			default:
@@ -113,22 +116,23 @@ public class UI {
 		System.out.println("Welcome to the assembly system.");
 		System.out.println(helper.SEPERATOR);
 		System.out.println("Choose one of the options below:");
-		System.out.println("(1) I would like to log in as Garage Holder to order a new car");
+		System.out.println("(1) I would like to log in as Garage Holder to order a new vehicle");
 		System.out.println("(2) I would like to log in as Garage Holder to check one of the orders");
 		System.out.println("(3) I would like to log in as Mechanic to perform a task at my workpost");
-		System.out.println("(4) I would like to log in as Mechanic to check the status of the AssemblyLine");
+		System.out.println("(4) I would like to log in as Mechanic to check the status of the assembly lines");
 		System.out.println("(5) I would like to log in as Manager to check the production statistics");
 		System.out.println("(6) I would like to log in as Manager to adapt the scheduling algorithm");
-		System.out.println("(7) I would like to log in as Customs Shop Owner to order custom task");
-		System.out.println("(8) I would like to exit and shutdown the system. !CAUTION, LOSS OF ALL DATA!");
+		System.out.println("(7) I would like to log in as Manager to change the status of an assembly line");
+		System.out.println("(8) I would like to log in as Customs Shop Owner to order custom task");
+		System.out.println("(9) I would like to exit and shutdown the system. !CAUTION, LOSS OF ALL DATA!");
 	}
 
 	//--------------------------------------------------------------------------
 	// Usecase parts
 	//--------------------------------------------------------------------------
 
-	private void orderNewCarRoutine() {
-		OrderNewCarUIPart uiPart = new OrderNewCarUIPart(
+	private void orderNewVehicleRoutine() {
+		OrderNewVehicleUIPart uiPart = new OrderNewVehicleUIPart(
 				this.facade.getNewOrderSessionHandler(),this.helper);
 		uiPart.run();
 	}
@@ -166,6 +170,12 @@ public class UI {
 	private void orderSingleTaskRoutine() {
 		OrderSingleTaskUIPart uiPart = new OrderSingleTaskUIPart(
 				this.facade.getOrderSingleTaskHandler(),this.helper);
+		uiPart.run();
+	}
+
+	private void changeOperationalStatusRoutine() {
+		ChangeOperationelStatusUIPart uiPart = new ChangeOperationelStatusUIPart(
+				this.facade.getChangeOperationalStatusHandler(),this.helper);
 		uiPart.run();
 	}
 

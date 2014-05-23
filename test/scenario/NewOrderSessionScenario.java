@@ -18,7 +18,7 @@ import domain.car.Model;
 import domain.handlers.InitialisationHandler;
 import domain.handlers.NewOrderSessionHandler;
 import domain.order.OrderView;
-import exceptions.IllegalCarOptionCombinationException;
+import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
@@ -47,11 +47,11 @@ public class NewOrderSessionScenario {
 		// with estimated completion times, and the second part shows a history	of completed orders, sorted most recent first.
 		// System is currently empty
 		List<OrderView> initPending = orderHandler.getPendingOrders();
-		List<OrderView> initComplete = orderHandler.getCompletedOrders();
+		int pendingSize = initPending.size();
 		
 		//2. The user indicates he wants to place a new car order. ==HAPPENS IN UI==
 		//3. The system shows a list of available car models.
-		List<Model> models = orderHandler.getCarModels();	
+		List<Model> models = orderHandler.getVehicleModels();	
 		assertTrue(!models.isEmpty());
 		
 		//4. The user indicates the car model he wishes to order.
@@ -109,7 +109,7 @@ public class NewOrderSessionScenario {
 		try {
 			orderHandler.submitOrder();
 		} catch (IllegalStateException | IllegalArgumentException
-				| IllegalCarOptionCombinationException
+				| IllegalVehicleOptionCombinationException
 				| OptionRestrictionException e) {
 			fail();
 		}
@@ -123,9 +123,7 @@ public class NewOrderSessionScenario {
 		
 		//8. The system presents an estimated completion date for the new order.
 		initPending = orderHandler.getPendingOrders();
-		initComplete = orderHandler.getCompletedOrders();
-		assertTrue(initPending.size() == 1);
-		assertTrue(initComplete.isEmpty());
+		assertTrue(initPending.size() == pendingSize + 1);
 	}
 	
 	@Test
@@ -146,11 +144,11 @@ public class NewOrderSessionScenario {
 		// with estimated completion times, and the second part shows a history	of completed orders, sorted most recent first.
 		// System is currently empty
 		List<OrderView> initPending = orderHandler.getPendingOrders();
-		List<OrderView> initComplete = orderHandler.getCompletedOrders();
+		int pendingSize = initPending.size();
 		
 		//2. The user indicates he wants to place a new car order. ==HAPPENS IN UI==
 		//3. The system shows a list of available car models.
-		List<Model> models = orderHandler.getCarModels();	
+		List<Model> models = orderHandler.getVehicleModels();	
 		assertTrue(!models.isEmpty());
 		
 		//4. The user indicates the car model he wishes to order.
@@ -172,9 +170,7 @@ public class NewOrderSessionScenario {
 		//6. (a) The user indicates he wants to cancel placing the order. ==HAPPENS IN UI==
 		//7. The use case returns to step 1.
 		initPending = orderHandler.getPendingOrders();
-		initComplete = orderHandler.getCompletedOrders();
-		assertTrue(initPending.isEmpty());
-		assertTrue(initComplete.isEmpty());
+		assertTrue(initPending.size() == pendingSize);
 	}
 
 }

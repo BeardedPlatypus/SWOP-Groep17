@@ -3,8 +3,9 @@ package domain.handlers;
 import java.util.List;
 
 import domain.Manufacturer;
-import domain.assemblyLine.AssemblyTaskView;
-import domain.assemblyLine.WorkPostView;
+import domain.assembly_line.AssemblyLineView;
+import domain.assembly_line.AssemblyTaskView;
+import domain.assembly_line.WorkPostView;
 
 /**
  * Coordinates with the outside world in order to complete assembly tasks of a single WorkPost.
@@ -50,8 +51,8 @@ public class PerformAssemblyTaskHandler {
 	 * 
 	 * @return the WorkPostContainers of the ASsemblyLine's WorkPosts
 	 */
-	public List<WorkPostView> getWorkPosts() {
-		return this.getManufacturer().getWorkPostContainers();
+	public List<AssemblyLineView> getAssemblyLines() {
+		return this.getManufacturer().getAssemblyLineViews();
 	}
 
 	/**
@@ -65,8 +66,10 @@ public class PerformAssemblyTaskHandler {
 	 * @throws IllegalArgumentException
 	 * 		workPostNumber refers to a work post that does not exist.
 	 */
-	public List<AssemblyTaskView> getAssemblyTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
-		return this.getManufacturer().getAssemblyTasksAtPost(workPostNumber);
+	public List<AssemblyTaskView> getAssemblyTasksAtWorkPost(int lineNb,
+			int postNb) {
+		// TODO Auto-generated method stub
+		return this.getManufacturer().getAssemblyTasksAtPost(lineNb, postNb);
 	}
 
 	/**
@@ -86,8 +89,18 @@ public class PerformAssemblyTaskHandler {
 	 * @throws IllegalArgumentException
 	 * 		taskNumber refers to a task with a type incompatible with the given
 	 * 		work post.
+	 * @throws IllegalStateException
+	 * 		Status of specified assembly line disallows completion of tasks
 	 */
-	public void completeWorkpostTask(int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException {
-		this.getManufacturer().completeWorkpostTask(workPostNumber, taskNumber, minutes);
+	public void completeWorkpostTask(int lineNumber, int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException,
+		IllegalStateException {
+		this.getManufacturer().completeWorkpostTask(lineNumber, workPostNumber, taskNumber, minutes);
 	}
+
+	public List<WorkPostView> getWorkPosts(int lineNb) {
+		// TODO Auto-generated method stub
+		return this.getManufacturer().getWorkPostsAt(lineNb);
+	}
+
+
 }

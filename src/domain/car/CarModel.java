@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import util.annotations.Immutable;
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
 import domain.car.OptionCategory;
 
 /**

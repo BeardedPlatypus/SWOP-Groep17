@@ -36,20 +36,20 @@ public class PerformAssemblyTaskHandlerTest {
 	
 	@Test
 	public void getWorkPostsTest() {
-		handler.getWorkPosts();
-		Mockito.verify(manufacturer).getWorkPostContainers();
+		handler.getWorkPosts(0);
+		Mockito.verify(manufacturer).getWorkPostsAt(0);
 	}
 	
 	@Test
 	public void getAssemblyTasksAtWorkPostTest() {
-		handler.getAssemblyTasksAtWorkPost(0);
-		Mockito.verify(manufacturer).getAssemblyTasksAtPost(0);
+		handler.getAssemblyTasksAtWorkPost(0, 0);
+		Mockito.verify(manufacturer).getAssemblyTasksAtPost(0, 0);
 	}
 	
 	@Test
 	public void completeWorkpostTask() {
-		handler.completeWorkpostTask(0, 0, 60);
-		Mockito.verify(manufacturer).completeWorkpostTask(0, 0, 60);
+		handler.completeWorkpostTask(0, 0, 0, 60);
+		Mockito.verify(manufacturer).completeWorkpostTask(0, 0, 0, 60);
 	}
 	
 

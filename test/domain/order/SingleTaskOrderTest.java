@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import domain.DateTime;
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
 import domain.car.Specification;
 import domain.car.Model;
 

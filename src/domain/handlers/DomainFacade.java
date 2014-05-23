@@ -3,15 +3,16 @@ package domain.handlers;
 import java.util.List;
 
 import domain.DateTime;
-import domain.assemblyLine.AssemblyTaskView;
-import domain.assemblyLine.WorkPostView;
+import domain.assembly_line.AssemblyLineView;
+import domain.assembly_line.AssemblyTaskView;
+import domain.assembly_line.WorkPostView;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.car.Specification;
 import domain.order.OrderView;
-import domain.productionSchedule.strategy.SchedulingStrategyView;
-import exceptions.IllegalCarOptionCombinationException;
+import domain.production_schedule.strategy.SchedulingStrategyView;
+import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
@@ -48,7 +49,8 @@ public class DomainFacade {
 			CheckProductionStatisticsHandler prodStatHandler,
 			NewOrderSessionHandler newOrderHandler,
 			OrderSingleTaskHandler singleTaskHandler,
-			PerformAssemblyTaskHandler performHandler)
+			PerformAssemblyTaskHandler performHandler,
+			ChangeOperationalStatusHandler changeHandler)
 					throws IllegalArgumentException
 					{
 		if(algorithmHandler == null)
@@ -65,6 +67,8 @@ public class DomainFacade {
 			throw new IllegalArgumentException("Handler should not be null!");
 		if(performHandler == null)
 			throw new IllegalArgumentException("Handler should not be null!");
+		if(changeHandler == null)
+			throw new IllegalArgumentException("Handler should not be null!");
 		this.schedulingAlgorithmHandler = algorithmHandler;
 		this.assemblyLineStatusHandler = assemblyLineStatusHandler;
 		this.orderDetailsHandler = orderDetailsHandler;
@@ -72,6 +76,7 @@ public class DomainFacade {
 		this.newOrderSessionHandler = newOrderHandler;
 		this.orderSingleTaskHandler = singleTaskHandler;
 		this.performAssemblyTaskHandler = performHandler;
+		this.changeOperationalStatusHandler = changeHandler;
 	}
 
 	//-------------------------------------------------------------------------
@@ -158,6 +163,18 @@ public class DomainFacade {
 	public AssemblyLineStatusHandler getAssemblyLineStatusHandler() {
 		return this.assemblyLineStatusHandler;
 	}
+	
+	/**
+	 * Get the ChangeOperationalStatusHandler.
+	 * This is both for internal use, and in the case a developer wants to write
+	 * a UI based on the handlers themselves, for better specialization of the
+	 * different parts of the UI.
+	 * 
+	 * @return the ChangeOperationalStatusHandler
+	 */
+	public ChangeOperationalStatusHandler getChangeOperationalStatusHandler() {
+		return this.changeOperationalStatusHandler;
+	}
 
 	/**	The facade's PerformAssemblyTaskHandler */
 	private final PerformAssemblyTaskHandler performAssemblyTaskHandler;
@@ -180,6 +197,9 @@ public class DomainFacade {
 	/**	The facade's AssemblyLineStatusHandler */
 	private final AssemblyLineStatusHandler assemblyLineStatusHandler;
 
+	/**	The facade's ChangeOperationalStatusHandler */
+	private final ChangeOperationalStatusHandler changeOperationalStatusHandler;
+	
 	//-------------------------------------------------------------------------
 	// Class Methods
 	//-------------------------------------------------------------------------
@@ -413,8 +433,8 @@ public class DomainFacade {
 	 * 
 	 * @return a list of all possible Car Models for the system
 	 */
-	public List<Model> getCarModels(){
-		return this.getNewOrderSessionHandler().getCarModels();
+	public List<Model> getVehicleModels(){
+		return this.getNewOrderSessionHandler().getVehicleModels();
 	}
 
 	/**
@@ -513,14 +533,14 @@ public class DomainFacade {
 	 * 		If no model has been chosen
 	 * @throws IllegalStateException
 	 * 		If there are unfulfilled OptionCategories
-	 * @throws IllegalCarOptionCombinationException 
+	 * @throws IllegalVehicleOptionCombinationException 
 	 * 		When the chosen options are not valid with given model
 	 * @throws OptionRestrictionException
 	 * 		When the set of options does not meet the system's restrictions
 	 * @throws IllegalStateException
 	 * 		When the order was already submitted
 	 */
-	public void submitOrder() throws IllegalStateException, IllegalArgumentException, IllegalCarOptionCombinationException, OptionRestrictionException{
+	public void submitOrder() throws IllegalStateException, IllegalArgumentException, IllegalVehicleOptionCombinationException, OptionRestrictionException{
 		this.getNewOrderSessionHandler().submitOrder();
 
 	}
@@ -640,8 +660,8 @@ public class DomainFacade {
 	 * 
 	 * @return the WorkPostContainers of the ASsemblyLine's WorkPosts
 	 */
-	public List<WorkPostView> getWorkPosts() {
-		return this.getPerformAssemblyTaskHandler().getWorkPosts();
+	public List<WorkPostView> getWorkPosts(int postNb) {
+		return this.getPerformAssemblyTaskHandler().getWorkPosts(postNb);
 	}
 
 	/**
@@ -655,8 +675,9 @@ public class DomainFacade {
 	 * @throws IllegalArgumentException
 	 * 		workPostNumber refers to a work post that does not exist.
 	 */
-	public List<AssemblyTaskView> getAssemblyTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
-		return this.getPerformAssemblyTaskHandler().getAssemblyTasksAtWorkPost(workPostNumber);
+	public List<AssemblyTaskView> getAssemblyTasksAtWorkPost(int lineNb, 
+			int postNb) throws IllegalArgumentException {
+		return this.getPerformAssemblyTaskHandler().getAssemblyTasksAtWorkPost(lineNb, postNb);
 	}
 
 	/**
@@ -677,8 +698,9 @@ public class DomainFacade {
 	 * 		taskNumber refers to a task with a type incompatible with the given
 	 * 		work post.
 	 */
-	public void completeWorkpostTask(int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException {
-		this.getPerformAssemblyTaskHandler().completeWorkpostTask(workPostNumber, taskNumber, minutes);
+	public void completeWorkpostTask(int lineNb, int workPostNumber, int taskNumber, 
+			int minutes) throws IllegalArgumentException {
+		this.getPerformAssemblyTaskHandler().completeWorkpostTask(lineNb, workPostNumber, taskNumber, minutes);
 	}
 
 	//--------------------------------------------------------------------------
@@ -686,63 +708,15 @@ public class DomainFacade {
 	//--------------------------------------------------------------------------
 	// AsemblyLine Status methods
 	
+
 	/**
-	 * Returns a list of work post containers, containing information about the assembly line status.
+	 * Return a list of all assemblylines in the system.
+	 * These are immutable and can be inspected.
 	 * 
-	 * @return List of work post containers.
+	 * @return all assemblylines in the system
 	 */
-	public List<WorkPostView> getStatusWorkPosts() {
-		return this.getAssemblyLineStatusHandler().getWorkPosts();
-	}
-	
-	/**
-	 * Returns the amount of different work posts on the assembly line.
-	 * 
-	 * @return Amount of work posts.
-	 */
-	public int getAmountOfWorkPosts() {
-		return this.getAssemblyLineStatusHandler().getAmountOfWorkPosts();
-	}
-	
-	/**
-	 * Retrieves a single work post from the list of work posts using the given index.
-	 * 
-	 * @param 	workPostNumber
-	 * 			The index of the work post.
-	 * @pre		workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts()
-	 * @return	The work post situated at the given index.
-	 * @throws	IllegalArgumentException
-	 * 			If the given index does not satisfy the preconditions.
-	 */
-	public WorkPostView getWorkPost(int workPostNumber) throws IllegalArgumentException {
-		return this.getAssemblyLineStatusHandler().getWorkPost(workPostNumber);
-	}
-	
-	/**
-	 * Retrieves a list of tasks at the work post identified by the given index.
-	 * 
-	 * @param 	workPostNumber
-	 * 			The index of the work post.
-	 * @pre		workPostNumber >= 0 && workPostNumber < getAmountOfWorkPosts()
-	 * @return	List of tasks at that work post.
-	 * @throws	IllegalArgumentException
-	 * 			If the given index does not satisfy the preconditions.
-	 */
-	public List<AssemblyTaskView> getTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
-		return this.getAssemblyLineStatusHandler().getTasksAtWorkPost(workPostNumber);
-	}
-	
-	/**
-	 * Returns the amount of different tasks at the work post identified by the given index.
-	 * 
-	 * @param 	workPostNumber
-	 * 			The index of the work post.
-	 * @return	Amount of tasks at that work post.
-	 * @throws	IllegalArgumentException
-	 * 			If the given index does not satisfy the preconditions.
-	 */
-	public int getAmountOfTasksAtWorkPost(int workPostNumber) throws IllegalArgumentException {
-		return this.getAssemblyLineStatusHandler().getAmountOfTasksAtWorkPost(workPostNumber);
+	public List<AssemblyLineView> getLineViews() {
+		return this.getAssemblyLineStatusHandler().getLineViews();
 	}
 	
 

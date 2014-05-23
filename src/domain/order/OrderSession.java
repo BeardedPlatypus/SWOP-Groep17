@@ -8,8 +8,7 @@ import domain.Manufacturer;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
-import domain.car.Model;
-import exceptions.IllegalCarOptionCombinationException;
+import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
@@ -235,13 +234,15 @@ public class OrderSession {
 	 * @pre
 	 * 		this.getManufacturer != null
 	 */
-	public List<Model> getCarModels(){
-		return this.getManufacturer().getCarModels();
+	public List<Model> getVehicleModels(){
+		return this.getManufacturer().getVehicleModels();
 	}
 
 	/**
 	 * Get the next unfilled optionCategory from set model with the options
-	 * currently chosen in this session
+	 * currently chosen in this session. OptionCategories with one option are
+	 * skipped, and the option is added when the order is submitted. It is viewed
+	 * as a required or default option.
 	 * 
 	 * @return the next unfilled optionCategory
 	 * 
@@ -263,7 +264,7 @@ public class OrderSession {
 	 * Submit the current state of this session to the system, to form an order.
 	 * The order is then saved in this session, so the ETA can be calculated.
 	 * 
-	 * @throws IllegalCarOptionCombinationException 
+	 * @throws IllegalVehicleOptionCombinationException 
 	 * 		When the chosen options are not valid with given model
 	 * @throws OptionRestrictionException
 	 * 		When the set of options does not meet the system's restrictions
@@ -273,16 +274,18 @@ public class OrderSession {
 	 * 		When the order was already submitted
 	 */
 	public void submitOrder() throws IllegalArgumentException,
-									 IllegalCarOptionCombinationException,
+									 IllegalVehicleOptionCombinationException,
 									 OptionRestrictionException,
 									 IllegalStateException
 	{
 		if(this.orderIsMade())
 			throw new IllegalStateException("An order has already been made from this Session.");
 		try{
+			List<Option> allDesiredOptions = this.getModel().getSolitaryOptions();
+			allDesiredOptions.addAll(this.getOptions());
 			OrderView generatedOrder = this.getManufacturer().
 					submitStandardOrder(this.getModel(),
-							new ArrayList<Option>(this.getOptions()));
+							allDesiredOptions);
 			this.setOrder(generatedOrder);
 		} catch (IllegalArgumentException e){
 			throw new IllegalStateException("Session is not valid (yet).");

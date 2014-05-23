@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import domain.assemblyLine.AssemblyTaskView;
-import domain.assemblyLine.WorkPostView;
+import domain.assembly_line.AssemblyTaskView;
+import domain.assembly_line.WorkPostView;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
@@ -104,7 +104,7 @@ public class InitialDataLoader {
 		
 		//start new order session
 		this.getDomainFacade().startNewOrderSession();
-		Model chosenModel = this.getDomainFacade().getCarModels().get(0);
+		Model chosenModel = this.getDomainFacade().getVehicleModels().get(0);
 		this.getDomainFacade().chooseModel(chosenModel);
 		
 		//select compatible options
@@ -149,7 +149,7 @@ public class InitialDataLoader {
 		Random rand = new Random();
 		
 		for(int i=0;i<numberOfOrders;i++){
-			List<Model> models = this.getDomainFacade().getCarModels();
+			List<Model> models = this.getDomainFacade().getVehicleModels();
 			Model chosenModel = models.get(rand.nextInt(models.size()));
 			placeRandomStandardOrderOfModel(1, chosenModel);
 		}
@@ -208,7 +208,8 @@ public class InitialDataLoader {
 	 */
 	public void simulateCompleteAllOrders(){
 		while(this.getDomainFacade().getPendingOrders().size() > 0){
-			simulateCompleteAllTasksOnAssemblyLine(1);
+			for(int i=0; i<this.getDomainFacade().getLineViews().size();i++)
+				simulateCompleteAllTasksOnAssemblyLine(i,1);
 		}
 	}
 	
@@ -218,8 +219,8 @@ public class InitialDataLoader {
 	 * 
 	 * @param numberOfTimes
 	 */
-	public void simulateCompleteAllTasksOnAssemblyLine(int numberOfTimes) {
-		simulateCompleteAllTasksOnAssemblyLine(numberOfTimes, 40);
+	public void simulateCompleteAllTasksOnAssemblyLine(int lineNb, int numberOfTimes) {
+		simulateCompleteAllTasksOnAssemblyLine(lineNb, numberOfTimes, 40);
 	}
 	
 	/**
@@ -228,13 +229,13 @@ public class InitialDataLoader {
 	 * 
 	 * @param numberOfTimes
 	 */
-	public void simulateCompleteAllTasksOnAssemblyLine(int numberOfTimes,
+	public void simulateCompleteAllTasksOnAssemblyLine(int lineNb, int numberOfTimes,
 			int timeSpentPerTask) {
 		for(int i = 0; i < numberOfTimes; i++){
-			for(WorkPostView wp : this.getDomainFacade().getWorkPosts()){
+			for(WorkPostView wp : this.getDomainFacade().getWorkPosts(lineNb)){
 				for(AssemblyTaskView task : wp.getMatchingAssemblyTasks()){
 					if(!task.isCompleted()){
-						this.getDomainFacade().completeWorkpostTask(
+						this.getDomainFacade().completeWorkpostTask( lineNb,
 								wp.getWorkPostNum(), task.getTaskNumber(),
 								timeSpentPerTask);
 					}

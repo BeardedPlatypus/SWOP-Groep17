@@ -3,8 +3,9 @@ package ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.assemblyLine.AssemblyTaskView;
-import domain.assemblyLine.WorkPostView;
+import domain.assembly_line.AssemblyLineView;
+import domain.assembly_line.AssemblyTaskView;
+import domain.assembly_line.WorkPostView;
 import domain.handlers.PerformAssemblyTaskHandler;
 
 public class PerformAssemblyTasksUIPart {
@@ -63,37 +64,51 @@ public class PerformAssemblyTasksUIPart {
 	 * The user can't exit this menu without choosing a workpost.
 	 */
 	public void run() {
+		//FIXME
 		System.out.println(helper.SEPERATOR);
-		int postNumber = selectPost();
+		int lineNb = selectLine();
+		int postNumber = selectPost(lineNb);
 		boolean exit = false;
 		while(!exit){
-			AssemblyTaskView task = selectTask(postNumber);
+			AssemblyTaskView task = selectTask(lineNb, postNumber);
 			if(task == null){
 				exit = true;
 			}else{
-				showAndCompleteTask(task,postNumber);
+				showAndCompleteTask(task, lineNb, postNumber);
 			}
 		}
 	}
 
-	/**
-	 * The user is shown a description of given task, along with post number of the task, for completion purposes.
-	 * The user indicates when he is finished, and the task is marked as completed.
-	 * 
-	 * @param task
-	 * 		The task the user has to execute
-	 * @param postNumber
-	 * 		The post number the task originates from
-	 */
-	private void showAndCompleteTask(AssemblyTaskView task, int postNumber) {
-		System.out.println(helper.SEPERATOR);
-		System.out.println("Short overview of task " + task.getOptionName() + ":");
-		System.out.println("\t" + task.getOptionDescription());
-		System.out.println("Please complete the task, and then fill in how many minutes it took you.");
-		int minutes = helper.getIntFromUser(0, Integer.MAX_VALUE);
-		getHandler().completeWorkpostTask(postNumber, task.getTaskNumber(), minutes);
+	private int selectLine() {
+		System.out.println("Please select your assembly line:");
+		List<AssemblyLineView> lines = this.getHandler().getAssemblyLines();
+		for(int i = 0; i<lines.size();i++){
+			System.out.println("\t" + (i+1) + " Assembly line nb. " + (i+1));
+		}
+		return (this.helper.getIntFromUser(1, lines.size()) - 1);
 	}
 
+
+	/**
+	 * The user is shown a list of all workposts in the system, and has to choose one.
+	 * The choice is made based on indices, and the returned int symbolising the workpost
+	 * is based on the order of the workposts, the first being 0.
+	 * @param lineNb 
+	 * 
+	 * @return
+	 * 		The number of the workpost, taken from the order they appear on the assembly line,
+	 * 		with the first workpost being 0
+	 */
+	private int selectPost(int lineNb) {
+		System.out.println("Welcome, please select your workpost:");
+		List<WorkPostView> posts= getHandler().getWorkPosts(lineNb);
+		for(int i = 0; i<posts.size(); i++){
+			WorkPostView currentPost = posts.get(i);
+			System.out.println((i+1) + ") " + currentPost.getName());
+		}
+		return (helper.getIntFromUser(1, posts.size())-1);
+	}
+	
 	/**
 	 * Shows a menu of assembly tasks based on the given workpost number.
 	 * The tasks match the workpost's type.
@@ -102,12 +117,13 @@ public class PerformAssemblyTasksUIPart {
 	 * 
 	 * @param postNumber
 	 * 		The post number the user currently resides at
+	 * @param postNumber2 
 	 * @return
 	 * 		The chosen task as a container
 	 */
-	private AssemblyTaskView selectTask(int postNumber) {
+	private AssemblyTaskView selectTask(int lineNb, int postNb) {
 		System.out.println("Please select an incomplete task at your workpost from the ones below:");
-		List<AssemblyTaskView> postTasks = getHandler().getAssemblyTasksAtWorkPost(postNumber);
+		List<AssemblyTaskView> postTasks = getHandler().getAssemblyTasksAtWorkPost(lineNb, postNb);
 		List<AssemblyTaskView> incompletePostTasks = new ArrayList<>();
 		for(AssemblyTaskView task : postTasks){
 			if(!task.isCompleted())
@@ -125,23 +141,23 @@ public class PerformAssemblyTasksUIPart {
 			return incompletePostTasks.get(choice-1);
 		}
 	}
+	
 
 	/**
-	 * The user is shown a list of all workposts in the system, and has to choose one.
-	 * The choice is made based on indices, and the returned int symbolising the workpost
-	 * is based on the order of the workposts, the first being 0.
+	 * The user is shown a description of given task, along with post number of the task, for completion purposes.
+	 * The user indicates when he is finished, and the task is marked as completed.
 	 * 
-	 * @return
-	 * 		The number of the workpost, taken from the order they appear on the assembly line,
-	 * 		with the first workpost being 0
+	 * @param task
+	 * 		The task the user has to execute
+	 * @param postNumber
+	 * 		The post number the task originates from
 	 */
-	private int selectPost() {
-		System.out.println("Welcome, please select your workpost:");
-		List<WorkPostView> posts= getHandler().getWorkPosts();
-		for(int i = 0; i<posts.size(); i++){
-			WorkPostView currentPost = posts.get(i);
-			System.out.println((i+1) + ") " + currentPost.getName());
-		}
-		return (helper.getIntFromUser(1, posts.size())-1);
+	private void showAndCompleteTask(AssemblyTaskView task, int lineNumber, int postNumber) {
+		System.out.println(helper.SEPERATOR);
+		System.out.println("Short overview of task " + task.getOptionName() + ":");
+		System.out.println("\t" + task.getOptionDescription());
+		System.out.println("Please complete the task, and then fill in how many minutes it took you.");
+		int minutes = helper.getIntFromUser(0, Integer.MAX_VALUE);
+		getHandler().completeWorkpostTask(lineNumber, postNumber, task.getTaskNumber(), minutes);
 	}
 }

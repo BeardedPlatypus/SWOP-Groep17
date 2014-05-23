@@ -11,7 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
 import domain.car.Option;
 
 public class RestrictionTest {

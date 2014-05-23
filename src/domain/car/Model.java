@@ -3,7 +3,7 @@ package domain.car;
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
 import util.annotations.Immutable;
 import exceptions.NoOptionCategoriesRemainingException;
 
@@ -216,7 +216,9 @@ public abstract class Model {
 	/**
 	 * Get the next unfilled optionCategory of this model. Unfilled is based on
 	 * given list of options, meaning the returned optionsCategory does not contain
-	 * any of given options
+	 * any of given options OptionCategories with one option are
+	 * skipped, and the option is added when the order is submitted. It is viewed
+	 * as a required or default option.
 	 * 
 	 * @param options
 	 * 		options to treat as already chosen
@@ -229,17 +231,19 @@ public abstract class Model {
 	 */
 	public OptionCategory getNextOptionCategory(List<Option> options)
 			throws NoOptionCategoriesRemainingException {
-				for(OptionCategory cat : this.getOptionCategories()){
-					boolean containsNone = true;
-					for(Option opt : options){
-						if(cat.containsOption(opt))
-							containsNone = false;
-					}
-					if(containsNone)
-						return cat;
+		for(OptionCategory cat : this.getOptionCategories()){
+			if(cat.getAmountOfOptions()>1){
+				boolean containsNone = true;
+				for(Option opt : options){
+					if(cat.containsOption(opt))
+						containsNone = false;
 				}
-				throw new NoOptionCategoriesRemainingException("No unfilled optionCategories remaining.");
+				if(containsNone)
+					return cat;
 			}
+		}
+		throw new NoOptionCategoriesRemainingException("No unfilled optionCategories remaining.");
+	}
 
 	/**
 	 * Check, based on given options, if there are optionCategories in the model
@@ -253,15 +257,35 @@ public abstract class Model {
 	 */
 	public boolean hasUnfilledOptions(List<Option> options) {
 		for(OptionCategory cat : this.getOptionCategories()){
-			boolean isUnfilled = true;
-			for(Option opt : options){
-				if(cat.containsOption(opt))
-					isUnfilled = false;
+			if(cat.getAmountOfOptions()>1){
+				boolean isUnfilled = true;
+				for(Option opt : options){
+					if(cat.containsOption(opt))
+						isUnfilled = false;
+				}
+				if(isUnfilled)
+					return true;
 			}
-			if(isUnfilled)
-				return true;
 		}
 		return false;
+	}
+	
+
+	/**
+	 * Get all options in this model who are the only ones in their respective
+	 * optionCategories. These options are all viewed as default options, which
+	 * should not be offered, but always added to an order.
+	 * 
+	 * @return all solitary options
+	 */
+	public List<Option> getSolitaryOptions() {
+		List<Option> result = new ArrayList<>();
+		for(OptionCategory cat : this.getOptionCategories()){
+			if(cat.getAmountOfOptions()==1){
+				result.add(cat.getOption(0));
+			}
+		}
+		return result;
 	}
 	
 	//--------------------------------------------------------------------------
@@ -289,5 +313,6 @@ public abstract class Model {
 	 * 		The amount of minutes
 	 */
 	public abstract int getMinsOnWorkPostOfType(TaskType workPostType);
+
 
 }

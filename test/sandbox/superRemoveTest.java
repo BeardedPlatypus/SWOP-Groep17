@@ -10,8 +10,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import domain.assemblyLine.WorkPost;
-import domain.assemblyLine.WorkPostView;
+import domain.assembly_line.WorkPost;
+import domain.assembly_line.WorkPostView;
 
 public class superRemoveTest {
 	

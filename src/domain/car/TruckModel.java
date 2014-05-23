@@ -2,7 +2,7 @@ package domain.car;
 
 import java.util.List;
 
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
 
 /**
  * TruckModel is a subclass of Model that represents models of trucks.

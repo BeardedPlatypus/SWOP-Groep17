@@ -3,7 +3,7 @@ package domain.order;
 import com.google.common.base.Optional;
 
 import domain.DateTime;
-import domain.assemblyLine.TaskType;
+import domain.assembly_line.TaskType;
 import domain.car.Specification;
 import domain.car.Model;
 
@@ -215,17 +215,6 @@ public abstract class Order implements OrderView {
 
 	/** The model of this Order. */
 	public final Model model;
-	
-// DEPRECATED
-//	/**
-//	 * Get the amount of minutes that the ordered car is expected to spend
-//	 * at each work post.
-//	 * 
-//	 * @return The amount of minutes
-//	 */
-//	public int getMinutesPerPost() {
-//		return this.getModel().getMinsPerWorkPost();
-//	}
 
 	/**
 	 * Get the amount of minutes that the ordered car is expected to spend
