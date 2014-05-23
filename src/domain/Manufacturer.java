@@ -3,6 +3,7 @@ package domain;
 import java.util.List;
 
 import domain.restrictions.OptionRestrictionManager;
+import domain.statistics.EstimatedTimeCatalog;
 import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.OptionRestrictionException;
 import exceptions.OrderDoesNotExistException;
@@ -64,6 +65,7 @@ public class Manufacturer {
 	 * @param clock
 	 * 		The {@link SchedulerIntermediate} for the new {@link Manufacturer}
 	 * @param schedule 
+	 * @param estTimeCat 
 	 * @param prodSched
 	 * 		The {@link ProductionScheduleFacade} for the new {@link Manufacturer}
 	 * @param inter 
@@ -79,7 +81,8 @@ public class Manufacturer {
 						OrderFactory orderFactory,
 						AssemblyFloor floor,
 						Clock clock,
-						SchedulerContext schedule)
+						SchedulerContext schedule,
+						EstimatedTimeCatalog estTimeCat)
 						throws IllegalArgumentException
 	{
 		if(stratFact == null)
@@ -100,6 +103,8 @@ public class Manufacturer {
 			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
 		if(schedule == null)
 			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+		if(estTimeCat == null)
+			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
 		
 		this.algorithmStrategyFactory = stratFact;
 		this.singleTaskCatalog = singleCat;
@@ -110,6 +115,7 @@ public class Manufacturer {
 		this.assemblyFloor = floor;
 		this.clock = clock;
 		this.schedulerContext = schedule;
+		this.estimatedTimeCatalog = estTimeCat;
 
 
 		this.orderFactory.setManufacturer(this);
@@ -117,7 +123,6 @@ public class Manufacturer {
 	}
 	
 
-	
 	//--------------------------------------------------------------------------
 	// Methods concerning multiple subsystems
 	//--------------------------------------------------------------------------
@@ -134,42 +139,8 @@ public class Manufacturer {
 		return pending;
 	}
 	
-	
-	/**
-	 * Query the system for estimated completion time of given order.
-	 * Checks sequentially if the order is found in the ProductionSchedule, the
-	 * AssemblyLine and the CompletedOrdersCatalog.
-	 * If the order is found, it queries the respective component for the ECT.
-	 * If the order is not present in the system, the system throws an
-	 * OrderDoesNotExistException.
-	 * 
-	 * @param order
-	 * 		The order to find in the system and return the ECT for
-	 * 
-	 * @return the ECT of given order
-	 * 
-	 * @throws OrderDoesNotExistException
-	 * 		When the order is not found in the system.
-	 */
-	public DateTime getEstimatedCompletionTime(OrderView order) throws OrderDoesNotExistException{
-		//TODO: DIVERT THIS TO THE STATISTICS
-		// http://content.artofmanliness.com/uploads//2010/10/snidely-whiplash.jpg
-		
-//		if(this.getProductionSchedule().contains(order))
-//			return this.getProductionSchedule().getEstimatedCompletionTime(order);
-//		if(this.getAssemblyFloor().contains(order))
-//			return this.getAssemblyFloor().getEstimatedCompletionTime(order);
-//		if(this.getCompletedOrderCatalog().contains(order))
-//			return this.getCompletedOrderCatalog().getCompletionTime(order);
-		throw new OrderDoesNotExistException("Order was not found in the system.");
-	}
-	
-	
 	//--------------------------------------------------------------------------
-	// AlgorithStrategyFactory methods.
-	//--------------------------------------------------------------------------
-	//--------------------------------------------------------------------------
-	// Algorithm methods.
+	// AlgorithmStrategyFactory methods.
 	//--------------------------------------------------------------------------
 	/**
 	 * Get the AlgorithmFactory of this Manufacturer
@@ -709,5 +680,29 @@ public class Manufacturer {
 		return this.getAssemblyFloor().getStatisticsReport();
 	}
 
+	//--------------------------------------------------------------------------
+	// Completion time estimation methods
+	//--------------------------------------------------------------------------
+	/**
+	 * Query the system for estimated completion time of given order.
+	 * This e
+	 * 
+	 * @param order
+	 * 		The order to find in the system and return the ECT for
+	 * 
+	 * @return the ECT of given order
+	 */
+	public DateTime getEstimatedCompletionTime(OrderView order) {
+		if(order.getDeadline().isPresent())
+			return order.getDeadline().get();
+		return this.getEstimatedTimeCatalog().getEstimatedCompletionTime(order);
+	}
+	
+	private EstimatedTimeCatalog getEstimatedTimeCatalog(){
+		return this.estimatedTimeCatalog;
+	}
+	
+	/** estimatedTimeCatalog of this Manufacturer */
+	private final EstimatedTimeCatalog estimatedTimeCatalog;
 
 }

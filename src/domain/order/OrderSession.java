@@ -8,7 +8,6 @@ import domain.Manufacturer;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
-import domain.car.Model;
 import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
@@ -241,7 +240,9 @@ public class OrderSession {
 
 	/**
 	 * Get the next unfilled optionCategory from set model with the options
-	 * currently chosen in this session
+	 * currently chosen in this session. OptionCategories with one option are
+	 * skipped, and the option is added when the order is submitted. It is viewed
+	 * as a required or default option.
 	 * 
 	 * @return the next unfilled optionCategory
 	 * 
@@ -280,9 +281,11 @@ public class OrderSession {
 		if(this.orderIsMade())
 			throw new IllegalStateException("An order has already been made from this Session.");
 		try{
+			List<Option> allDesiredOptions = this.getModel().getSolitaryOptions();
+			allDesiredOptions.addAll(this.getOptions());
 			OrderView generatedOrder = this.getManufacturer().
 					submitStandardOrder(this.getModel(),
-							new ArrayList<Option>(this.getOptions()));
+							allDesiredOptions);
 			this.setOrder(generatedOrder);
 		} catch (IllegalArgumentException e){
 			throw new IllegalStateException("Session is not valid (yet).");

@@ -6,7 +6,6 @@ import java.util.List;
 import domain.DateTime;
 import domain.order.CompletedOrderEvent;
 import domain.order.CompletedOrderObserver;
-import domain.statistics.Registrar;
 import domain.clock.TimeObserver;
 
 /**

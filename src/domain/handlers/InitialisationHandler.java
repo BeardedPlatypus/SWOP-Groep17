@@ -1,6 +1,7 @@
 package domain.handlers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,8 @@ import domain.restrictions.RequiredOptionSetRestriction;
 import domain.restrictions.Restriction;
 import domain.statistics.CarsProducedRegistrar;
 import domain.statistics.DelayRegistrar;
+import domain.statistics.EstimatedProductionTimeRegistrar;
+import domain.statistics.EstimatedTimeCatalog;
 import domain.statistics.StatisticsLogger;
 
 /**
@@ -64,7 +67,7 @@ public class InitialisationHandler {
 				"Mount the Sport body on the car.");
 		Option bodyPlatformOption = new Option(TaskType.BODY, "Platform Body",
 				"Mount the Platform body on the truck.");
-		Option bodyClosedOption = new Option(TaskType.BODY, "Platform Body",
+		Option bodyClosedOption = new Option(TaskType.BODY, "Closed Body",
 				"Mount the Closed body on the truck.");
 		// -- Paint
 		Option paintRedOption = new Option(TaskType.BODY, "Red Paint", "Paint the car red.");
@@ -131,6 +134,14 @@ public class InitialisationHandler {
 		Option spoilerNoneOption = new Option(TaskType.ACCESSORIES, "No Spoiler",
 				"Mount no spoiler on the car.");
 		spoilerNoneOption.setNeedsAssemblyTask(false);
+		
+		// -- Extra truck options
+		Option certificationOption = new Option(TaskType.CERTIFICATION, "Certification",
+				"Certify maximum cargo load.");
+		Option cargoToolOption = new Option(TaskType.CARGO, "Tool Storage",
+				"Install tool storage.");
+		Option cargoProtectionOption = new Option(TaskType.CARGO, "Cargo Protection",
+				"Add cargo protection.");
 
 		//----------------------------------------------------------------------
 		// Initialise OptionCategories
@@ -314,6 +325,15 @@ public class InitialisationHandler {
 		OptionCategory modelCSpoilerCategory = new OptionCategory(modelCSpoilerList, "Spoiler");
 		OptionCategory modelXSpoilerCategory = new OptionCategory(modelXSpoilerList, "Spoiler");
 		OptionCategory modelYSpoilerCategory = new OptionCategory(modelYSpoilerList, "Spoiler");
+		
+		//Extra truck optioncategories
+		
+		OptionCategory certificationCategory = new OptionCategory(
+				Arrays.asList(certificationOption), "Certification");
+		OptionCategory toolStorageCategory = new OptionCategory(
+				Arrays.asList(cargoToolOption), "ToolStorage");
+		OptionCategory cargoProtectionCategory = new OptionCategory(
+				Arrays.asList(cargoProtectionOption), "CargoProtection");
 
 		//----------------------------------------------------------------------
 		// Initialise Models
@@ -361,6 +381,9 @@ public class InitialisationHandler {
 		modelXCategories.add(modelXSeatsCategory);
 		modelXCategories.add(modelXSpoilerCategory);
 		modelXCategories.add(modelXWheelsCategory);
+		modelXCategories.add(certificationCategory);
+		modelXCategories.add(toolStorageCategory);
+		modelXCategories.add(cargoProtectionCategory);
 		Model modelX = new CarModel("Model X", modelXCategories, 60);
 
 		List<OptionCategory> modelYCategories = new ArrayList<>();
@@ -372,6 +395,9 @@ public class InitialisationHandler {
 		modelYCategories.add(modelYSeatsCategory);
 		modelYCategories.add(modelYSpoilerCategory);
 		modelYCategories.add(modelYWheelsCategory);
+		modelYCategories.add(certificationCategory);
+		modelYCategories.add(toolStorageCategory);
+		modelYCategories.add(cargoProtectionCategory);
 		Model modelY = new CarModel("Model Y", modelYCategories, 60);
 		
 		Model singleTaskModel = new CarModel("Single Task Order",
@@ -529,9 +555,18 @@ public class InitialisationHandler {
 		logger.addRegistrar(prodRegistrar);
 		DelayRegistrar delayRegistrar = new DelayRegistrar();
 		logger.addRegistrar(delayRegistrar);
+		EstimatedProductionTimeRegistrar estTimeReg =
+				new EstimatedProductionTimeRegistrar(clock);
+		//TODO this has to be allowed
+		logger.addRegistrar(estTimeReg);
 		
 		//TODO Fix this floor constructor
 		AssemblyFloor floor = new AssemblyFloor(lines, logger);
+		
+		//--------------------------------------------------------------------------
+		// Initialise Completion Estimator
+		//--------------------------------------------------------------------------
+		EstimatedTimeCatalog estTimeCat = new EstimatedTimeCatalog(estTimeReg);
 
 		//----------------------------------------------------------------------
 		// Attach Observers
@@ -565,7 +600,8 @@ public class InitialisationHandler {
 				orderFact,
 				floor,
 				clock,
-				schedule);
+				schedule,
+				estTimeCat);
 
 		//----------------------------------------------------------------------
 		// Initialise Handlers
