@@ -36,10 +36,10 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	throws IllegalArgumentException{
 		if (line == null)
 			throw new IllegalArgumentException("line can not be null!");
-//		if (inter == null)
-//			throw new IllegalArgumentException("intermediate can not be null!");
+		if (controller == null)
+			throw new IllegalArgumentException("intermediate can not be null!");
 		this.line = line;
-		this.line.setAssemblyLine(controller);
+		this.line.setAssemblyLineController(controller);
 		this.controller = controller;
 		this.controller.setAssemblyLine(line);
 	}
