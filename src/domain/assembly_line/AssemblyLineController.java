@@ -91,11 +91,7 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 		
 		// Check if day should end.
 		if (timeExceedsToday(currentTime)) {
-			if (this.getAssemblyLine().isEmpty()) {
-				this.scheduleEndDay(currentTime);
-			} else {
-				this.getAssemblyLine().advance(new ArrayList<Order>());
-			}
+			this.wrapUpDay(currentTime);
 		} else if (this.getAssemblyLine().getCurrentState().acceptsOrders()) {
 			VirtualAssemblyLine virt = this.getAssemblyLine().newVirtualAssemblyLine();
 			List<Order> resultOrders = new ArrayList<>();
@@ -103,15 +99,7 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 			Optional<Order> deadline = this.requestDeadlineOrder();
 			if (deadline.isPresent()) {
 				if (mustScheduleDeadline(currentTime, deadline.get())) {
-					List<Order> l = Lists.newArrayList(deadline.get());
-					DateTime timeToFinishWithDeadline = virt.timeToFinish(l);
-					
-					if (!timeExceedsToday(currentTime.addTime(timeToFinishWithDeadline))) {
-						
-					} else {
-						
-					}
-					
+					this.scheduleDeadline(deadline, virt, resultOrders, currentTime);
 				} else {
 					Optional<Order> standardOrder = this.requestStandardOrder();
 					if (standardOrder.isPresent()) {
@@ -120,11 +108,14 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 						
 						if (!timeExceedsToday(currentTime.addTime(timeToSchedule))) {
 							resultOrders.add(standardOrder.get());
+							this.addSingleTaskOrders(resultOrders);
+							this.getAssemblyLine().advance(resultOrders);							
+						} else {
+							this.scheduleDeadline(deadline, virt, resultOrders, currentTime);						
 						}
+					} else {
+						this.scheduleDeadline(deadline, virt, resultOrders, currentTime);					
 					}
-					this.getExtra
-					
-					
 				}
 			} else {
 				Optional<Order> standardOrder = this.requestStandardOrder();
@@ -139,13 +130,7 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 						resultOrders.add(standardOrder.get());
 						this.getAssemblyLine().advance(resultOrders);
 					} else {
-						if (this.getAssemblyLine().isEmpty()) {
-							// cannot schedule standardOrder today and assembly line is empty -> next day
-							this.scheduleEndDay(curTime);
-						} else {
-							// cannot schedule standardOrder today and assembly line is not empty -> move order.
-							this.getAssemblyLine().advance(new ArrayList<Order>());
-						}
+						this.wrapUpDay(currentTime);
 					}
 				} else {
 					// no orders available
@@ -162,6 +147,27 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 			//AssemblyLine does not accept orders.
 			this.getAssemblyLine().advance(new ArrayList<Order>());
 		}
+	}
+	
+	protected void scheduleDeadline(Optional<Order> deadline, 
+			VirtualAssemblyLine virt, 
+			List<Order> resultOrders,
+			DateTime currentTime) {
+		List<Order> m = Lists.newArrayList(deadline.get()); 
+		DateTime timeToScheduleDeadLine = virt.timeToFinish(m);
+
+		if (!timeExceedsToday(currentTime.addTime(timeToScheduleDeadLine))) {
+			resultOrders.add(deadline.get());
+			this.addSingleTaskOrders(resultOrders);
+			this.getAssemblyLine().advance(resultOrders);
+		} else {
+			this.addSingleTaskOrders(resultOrders);
+			if (resultOrders.isEmpty()) {	
+				this.wrapUpDay(currentTime);
+			} else {
+				this.getAssemblyLine().advance(resultOrders);
+			}
+		}						
 	}
 	
 	//--------------------------------------------------------------------------
@@ -273,6 +279,15 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 	//--------------------------------------------------------------------------
 	// Scheduling
 	//--------------------------------------------------------------------------
+	protected void wrapUpDay(DateTime curTime) { 
+		if (this.getAssemblyLine().isEmpty()) {
+			this.scheduleEndDay(curTime);
+		} else {
+			this.getAssemblyLine().advance(new ArrayList<Order>());
+		}
+	}
+
+	
 	protected void scheduleEndDay(DateTime curTime) {
 		// calculate overtime.
 		int newOverTime = this.getOverTime() - (WORKHOURS * 60 - 
