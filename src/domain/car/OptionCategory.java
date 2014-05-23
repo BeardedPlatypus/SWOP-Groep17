@@ -1,6 +1,5 @@
 package domain.car;
 
-//TODO new, original option, but now uses option object
 import java.util.ArrayList;
 import java.util.List;
 

@@ -2,7 +2,6 @@ package domain.assembly_line;
 
 import domain.car.Option;
 
-//TODO: update class documentation
 /**
  * One single task that needs to be performed as part of the assembly process. Painting a car blue is an example
  * of an assembly task.
@@ -11,7 +10,6 @@ public class AssemblyTask implements AssemblyTaskView {
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
-	//TODO: update constructor
 	/**
 	 * Initialises a new assembly task with the given name, action info and type.
 	 * 

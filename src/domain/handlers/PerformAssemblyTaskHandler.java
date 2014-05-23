@@ -68,7 +68,6 @@ public class PerformAssemblyTaskHandler {
 	 */
 	public List<AssemblyTaskView> getAssemblyTasksAtWorkPost(int lineNb,
 			int postNb) {
-		// TODO Auto-generated method stub
 		return this.getManufacturer().getAssemblyTasksAtPost(lineNb, postNb);
 	}
 
@@ -98,7 +97,6 @@ public class PerformAssemblyTaskHandler {
 	}
 
 	public List<WorkPostView> getWorkPosts(int lineNb) {
-		// TODO Auto-generated method stub
 		return this.getManufacturer().getWorkPostsAt(lineNb);
 	}
 

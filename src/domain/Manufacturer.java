@@ -95,19 +95,18 @@ public class Manufacturer {
 			throw new IllegalArgumentException("ModelCatalog should not be null.");
 		if(optionRestMan == null)
 			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
-		//TODO better names lol
 		if(orderFactory == null)
-			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+			throw new IllegalArgumentException("OrderFactory should not be null.");
 		if(floor == null)
-			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+			throw new IllegalArgumentException("AssemblyFloor should not be null.");
 		if(clock == null)
-			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+			throw new IllegalArgumentException("Clock should not be null.");
 		if(schedule == null)
-			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+			throw new IllegalArgumentException("Schedule should not be null.");
 		if(estTimeCat == null)
-			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+			throw new IllegalArgumentException("EstTimeCat should not be null.");
 		if(stateCat == null)
-			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+			throw new IllegalArgumentException("StateCat should not be null.");
 		
 		this.algorithmStrategyFactory = stratFact;
 		this.singleTaskCatalog = singleCat;
@@ -289,8 +288,6 @@ public class Manufacturer {
 	public OrderView submitSingleTaskOrder(Option option, DateTime deadline) {
 		SingleTaskOrder order = this.getOrderFactory().makeNewSingleTaskOrder(deadline, option);
 		this.getProductionSchedule().addNewSingleTaskOrder(order);
-		
-		//TODO Fix the unidling in the floor
 		
 		return order;
 	}
@@ -500,8 +497,6 @@ public class Manufacturer {
 		StandardOrder newOrder = this.getOrderFactory().makeNewStandardOrder(model, orderSpecs);
 		this.getProductionSchedule().addNewStandardOrder(newOrder);
 		
-		//TODO fix unidling in the floor
-		
 		return newOrder;
 	}
 
@@ -527,14 +522,12 @@ public class Manufacturer {
 	 * @return The WorkPostContainers
 	 */
 	public List<AssemblyLineView> getAssemblyLineViews() {
-		//TODO set this up as required
 		return this.getAssemblyFloor().getLineViews();
 	}
 	
 
 
 	public List<WorkPostView> getWorkPostsAt(int lineNb) {
-		// TODO Auto-generated method stub
 		return this.getAssemblyFloor().getWorkPostViewsAt(lineNb);
 	}
 
@@ -550,7 +543,6 @@ public class Manufacturer {
 	 * 		See {@link AssemblyLine#getAssemblyTasksAtPost(int) getAssemblyTasksAtPost(int)}
 	 */
 	public List<AssemblyTaskView> getAssemblyTasksAtPost(int lineNum, int postNum) throws IllegalArgumentException {
-		//TODO also add layer of indirection
 		return this.getAssemblyFloor().getAssemblyTasksAtPost(lineNum, postNum);
 	}
 
@@ -580,7 +572,6 @@ public class Manufacturer {
 	 * @return List of pending order containers on the assembly line.
 	 */
 	private List<OrderView> getAssemblingPendingOrderContainers() {
-		//TODO add layer of indirection
 		return this.getAssemblyFloor().getActiveOrderViews();
 	}
 	

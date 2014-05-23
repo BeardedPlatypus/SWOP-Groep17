@@ -64,7 +64,6 @@ public class PerformAssemblyTasksUIPart {
 	 * The user can't exit this menu without choosing a workpost.
 	 */
 	public void run() {
-		//FIXME
 		System.out.println(helper.SEPERATOR);
 		int lineNb = selectLine();
 		int postNumber = selectPost(lineNb);

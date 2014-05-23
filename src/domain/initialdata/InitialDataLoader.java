@@ -12,6 +12,8 @@ import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.clock.ClockManipulator;
 import domain.handlers.DomainFacade;
+import domain.handlers.OrderSingleTaskHandler;
+import domain.order.OrderView;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
 import exceptions.OptionRestrictionException;
@@ -171,12 +173,12 @@ public class InitialDataLoader {
 	 * 			The number of orders to be placed.
 	 */
 	public void placeRandomStandardOrder(int numberOfOrders) {
-		Random rand = new Random();
+		//Random rand = new Random();
 		//Setup up an order session for no exceptions
 		this.getDomainFacade().getNewOrderSessionHandler().startNewOrderSession();
 		for(int i=0;i<numberOfOrders;i++){
 			List<Model> models = this.getDomainFacade().getVehicleModels();
-			Model chosenModel = models.get(rand.nextInt(models.size()));
+			Model chosenModel = models.get(4);
 			placeRandomStandardOrderOfModel(1, chosenModel);
 		}
 
@@ -222,6 +224,26 @@ public class InitialDataLoader {
 
 	}
 
+
+	public void placeSingleTaskOrder(int numberOfOrders) {
+		Random rand = new Random();
+
+
+		for(int i = 0; i<numberOfOrders; i++){
+			boolean accepted = false;
+			while(!accepted){
+				//start new order session
+				OrderSingleTaskHandler sing = this.getDomainFacade().getOrderSingleTaskHandler();
+				sing.startNewOrderSession();
+				
+				sing.selectOption(sing.getPossibleTasks().get(0).getOption(0));
+				sing.specifyDeadline(2, 6, 0);
+				sing.submitSingleTaskOrder();
+				accepted = true;
+			}
+		}
+	}
+
 	//----- end of order placement methods -----//
 
 	//--------- Assembly line advancement methods ---------//
@@ -232,6 +254,8 @@ public class InitialDataLoader {
 	 */
 	public void completeAllOrders(){
 		while(this.getDomainFacade().getPendingOrders().size() > 0){
+			for(OrderView v : this.getDomainFacade().getAssemblyLineStatusHandler().getLineViews().get(0).getActiveOrderContainers())
+				System.out.println(v.getOrderNumber());
 			for(int i=0; i<this.getDomainFacade().getLineViews().size();i++)
 				completeAllTasksOnAssemblyLine(i,1);
 		}
