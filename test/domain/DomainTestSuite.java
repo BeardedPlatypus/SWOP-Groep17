@@ -8,7 +8,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ CarModelTest.class,
 				CarsProducedRegistrarTest.class,
 				ClockManagerTest.class,
-				CompletedOrderCatalogTest.class,
 				DateTimeTest.class,
 				DelayRegistrarTest.class,
 				MedianSelectorTest.class,
