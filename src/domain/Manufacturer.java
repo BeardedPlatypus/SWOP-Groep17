@@ -6,7 +6,6 @@ import domain.restrictions.OptionRestrictionManager;
 import domain.statistics.EstimatedTimeCatalog;
 import exceptions.IllegalVehicleOptionCombinationException;
 import exceptions.OptionRestrictionException;
-import exceptions.OrderDoesNotExistException;
 import domain.assembly_line.AssemblyFloor;
 import domain.assembly_line.AssemblyLine;
 import domain.assembly_line.AssemblyLineState;
@@ -457,7 +456,7 @@ public class Manufacturer {
 	 * @return List of pending order containers in the productionSchedule.
 	 */
 	private List<OrderView> getSchedulePendingOrderContainers() {
-		return this.getProductionSchedule().getPendingStandardOrders();
+		return this.getProductionSchedule().getAllPendingOrders();
 	}
 	
 	/**
@@ -577,7 +576,7 @@ public class Manufacturer {
 	 */
 	private List<OrderView> getAssemblingPendingOrderContainers() {
 		//TODO add layer of indirection
-		return this.getAssemblyFloor().getActiveOrderContainers();
+		return this.getAssemblyFloor().getActiveOrderViews();
 	}
 	
 
@@ -693,8 +692,10 @@ public class Manufacturer {
 	 * @return the ECT of given order
 	 */
 	public DateTime getEstimatedCompletionTime(OrderView order) {
-		ifkkajkofdshfiudsafijiuhfgor
-		
+		if(this.getAssemblyFloor().contains(order)){
+			DateTime relativeCompletionTime= this.getAssemblyFloor().getEstimatedCompletionTime(order);
+			return this.getEstimatedTimeCatalog().calculateAbsoluteTime(relativeCompletionTime);
+		}
 		if(order.getDeadline().isPresent())
 			return order.getDeadline().get();
 		return this.getEstimatedTimeCatalog().getEstimatedCompletionTime(order);
