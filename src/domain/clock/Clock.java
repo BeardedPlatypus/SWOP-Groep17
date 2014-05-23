@@ -268,10 +268,13 @@ public class Clock implements TimeSubject, EventConsumer{
 	private void checkFireEvent() {
 		if (this.mustFireEvent()) {
 			List<TimeEvent> toFire = this.nextToFireEvents();
-			this.setCurrentTime(toFire.get(0).getGlobalTime());
+			if(!toFire.isEmpty()){
+				this.setCurrentTime(toFire.get(0).getGlobalTime());
+			}
 			for (TimeEvent event : toFire) {
 				event.activate();
 			}
+			
 		}
 	}
 	
@@ -279,7 +282,7 @@ public class Clock implements TimeSubject, EventConsumer{
 	 * @return Whether an event must be fired.
 	 */
 	private boolean mustFireEvent() {
-		return this.getEventQueue().size() >= this.getNumRegisteredActors();
+		return (!this.getEventQueue().isEmpty()) && (this.getEventQueue().size() >= this.getNumRegisteredActors());
 	}
 	
 	/**
@@ -288,11 +291,12 @@ public class Clock implements TimeSubject, EventConsumer{
 	 */
 	private List<TimeEvent> nextToFireEvents() {
 		List<TimeEvent> toReturn = new ArrayList<TimeEvent>();
-		
-		toReturn.add(this.getEventQueue().poll());
-		
+
+		TimeEvent event = this.getEventQueue().poll();
+		toReturn.add(event);
+
 		boolean addNoMore = false;
-		
+
 		do {
 			TimeEvent potentialToFire = this.getEventQueue().peek();
 			if (potentialToFire == null || toReturn.get(0).compareTo(potentialToFire) != 0) {
@@ -301,7 +305,7 @@ public class Clock implements TimeSubject, EventConsumer{
 				toReturn.add(this.getEventQueue().poll());
 			}
 		} while(! addNoMore);
-		
+
 		return toReturn;
 	}
 

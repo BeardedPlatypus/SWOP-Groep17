@@ -589,17 +589,17 @@ public class InitialisationHandler {
 		line3.attachObserver(logger);
 		line3.attachObserver(complCat);
 		
-		schedule.attachOrderObserver(line1Controller);
-		schedule.attachOrderObserver(line2Controller);
-		schedule.attachOrderObserver(line3Controller);
+//		schedule.attachOrderObserver(line1Controller);
+//		schedule.attachOrderObserver(line2Controller);
+//		schedule.attachOrderObserver(line3Controller);
 		
 		clock.register(line1Controller);
 		clock.register(line2Controller);
 		clock.register(line3Controller);
 		
-//		clock.constructEvent(new DateTime(0, 0, 0), line1Controller);
-//		clock.constructEvent(new DateTime(0, 0, 0), line2Controller);
-//		clock.constructEvent(new DateTime(0, 0, 0), line3Controller);
+		clock.constructEvent(new DateTime(0, 6, 0), line1Controller);
+		clock.constructEvent(new DateTime(0, 6, 0), line2Controller);
+		clock.constructEvent(new DateTime(0, 6, 0), line3Controller);
 		
 		//----------------------------------------------------------------------
 		// Initialise Manufacturer

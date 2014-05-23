@@ -103,6 +103,6 @@ public class AssemblyLineBuilder {
 		
 		List<WorkPost> workPosts = layoutFactory.makeLayout(this.getDesiredModels());
 		
-		return new AssemblyLine(workPosts, this.getDesiredModels(), eventConsumer);
+		return new AssemblyLine(workPosts, new ArrayList<>(this.getDesiredModels()), eventConsumer);
 	}
 }
