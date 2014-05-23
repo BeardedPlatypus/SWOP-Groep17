@@ -10,5 +10,5 @@ public interface OrderObserver {
 	 * @throws IllegalArgumentException
 	 * 		| time == null
 	 */
-	public void notifyOrder(OrderSubject o) throws IllegalArgumentException;
+	public void notifyOrder() throws IllegalArgumentException;
 }

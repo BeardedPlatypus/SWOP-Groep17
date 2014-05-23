@@ -245,5 +245,7 @@ public abstract class AssemblyLineState implements AssemblyLineStateView {
 	 * When setting the state, perform more work to ensure valid state.
 	 */
 	protected abstract void finaliseSetState();
+	
+	abstract boolean acceptsOrders();
 
 }

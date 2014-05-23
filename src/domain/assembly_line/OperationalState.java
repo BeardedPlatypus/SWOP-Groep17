@@ -46,4 +46,9 @@ public class OperationalState extends AssemblyLineState {
 		
 	}
 
+	@Override
+	boolean acceptsOrders() {
+		return true;
+	}
+
 }

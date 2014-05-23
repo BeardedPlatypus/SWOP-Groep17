@@ -73,4 +73,9 @@ public class BrokenState extends AssemblyLineState {
 		return other instanceof BrokenState;
 	}
 
+	@Override
+	boolean acceptsOrders() {
+		return false;
+	}
+
 }

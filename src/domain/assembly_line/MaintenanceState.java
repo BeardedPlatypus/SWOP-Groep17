@@ -59,4 +59,9 @@ public class MaintenanceState extends AssemblyLineState {
 		return other instanceof MaintenanceState;
 	}
 
+	@Override
+	boolean acceptsOrders() {
+		return false;
+	}
+
 }

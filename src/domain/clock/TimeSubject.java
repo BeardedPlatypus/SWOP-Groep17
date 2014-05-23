@@ -3,7 +3,7 @@ package domain.clock;
 import java.util.List;
 
 /**
- * The TimeSubject provides the subject interface of the ObserverStrategy for 
+ * The TimeSubject provides the subject interface of the Observer Pattern for 
  * the internal time in this System. 
  * It provides methods to attach and detach TimeObservers from this Subject, as 
  * well as a notify method to update all TimeObservers that observe this 
