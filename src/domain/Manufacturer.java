@@ -693,6 +693,8 @@ public class Manufacturer {
 	 * @return the ECT of given order
 	 */
 	public DateTime getEstimatedCompletionTime(OrderView order) {
+		ifkkajkofdshfiudsafijiuhfgor
+		
 		if(order.getDeadline().isPresent())
 			return order.getDeadline().get();
 		return this.getEstimatedTimeCatalog().getEstimatedCompletionTime(order);
