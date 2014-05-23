@@ -37,8 +37,6 @@ public class ChangeOperationalStatusHandler {
 		return this.manufacturer;
 	}
 	
-	//TODO select assembly line
-	
 	/**
 	 * Get the AssemblyLineStates that the manager can select.
 	 * 

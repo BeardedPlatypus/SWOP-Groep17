@@ -1,6 +1,5 @@
 package domain.assembly_line;
 
-//TODO update class documentation.
 /**
  * A view of an assembly task. Use this class to expose a task to the outside world.
  */

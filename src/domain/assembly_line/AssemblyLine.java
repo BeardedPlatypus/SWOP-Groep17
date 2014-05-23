@@ -488,43 +488,6 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 		this.resetFinishedAssemblyCounter();
 	}
 	
-//	/** Source of new Orders. */
-//	private SchedulerIntermediate schedulerIntermediate;
-//	
-//	/**
-//	 * @return the SchedulerIntermediate
-//	 */
-//	private SchedulerIntermediate getSchedulerIntermediate() {
-//		return this.schedulerIntermediate;
-//	}
-//	
-//	/**
-//	 * Set the SchedulerIntermediate to the specified SchedulerIntermediate
-//	 * 
-//	 * @param schedulerIntermediate
-//	 * 		The new SchedulerIntermediate
-//	 * @throws IllegalArgumentException
-//	 * 		schedulerIntermediate is null
-//	 */
-//	public void setSchedulerIntermediate(SchedulerIntermediate schedulerIntermediate)
-//		throws IllegalArgumentException {
-//		if (schedulerIntermediate == null) {
-//			throw new IllegalArgumentException("Cannot set null SchedulerIntermediate"
-//					+ "in AssemblyLine");
-//		}
-//		this.schedulerIntermediate = schedulerIntermediate;
-//	}
-	
-//	/**
-//	 * Ask the SchedulerIntermediate for the next Order
-//	 * 
-//	 * @return The next Order
-//	 */
-//	Optional<Order> popNextOrderFromSchedule() {
-//		//TODO ask the AssemblyLineController
-//		return this.getSchedulerIntermediate().popNextOrderFromSchedule();
-//	}
-	
 	/**
 	 * Call this method when advancing to handle the AssemblyProcedure that
 	 * is rolling off this AssemblyLine, if any. Concretely, submit the

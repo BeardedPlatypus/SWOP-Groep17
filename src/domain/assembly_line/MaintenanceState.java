@@ -2,8 +2,6 @@ package domain.assembly_line;
 
 import java.util.List;
 
-import com.google.common.base.Optional;
-
 import domain.DateTime;
 import domain.order.Order;
 
@@ -26,32 +24,16 @@ public class MaintenanceState extends AssemblyLineState {
 	public MaintenanceState clone() {
 		return new MaintenanceState();
 	}
-
-//	@Override
-//	protected Optional<Order> popNextOrderFromSchedule() {
-//		//FIXME optional?
-//		return Optional.absent();
-//	}
-	
-	private DateTime timeOfLastAdvance;
 	
 	@Override
 	protected void finaliseSetState() {
-		this.checkEmptyAssemblyLine();
 	}
 
 	@Override
 	protected void ensureStateConsistency() {
-		this.checkEmptyAssemblyLine();
 		
 	}
-	
-	private void checkEmptyAssemblyLine() {
-		if (super.getAssemblyLine().isEmpty()) {
-			//TODO request time and set operational time to four hours later
-		}
-		
-	}
+
 	
 	@Override
 	public boolean equals(Object other) {

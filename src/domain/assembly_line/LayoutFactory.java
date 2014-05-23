@@ -31,7 +31,6 @@ public class LayoutFactory {
 		
 		for (TaskType type : TaskType.values()) {
 			for (Model model : models) {
-				//FIXME
 				if (model.getMinsOnWorkPostOfType(type) > 0) {
 					toReturn.add(new WorkPost(type, workPostNum));
 					workPostNum++;

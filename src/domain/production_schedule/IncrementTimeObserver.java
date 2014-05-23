@@ -2,7 +2,6 @@ package domain.production_schedule;
 
 import domain.DateTime;
 
-//FIXME improve documentation.
 /**
  * The IncrementTimeObserver class implements the Observer interface of the 
  * Observer Pattern.

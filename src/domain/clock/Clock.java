@@ -25,7 +25,6 @@ import domain.DateTime;
  * 				at any one time.  
  *
  */
-//TODO refactor event queue management into new class?
 public class Clock implements TimeSubject, EventConsumer{
 
 	//--------------------------------------------------------------------------

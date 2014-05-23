@@ -137,7 +137,6 @@ public class ActiveStateTest {
 			PowerMockito.verifyPrivate(line, Mockito.never()).invoke("setCurrentState", new IdleState());
 			PowerMockito.verifyPrivate(line, Mockito.never()).invoke("setCurrentState", new ActiveState());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
