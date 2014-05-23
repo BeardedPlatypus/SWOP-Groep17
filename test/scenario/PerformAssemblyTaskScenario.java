@@ -70,7 +70,7 @@ public class PerformAssemblyTaskScenario {
 		 *         to finish the job.
 		 */
 		AssemblyTaskView firstTask = tasks.get(0);
-		facade.completeWorkpostTask(0, firstTask.getTaskNumber(), 60);
+		handler.completeWorkpostTask(0, 0, firstTask.getTaskNumber(), 60);
 		tasks = handler.getAssemblyTasksAtWorkPost(0, 0);
 		assertTrue(tasks.get(0).isCompleted());
 		for(int i = 1; i < tasks.size(); i++){
