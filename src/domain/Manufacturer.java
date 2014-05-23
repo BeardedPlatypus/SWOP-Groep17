@@ -12,7 +12,6 @@ import domain.assembly_line.AssemblyLineState;
 import domain.assembly_line.AssemblyLineStateView;
 import domain.assembly_line.AssemblyLineView;
 import domain.assembly_line.AssemblyTaskView;
-import domain.assembly_line.SchedulerIntermediate;
 import domain.assembly_line.WorkPostView;
 import domain.car.ModelCatalog;
 import domain.car.Option;

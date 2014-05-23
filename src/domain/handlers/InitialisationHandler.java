@@ -11,6 +11,7 @@ import domain.Manufacturer;
 import domain.assembly_line.AssemblyFloor;
 import domain.assembly_line.AssemblyLine;
 import domain.assembly_line.AssemblyLineBuilder;
+import domain.assembly_line.AssemblyLineController;
 import domain.assembly_line.AssemblyLineFacade;
 import domain.assembly_line.TaskType;
 import domain.car.CarModel;
@@ -540,17 +541,17 @@ public class InitialisationHandler {
 		
 		proBuilder.addToDesiredModels(modelA);
 		proBuilder.addToDesiredModels(modelB);
-		AssemblyLine line1 = proBuilder.buildAssemblyLine();
+		AssemblyLine line1 = proBuilder.buildAssemblyLine(clock);
 		proBuilder.addToDesiredModels(modelC);
-		AssemblyLine line2 = proBuilder.buildAssemblyLine();
+		AssemblyLine line2 = proBuilder.buildAssemblyLine(clock);
 		proBuilder.addToDesiredModels(modelX);
 		proBuilder.addToDesiredModels(modelY);
-		AssemblyLine line3 = proBuilder.buildAssemblyLine();
+		AssemblyLine line3 = proBuilder.buildAssemblyLine(clock);
 		
 		//TODO FIXME YOLO
-		lines.add(new AssemblyLineFacade(line1, null));
-		lines.add(new AssemblyLineFacade(line2, null));
-		lines.add(new AssemblyLineFacade(line3, null));		
+		lines.add(new AssemblyLineFacade(line1, new AssemblyLineController(schedule, clock)));
+		lines.add(new AssemblyLineFacade(line2, new AssemblyLineController(schedule, clock)));
+		lines.add(new AssemblyLineFacade(line3, new AssemblyLineController(schedule, clock)));		
 		
 		StatisticsLogger logger = new StatisticsLogger();
 		CarsProducedRegistrar prodRegistrar = new CarsProducedRegistrar();

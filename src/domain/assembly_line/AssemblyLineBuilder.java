@@ -3,8 +3,8 @@ package domain.assembly_line;
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.Manufacturer;
 import domain.car.Model;
+import domain.clock.EventConsumer;
 
 /**
  * The AssemblyLineBuilder is responsible for assuring that new
@@ -25,27 +25,9 @@ public class AssemblyLineBuilder {
 	 */
 	public AssemblyLineBuilder() throws IllegalArgumentException {
 		
-		//TODO Manufacturer necessary?
-//		if (manufacturer == null) {
-//			throw new IllegalArgumentException("Cannot initialise an "
-//					+ "AssemblyLineBuilder with null manufacturer");
-//		}
+
 		this.desiredModels = new ArrayList<Model>();
-		//this.manufacturer = manufacturer;
 	}
-//	
-//	/** The manufacturer of the new AssemblyLine. */
-//	private Manufacturer manufacturer;
-//	
-//	/**
-//	 * Get the Manufacturer of any new AssemblyLines built by this
-//	 * AssemblyLineBuilder
-//	 * 
-//	 * @return The manufacturer
-//	 */
-//	private Manufacturer getManufacturer() {
-//		return this.manufacturer;
-//	}
 	
 	/** List of Models that the new AssemblyLine is expected to handle */
 	private List<Model> desiredModels;
@@ -110,7 +92,7 @@ public class AssemblyLineBuilder {
 	 * @throws IllegalArgumentException
 	 * 		See {@link AssemblyLine#AssemblyLine(List<WorkPost), OrderAcceptanceChecker, SchedulerIntermediate) AssemblyLine(List<WorkPost), OrderAcceptanceChecker, SchedulerIntermediate)}
 	 */
-	public AssemblyLine buildAssemblyLine()
+	public AssemblyLine buildAssemblyLine(EventConsumer eventConsumer)
 			throws IllegalStateException {
 		if (! this.canBuildAssemblyLine()) {
 			throw new IllegalStateException("The AssemblyLineBuilder could"
@@ -121,6 +103,6 @@ public class AssemblyLineBuilder {
 		
 		List<WorkPost> workPosts = layoutFactory.makeLayout(this.getDesiredModels());
 		
-		return new AssemblyLine(workPosts, this.getDesiredModels());
+		return new AssemblyLine(workPosts, this.getDesiredModels(), eventConsumer);
 	}
 }

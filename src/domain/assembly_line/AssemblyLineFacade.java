@@ -32,14 +32,16 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	 * @throws IllegalArgumentException
 	 * 		If either of the parameters is null
 	 */
-	public AssemblyLineFacade(AssemblyLine line, SchedulerIntermediate inter)
+	public AssemblyLineFacade(AssemblyLine line, AssemblyLineController controller)
 	throws IllegalArgumentException{
 		if (line == null)
 			throw new IllegalArgumentException("line can not be null!");
 //		if (inter == null)
 //			throw new IllegalArgumentException("intermediate can not be null!");
 		this.line = line;
-		this.inter = inter;
+		this.line.setAssemblyLine(controller);
+		this.controller = controller;
+		this.controller.setAssemblyLine(line);
 	}
 
 	//--------------------------------------------------------------------------
@@ -62,11 +64,11 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	 * 
 	 * @return the assemblyline
 	 */
-	private SchedulerIntermediate getIntermediate(){
-		return this.inter;
+	private AssemblyLineController getController(){
+		return this.controller;
 	}
 	
-	private final SchedulerIntermediate inter;
+	private final AssemblyLineController controller;
 	
 	//--------------------------------------------------------------------------
 	// Facade methods
