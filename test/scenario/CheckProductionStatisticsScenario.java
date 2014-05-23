@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.*;
+import org.powermock.reflect.Whitebox;
 
 import domain.DateTime;
 import domain.Manufacturer;
@@ -33,9 +34,11 @@ public class CheckProductionStatisticsScenario {
 	AssemblyLine assemblyLine;
 	InitialisationHandler init;
 	DomainFacade facade;
+	Manufacturer manufacturer; 
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		
 	}
 
 	@Before
@@ -43,8 +46,10 @@ public class CheckProductionStatisticsScenario {
 		MockitoAnnotations.initMocks(this);
 		
 		init = new InitialisationHandler();
+		init.setupIteration3();
 		facade = init.getDomainFacade();
 		handler = facade.getCheckProductionStatisticsHandler();
+		manufacturer = Whitebox.getInternalState(handler, Manufacturer.class);
 	}
 
 	@Test

@@ -10,6 +10,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.asm.tree.IntInsnNode;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import domain.InteractionSimulator;
@@ -34,6 +35,7 @@ public class PerformAssemblyTaskScenario {
 	
 	DomainFacade facade;
 	PerformAssemblyTaskHandler handler;
+	InitialisationHandler init;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -42,7 +44,8 @@ public class PerformAssemblyTaskScenario {
 	@Before
 	public void setUp() throws Exception {
 		
-		InitialisationHandler init = new InitialisationHandler();
+		init = new InitialisationHandler();
+		init.setupIteration3();
 		facade = init.getDomainFacade();
 		handler = facade.getPerformAssemblyTaskHandler();
 	}
@@ -90,29 +93,18 @@ public class PerformAssemblyTaskScenario {
 		// Use case ends here.
 	}
 	
-	@Test
-	public void scenarioTest_allTasksFinished() {
-		this.completeAllTasks();
-		List<WorkPostView> workPosts = handler.getWorkPosts(0);
-		assertFalse(workPosts.get(0).isEmpty());
-		assertFalse(workPosts.get(0).isFinished());
-		assertFalse(workPosts.get(1).isEmpty());
-		assertFalse(workPosts.get(1).isFinished());
-		assertTrue(workPosts.get(2).isEmpty());
-	}
+//	@Test
+//	public void scenarioTest_allTasksFinished() {
+//		init.getInitialDataLoader().completeAllTasksOnAssemblyLine(0, 6, 100);
+//		init.getInitialDataLoader().completeAllTasksOnAssemblyLine(1, 6, 100);
+//		List<WorkPostView> workPosts = handler.getWorkPosts(0);
+//		assertFalse(workPosts.get(0).isEmpty());
+//		assertFalse(workPosts.get(0).isFinished());
+//		assertFalse(workPosts.get(1).isEmpty());
+//		assertFalse(workPosts.get(1).isFinished());
+//		assertTrue(workPosts.get(2).isEmpty());
+//	}
 	
-	public void completeAllTasks() {
-		List<AssemblyLineView> lines = handler.getAssemblyLines();
-		for (int i = 0; i < lines.size(); i++) {
-			AssemblyLineView line = lines.get(i);
-			List<WorkPostView> workPosts = line.getWorkPostViews();
-			for (int j = 0; j < workPosts.size(); j++) {
-				List<AssemblyTaskView> tasks = handler.getAssemblyTasksAtWorkPost(i, j);
-				for (int k = 0; k < tasks.size(); k++) {
-					handler.completeWorkpostTask(i, j, k, 60);
-				}
-			}
-		}
-	}
+
 
 }

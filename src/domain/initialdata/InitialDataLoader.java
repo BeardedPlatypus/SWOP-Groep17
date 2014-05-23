@@ -268,7 +268,7 @@ public class InitialDataLoader {
 	 * @param numberOfTimes
 	 */
 	public void completeAllTasksOnAssemblyLine(int lineNb, int numberOfTimes) {
-		completeAllTasksOnAssemblyLine(lineNb, numberOfTimes, 40);
+		completeAllTasksOnAssemblyLine(lineNb, numberOfTimes, 10);
 	}
 	
 	/**

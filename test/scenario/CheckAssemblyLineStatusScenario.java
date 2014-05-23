@@ -49,10 +49,9 @@ public class CheckAssemblyLineStatusScenario {
 		// of the UI ---
 		AssemblyLineView view = handler.getLineViews().get(0);
 		assertEquals(3, view.getWorkPostViews().size());
-		assertFalse(view.getWorkPostViews().get(0).isEmpty());
+		assertTrue(view.getWorkPostViews().get(0).isEmpty());
 		assertTrue(view.getWorkPostViews().get(1).isEmpty());
 		assertTrue(view.getWorkPostViews().get(2).isEmpty());
-		assertFalse(view.getWorkPostViews().get(0).isFinished());
 		assertEquals(TaskType.BODY.toString(), view.getWorkPostViews().get(0).getName());
 	}
 

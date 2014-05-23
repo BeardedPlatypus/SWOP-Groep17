@@ -131,7 +131,7 @@ public class CheckOrderDetailsHandler {
 	 * 		The new state of deprecation
 	 */
 	private void setDeprecatedState(boolean state){
-		
+		this.snapshotWasUsed = state;
 	}
 	
 	/** boolean which records if the current snapshot lists have been used */
