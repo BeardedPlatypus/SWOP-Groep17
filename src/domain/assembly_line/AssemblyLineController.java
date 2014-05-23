@@ -2,13 +2,11 @@ package domain.assembly_line;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observer;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import domain.DateTime;
-import domain.Manufacturer;
 import domain.assembly_line.virtual.VirtualAssemblyLine;
 import domain.car.Model;
 import domain.clock.Clock;
@@ -17,7 +15,6 @@ import domain.clock.EventConsumer;
 import domain.order.Order;
 import domain.production_schedule.OrderObserver;
 import domain.production_schedule.OrderRequest;
-import domain.production_schedule.OrderSubject;
 import domain.production_schedule.SchedulerContext;
 
 /**
@@ -97,8 +94,6 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 	//--------------------------------------------------------------------------
 	@Override
 	public void activate() {
-		// Activate this AssemblyLine.
-		this.setIsCurrent(true);
 		// Check for state change.		
 		if (this.hasNewState()) {
 			this.switchState();
@@ -224,43 +219,17 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 		
 		this.getAssemblyLine().advance(Lists.reverse(l));
 	}
-	
-	//--------------------------------------------------------------------------
-	// Is current or in the future
-	//--------------------------------------------------------------------------
-	/**
-	 * Check if this AssemblyLine is current.
-	 * 
-	 * @return if this AssemblyLine is current.
-	 */
-	private boolean isCurrent() {
-		return this.isCurrent;
-	}
-	
-	/** 
-	 * Set this AsemblyLine to the specified new isCurrent state.
-	 * 
-	 * @param newIsCurrent
-	 * 		The new state of this AssemblyLine's isCurrent.
-	 * 
-	 * @postcondition | (new this).isCurrent == newIsCurrent
-	 */
-	private void setIsCurrent(boolean newIsCurrent) {
-		this.isCurrent = newIsCurrent;
-	}
-	
-	/** If this AssemblyLine is current and active, or disabled because it is in the future. */
-	private boolean isCurrent = true;
-	
+		
 	//--------------------------------------------------------------------------
 	// State-related methods.
 	//--------------------------------------------------------------------------
-	public void restoreToOperationalState() {
-		
+	public void changeState(AssemblyLineState state) {
+		this.setNextState(Optional.of(state));
 	}
 	
 	private void switchState() {
 		this.getAssemblyLine().setCurrentState(this.getNewState().get());
+		this.setNextState(Optional.<AssemblyLineState> absent());
 	}
 	
 	private boolean hasNewState() {
@@ -269,6 +238,14 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 	
 	private Optional<AssemblyLineState> getNewState() {
 		return this.newState;
+	}
+	
+	private void setNextState(Optional<AssemblyLineState> state) {
+		if (state == null) {
+			throw new IllegalArgumentException("Thomas is niet lief.");
+		}
+		
+		this.newState = state;
 	}
 	
 	/** State that should be updated next step. */
