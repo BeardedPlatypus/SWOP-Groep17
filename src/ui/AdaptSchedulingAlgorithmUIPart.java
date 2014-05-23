@@ -83,8 +83,8 @@ public class AdaptSchedulingAlgorithmUIPart {
 			System.out.println((i+1) + ") " + algs.get(i).getName());
 		}
 		System.out.println((algs.size()+1) + ") Exit Menu");
-		int choice = helper.getIntFromUser(1, algs.size()+1);
-		if(choice == algs.size()+1)
+		int choice = helper.getIntFromUser(1, algs.size()+1)-1;
+		if(choice == algs.size())
 			return "ExitPLS";
 		return algs.get(choice).getName();
 	}
