@@ -56,4 +56,15 @@ public class EstimatedTimeCatalog {
 	public DateTime getEstimatedCompletionTime(OrderView order){
 		return this.getRegistrar().getCompletionTimeOfModel(order.getModel());
 	}
+
+	/**
+	 * Takes a relative completion time and makes it into an absolute time.
+	 * 
+	 * @param relativeCompletionTime
+	 * 		The given relative completion time
+	 * @return The resulting absolute completion time
+	 */
+	public DateTime calculateAbsoluteTime(DateTime relativeCompletionTime) {
+		return this.getRegistrar().calculateAbsoluteTime(relativeCompletionTime);
+	}
 }

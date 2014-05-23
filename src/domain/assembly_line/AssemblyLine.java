@@ -17,7 +17,6 @@ import domain.order.CompletedOrderSubject;
 import domain.order.Order;
 import domain.order.OrderView;
 import domain.statistics.ProcedureStatistics;
-import domain.statistics.StatisticsLogger;
 import exceptions.OrdersNotEmptyWhenAdvanceException;
 
 /**
@@ -77,37 +76,6 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 		this.observers = new ArrayList<CompletedOrderObserver>();
 		this.initialiseState();
 	}	
-	
-	//--------------------------------------------------------------------------
-	// Manufacturer.
-	//--------------------------------------------------------------------------
-	/** 
-	 * Get the manufacturer that owns this AssemblyLine. 
-	 * 
-	 * @return this manufacturer that owns this AssemblyLine.
-	 */
-	private Manufacturer getManufacturer() {
-		return this.manufacturer;
-	}
-	
-	/** The manufacturer that owns this AssemblyLIne. */
-	private Manufacturer manufacturer;
-	
-	/**
-	 * Set this AssemblyLine's Manufacturer to the specified manufacturer
-	 * 
-	 * @param manufacturer
-	 * 		The new Manufacturer
-	 * @throws IllegalArgumentException
-	 * 		manufacturer is null
-	 */
-	public void setManufacturer(Manufacturer manufacturer) throws IllegalArgumentException {
-		if (manufacturer == null) {
-			throw new IllegalArgumentException("Cannot set null Manufacturer"
-					+ "in AssemblyLine");
-		}
-		this.manufacturer = manufacturer;
-	}
 	
 	//--------------------------------------------------------------------------
 	// Order-related methods
@@ -711,5 +679,32 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 			result.add(wp.getOrder());
 		}
 		return result;
+	}
+
+	/**
+	 * Calculate the remaining time this order will spend on this line.
+	 * 
+	 * @param order
+	 * 		The order to check for
+	 * @return the estimated remaining time
+	 * @throws IllegalArgumentException
+	 * 		If the order is not present on this line
+	 */
+	public DateTime getEstimatedCompletionTime(OrderView order) {
+		if(!this.contains(order))
+			throw new IllegalArgumentException("Order not present on this line");
+		boolean found = false;
+		DateTime time = new DateTime(0, 0, 0);
+		for(int i=0; i<this.getAssemblyLineSize();i++){
+			WorkPost currentWorkPost = this.getWorkPost(i);
+			if(currentWorkPost.contains(order))
+				found = true;
+			if(found){
+				time = time.addTime(new DateTime(0, 0,
+						order.getModel().
+						getMinsOnWorkPostOfType(currentWorkPost.getTaskType())));
+			}
+		}
+		return time;
 	}
 }

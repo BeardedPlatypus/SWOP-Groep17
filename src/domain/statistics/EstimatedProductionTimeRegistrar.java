@@ -150,5 +150,16 @@ public class EstimatedProductionTimeRegistrar implements Registrar {
 	private void setCompletionEstimate(Model model, DateTime time){
 		this.completionTimes. put(model, time);
 	}
+
+	/**
+	 * Takes a relative completion time and makes it into an absolute time.
+	 * 
+	 * @param relativeCompletionTime
+	 * 		The given relative completion time
+	 * @return The resulting absolute completion time
+	 */
+	public DateTime calculateAbsoluteTime(DateTime relativeCompletionTime) {
+		return this.getCurrentTime().addTime(relativeCompletionTime);
+	}
 	
 }

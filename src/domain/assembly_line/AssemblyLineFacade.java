@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.google.common.base.Optional;
 
+import domain.DateTime;
 import domain.order.Order;
 import domain.order.OrderView;
-import domain.statistics.StatisticsLogger;
 
 /**
  * A facade which hold together an assemblyLine and its controller.
@@ -228,6 +228,21 @@ public class AssemblyLineFacade implements AssemblyLineView{
 	public AssemblyProcedure makeAssemblyProcedure(Optional<Order> order) {
 		return this.getLine().makeAssemblyProcedure(order);
 	}
+
+	/**
+	 * Calculate the remaining time this order will spend on this line.
+	 * 
+	 * @param order
+	 * 		The order to check for
+	 * @return the estimated remaining time
+	 * @throws IllegalArgumentException
+	 * 		If the order is not present on this line
+	 */
+	public DateTime getEstimatedCompletionTime(OrderView order) {
+		return this.getLine().getEstimatedCompletionTime(order);
+	}
+
+
 
 	//----- end of AssemblyLine methods -----//
 	
