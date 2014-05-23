@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import com.google.common.base.Optional;
@@ -32,13 +31,14 @@ import domain.car.Specification;
 import domain.order.Order;
 import domain.order.StandardOrder;
 import domain.car.Model;
+import domain.clock.Clock;
 
 public class OperationalStateTest {
 
 	AssemblyLine line;
 	@Mock Order mockOrder;
 	@Mock Manufacturer manufacturer;
-	//@Mock SchedulerIntermediate sched;
+	@Mock Clock mockDeKlokMock;
 	List<WorkPost> workPosts;
 	
 	AssemblyTask task0;
@@ -64,8 +64,7 @@ public class OperationalStateTest {
 		workPosts.add(new WorkPost(TaskType.DRIVETRAIN, 1));
 		workPosts.add(new WorkPost(TaskType.ACCESSORIES, 2));
 		
-		line = new AssemblyLine(workPosts, new ArrayList<Model>(Arrays.asList(model)));
-		line.setManufacturer(manufacturer);
+		line = new AssemblyLine(workPosts, new ArrayList<Model>(Arrays.asList(model)), mockDeKlokMock);
 		
 		task0 = new AssemblyTask(new Option(TaskType.BODY, "john", "doe"), 0);
 		task1 = new AssemblyTask(new Option(TaskType.DRIVETRAIN, "jane", "doe"), 0);
