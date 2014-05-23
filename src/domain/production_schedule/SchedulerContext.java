@@ -413,6 +413,7 @@ public class SchedulerContext implements OrderSubject {
 			throw new IllegalArgumentException("Order is not a valid pending order.");
 		}
 		this.getCurrentSchedulingStrategy().addTo(order, this.getStandardOrderQueueRaw());
+		this.notifyNewOrder();
 	}
 	
 	/**
@@ -445,6 +446,7 @@ public class SchedulerContext implements OrderSubject {
 		if (!hasAdded) {
 			queue.add(order);
 		}
+		this.notifyNewOrder();
 	}
 	
 	//--------------------------------------------------------------------------
