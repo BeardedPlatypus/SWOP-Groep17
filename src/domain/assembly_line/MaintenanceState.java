@@ -1,5 +1,7 @@
 package domain.assembly_line;
 
+import java.util.List;
+
 import com.google.common.base.Optional;
 
 import domain.DateTime;
@@ -64,4 +66,13 @@ public class MaintenanceState extends AssemblyLineState {
 		return false;
 	}
 
+	@Override
+	void advanceAssemblyLine(List<Order> orders) throws IllegalStateException,
+			IllegalArgumentException {
+		super.advanceAssemblyLine(orders);
+		if (this.getAssemblyLine().isEmpty()) {
+			this.getAssemblyLine().getAssemblyLineController().changeState(new ActiveState());
+			this.getAssemblyLine().getEventConsumer().constructEvent(new DateTime(0, 4, 0), this.getAssemblyLine().getAssemblyLineController());
+		}
+	}
 }
