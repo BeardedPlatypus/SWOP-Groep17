@@ -53,6 +53,7 @@ public class OrderDetailsScenario {
 	@Before
 	public void setUp() throws Exception {
 		init = new InitialisationHandler();
+		init.setupIteration3();
 		facade = init.getDomainFacade();
 		orderDetailsHandler = facade.getCheckOrderDetailsHandler();
 	}
@@ -73,7 +74,6 @@ public class OrderDetailsScenario {
 		assertNotNull(orderDetailsHandler.getCurrentOrderSubmissionTime());
 		assertFalse(orderDetailsHandler.currentOrderIsComplete());
 		assertTrue(orderDetailsHandler.getCurrentOrderEstimatedCompletionTime() != null);
-		assertTrue(orderDetailsHandler.getEstimatedCompletionTime(order1) != null);
 
 
 		//4. The user indicates he is finished viewing the details. ==HAPPENS IN UI==
@@ -94,7 +94,6 @@ public class OrderDetailsScenario {
 		assertNotNull(orderDetailsHandler.getCurrentOrderSubmissionTime());
 		assertFalse(orderDetailsHandler.currentOrderIsComplete());
 		assertTrue(orderDetailsHandler.getCurrentOrderEstimatedCompletionTime() != null);
-		assertTrue(orderDetailsHandler.getEstimatedCompletionTime(order1) != null);
 
 
 		//4. The user indicates he is finished viewing the details. ==HAPPENS IN UI==
@@ -115,8 +114,7 @@ public class OrderDetailsScenario {
 
 		orderDetailsHandler.selectCompletedOrder(0);
 		assertNotNull(orderDetailsHandler.getCurrentOrderSubmissionTime());
-		assertTrue(orderDetailsHandler.getCurrentOrderEstimatedCompletionTime() != null);
-		assertTrue(orderDetailsHandler.getEstimatedCompletionTime(order1) != null);
+		assertTrue(orderDetailsHandler.getCurrentOrderCompletionTime() != null);
 		assertTrue(orderDetailsHandler.currentOrderIsComplete());
 
 		//4. The user indicates he is finished viewing the details. ==HAPPENS IN UI==

@@ -707,7 +707,7 @@ public class InitialisationHandler {
 	
 	public void setupIteration3(){
 		//First ten orders of the system
-		this.getInitialDataLoader().placeRandomStandardOrder(5);
+		this.getInitialDataLoader().placeRandomStandardOrder(10);
 		//Complete those
 		this.getInitialDataLoader().completeAllOrders();
 		//Set the new day

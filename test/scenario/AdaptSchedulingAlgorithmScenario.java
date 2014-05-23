@@ -35,6 +35,7 @@ public class AdaptSchedulingAlgorithmScenario extends TestCase {
 	@Before
 	public void setUp() throws Exception {
 		InitialisationHandler init = new InitialisationHandler();
+		init.setupIteration3();
 		facade = init.getDomainFacade();
 		handler = facade.getAdaptSchedulingAlgorithmHandler();
 		manufacturer = Whitebox.getInternalState(handler, Manufacturer.class);
