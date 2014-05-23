@@ -3,6 +3,7 @@ package domain.assembly_line;
 import java.util.ArrayList;
 import java.util.List;
 
+import domain.DateTime;
 import domain.order.OrderView;
 import domain.statistics.StatisticsLogger;
 
@@ -144,7 +145,7 @@ public class AssemblyFloor {
 	 * 
 	 * @return a list with all orders on the assembly lines
 	 */
-	public List<OrderView> getActiveOrderContainers() {
+	public List<OrderView> getActiveOrderViews() {
 		List<OrderView> result = new ArrayList<>();
 		for(AssemblyLineFacade fac : this.getLines()){
 			result.addAll(fac.getActiveOrderContainers());
@@ -152,6 +153,40 @@ public class AssemblyFloor {
 		return result;
 	}
 
+	/**
+	 * Check whether or not an assembly line on this floor contains given order.
+	 * 
+	 * @param order
+	 * 		The order to check for
+	 * @return whether this order is present on one of the assemblyLines
+	 */
+	public boolean contains(OrderView order) {
+		for(AssemblyLineFacade line : this.getLines()){
+			if(line.contains(order))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Return the estimated remaining time of production for an order on this
+	 * assemblyFloor
+	 * 
+	 * @param order
+	 *		The order to calculate for
+	 * @return
+	 * 		The calculated time
+	 * @throws IllegalStateException
+	 * 		If the order is not present on this floor
+	 */
+	public DateTime getEstimatedCompletionTime(OrderView order)
+			throws IllegalStateException{
+		for(AssemblyLineFacade line : this.getLines()){
+			if(line.contains(order))
+				return line.getEstimatedCompletionTime(order);
+		}
+		throw new IllegalStateException("Order not present on assemblyLine.");
+	}
 
 	//--------- Perform Assembly Tasks methods ---------//
 	
@@ -216,6 +251,7 @@ public class AssemblyFloor {
 			throw new IllegalArgumentException("Not a valid index for an assemblyline.");
 		this.getLines().get(lineNb).completeWorkpostTask(postNb, taskNb, minutes);;
 	}
+
 
 	//----- end of Perform Assembly Tasks methods -----//
 
