@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import domain.Manufacturer;
 import domain.assembly_line.AssemblyTaskView;
 import domain.assembly_line.WorkPostView;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
+import domain.clock.ClockManipulator;
 import domain.handlers.DomainFacade;
-import domain.order.Order;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
 
@@ -36,8 +37,10 @@ public class InitialDataLoader {
 	 * @param manu
 	 * 		The manufacturer to load the data into
 	 */
-	public InitialDataLoader(DomainFacade domain){
+	public InitialDataLoader(DomainFacade domain, Manufacturer manuf, ClockManipulator manip){
 		this.domainFacade = domain;
+		this.manufacturer = manuf;
+		this.clockMan = manip;
 	}
 	
 	//--------------------------------------------------------------------------
@@ -45,42 +48,55 @@ public class InitialDataLoader {
 	//--------------------------------------------------------------------------
 	
 	/**
+	 * Get the domainfacade of this loader for internal use
+	 * 
+	 * @return the domainfacade
+	 */
+	private DomainFacade getDomainFacade() {
+		return this.domainFacade;
+	}
+
+	private final DomainFacade domainFacade;
+	
+	/**
 	 * Get the manufacturer of this loader for internal use
 	 * 
 	 * @return the manufacturer
 	 */
-	private DomainFacade getDomainFacade() {
-		return domainFacade;
+	private Manufacturer getManufacturer(){
+		return this.manufacturer;
 	}
-
-	private final DomainFacade domainFacade;
+	
+	private final Manufacturer manufacturer;
+	
+	/**
+	 * Get the clockManipulator of this loader for internal use
+	 * 
+	 * @return the ClockManipulator
+	 */
+	private ClockManipulator getClockManipulator(){
+		return this.clockMan;
+	}
+	
+	private final ClockManipulator clockMan;
 	
 	//--------------------------------------------------------------------------
 	// Loading methods
 	//--------------------------------------------------------------------------
 	
-	public void advanceDay(int amountOfDays){
-		//TODO
-	}
-	
-	public void addCompletedStandardOrder(StandardOrder order){
-		//TODO
-	}
-	
-	public void addCompletedSingleOrder(SingleTaskOrder order){
-		//TODO
-	}
-	
 	public void addPendingStandardOrder(StandardOrder order){
-		
+		this.getManufacturer().submitStandardOrder(order.getModel(), order.getSpecifications().getOptions());
 	}
 	
 	public void addPendingSingleOrder(SingleTaskOrder order){
-		
+		this.getManufacturer().submitSingleTaskOrder(order.getSpecifications().getOption(0), order.getDeadline().get());
 	}
 	
-	public void scheduleOnLine(int line, Order order){
-		//TODO
+	public void advanceDay(int amountOfDays){
+		for (int i = 0; i < amountOfDays; i++) {
+			this.completeAllOrders();
+			this.getClockManipulator().advanceDay();
+		}
 	}
 	
 	//--------------------------------------------------------------------------
@@ -206,10 +222,10 @@ public class InitialDataLoader {
 	/**
 	 * Simulates completing all pending orders.
 	 */
-	public void simulateCompleteAllOrders(){
+	public void completeAllOrders(){
 		while(this.getDomainFacade().getPendingOrders().size() > 0){
 			for(int i=0; i<this.getDomainFacade().getLineViews().size();i++)
-				simulateCompleteAllTasksOnAssemblyLine(i,1);
+				completeAllTasksOnAssemblyLine(i,1);
 		}
 	}
 	
@@ -219,8 +235,8 @@ public class InitialDataLoader {
 	 * 
 	 * @param numberOfTimes
 	 */
-	public void simulateCompleteAllTasksOnAssemblyLine(int lineNb, int numberOfTimes) {
-		simulateCompleteAllTasksOnAssemblyLine(lineNb, numberOfTimes, 40);
+	public void completeAllTasksOnAssemblyLine(int lineNb, int numberOfTimes) {
+		completeAllTasksOnAssemblyLine(lineNb, numberOfTimes, 40);
 	}
 	
 	/**
@@ -229,7 +245,7 @@ public class InitialDataLoader {
 	 * 
 	 * @param numberOfTimes
 	 */
-	public void simulateCompleteAllTasksOnAssemblyLine(int lineNb, int numberOfTimes,
+	public void completeAllTasksOnAssemblyLine(int lineNb, int numberOfTimes,
 			int timeSpentPerTask) {
 		for(int i = 0; i < numberOfTimes; i++){
 			for(WorkPostView wp : this.getDomainFacade().getWorkPosts(lineNb)){

@@ -196,7 +196,8 @@ public class Clock implements TimeSubject, EventConsumer{
 	 * @param time
 	 * 		The new time
 	 */
-	private void setCurrentTime(DateTime time) {
+	//Package Protected for manipulator
+	void setCurrentTime(DateTime time) {
 		this.time = time;
 		this.notifyTime();
 	}
