@@ -19,6 +19,8 @@ import domain.car.ModelCatalog;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.clock.Clock;
+import domain.clock.ClockManipulator;
+import domain.initialdata.InitialDataLoader;
 import domain.order.CompletedOrderCatalog;
 import domain.order.OrderFactory;
 import domain.order.SingleTaskCatalog;
@@ -637,12 +639,21 @@ public class InitialisationHandler {
 				singleTaskHandler,
 				performHandler,
 				changeHandler);
+		
+		//--------------------------------------------------------------------------
+		// Initialdataloader setup
+		//--------------------------------------------------------------------------
+		ClockManipulator manipulator = new ClockManipulator(clock);
+		loader = new InitialDataLoader(domainFacade, manufacturer, manipulator);
 
 	}
 
+	//--------------------------------------------------------------------------
+	// Properties
+	//--------------------------------------------------------------------------
+	
 	/** 
-	 * Get the DomainFacade of the system initialised 
-	 * by this InitialisationHandler.
+	 * Get the DomainFacade of the system, initialised by this InitialisationHandler.
 	 * 
 	 * @return The DomainFacade of the system initialised by this InitialisationHandler
 	 */
@@ -652,5 +663,38 @@ public class InitialisationHandler {
 
 	/** The domain facade that is accessible by the UI. */
 	private final DomainFacade domainFacade;
+	
+	/**
+	 * Get the initialDataLoader of the set up system
+	 * 
+	 * @return the initialDataLoader
+	 */
+	public InitialDataLoader getInitialDataLoader(){
+		return this.loader;
+	}
+	
+	private final InitialDataLoader loader;
+	
+	//--------------------------------------------------------------------------
+	// Setup method for iteration 3
+	//--------------------------------------------------------------------------
+	
+	public void setupIteration3(){
+		//First ten orders of the system
+		this.getInitialDataLoader().placeRandomStandardOrder(10);
+		//Complete those
+		this.getInitialDataLoader().completeAllOrders();
+		//Set the new day
+		this.getInitialDataLoader().advanceDay(1);
+		//Now we want to get the three lines filled up, we use the identical orders for this
+		// since we slightly assume they can populate each assemblyLine
+		this.getInitialDataLoader().placeIdenticalStandardOrder(3);
+		//Add three singleTaskOrders
+		//TODO
+		//Add three batch orders
+		this.getInitialDataLoader().placeIdenticalStandardOrder(3);
+		//Add three random other orders
+		this.getInitialDataLoader().placeRandomStandardOrder(3);
+	}
 
 }
