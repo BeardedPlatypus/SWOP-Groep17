@@ -25,7 +25,7 @@ import domain.production_schedule.strategy.SchedulingStrategy;
  * 
  * @author Martinus Wilhelmus Tegelaers
  */
-public class SchedulerContext {
+public class SchedulerContext implements OrderSubject {
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -456,4 +456,46 @@ public class SchedulerContext {
 	public boolean isValidPendingOrder(Order order) {
 		return order != null && !order.isCompleted();
 	}
+
+	//--------------------------------------------------------------------------
+	// OrderSubject methods.
+	//--------------------------------------------------------------------------
+	@Override
+	public void attachOrderObserver(OrderObserver o) throws IllegalArgumentException {
+		if (o == null) {
+			throw new IllegalArgumentException("Observer cannot be null");
+		}
+		
+		if (!this.getOrderObserversRaw().contains(o)) { 
+			this.getOrderObserversRaw().add(o); 
+		}
+	}
+
+	@Override
+	public void detachOrderObserver(OrderObserver o) throws IllegalArgumentException {
+		if (o == null) {
+			throw new IllegalArgumentException("Observer cannot be null");
+		}
+		this.getOrderObserversRaw().remove(o);
+	}
+
+	@Override
+	public void notifyNewOrder() {
+		for(OrderObserver o: this.getOrderObserversRaw()) {
+			o.notifyOrder(this);
+		}
+	}
+	
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the raw instance of the OrderObservers of this OrderSubject.
+	 * 
+	 * @return a raw instance of the OrderOBservers of this OrderSubject.
+	 */
+	private List<OrderObserver> getOrderObserversRaw() {
+		return this.orderObservers;
+	}
+	
+	/** The OrderObservers of this OrderSubject. */
+	private final List<OrderObserver> orderObservers = new ArrayList<>();
 }
