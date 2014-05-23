@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Observer;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 
 import domain.DateTime;
 import domain.Manufacturer;
+import domain.assembly_line.virtual.VirtualAssemblyLine;
 import domain.car.Model;
 import domain.clock.EventActor;
 import domain.clock.EventConsumer;
@@ -77,36 +79,102 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 	//--------------------------------------------------------------------------
 	@Override
 	public void activate() {
-		// Check for state change. 
+		// Activate this AssemblyLine.
+		this.setIsCurrent(true);
+		// Check for state change.		
 		if (this.hasNewState()) {
 			this.switchState();
 		}
 		
 		// Get time. 
 		DateTime currentTime = null; //TODO get time here. 
-		int timeLeftMinutes = (FINISHHOUR * 60 - this.getOverTime()) - 
-				currentTime.getHours() * 60 + currentTime.minutes;
 		
 		// Check if day should end.
-		if (timeLeftMinutes < 0) {
+		if (timeExceedsToday(currentTime)) {
 			if (this.getAssemblyLine().isEmpty()) {
 				this.scheduleEndDay(currentTime);
 			} else {
 				this.getAssemblyLine().advance(new ArrayList<Order>());
 			}
-		} else {
-			if (this.getAssemblyLine().getCurrentState().acceptsOrders()) {
-				
+		} else if (this.getAssemblyLine().getCurrentState().acceptsOrders()) {
+			VirtualAssemblyLine virt = this.getAssemblyLine().newVirtualAssemblyLine();
+			List<Order> resultOrders = new ArrayList<>();
+			
+			Optional<Order> deadline = this.requestDeadlineOrder();
+			if (deadline.isPresent()) {
+				if (mustScheduleDeadline(currentTime, deadline.get())) {
+					List<Order> l = Lists.newArrayList(deadline.get());
+					DateTime timeToFinishWithDeadline = virt.timeToFinish(l);
+					
+					if (!timeExceedsToday(currentTime.addTime(timeToFinishWithDeadline))) {
+						
+					} else {
+						
+					}
+					
+				} else {
+					Optional<Order> standardOrder = this.requestStandardOrder();
+					if (standardOrder.isPresent()) {
+						List<Order> l = Lists.newArrayList(standardOrder.get());
+						DateTime timeToSchedule = virt.timeToFinish(l);
+						
+						if (!timeExceedsToday(currentTime.addTime(timeToSchedule))) {
+							resultOrders.add(standardOrder.get());
+						}
+					}
+					this.getExtra
+					
+					
+				}
 			} else {
-				this.getAssemblyLine().advance(new ArrayList<Order>());
-			}
+				Optional<Order> standardOrder = this.requestStandardOrder();
+				
+				if (standardOrder.isPresent()) {
+					List<Order> inputOrders = new ArrayList<>();
+					inputOrders.add(standardOrder.get());
+					DateTime timeToSchedule = virt.timeToFinish(inputOrders);
+					
+					if (!timeExceedsToday(currentTime.addTime(timeToSchedule))) {
+						// Can schedule standardOrder
+						resultOrders.add(standardOrder.get());
+						this.getAssemblyLine().advance(resultOrders);
+					} else {
+						if (this.getAssemblyLine().isEmpty()) {
+							// cannot schedule standardOrder today and assembly line is empty -> next day
+							this.scheduleEndDay(curTime);
+						} else {
+							// cannot schedule standardOrder today and assembly line is not empty -> move order.
+							this.getAssemblyLine().advance(new ArrayList<Order>());
+						}
+					}
+				} else {
+					// no orders available
+					if (this.getAssemblyLine().isEmpty()) 
+						// no orders and empty band -> go to idle.
+						this.goToIdle();
+					else {
+						// advance the line without orders.
+						this.getAssemblyLine().advance(new ArrayList<Order>());
+					}
+				}
+			}			
+		} else {
+			//AssemblyLine does not accept orders.
+			this.getAssemblyLine().advance(new ArrayList<Order>());
 		}
-		
 	}
 	
 	//--------------------------------------------------------------------------
 	// Is current or in the future
 	//--------------------------------------------------------------------------
+	/**
+	 * Check if this AssemblyLine is current.
+	 * 
+	 * @return if this AssemblyLine is current.
+	 */
+	private boolean isCurrent() {
+		return this.isCurrent;
+	}
 	
 	/** 
 	 * Set this AsemblyLine to the specified new isCurrent state.
@@ -114,7 +182,7 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 	 * @param newIsCurrent
 	 * 		The new state of this AssemblyLine's isCurrent.
 	 * 
-	 * @postscondition | (new this).isCurrent == newIsCurrent
+	 * @postcondition | (new this).isCurrent == newIsCurrent
 	 */
 	private void setIsCurrent(boolean newIsCurrent) {
 		this.isCurrent = newIsCurrent;
@@ -148,17 +216,23 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 	//--------------------------------------------------------------------------
 	// OrderSchedule Related methods.
 	//--------------------------------------------------------------------------
-	protected List<Order> calculateOrdersToSchedule() {
-		return null;
+	protected boolean timeExceedsToday(DateTime t) {
+		int timeLeftMinutes = (FINISHHOUR * 60 - this.getOverTime()) - 
+				t.getHours() * 60 + t.minutes;
+		return timeLeftMinutes < 0; 
 	}
-
+	
+	protected boolean mustScheduleDeadline(DateTime curTime, Order o) {
+		 return curTime.getDays() >= o.getDeadline().get().getDays() - 1;
+	}
+	
 	/**
 	 * Request a StandardOrder from the SchedulerContext of this AssemblyLineController, 
 	 * that can be scheduled on this AssemblyLineController's AssemblyLine.
 	 * 
 	 * @return An StandardOrder from the SchedulerContext of this AssemblyLineController.
 	 */
-	private Optional<Order> requestStandardOrder() {
+	protected Optional<Order> requestStandardOrder() {
 		List<Model> models = this.getAssemblyLine().getAcceptedModels();
 		Model[] m = new Model[models.size()];
 		return this.getSchedulerContext().getOrder(new OrderRequest(models.toArray(m)));
@@ -171,7 +245,7 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 	 * 
 	 * @return The SingleTaskOrder with the next deadline from the SchedulerContext.
 	 */
-	private Optional<Order> requestDeadlineOrder() {
+	protected Optional<Order> requestDeadlineOrder() {
 		List<TaskType> taskTypes = this.getAssemblyLine().getTaskTypes();
 		TaskType[] t = new TaskType[taskTypes.size()];
 		return this.getSchedulerContext().getOrder(new OrderRequest(taskTypes.toArray(t)));
@@ -187,7 +261,7 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 	 * 
 	 * @throws IllegalArgumentException | taskType == null || !this.getAssemblyLine.tasktypes contains taskType
 	 */
-	private Optional<Order> requestSingleTaskOrder(TaskType taskType) throws IllegalArgumentException {
+	protected Optional<Order> requestSingleTaskOrder(TaskType taskType) throws IllegalArgumentException {
 		if (taskType == null || !this.getAssemblyLine().getTaskTypes().contains(taskType)) {
 			throw new IllegalArgumentException("Potato.");
 		}
@@ -267,6 +341,8 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 		
 		//start observing scheduler.
 		this.getSchedulerContext().attachOrderObserver(this);
+		//unsubscribe from clock.
+		this.getEventConsumer().unregister(this);
 	}
 	
 	/**
@@ -280,8 +356,8 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 		//remove old references
 		this.setIdle(false);
 		this.getSchedulerContext().detachOrderObserver(this);
+		this.getEventConsumer().register(this);
 		//advance asemblyline
-		
 		List<Order> l = new ArrayList<>();
 		l.add(order);
 		this.getAssemblyLine().advance(l);
