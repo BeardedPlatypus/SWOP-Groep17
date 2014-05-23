@@ -25,7 +25,6 @@ import domain.statistics.WorkingDayTest;
 @RunWith(Suite.class)
 @SuiteClasses({ CarModelTest.class,
 				CarsProducedRegistrarTest.class,
-				ClockManagerTest.class,
 				DateTimeTest.class,
 				DelayRegistrarTest.class,
 				MedianSelectorTest.class,

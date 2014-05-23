@@ -7,12 +7,9 @@ import org.junit.runners.Suite.SuiteClasses;
 import scenario.AdaptSchedulingAlgorithmScenario;
 import scenario.ChangeOperationalStatusScenario;
 import scenario.CheckAssemblyLineStatusScenario;
-import scenario.CheckAssemblyLineStatusScenario_Alternate;
 import scenario.CheckProductionStatisticsScenario;
-import scenario.CheckProductionStatisticsScenario_Alternate;
 import scenario.NewOrderSessionScenario;
 import scenario.OrderDetailsScenario;
-import scenario.OrderDetailsScenario_Alternate;
 import scenario.OrderSingleTaskScenario;
 import scenario.PerformAssemblyTaskScenario;
 
