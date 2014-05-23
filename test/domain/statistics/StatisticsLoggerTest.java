@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import domain.DateTime;
+import domain.order.Order;
 import domain.statistics.CarsProducedRegistrar;
 import domain.statistics.DelayRegistrar;
 import domain.statistics.ProcedureStatistics;
@@ -19,6 +20,7 @@ public class StatisticsLoggerTest {
 	
 	@Mock DelayRegistrar delayRegistrar;
 	@Mock CarsProducedRegistrar carsRegistrar;
+	@Mock Order order;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -39,7 +41,7 @@ public class StatisticsLoggerTest {
 
 	@Test
 	public void addStatisticsTest() {
-		ProcedureStatistics stats = new ProcedureStatistics(100);
+		ProcedureStatistics stats = new ProcedureStatistics(100, order);
 		logger.addStatistics(stats);
 		Mockito.verify(delayRegistrar).addStatistics(stats);
 		Mockito.verify(carsRegistrar).addStatistics(stats);
