@@ -244,16 +244,33 @@ public class AssemblyLineFacade implements AssemblyLineView{
 		return this.getLine().getEstimatedCompletionTime(order);
 	}
 
+	AssemblyLineState getCurrentState() {
+		return this.getLine().getCurrentState();
+	}
 
 
 	//----- end of AssemblyLine methods -----//
 	
 	
-	//--------- Intermediate methods ---------//
+	//--------- Controller methods ---------//
 
-	
 
-	//----- end of Intermediate methods -----//
+	/**
+	 * Set the state of the assemblyLine to given state
+	 * 
+	 * @param state
+	 * 		New state for the assemblyLine
+	 * @throws IllegalArgumentException
+	 * 		The state is null
+	 */
+	public void setState(AssemblyLineState state) {
+		if(state == null)
+			throw new IllegalArgumentException();
+		this.getController().changeState(state);
+		
+	}
+
+	//----- end of Controller methods -----//
 
 	
 }

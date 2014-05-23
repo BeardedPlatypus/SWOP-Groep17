@@ -12,6 +12,7 @@ import domain.assembly_line.AssemblyLineState;
 import domain.assembly_line.AssemblyLineStateView;
 import domain.assembly_line.AssemblyLineView;
 import domain.assembly_line.AssemblyTaskView;
+import domain.assembly_line.StateCatalog;
 import domain.assembly_line.WorkPostView;
 import domain.car.ModelCatalog;
 import domain.car.Option;
@@ -40,7 +41,6 @@ import domain.production_schedule.strategy.SchedulingStrategyView;
  */
 public class Manufacturer {
 
-
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -64,6 +64,7 @@ public class Manufacturer {
 	 * 		The {@link SchedulerIntermediate} for the new {@link Manufacturer}
 	 * @param schedule 
 	 * @param estTimeCat 
+	 * @param stateCat 
 	 * @param prodSched
 	 * 		The {@link ProductionScheduleFacade} for the new {@link Manufacturer}
 	 * @param inter 
@@ -80,7 +81,8 @@ public class Manufacturer {
 						AssemblyFloor floor,
 						Clock clock,
 						SchedulerContext schedule,
-						EstimatedTimeCatalog estTimeCat)
+						EstimatedTimeCatalog estTimeCat,
+						StateCatalog stateCat)
 						throws IllegalArgumentException
 	{
 		if(stratFact == null)
@@ -93,6 +95,7 @@ public class Manufacturer {
 			throw new IllegalArgumentException("ModelCatalog should not be null.");
 		if(optionRestMan == null)
 			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+		//TODO better names lol
 		if(orderFactory == null)
 			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
 		if(floor == null)
@@ -102,6 +105,8 @@ public class Manufacturer {
 		if(schedule == null)
 			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
 		if(estTimeCat == null)
+			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+		if(stateCat == null)
 			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
 		
 		this.algorithmStrategyFactory = stratFact;
@@ -114,6 +119,7 @@ public class Manufacturer {
 		this.clock = clock;
 		this.schedulerContext = schedule;
 		this.estimatedTimeCatalog = estTimeCat;
+		this.stateCat = stateCat;
 
 
 		this.orderFactory.setManufacturer(this);
@@ -580,26 +586,49 @@ public class Manufacturer {
 	
 
 	//--------- Assembly States ---------//
+	
+	/**
+	 * Get the StateCatalog of this manufacturer for internal use.
+	 * 
+	 * @return the statecatalog
+	 */
+	private StateCatalog getStateCatalog(){
+		return this.stateCat;
+	}
+
+	/** stateCatalog of this Manufacturer */
+	private StateCatalog stateCat;
 
 	public List<AssemblyLineStateView> getAvailableStates() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getStateCatalog().getAvailableStates();
 	}
 
 
 
 	public AssemblyLineState getStateInstance(int stateNum) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getStateCatalog().getStateInstance(stateNum);
 	}
 
 
 
 	public List<AssemblyLineStateView> getCurrentLineStates() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getAssemblyFloor().getCurrentLineStates();
+	}
+	
+	/**
+	 * Set the state of the assemblyLine to given state
+	 * 
+	 * @param state
+	 * 		New state for the assemblyLine
+	 * @throws IllegalArgumentException
+	 * 		The state is null
+	 */
+	public void setAssemblyLineState(int assemblyLineNum,
+			AssemblyLineState state) {
+		this.getAssemblyFloor().setAssemblyLineState(assemblyLineNum,state);
 	}
 
+	
 	//----- end of Assembly States -----//
 
 	//--------------------------------------------------------------------------
@@ -706,5 +735,7 @@ public class Manufacturer {
 	
 	/** estimatedTimeCatalog of this Manufacturer */
 	private final EstimatedTimeCatalog estimatedTimeCatalog;
+
+
 
 }

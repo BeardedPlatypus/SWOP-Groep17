@@ -252,6 +252,22 @@ public class AssemblyFloor {
 		this.getLines().get(lineNb).completeWorkpostTask(postNb, taskNb, minutes);;
 	}
 
+	public void setAssemblyLineState(int lineNb,
+			AssemblyLineState state) {
+		if(lineNb<0 || lineNb >= getLineViews().size())
+			throw new IllegalArgumentException("Not a valid index for an assemblyline.");
+		this.getLines().get(lineNb).setState(state);
+		
+	}
+
+	public List<AssemblyLineStateView> getCurrentLineStates() {
+		List<AssemblyLineStateView> toReturn = new ArrayList<>();
+		for (AssemblyLineFacade line : this.getLines()) {
+			toReturn.add(line.getCurrentState());
+		}
+		return toReturn;
+	}
+
 
 	//----- end of Perform Assembly Tasks methods -----//
 

@@ -13,6 +13,10 @@ import domain.assembly_line.AssemblyLine;
 import domain.assembly_line.AssemblyLineBuilder;
 import domain.assembly_line.AssemblyLineController;
 import domain.assembly_line.AssemblyLineFacade;
+import domain.assembly_line.BrokenState;
+import domain.assembly_line.MaintenanceState;
+import domain.assembly_line.OperationalState;
+import domain.assembly_line.StateCatalog;
 import domain.assembly_line.TaskType;
 import domain.car.CarModel;
 import domain.car.Model;
@@ -533,6 +537,15 @@ public class InitialisationHandler {
 
 		OrderFactory orderFact = new OrderFactory();
 		
+		//--------------------------------------------------------------------------
+		// StateCatalog
+		//--------------------------------------------------------------------------
+		
+		StateCatalog stateCat = new StateCatalog();
+		stateCat.addToAvailableStates(new OperationalState());
+		stateCat.addToAvailableStates(new BrokenState());
+		stateCat.addToAvailableStates(new MaintenanceState());
+		
 		//----------------------------------------------------------------------
 		// Initialise AssemblyLines
 		//----------------------------------------------------------------------
@@ -615,7 +628,8 @@ public class InitialisationHandler {
 				floor,
 				clock,
 				schedule,
-				estTimeCat);
+				estTimeCat,
+				stateCat);
 
 		//----------------------------------------------------------------------
 		// Initialise Handlers

@@ -91,23 +91,23 @@ public class ChangeOperationelStatusUIPart {
 	private void printCurrentStates() {
 		List<AssemblyLineStateView> states = this.getHandler().getAssemblyLineStates();
 		for(int i = 1; i<= states.size(); i++){
-			System.out.println("Assemblyline " + i + ": " + states.get(i).getName());
+			System.out.println("Assemblyline " + i + ": " + states.get(i-1).getName());
 		}
 	}
 	
 
 	private void changeLineStatus(int lineChoice) {
 		System.out.println("The current status of assembly line" + lineChoice +" is:");
-		System.out.println("\t" + this.getHandler().getAssemblyLineStates().get(lineChoice));
+		System.out.println("\t" + this.getHandler().getAssemblyLineStates().get(lineChoice).getName());
 		System.out.println("What should be the new status for assembly line "
 				+ lineChoice + "?");
 		List<AssemblyLineStateView> states = this.getHandler().getAvailableStates();
 		for(int i = 1; i<= states.size(); i++){
-			System.out.println(i + ") " + states.get(i).getName());
+			System.out.println(i + ") " + states.get(i-1).getName());
 		}
 		int stateChoice = this.helper.getIntFromUser(1, states.size());
 		System.out.println("The new status of assembly line " + lineChoice + " is:");
-		System.out.println("\t"+states.get(stateChoice));
-		this.getHandler().setAssemblyLineState(lineChoice, stateChoice);
+		System.out.println("\t"+states.get(stateChoice-1).getName());
+		this.getHandler().setAssemblyLineState(lineChoice, stateChoice-1);
 	}
 }
