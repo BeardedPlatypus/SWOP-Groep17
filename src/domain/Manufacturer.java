@@ -1,7 +1,36 @@
 package domain;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import domain.restrictions.OptionRestrictionManager;
+import domain.statistics.EstimatedTimeCatalog;
+import exceptions.IllegalVehicleOptionCombinationException;
+import exceptions.OptionRestrictionException;
+import domain.assembly_line.AssemblyFloor;
+import domain.assembly_line.AssemblyLine;
+import domain.assembly_line.AssemblyLineState;
+import domain.assembly_line.AssemblyLineStateView;
+import domain.assembly_line.AssemblyLineView;
+import domain.assembly_line.AssemblyTaskView;
+import domain.assembly_line.StateCatalog;
+import domain.assembly_line.WorkPostView;
+import domain.car.ModelCatalog;
+import domain.car.Option;
+import domain.car.Specification;
+import domain.car.Model;
+import domain.clock.Clock;
+import domain.order.CompletedOrderCatalog;
+import domain.order.Order;
+import domain.order.OrderView;
+import domain.order.OrderFactory;
+import domain.order.OrderSession;
+import domain.order.SingleOrderSession;
+import domain.order.SingleTaskCatalog;
+import domain.order.SingleTaskOrder;
+import domain.order.StandardOrder;
+import domain.production_schedule.SchedulerContext;
+import domain.production_schedule.strategy.AlgorithmStrategyFactory;
+import domain.production_schedule.strategy.SchedulingStrategyView;
 
 /**
  * A class which represents the book-keeping body of the system.
@@ -9,165 +38,695 @@ import java.util.List;
  * It passes information for a new order to the productionSchedule, which instantiates new orders.
  * 
  * @author Martinus Wilhelmus Tegelaers, Frederik Goovaerts
- *
  */
 public class Manufacturer {
-	
-	/**
-	 * The ProductionSchedule this manufacturer uses for scheduling orders.
-	 */
-	private ProductionSchedule productionSchedule;
-	
-	/**
-	 * A list this class keeps of orders the assembly system has completed in the past.
-	 */
-	private List<Order> completedOrders = new ArrayList<Order>();
 
+	//--------------------------------------------------------------------------
+	// Constructor
+	//--------------------------------------------------------------------------
 	/**
-	 * A ModelCatalog which contains the models this manufacturer is able to produce.
-	 */
-	private final ModelCatalog modelCatalog;
-
-	/**
-	 * Constructor
+	 * Create a new manufacturer object with all given parameters as subsystems
+	 * to interface with.
 	 * 
-	 * Instantiates an object of the class with a given modelCatalog.
-	 * 
-	 * Binary association with schedule will be set by schedule.
-	 * 
-	 * @param modelCatalog
-	 * 		The modelCatalog of the manufacturer which contains the models this manufacturer can assemble.
+	 * @param stratFact
+	 * 		The {@link AlgorithmStrategyFactory} for the new {@link Manufacturer}
+	 * @param singleCat
+	 * 		The {@link SingleTaskCatalog} for the new {@link Manufacturer}
+	 * @param completedCat
+	 * 		The {@link CompletedOrderCatalog} for the new {@link Manufacturer}
+	 * @param modelCat
+	 * 		The {@link ModelCatalog} for the new {@link Manufacturer}
+	 * @param optionRestMan
+	 * 		The {@link OptionRestrictionManager} for the new {@link Manufacturer}
+	 * @param floor
+	 * 		The {@link AssemblyLine} for the new {@link Manufacturer}
+	 * @param clock
+	 * 		The {@link SchedulerIntermediate} for the new {@link Manufacturer}
+	 * @param schedule 
+	 * @param estTimeCat 
+	 * @param stateCat 
+	 * @param prodSched
+	 * 		The {@link ProductionScheduleFacade} for the new {@link Manufacturer}
+	 * @param inter 
+	 * @param line 
 	 * @throws IllegalArgumentException
-	 * 		When either of the arguments is null.
+	 * 		If any of the parameters is null
 	 */
-	public Manufacturer(ModelCatalog modelCatalog) throws IllegalArgumentException{
-		if(modelCatalog == null)
-			throw new IllegalArgumentException("modelCatalog is not allowed to be null when creating a new Manufacturer.");
-		this.modelCatalog = modelCatalog;
+	public Manufacturer(AlgorithmStrategyFactory stratFact,
+						SingleTaskCatalog singleCat,
+						CompletedOrderCatalog completedCat,
+						ModelCatalog modelCat,
+						OptionRestrictionManager optionRestMan,
+						OrderFactory orderFactory,
+						AssemblyFloor floor,
+						Clock clock,
+						SchedulerContext schedule,
+						EstimatedTimeCatalog estTimeCat,
+						StateCatalog stateCat)
+						throws IllegalArgumentException
+	{
+		if(stratFact == null)
+			throw new IllegalArgumentException("AlgorithmStrategyFactory should not be null.");
+		if(singleCat == null)
+			throw new IllegalArgumentException("SingleTaskCatalog should not be null.");
+		if(completedCat == null)
+			throw new IllegalArgumentException("CompletedOrderCatalog should not be null.");
+		if(modelCat == null)
+			throw new IllegalArgumentException("ModelCatalog should not be null.");
+		if(optionRestMan == null)
+			throw new IllegalArgumentException("OptionRestrictionManager should not be null.");
+		if(orderFactory == null)
+			throw new IllegalArgumentException("OrderFactory should not be null.");
+		if(floor == null)
+			throw new IllegalArgumentException("AssemblyFloor should not be null.");
+		if(clock == null)
+			throw new IllegalArgumentException("Clock should not be null.");
+		if(schedule == null)
+			throw new IllegalArgumentException("Schedule should not be null.");
+		if(estTimeCat == null)
+			throw new IllegalArgumentException("EstTimeCat should not be null.");
+		if(stateCat == null)
+			throw new IllegalArgumentException("StateCat should not be null.");
+		
+		this.algorithmStrategyFactory = stratFact;
+		this.singleTaskCatalog = singleCat;
+		this.completedOrderCatalog = completedCat;
+		this.modelCatalog = modelCat;
+		this.optionRestrictionManager = optionRestMan;
+		this.orderFactory = orderFactory;
+		this.assemblyFloor = floor;
+		this.clock = clock;
+		this.schedulerContext = schedule;
+		this.estimatedTimeCatalog = estTimeCat;
+		this.stateCat = stateCat;
+
+
+		this.orderFactory.setManufacturer(this);
+
+	}
+	
+
+	//--------------------------------------------------------------------------
+	// Methods concerning multiple subsystems
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the system's pending orders. This includes the orders in the production
+	 * schedule, queuing to be assembled, as well as the orders which are active
+	 * on the assembly line.
+	 * 
+	 * @return the list of pending orders in the system
+	 */
+	public List<OrderView> getPendingOrderContainers() {
+		List<OrderView> pending = this.getAssemblingPendingOrderContainers();
+		pending.addAll(this.getSchedulePendingOrderContainers());
+		return pending;
+	}
+	
+	//--------------------------------------------------------------------------
+	// AlgorithmStrategyFactory methods.
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the AlgorithmFactory of this Manufacturer
+	 * 
+	 * @return the AlogorithmFactory of this Manufacturer. 
+	 */
+	public AlgorithmStrategyFactory getAlgorithmFactory() {
+		return this.algorithmStrategyFactory;
+	}
+	
+//	/**
+//	 * Set a new SchedulingStrategy of the ProductionSchedule subsystem.
+//	 * 
+//	 * @param strat
+//	 * 		The new SchedulingStrategy of this Manufacturer's ProductionSchedule subsystem.
+//	 */
+//	public void setNewSchedulingAlgorithm(SchedulingStrategy strat) {
+//		this.getProductionSchedule().setNewSchedulingAlgorithm(strat);
+//	}
+	
+	/**
+	 * Get a list of SchedulingStrategyViews of all available SchedulingAlgorithms
+	 * 
+	 * @return The SchedulingStrategyViews
+	 */
+	public List<SchedulingStrategyView> getAlgorithms() {
+		return this.getAlgorithmFactory().getAlgorithmViews();
 	}
 	
 	/**
-	 * Sets the production schedule to given schedule
+	 * Get a view of the currently used SchedulingAlgorithm
 	 * 
-	 * @param productionSchedule
-	 * 		The productionSchedule this manufacturer will use to schedule its orders for assembly
+	 * @return The SchedulingAlgorithm
 	 */
-	public void setProductionSchedule(ProductionSchedule productionSchedule){
-		this.productionSchedule = productionSchedule;
+	public SchedulingStrategyView getCurrentAlgorithm() {
+		return this.getProductionSchedule().getCurrentSchedulingStrategy();
 	}
 	
 	/**
-	 * A getter for the productionSchedule for internal use
-	 * 
-	 * @return
-	 * 		the productionSchedule of this class
+	 * Set the currently used SchedulingAlgorithm to the FIFO algorithm
 	 */
-	private ProductionSchedule getProductionSchedule() {
-		return this.productionSchedule;
+	public void setFifoAlgorithm() {
+		this.getProductionSchedule().setSchedulingStrategy(
+				this.getAlgorithmFactory().getFifoStrategy());
 	}
 	
 	/**
-	 * A getter for the modelCatalog for internal use
+	 * Get the batches that are currently eligible for use in batch strategies.
 	 * 
-	 * @return
-	 * 		the modelCatalog of this class
+	 * @return The batches
 	 */
-	private ModelCatalog getModelCatalog() {
-		return modelCatalog;
+	public List<Specification> getCurrentBatches() {
+		return this.getProductionSchedule().getEligibleBatches();
 	}
 	
 	/**
-	 * A getter for the list of completed orders for internal use
+	 * Set the currently used SchedulingAlgorithm to a batch strategy that
+	 * uses the specified Specification.
 	 * 
-	 * @return
-	 * 		the list of completed orders
+	 * @param batch
+	 * 		The batch used to compare Orders
+	 * @throws IllegalArgumentException
+	 * 		batch is null
 	 */
-	private List<Order> getCompletedOrders() {
-		return completedOrders;
+	public void setBatchAlgorithm(Specification batch) throws IllegalArgumentException {
+		this.getProductionSchedule().setSchedulingStrategy(
+				this.getAlgorithmFactory().getBatchStrategy(batch));
 	}
 
+	
+	/** The AlgorithmStrategyFactory of this Manufacturer. */
+	private final AlgorithmStrategyFactory algorithmStrategyFactory;
+
+
+	//--------------------------------------------------------------------------
+	// OrderFactory
+	//--------------------------------------------------------------------------
+	
 	/**
-	 * Returns a list of containers for the completed orders for use by the UI.
+	 * Get the OrderFactory of this Manufacturer.
 	 * 
-	 * @return
-	 * 		The list of completed orders as containers
+	 * @return the OrderFactory of this Manufacturer.
 	 */
-	public List<OrderContainer> getCompletedOrderContainers() {
-		return new ArrayList<OrderContainer>(completedOrders);
+	public OrderFactory getOrderFactory() {
+		return this.orderFactory;
+	}
+	
+	/** The OrderFactory of this Manufacturer. */
+	private final OrderFactory orderFactory;
+	
+	/**
+	 * Create and return a new order session.
+	 * 
+	 * @return the new order session
+	 * 
+	 * @post result.getManufacturer = this
+	 */
+	public OrderSession getNewOrderSession() {
+		return new OrderSession(this);
+	}
+	
+	/**
+	 * Create and return a new single task order session.
+	 * 
+	 * @return	the new single task order session
+	 */
+	public SingleOrderSession startNewSingleTaskOrderSession() {
+		return new SingleOrderSession(this, this.singleTaskCatalog);
+	}
+	
+	
+	/**
+	 * Get the {@link SingleTaskCatalog} of this {@link Manufacturer}.
+	 * 
+	 * @return the {@link SingleTaskCatalog}.
+	 */
+	public SingleTaskCatalog getSingleTaskCatalog(){
+		return this.singleTaskCatalog;
 	}
 
+	/** The SingleTaskCatalog of this Manufacturer. */
+	private final SingleTaskCatalog singleTaskCatalog;
+	
 	/**
-	 * Returns the containers of the pending orders from the productionSchedule
+	 * Submit the parameters for a single task order to the production schedule.
+	 * We expect the schedule to make an order and schedule it. The schedule
+	 * will also return the order, which is further passed on.
+	 * 
+	 * @param option
+	 * 		The option for the single task order
+	 * @param deadline
+	 * 		The deadline for the single task order
 	 * 
 	 * @return
-	 * 		A list with containers for the pending orders in the schedule
+	 * 		The generated order
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		If the given option is not an option of the singleTaskCatalog
+	 * @throws IllegalArgumentException
+	 * 		If either of the arguments is null
 	 */
-	public List<OrderContainer> getIncompleteOrderContainers() {
-		return this.getProductionSchedule().getIncompleteOrderContainers();
+	public OrderView submitSingleTaskOrder(Option option, DateTime deadline) {
+		SingleTaskOrder order = this.getOrderFactory().makeNewSingleTaskOrder(deadline, option);
+		this.getProductionSchedule().addNewSingleTaskOrder(order);
+		
+		return order;
 	}
-
+	
 	/**
-	 * Gets the available models from the modelCatalog for use by the UI
+	 * Check whether or not given option is present in the singleTaskCatalog
 	 * 
-	 * @return
-	 * 		A list of the available models in the modelCatalog
+	 * @param option
+	 * 		The option to check if it is present in the singleTaskCatalog
+	 * 
+	 * @return whether or not given option is present in the singleTaskCatalog
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		| option == null
 	 */
-	public List<Model> getModels() {
+	public boolean singleTaskCatalogContains(Option option) throws IllegalArgumentException{
+		return this.singleTaskCatalog.contains(option);
+	}
+	
+	//--------------------------------------------------------------------------
+	// ModelCatalog
+	//--------------------------------------------------------------------------
+		
+	/**
+	 * Get the modelCatalog for internal use
+	 * 
+	 * @return the modelCatalog of this class
+	 */
+	private ModelCatalog getModelCatalog(){
+		return this.modelCatalog;
+	}
+	
+	/** The modelCatalog of this system, kept by the manufacturer */
+	private ModelCatalog modelCatalog;
+	
+	/**
+	 * Get a list of the available Models in the system.
+	 * 
+	 * @return a list of the available Models in the system
+	 */
+	public List<Model> getVehicleModels() {
 		return this.getModelCatalog().getModels();
 	}
+	
+	/** 
+	 * Get the model of a SingleTaskOrder.
+	 * 
+	 * @return the model of a SingleTaskOrder
+	 */
+	public Model getSingleTaskModel() {
+		return this.getModelCatalog().getSingleTaskModel();
+	}
 
 	/**
-	 * Passes the information for a new order from the UI to the production schedule where an order will be created
+	 * Check whether or not given model is a model of this system.
 	 * 
 	 * @param model
-	 * 		The chosen model for the new order
-	 * @param specifications
-	 * 		The chosen specifications for the model for the new order
-	 * @throws IllegalArgumentException
-	 * 		When either of the arguments is null.
+	 * 		The model to check for.
+	 * 
+	 * @return whether or not given model is part of the system
 	 */
-	public void createOrder(Model model, Specification specifications) throws IllegalArgumentException{
+	public boolean isValidModel(Model model){
 		if(model == null)
-			throw new IllegalArgumentException("model is not allowed to be null when creating a new Order.");
-		if(specifications == null)
-			throw new IllegalArgumentException("modelCatalog is not allowed to be null when creating a new Order.");
-		this.getProductionSchedule().addNewOrder(model, specifications);
+			throw new IllegalArgumentException("Null is not a valid model.");
+		return this.getModelCatalog().contains(model);
 	}
 
 	/**
-	 * Adds an order to the list of completed orders.
-	 * This method expects the order to already have been set as completed with a completion date.
+	 * Check whether the modelcatalog contains given model
 	 * 
-	 * @param order
-	 * 		The order to add to the completed orders list
-	 * @throws IllegalStateException
-	 * 		If the order is not yet set as completed
+	 * @param model
+	 * 		The model to check for
+	 * @return whether or not the catalog contains the model
 	 */
-	public void addCompleteOrder(Order order) throws IllegalStateException{
-		if(!order.isCompleted())
-			throw new IllegalStateException("Order is not yet completed, can not add it to completed orders.");
-		this.getCompletedOrders().add(order);
+	public boolean modelCatalogContains(Model model) {
+		return this.getModelCatalog().contains(model);
 	}
+	
+	//--------------------------------------------------------------------------
+	// Restrictions Manager
+	//--------------------------------------------------------------------------
 
 	/**
-	 * Returns a DateTime object with the estimated completion time of the given order.
+	 * Check whether given model and given specs match all restrictions
 	 * 
-	 * @param order
-	 * 		The order to get the completion time for as a container.
-	 * @return
-	 * 		The DateTime of the estimated completion of the order
+	 * @param model
+	 * 		The model to check
+	 * @param specification
+	 * 		The specification to check
+	 * 
+	 * @return whether given model and given specs match all restrictions
 	 */
-	public DateTime getEstimatedCompletionTime(OrderContainer order) {
-		return getProductionSchedule().getEstimatedCompletionTime(order);
+	public boolean checkSpecificationRestrictions(Model model,
+			Specification specification) {
+		return this.getOptionRestrictionManager().checkValidity(model, specification.getOptions());
 	}
 	
 	/**
-	 * Returns a DateTime object which contains the current system time.
+	 * Get the optionRestrictionManager for internal use
 	 * 
-	 * @return
-	 * 		The current system time as a DateTime object
+	 * @return the optionRestrictionManager of this class
 	 */
-	public DateTime getCurrentTime() {
-		return this.getProductionSchedule().getCurrentTime();
+	private OptionRestrictionManager getOptionRestrictionManager(){
+		return this.optionRestrictionManager;
 	}
+	
+	/** The restrictionManager this manufacturer keeps, to check given restriction on new orders */
+	private final OptionRestrictionManager optionRestrictionManager;
+
+	/**
+	 * Check whether or not the given model and list of options would make a valid
+	 * order. This encompasses checking whether all options are options of the model,
+	 * whether there are no options that are both from the same optionCategory,
+	 * and whether the set of options matches the restriction imposed on the system.
+	 * If the arguments are not valid, either themselves, or in combination with
+	 * each other, an exception occurs.
+	 * If the options do not pass the restrictions check, the order is not valid.
+	 * If everything, including the restrictions, checks out, the order is valid. 
+	 * 
+	 * @return whether this combination is valid 
+	 * @param model
+	 * 		The given model to check with the options
+	 * @param options
+	 * 		The given options to check with the model
+	 * @throws IllegalArgumentException
+	 * 		When either of the parameters is or contains null
+	 * @throws IllegalVehicleOptionCombinationException 
+	 * 		When the list of options is not valid with given model
+	 */
+	private boolean checkOrderRestrictionValidity(Model model, List<Option> options)
+			throws IllegalArgumentException, IllegalVehicleOptionCombinationException
+	{
+		if(model == null)
+			throw new IllegalArgumentException("Model schould not be null");
+		if(options == null)
+			throw new IllegalArgumentException("Options list should not be null.");
+		if(options.contains(null))
+			throw new IllegalArgumentException("Options list should not contain null.");
+		if(!model.checkOptionsValidity(options))
+			throw new IllegalVehicleOptionCombinationException("These options do not match given model.");
+		if(!this.getOptionRestrictionManager().checkValidity(model,options))
+			return false;
+		return true;
+	}
+	
+
+	//--------------------------------------------------------------------------
+	// ProductionSchedule related variables and methods. 
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the ProductionSchedule of this Manufacturer.
+	 * 
+	 * @return The ProductionSchedule of this Manufacturer. 
+	 */
+	public SchedulerContext getProductionSchedule() {
+		return this.schedulerContext;
+	}
+	
+	/** Interface into production schedule functionality. */
+	private final SchedulerContext schedulerContext;
+
+	//--------------------------------------------------------------------------
+
+
+	/**
+	 * Get a list of pending {@link OrderView}s in the productionSchedule.
+	 * 
+	 * @return List of pending order containers in the productionSchedule.
+	 */
+	private List<OrderView> getSchedulePendingOrderContainers() {
+		return this.getProductionSchedule().getAllPendingOrders();
+	}
+	
+	/**
+	 * Submit given model and list of options to the system to form a new order.
+	 * An order is formed if the model and options form a valid model, concerning
+	 * compatibility and restrictions; Else, a relevant exception is thrown.
+	 * 
+	 * @param model
+	 * 		The model for the new order
+	 * @param options
+	 * 		The list of options for the new order
+	 * 
+	 * @return the new order, made from the arguments
+	 * 
+	 * @throws IllegalVehicleOptionCombinationException 
+	 * 		When the list of options is not valid with given model
+	 * @throws IllegalArgumentException
+	 * 		When either of the parameters is or contains null
+	 * @throws OptionRestrictionException
+	 * 		When the set of options does not meet the system's restrictions
+	 */
+	public OrderView submitStandardOrder(Model model, List<Option> options)
+			throws IllegalArgumentException,
+			IllegalVehicleOptionCombinationException,
+			OptionRestrictionException
+	{
+		if(model == null)
+			throw new IllegalArgumentException("Model schould not be null");
+		if(options == null)
+			throw new IllegalArgumentException("Options list should not be null.");
+		if(options.contains(null))
+			throw new IllegalArgumentException("Options list should not contain null.");
+		if(!checkOrderRestrictionValidity(model, options))
+			throw new OptionRestrictionException("Options do not meet Restriction criteria.");
+		Specification orderSpecs = model.makeSpecification(options);
+		StandardOrder newOrder = this.getOrderFactory().makeNewStandardOrder(model, orderSpecs);
+		this.getProductionSchedule().addNewStandardOrder(newOrder);
+		
+		return newOrder;
+	}
+
+	
+	//--------------------------------------------------------------------------
+	// AssemblyFloor and AssemblyLine-related variables and methods
+	//--------------------------------------------------------------------------
+	/** This Manufacturer's AssemblyFloor */
+	private final AssemblyFloor assemblyFloor;
+
+	/**
+	 * Get the AssemblyFloor of this Manufacturer.
+	 * 
+	 * @return The AssemblyFloor
+	 */
+	private AssemblyFloor getAssemblyFloor() {
+		return this.assemblyFloor;
+	}
+
+	/**
+	 * Ask the AssemblyLine for its WorkPostContainers.
+	 * 
+	 * @return The WorkPostContainers
+	 */
+	public List<AssemblyLineView> getAssemblyLineViews() {
+		return this.getAssemblyFloor().getLineViews();
+	}
+	
+
+
+	public List<WorkPostView> getWorkPostsAt(int lineNb) {
+		return this.getAssemblyFloor().getWorkPostViewsAt(lineNb);
+	}
+
+	/**
+	 * Ask the AssemblyLine for the AssemblyTaskContainers at the specified
+	 * WorkPost.
+	 * 
+	 * @param postNum
+	 * 		The WorkPost of interest
+	 * @return Those AssemblyTaskContainers that are of the same type as the
+	 * 		specified WorkPost
+	 * @throws IllegalArgumentException
+	 * 		See {@link AssemblyLine#getAssemblyTasksAtPost(int) getAssemblyTasksAtPost(int)}
+	 */
+	public List<AssemblyTaskView> getAssemblyTasksAtPost(int lineNum, int postNum) throws IllegalArgumentException {
+		return this.getAssemblyFloor().getAssemblyTasksAtPost(lineNum, postNum);
+	}
+
+	/**
+	 * Ask the AssemblyLine to complete the specified AssemblyTask at the specified
+	 * WorkPost in the specified amount of minutes.
+	 * 
+	 * @param workPostNumber
+	 * 		The WorkPost of interest
+	 * @param taskNumber
+	 * 		The AssemblyTask of interest
+	 * @param minutes
+	 * 		The amount of minutes the task was completed in
+	 * @throws IllegalArgumentException
+	 * 		See {@link AssemblyLine#completeWorkpostTask(int, int, int) completeWorkpostTask(int, int, int)}
+	 * @throws IllegalStateException
+	 * 		See {@link AssemblyLine#completeWorkpostTask(int, int, int) completeWorkpostTask(int, int, int)}
+	 */
+	public void completeWorkpostTask(int lineNumber, int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException,
+	IllegalStateException {
+		this.getAssemblyFloor().completeWorkpostTask(lineNumber, workPostNumber, taskNumber, minutes);
+	}
+	
+	/**
+	 * Get a list of pending {@link OrderView}s on the assembly line. 
+	 * 
+	 * @return List of pending order containers on the assembly line.
+	 */
+	private List<OrderView> getAssemblingPendingOrderContainers() {
+		return this.getAssemblyFloor().getActiveOrderViews();
+	}
+	
+
+	//--------- Assembly States ---------//
+	
+	/**
+	 * Get the StateCatalog of this manufacturer for internal use.
+	 * 
+	 * @return the statecatalog
+	 */
+	private StateCatalog getStateCatalog(){
+		return this.stateCat;
+	}
+
+	/** stateCatalog of this Manufacturer */
+	private StateCatalog stateCat;
+
+	public List<AssemblyLineStateView> getAvailableStates() {
+		return this.getStateCatalog().getAvailableStates();
+	}
+
+
+
+	public AssemblyLineState getStateInstance(int stateNum) {
+		return this.getStateCatalog().getStateInstance(stateNum);
+	}
+
+
+
+	public List<AssemblyLineStateView> getCurrentLineStates() {
+		return this.getAssemblyFloor().getCurrentLineStates();
+	}
+	
+	/**
+	 * Set the state of the assemblyLine to given state
+	 * 
+	 * @param state
+	 * 		New state for the assemblyLine
+	 * @throws IllegalArgumentException
+	 * 		The state is null
+	 */
+	public void setAssemblyLineState(int assemblyLineNum,
+			AssemblyLineState state) {
+		this.getAssemblyFloor().setAssemblyLineState(assemblyLineNum,state);
+	}
+
+	
+	//----- end of Assembly States -----//
+
+	//--------------------------------------------------------------------------
+	// Completed Order Methods
+	//--------------------------------------------------------------------------
+	/** Registers the Orders that have been completed */
+	private CompletedOrderCatalog completedOrderCatalog;
+
+	/**
+	 * Get this Manufacturer's CompletedOrderCatalog
+	 * 
+	 * @return The CompletedOrderCatalog
+	 */
+	private CompletedOrderCatalog getCompletedOrderCatalog() {
+		return this.completedOrderCatalog;
+	}
+
+	/**
+	 * Add the given order to the completedOrderCatalog.
+	 * This method passes the order right through.
+	 * 
+	 * @param order
+	 * 		The order to add to the catalog
+	 * @throws IllegalStateException
+	 * 		If the order is already completed and/or in the catalog
+	 * @throws IllegalArgumentException
+	 * 		If given order is null
+	 */
+	public void addToCompleteOrders(Order order)
+			throws IllegalStateException,
+			IllegalArgumentException{
+		if(order == null)
+			throw new IllegalArgumentException("Order Can not be null");
+		this.getCompletedOrderCatalog().addCompletedOrder(order);
+	}
+	
+	/**
+	 * Get the system's completed orders. This encompasses the orders which were
+	 * previously assembled and are now marked as complete.
+	 * 
+	 * @return the list of completed orders in the system
+	 */
+	public List<OrderView> getCompletedOrderContainers() {
+		return this.getCompletedOrderCatalog().getCompletedOrderContainers();
+	}
+	
+	//--------------------------------------------------------------------------
+	// Clock and Time-related methods
+	//--------------------------------------------------------------------------
+
+	/** The manufacturer's clock */
+	private final Clock clock;
+	
+	/**
+	 * Increments the time with the specified DateTime
+	 * 
+	 * @param dt
+	 * 		The time to increment with
+	 */
+	public void incrementTime(DateTime dt) {
+		
+		//TODO how does this impact the clock? Put this away for good?
+		//this.getProductionSchedule().incrementTime(dt);
+	}
+
+	//--------------------------------------------------------------------------
+	// Querying the statistics
+	//--------------------------------------------------------------------------
+	/**
+	 * Ask this Manufacturer's AssemblyLine for a report of statistics concerning its
+	 * production activities.
+	 * 
+	 * @return The report
+	 */
+	public String getStatisticsReport() {
+		return this.getAssemblyFloor().getStatisticsReport();
+	}
+
+	//--------------------------------------------------------------------------
+	// Completion time estimation methods
+	//--------------------------------------------------------------------------
+	/**
+	 * Query the system for estimated completion time of given order.
+	 * This e
+	 * 
+	 * @param order
+	 * 		The order to find in the system and return the ECT for
+	 * 
+	 * @return the ECT of given order
+	 */
+	public DateTime getEstimatedCompletionTime(OrderView order) {
+		if(this.getAssemblyFloor().contains(order)){
+			DateTime relativeCompletionTime= this.getAssemblyFloor().getEstimatedCompletionTime(order);
+			return this.getEstimatedTimeCatalog().calculateAbsoluteTime(relativeCompletionTime);
+		}
+		if(order.getDeadline().isPresent())
+			return order.getDeadline().get();
+		return this.getEstimatedTimeCatalog().getEstimatedCompletionTime(order);
+	}
+	
+	private EstimatedTimeCatalog getEstimatedTimeCatalog(){
+		return this.estimatedTimeCatalog;
+	}
+	
+	/** estimatedTimeCatalog of this Manufacturer */
+	private final EstimatedTimeCatalog estimatedTimeCatalog;
+
+
+
 }

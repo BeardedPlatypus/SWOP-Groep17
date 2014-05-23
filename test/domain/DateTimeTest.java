@@ -315,4 +315,193 @@ public class DateTimeTest {
 		assertEquals(0, test2.getHours());
 		assertEquals(0, test2.getMinutes());	
 	}
+	
+	//--------------------------------------------------------------------------
+	// Get in minutes.
+	//--------------------------------------------------------------------------
+	@Test
+	public void test_getInMinutesZero() {
+		DateTime zero = new DateTime(0, 0, 0);
+		
+		assertEquals(0, zero.getInMinutes());
+	}
+	
+	@Test
+	public void test_getInMinutesMinutesSmall() {
+		DateTime zero = new DateTime(0, 0, 50);
+		
+		assertEquals(50, zero.getInMinutes());
+	}
+
+	@Test
+	public void test_getInMinutesMinutesBig() {
+		DateTime zero = new DateTime(0, 0, 5000);
+		
+		assertEquals(5000, zero.getInMinutes());
+	}
+	
+	@Test
+	public void test_getInMinutesHoursSmall() {
+		DateTime zero = new DateTime(0, 10, 0);
+		
+		assertEquals(600, zero.getInMinutes());
+	}
+
+	@Test
+	public void test_getInMinutesHoursBig() {
+		DateTime zero = new DateTime(0, 50, 0);
+		
+		assertEquals(3000, zero.getInMinutes());
+	}
+
+	@Test
+	public void test_getInMinutesDays() {
+		DateTime zero = new DateTime(1, 0, 0);
+		
+		assertEquals(24 * 60, zero.getInMinutes());
+	}
+	
+	@Test 
+	public void test_getInMinutesCombined() {
+		DateTime zero = new DateTime(1, 2, 3);
+		
+		assertEquals(24 * 60 + 2 * 60 + 3, zero.getInMinutes());
+	}
+	
+	//--------------------------------------------------------------------------
+	// toString
+	//--------------------------------------------------------------------------
+	@Test
+	public void test_toString(){
+		DateTime t1 = new DateTime(1,0,0);
+		assertNotNull(t1.toString());
+	}
+	
+	//--------------------------------------------------------------------------
+	// hashCode
+	//--------------------------------------------------------------------------
+	@Test
+	public void test_hashCode(){
+		DateTime t1 = new DateTime(1,0,0);
+		DateTime t2 = new DateTime(0,1,0);
+		DateTime t3 = new DateTime(0,0,1);
+		
+		assertNotEquals(t1.hashCode(), t2.hashCode());
+		assertNotEquals(t1.hashCode(), t3.hashCode());
+		assertNotEquals(t2.hashCode(), t3.hashCode());
+	}
+
+	//--------------------------------------------------------------------------
+	// Compare to 
+	//--------------------------------------------------------------------------
+	@Test
+	public void test_compareToSmaller() {
+		DateTime t1 = new DateTime(1, 0, 0);
+		DateTime t2 = new DateTime(0, 1, 0);
+		DateTime t3 = new DateTime(0, 0, 1);
+		
+		assertEquals(-1, zero.compareTo(t1));
+		assertEquals(-1, zero.compareTo(t2));
+		assertEquals(-1, zero.compareTo(t3));
+		
+		assertEquals(-1, t3.compareTo(t2));
+		assertEquals(-1, t3.compareTo(t1));
+		assertEquals(-1, t2.compareTo(t1));
+	}
+	
+	@Test
+	public void test_compareToEqualsItself() {
+		DateTime t1 = new DateTime(1, 0, 0);
+		DateTime t2 = new DateTime(0, 1, 0);
+		DateTime t3 = new DateTime(0, 0, 1);
+		
+		assertEquals(0, t1.compareTo(t1));
+		assertEquals(0, t2.compareTo(t2));
+		assertEquals(0, t3.compareTo(t3));
+	}
+	
+	@Test
+	public void test_compareToEqualsSomethingElse() {
+		DateTime t11 = new DateTime(1, 0, 0);
+		DateTime t21 = new DateTime(0, 1, 0);
+		DateTime t31 = new DateTime(0, 0, 1);
+
+		DateTime t12 = new DateTime(1, 0, 0);
+		DateTime t22 = new DateTime(0, 1, 0);
+		DateTime t32 = new DateTime(0, 0, 1);
+
+		
+		assertEquals(0, t11.compareTo(t12));
+		assertEquals(0, t21.compareTo(t22));
+		assertEquals(0, t31.compareTo(t32));		
+	}
+	
+	@Test
+	public void test_compareToEqualsGreater() {
+		DateTime t1 = new DateTime(1, 0, 0);
+		DateTime t2 = new DateTime(0, 1, 0);
+		DateTime t3 = new DateTime(0, 0, 1);
+		
+		assertEquals(1, t1.compareTo(zero));
+		assertEquals(1, t2.compareTo(zero));
+		assertEquals(1, t3.compareTo(zero));
+		
+		assertEquals(1, t2.compareTo(t3));
+		assertEquals(1, t1.compareTo(t3));
+		assertEquals(1, t1.compareTo(t2));		
+	}
+
+	//--------------------------------------------------------------------------
+	// Equals
+	//--------------------------------------------------------------------------
+	@Test
+	public void test_equalsItself() {
+		DateTime t1 = new DateTime(1, 0, 0);
+		DateTime t2 = new DateTime(0, 1, 0);
+		DateTime t3 = new DateTime(0, 0, 1);
+		
+		assertEquals(true, t1.equals(t1));
+		assertEquals(true, t2.equals(t2));
+		assertEquals(true, t3.equals(t3));
+	} 
+	
+	@Test
+	public void test_equalsSomethingElse() {
+		DateTime t11 = new DateTime(1, 0, 0);
+		DateTime t21 = new DateTime(0, 1, 0);
+		DateTime t31 = new DateTime(0, 0, 1);
+
+		DateTime t12 = new DateTime(1, 0, 0);
+		DateTime t22 = new DateTime(0, 1, 0);
+		DateTime t32 = new DateTime(0, 0, 1);
+
+		
+		assertEquals(true, t11.equals(t12));
+		assertEquals(true, t21.equals(t22));
+		assertEquals(true, t31.equals(t32));		
+	}
+	
+	@Test
+	public void test_equalsFalse() {
+		DateTime t1 = new DateTime(1, 0, 0);
+		DateTime t2 = new DateTime(0, 1, 0);
+		DateTime t3 = new DateTime(0, 0, 1);
+		
+		assertEquals(false, t1.equals(t2));
+		assertEquals(false, t1.equals(t3));
+		assertEquals(false, t2.equals(t1));
+		assertEquals(false, t2.equals(t3));
+		assertEquals(false, t3.equals(t1));
+		assertEquals(false, t3.equals(t2));
+	}
+	
+	@Test
+	public void test_equalsNull() {
+		assertEquals(false, this.zero.equals(null));
+	}
+	
+	@Test
+	public void test_equalsDifferentClass() {
+		assertEquals(false, this.zero.equals("Ik heb weer is honger."));
+	}
 }

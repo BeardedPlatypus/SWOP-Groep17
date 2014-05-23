@@ -1,18 +1,20 @@
 package domain;
 
-// TODO write hash and equals method. 
+import util.annotations.Immutable;
+
 /**
  * The DateTime class is an immutable data object that contains the number of
  * days, hours, and minutes.
- * Created by the ProductionSchedule class. 
+ * Created by the ProductionSchedule class.
  * 
- * @author Martinus WilhelmusTegelaers
- *
- * @invariant 0 <= this.getDays()  
+ * @author Martinus Wilhelmus Tegelaers
+ * 
+ * @invariant 0 <= this.getDays()
  * @invariant 0 <= this.getHours() <= 23
  * @invariant 0 <= this.getMinutes() <= 59
  */
-public class DateTime {
+@Immutable
+public class DateTime implements Comparable<DateTime>{
 	//--------------------------------------------------------------------------
 	// Constructor
 	//--------------------------------------------------------------------------
@@ -52,18 +54,21 @@ public class DateTime {
 	 * @return {<sanitised days>, <sanitised hours>, <sanitised minutes>}
 	 */
 	public static int[] sanitise(int days, int hours, int minutes) {
-		long temp = days * 1440 + hours * 60 + minutes;
+		return sanitise(days * 1440 + hours * 60 + minutes);
 		
-		if (temp <= 0)
+	}
+	
+	public static int[] sanitise(long minutes) {
+		if (minutes <= 0)
 			return new int[]{0, 0, 0};
 		
 		int[] result = new int[3];
-		result[0] = (int) (temp / 1440);
-		result[1] = (int) ((temp % 1440) / 60);
-		result[2] = (int) (temp % 60);
+		result[0] = (int) (minutes / 1440);
+		result[1] = (int) ((minutes % 1440) / 60);
+		result[2] = (int) (minutes % 60);
 		return result;
 	}
-
+	
 	//--------------------------------------------------------------------------
 	// Properties
 	//--------------------------------------------------------------------------
@@ -103,6 +108,15 @@ public class DateTime {
 	/** The minutes of this DateTime. */
 	public final int minutes;
 
+	/**
+	 * Get the time of this DateTime in minutes. 
+	 * 
+	 * @return the time of this DateTime in minutes.
+	 */
+	public long getInMinutes() {
+		return this.getDays() * 1440 + this.getHours() * 60 + this.getMinutes();
+	}
+	
 	//--------------------------------------------------------------------------
 	// Creation Methods. 
 	//--------------------------------------------------------------------------
@@ -165,6 +179,29 @@ public class DateTime {
 		return this.subtractTime(dt.getDays(), dt.getHours(), dt.getMinutes());
 	}
 	
+	/**
+	 * Potato quality multiplies.
+	 * 
+	 * @param s
+	 * 		this potato.
+	 * @return potato.
+	 */
+	public DateTime multiplyWithScalar(double s) {
+		int[] val = sanitise(Math.round(this.getInMinutes() * s));
+		return new DateTime(val[0], val[1], val[2]);
+	}
+
+	//--------------------------------------------------------------------------
+	// Comparable interface. 
+	//--------------------------------------------------------------------------
+	@Override
+	public int compareTo(DateTime that) {
+		return Long.compare(this.getInMinutes(), that.getInMinutes());
+	}
+	 
+	//--------------------------------------------------------------------------
+	// Generic Object methods. 
+	//--------------------------------------------------------------------------
 	/**
 	 * Returns a simple string representation of the DateTime object, formatted as:
 	 * "Day DD, HHhMMm", based on the DateTime's data.
