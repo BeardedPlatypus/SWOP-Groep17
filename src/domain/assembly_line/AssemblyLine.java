@@ -11,6 +11,7 @@ import domain.Manufacturer;
 import domain.assembly_line.virtual.VirtualAssemblyLine;
 import domain.car.Model;
 import domain.car.Specification;
+import domain.clock.EventConsumer;
 import domain.order.CompletedOrderEvent;
 import domain.order.CompletedOrderObserver;
 import domain.order.CompletedOrderSubject;
@@ -46,8 +47,10 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 	 * 		workPosts == null || workPosts.isEmpty()
 	 * @throws IllegalArgumentException
 	 * 		models is null or models is empty
+	 * @throws IllegalArgumentException
+	 * 		eventConsumer == null
 	 */
-	public AssemblyLine(List<WorkPost> workPosts, List<Model> models)
+	public AssemblyLine(List<WorkPost> workPosts, List<Model> models, EventConsumer eventConsumer)
 		throws IllegalArgumentException {
 		if (workPosts == null || workPosts.isEmpty()) {
 			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
@@ -56,6 +59,9 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 		if (models == null || models.isEmpty()) {
 			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
 					+ "with empty model list");
+		}
+		if (eventConsumer == null) {
+			throw new IllegalArgumentException("eventConsumer == null");
 		}
 //		if (schedulerIntermediate == null) {
 //			throw new IllegalArgumentException("Cannot initialise an AssemblyLine"
@@ -75,6 +81,8 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 		
 		this.observers = new ArrayList<CompletedOrderObserver>();
 		this.initialiseState();
+		
+		this.eventConsumer = eventConsumer;
 	}	
 	
 	//--------------------------------------------------------------------------
@@ -740,4 +748,14 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 		}
 		return time;
 	}
+
+	//--------------------------------------------------------------------------
+	// Event Consumer
+	//--------------------------------------------------------------------------
+	protected EventConsumer getEventConsumer() {
+		return this.eventConsumer;
+	}
+	
+	private final EventConsumer eventConsumer;
+
 }
