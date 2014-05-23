@@ -31,6 +31,7 @@ public class UI {
 	 */
 	public static void main(String[] args){
 		InitialisationHandler initHandler = new InitialisationHandler();
+		initHandler.setupIteration3();
 		UI ui = new UI(initHandler.getDomainFacade());
 		ui.run();
 	}

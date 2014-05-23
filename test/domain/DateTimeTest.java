@@ -367,6 +367,29 @@ public class DateTimeTest {
 		
 		assertEquals(24 * 60 + 2 * 60 + 3, zero.getInMinutes());
 	}
+	
+	//--------------------------------------------------------------------------
+	// toString
+	//--------------------------------------------------------------------------
+	@Test
+	public void test_toString(){
+		DateTime t1 = new DateTime(1,0,0);
+		assertNotNull(t1.toString());
+	}
+	
+	//--------------------------------------------------------------------------
+	// hashCode
+	//--------------------------------------------------------------------------
+	@Test
+	public void test_hashCode(){
+		DateTime t1 = new DateTime(1,0,0);
+		DateTime t2 = new DateTime(0,1,0);
+		DateTime t3 = new DateTime(0,0,1);
+		
+		assertNotEquals(t1.hashCode(), t2.hashCode());
+		assertNotEquals(t1.hashCode(), t3.hashCode());
+		assertNotEquals(t2.hashCode(), t3.hashCode());
+	}
 
 	//--------------------------------------------------------------------------
 	// Compare to 

@@ -58,7 +58,7 @@ public class ChangeOperationalStatusHandler {
 	 */
 	public void setAssemblyLineState(int assemblyLineNum, int stateNum) {
 		AssemblyLineState state = this.getManufacturer().getStateInstance(stateNum);
-		//TODO set state in AssemblyLine
+		this.getManufacturer().setAssemblyLineState(assemblyLineNum, state);
 	}
 	
 	/**

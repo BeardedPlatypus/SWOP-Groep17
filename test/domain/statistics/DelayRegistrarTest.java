@@ -10,8 +10,11 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 
+import domain.order.Order;
 import domain.statistics.DelayRegistrar;
 import domain.statistics.ProcedureStatistics;
 import domain.statistics.WorkingDay;
@@ -20,6 +23,7 @@ public class DelayRegistrarTest {
 	
 	@Rule public ExpectedException exception = ExpectedException.none();
 	
+	@Mock Order order;
 	DelayRegistrar registrar;
 	double epsilon = 1E-14;
 
@@ -29,29 +33,30 @@ public class DelayRegistrarTest {
 
 	@Before
 	public void setUp() throws Exception {
+		MockitoAnnotations.initMocks(this);
 		registrar = new DelayRegistrar();
 		
-		ProcedureStatistics stats = new ProcedureStatistics(10);
+		ProcedureStatistics stats = new ProcedureStatistics(10, order);
 		registrar.addStatistics(stats);
 		
-		stats = new ProcedureStatistics(20);
+		stats = new ProcedureStatistics(20, order);
 		registrar.addStatistics(stats);
 		
-		stats = new ProcedureStatistics(50);
+		stats = new ProcedureStatistics(50, order);
 		registrar.addStatistics(stats);
 		
-		stats = new ProcedureStatistics(30);
+		stats = new ProcedureStatistics(30, order);
 		registrar.addStatistics(stats);
 		
-		stats = new ProcedureStatistics(40);
+		stats = new ProcedureStatistics(40, order);
 		registrar.addStatistics(stats);
 		
-		stats = new ProcedureStatistics(10);
+		stats = new ProcedureStatistics(10, order);
 		registrar.addStatistics(stats);
 	}
 	
 	public void addStatisticsTest() {
-		ProcedureStatistics stats = new ProcedureStatistics(1000);
+		ProcedureStatistics stats = new ProcedureStatistics(1000, order);
 		int dayNumber = registrar.getActiveDay().getDayNumber();
 		registrar.addStatistics(stats);
 		
@@ -146,7 +151,7 @@ public class DelayRegistrarTest {
 	@Test
 	public void getMedianTest_oneStat() {
 		DelayRegistrar registrar = new DelayRegistrar();
-		registrar.addStatistics(new ProcedureStatistics(100));
+		registrar.addStatistics(new ProcedureStatistics(100, order));
 		// Using whitebox, because these methods are protected.
 		try {
 			double median = Whitebox.<Double> invokeMethod(registrar,"getMedian");

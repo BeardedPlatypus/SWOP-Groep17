@@ -89,8 +89,11 @@ public class PerformAssemblyTaskHandler {
 	 * @throws IllegalArgumentException
 	 * 		taskNumber refers to a task with a type incompatible with the given
 	 * 		work post.
+	 * @throws IllegalStateException
+	 * 		Status of specified assembly line disallows completion of tasks
 	 */
-	public void completeWorkpostTask(int lineNumber, int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException {
+	public void completeWorkpostTask(int lineNumber, int workPostNumber, int taskNumber, int minutes) throws IllegalArgumentException,
+		IllegalStateException {
 		this.getManufacturer().completeWorkpostTask(lineNumber, workPostNumber, taskNumber, minutes);
 	}
 

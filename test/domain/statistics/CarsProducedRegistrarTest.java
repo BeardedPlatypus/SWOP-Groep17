@@ -8,14 +8,18 @@ import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 
+import domain.order.Order;
 import domain.statistics.CarsProducedRegistrar;
 import domain.statistics.ProcedureStatistics;
 import domain.statistics.WorkingDay;
 
 public class CarsProducedRegistrarTest {
 	
+	@Mock Order order;
 	CarsProducedRegistrar registrar;
 	double epsilon = 1E-14;
 
@@ -25,6 +29,7 @@ public class CarsProducedRegistrarTest {
 
 	@Before
 	public void setUp() throws Exception {
+		MockitoAnnotations.initMocks(this);
 		registrar = new CarsProducedRegistrar();
 		
 		this.initialiseStatistics();
@@ -32,7 +37,7 @@ public class CarsProducedRegistrarTest {
 
 	@Test
 	public void addStatisticsTest() {
-		ProcedureStatistics stats = new ProcedureStatistics(100);
+		ProcedureStatistics stats = new ProcedureStatistics(100, order);
 		registrar.addStatistics(stats);
 		// Using whitebox, because these methods are protected.
 		try {
@@ -71,7 +76,7 @@ public class CarsProducedRegistrarTest {
 			e.printStackTrace();
 		}
 		
-		registrar.addStatistics(new ProcedureStatistics(100));
+		registrar.addStatistics(new ProcedureStatistics(100, order));
 		registrar.switchDay(registrar.getActiveDay().getDayNumber() + 1);
 		
 		// Using whitebox, because these methods are protected.
@@ -98,7 +103,7 @@ public class CarsProducedRegistrarTest {
 	
 	@Test
 	public void switchDayTest_multipleDays() {
-		registrar.addStatistics(new ProcedureStatistics(100));
+		registrar.addStatistics(new ProcedureStatistics(100, order));
 		int newDayNumber = registrar.getActiveDay().getDayNumber() + 3;
 		registrar.switchDay(newDayNumber);
 		
@@ -125,7 +130,7 @@ public class CarsProducedRegistrarTest {
 	
 	@Test
 	public void finishUpActiveDayTest() {
-		registrar.addStatistics(new ProcedureStatistics(8008135));
+		registrar.addStatistics(new ProcedureStatistics(8008135, order));
 		
 		// Using whitebox, because these methods are protected.
 		try {
@@ -149,7 +154,7 @@ public class CarsProducedRegistrarTest {
 	}
 	
 	public void initialiseStatistics() {
-		ProcedureStatistics stats = new ProcedureStatistics(1337);
+		ProcedureStatistics stats = new ProcedureStatistics(1337, order);
 		
 		for (int i = 0; i < 50; i++) {
 			registrar.addStatistics(stats);

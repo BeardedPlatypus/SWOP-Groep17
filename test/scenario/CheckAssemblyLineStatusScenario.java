@@ -14,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import domain.assembly_line.AssemblyLineView;
+import domain.assembly_line.TaskType;
 import domain.handlers.AssemblyLineStatusHandler;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
@@ -52,6 +53,7 @@ public class CheckAssemblyLineStatusScenario {
 		assertTrue(view.getWorkPostViews().get(1).isEmpty());
 		assertTrue(view.getWorkPostViews().get(2).isEmpty());
 		assertFalse(view.getWorkPostViews().get(0).isFinished());
+		assertEquals(TaskType.BODY.toString(), view.getWorkPostViews().get(0).getName());
 	}
 
 }

@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import domain.Manufacturer;
 import domain.assembly_line.AssemblyTaskView;
 import domain.assembly_line.WorkPostView;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
+import domain.clock.ClockManipulator;
 import domain.handlers.DomainFacade;
-import domain.order.Order;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
+import exceptions.OptionRestrictionException;
 
 /**
  * Class which can manipulate the domainfacade of a system to add initial data
@@ -36,8 +38,10 @@ public class InitialDataLoader {
 	 * @param manu
 	 * 		The manufacturer to load the data into
 	 */
-	public InitialDataLoader(DomainFacade domain){
+	public InitialDataLoader(DomainFacade domain, Manufacturer manuf, ClockManipulator manip){
 		this.domainFacade = domain;
+		this.manufacturer = manuf;
+		this.clockMan = manip;
 	}
 	
 	//--------------------------------------------------------------------------
@@ -45,42 +49,55 @@ public class InitialDataLoader {
 	//--------------------------------------------------------------------------
 	
 	/**
+	 * Get the domainfacade of this loader for internal use
+	 * 
+	 * @return the domainfacade
+	 */
+	private DomainFacade getDomainFacade() {
+		return this.domainFacade;
+	}
+
+	private final DomainFacade domainFacade;
+	
+	/**
 	 * Get the manufacturer of this loader for internal use
 	 * 
 	 * @return the manufacturer
 	 */
-	private DomainFacade getDomainFacade() {
-		return domainFacade;
+	private Manufacturer getManufacturer(){
+		return this.manufacturer;
 	}
-
-	private final DomainFacade domainFacade;
+	
+	private final Manufacturer manufacturer;
+	
+	/**
+	 * Get the clockManipulator of this loader for internal use
+	 * 
+	 * @return the ClockManipulator
+	 */
+	private ClockManipulator getClockManipulator(){
+		return this.clockMan;
+	}
+	
+	private final ClockManipulator clockMan;
 	
 	//--------------------------------------------------------------------------
 	// Loading methods
 	//--------------------------------------------------------------------------
 	
-	public void advanceDay(int amountOfDays){
-		//TODO
-	}
-	
-	public void addCompletedStandardOrder(StandardOrder order){
-		//TODO
-	}
-	
-	public void addCompletedSingleOrder(SingleTaskOrder order){
-		//TODO
-	}
-	
 	public void addPendingStandardOrder(StandardOrder order){
-		
+		this.getManufacturer().submitStandardOrder(order.getModel(), order.getSpecifications().getOptions());
 	}
 	
 	public void addPendingSingleOrder(SingleTaskOrder order){
-		
+		this.getManufacturer().submitSingleTaskOrder(order.getSpecifications().getOption(0), order.getDeadline().get());
 	}
 	
-	public void scheduleOnLine(int line, Order order){
-		//TODO
+	public void advanceDay(int amountOfDays){
+		for (int i = 0; i < amountOfDays; i++) {
+			this.completeAllOrders();
+			this.getClockManipulator().advanceDay();
+		}
 	}
 	
 	//--------------------------------------------------------------------------
@@ -101,7 +118,8 @@ public class InitialDataLoader {
 	 * 			The number of orders to be placed.
 	 */
 	public void placeIdenticalStandardOrder(int numberOfOrders) {
-		
+
+		Random rand = new Random();
 		//start new order session
 		this.getDomainFacade().startNewOrderSession();
 		Model chosenModel = this.getDomainFacade().getVehicleModels().get(0);
@@ -109,22 +127,29 @@ public class InitialDataLoader {
 		
 		//select compatible options
 		List<Option> options = new ArrayList<Option>();
-		while(this.getDomainFacade().orderHasUnfilledOptions()){
-			OptionCategory optCat = this.getDomainFacade().getNextOptionCategory();
-			boolean validSelection = false;
-			for(int i = 0; i < optCat.getAmountOfOptions() && validSelection; i++){
-				Option opt = optCat.getOption(i);
+		boolean accepted = false;
+		while(!accepted){
+			//start new order session
+			this.getDomainFacade().startNewOrderSession();
+
+			//select first car model
+			this.getDomainFacade().chooseModel(chosenModel);
+
+			//select compatible options
+			while(this.getDomainFacade().orderHasUnfilledOptions()){
+				OptionCategory optCat = this.getDomainFacade().getNextOptionCategory();
+				Option opt = optCat.getOption(rand.nextInt(optCat.getAmountOfOptions()));
 				options.add(opt);
-				if(this.getDomainFacade().isFullyValidOptionSet(chosenModel, options)){
-					this.getDomainFacade().selectOption(opt);
-					validSelection = true;
-				} else {
-					options.remove(opt);
-				}
+				this.getDomainFacade().selectOption(opt);
+			}
+			try{
+				//submit composed order
+				this.getDomainFacade().submitOrder();
+				accepted = true;
+			} catch (OptionRestrictionException e) {
+				accepted = false;
 			}
 		}
-		//submit composed order
-		this.getDomainFacade().submitOrder();
 
 		//submit order n-1 times again
 		for(int i = 1; i < numberOfOrders;i++){
@@ -147,7 +172,8 @@ public class InitialDataLoader {
 	 */
 	public void placeRandomStandardOrder(int numberOfOrders) {
 		Random rand = new Random();
-		
+		//Setup up an order session for no exceptions
+		this.getDomainFacade().getNewOrderSessionHandler().startNewOrderSession();
 		for(int i=0;i<numberOfOrders;i++){
 			List<Model> models = this.getDomainFacade().getVehicleModels();
 			Model chosenModel = models.get(rand.nextInt(models.size()));
@@ -165,35 +191,33 @@ public class InitialDataLoader {
 	 */
 	public void placeRandomStandardOrderOfModel(int numberOfOrders, Model model) {
 		Random rand = new Random();
-		
+
+
 		for(int i = 0; i<numberOfOrders; i++){
-			//start new order session
-			this.getDomainFacade().startNewOrderSession();
+			boolean accepted = false;
+			while(!accepted){
+				//start new order session
+				this.getDomainFacade().startNewOrderSession();
 
-			//select first car model
-			this.getDomainFacade().chooseModel(model);
+				//select first car model
+				this.getDomainFacade().chooseModel(model);
 
-			//select compatible options
-			List<Option> options = new ArrayList<Option>();
-			while(this.getDomainFacade().orderHasUnfilledOptions()){
-				OptionCategory optCat = this.getDomainFacade().getNextOptionCategory();
-
-				boolean validSelection = false;
-				while(!validSelection){
+				//select compatible options
+				List<Option> options = new ArrayList<Option>();
+				while(this.getDomainFacade().orderHasUnfilledOptions()){
+					OptionCategory optCat = this.getDomainFacade().getNextOptionCategory();
 					Option opt = optCat.getOption(rand.nextInt(optCat.getAmountOfOptions()));
-
 					options.add(opt);
-
-					if(this.getDomainFacade().isFullyValidOptionSet(model, options)){
-						this.getDomainFacade().selectOption(opt);
-						validSelection = true;
-					} else {
-						options.remove(opt);
-					}
+					this.getDomainFacade().selectOption(opt);
+				}
+				try{
+					//submit composed order
+					this.getDomainFacade().submitOrder();
+					accepted = true;
+				} catch (OptionRestrictionException e) {
+					accepted = false;
 				}
 			}
-			//submit composed order
-			this.getDomainFacade().submitOrder();
 		}
 
 	}
@@ -206,10 +230,10 @@ public class InitialDataLoader {
 	/**
 	 * Simulates completing all pending orders.
 	 */
-	public void simulateCompleteAllOrders(){
+	public void completeAllOrders(){
 		while(this.getDomainFacade().getPendingOrders().size() > 0){
 			for(int i=0; i<this.getDomainFacade().getLineViews().size();i++)
-				simulateCompleteAllTasksOnAssemblyLine(i,1);
+				completeAllTasksOnAssemblyLine(i,1);
 		}
 	}
 	
@@ -219,8 +243,8 @@ public class InitialDataLoader {
 	 * 
 	 * @param numberOfTimes
 	 */
-	public void simulateCompleteAllTasksOnAssemblyLine(int lineNb, int numberOfTimes) {
-		simulateCompleteAllTasksOnAssemblyLine(lineNb, numberOfTimes, 40);
+	public void completeAllTasksOnAssemblyLine(int lineNb, int numberOfTimes) {
+		completeAllTasksOnAssemblyLine(lineNb, numberOfTimes, 40);
 	}
 	
 	/**
@@ -229,7 +253,7 @@ public class InitialDataLoader {
 	 * 
 	 * @param numberOfTimes
 	 */
-	public void simulateCompleteAllTasksOnAssemblyLine(int lineNb, int numberOfTimes,
+	public void completeAllTasksOnAssemblyLine(int lineNb, int numberOfTimes,
 			int timeSpentPerTask) {
 		for(int i = 0; i < numberOfTimes; i++){
 			for(WorkPostView wp : this.getDomainFacade().getWorkPosts(lineNb)){

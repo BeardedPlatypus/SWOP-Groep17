@@ -5,6 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import scenario.AdaptSchedulingAlgorithmScenario;
+import scenario.ChangeOperationalStatusScenario;
 import scenario.CheckAssemblyLineStatusScenario;
 import scenario.CheckAssemblyLineStatusScenario_Alternate;
 import scenario.CheckProductionStatisticsScenario;
@@ -17,13 +18,11 @@ import scenario.PerformAssemblyTaskScenario;
 
 @RunWith(Suite.class)
 @SuiteClasses({ AdaptSchedulingAlgorithmScenario.class,
+				ChangeOperationalStatusScenario.class,
 				CheckAssemblyLineStatusScenario.class,
-				CheckAssemblyLineStatusScenario_Alternate.class,
 				CheckProductionStatisticsScenario.class,
-				CheckProductionStatisticsScenario_Alternate.class,
 				NewOrderSessionScenario.class,
 				OrderDetailsScenario.class,
-				OrderDetailsScenario_Alternate.class,
 				OrderSingleTaskScenario.class,
 				PerformAssemblyTaskScenario.class})
 public class ScenarioTestSuite {
