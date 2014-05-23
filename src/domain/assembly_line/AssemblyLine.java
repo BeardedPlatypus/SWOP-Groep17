@@ -400,6 +400,10 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 			this.setElapsedTime(prospectiveElapsedTime);
 		}
 		this.incrementFinishedAssemblyCounter();
+		
+		if (this.canAdvance()) {
+			this.getEventConsumer().constructEvent(this.getElapsedTime(), this.getAssemblyLineController());
+		}
 	}
 
 	/**
