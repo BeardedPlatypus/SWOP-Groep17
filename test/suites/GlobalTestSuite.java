@@ -19,7 +19,6 @@ import domain.restrictions.RestrictionsTestSuite;
 				ProductionScheduleTestSuite.class,	// domain.productionSchedule
 				StrategyTestSuite.class,			// domain.productionSchedule.strategy
 				RestrictionsTestSuite.class })		// domain.restrictions
-
 public class GlobalTestSuite {
 
 

@@ -280,6 +280,8 @@ public class OrderSession {
 	{
 		if(this.orderIsMade())
 			throw new IllegalStateException("An order has already been made from this Session.");
+		if(!this.modelIsChosen())
+			throw new IllegalStateException("No model specified in this session.");
 		try{
 			List<Option> allDesiredOptions = this.getModel().getSolitaryOptions();
 			allDesiredOptions.addAll(this.getOptions());
