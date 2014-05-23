@@ -78,6 +78,39 @@ public class AssemblyLine implements WorkPostObserver, CompletedOrderSubject {
 	}	
 	
 	//--------------------------------------------------------------------------
+	// AssemblyLineController
+	//--------------------------------------------------------------------------
+	/**
+	 * Get the AssemblyLineController of this AssemblyLineControllerController.
+	 * 
+	 * @return The AssemblyLineController of AssemblyLine.
+	 */
+	protected AssemblyLineController getAssemblyLineController() {
+		return this.assemblyLineController;
+	}
+	
+	/**
+	 * Set the AssemblyLineController of this AssemblyLine to newAssemblyLineController.
+	 * 
+	 * @param newAssemblyLineController
+	 * 		The new AssemblyLine of this AssemblyLine.
+	 * 
+	 * @postcondition | (new this).getAssemblyLineController == newAssemblyLineController
+	 * 
+	 * @throws IllegalArgumentException
+	 * 		| newAssemblyLineController == null
+	 */
+	void setAssemblyLine(AssemblyLineController newAssemblyLineController) throws IllegalArgumentException {
+		if (newAssemblyLineController == null) {
+			throw new IllegalArgumentException("potato cannot be null.");
+		}
+		this.assemblyLineController = newAssemblyLineController;
+	}
+	
+	/** The AssemblyLine of this AssemblyLineController. */
+	private AssemblyLineController assemblyLineController;
+	
+	//--------------------------------------------------------------------------
 	// Order-related methods
 	//--------------------------------------------------------------------------
 	/**

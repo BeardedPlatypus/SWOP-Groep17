@@ -404,6 +404,8 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 		this.getSchedulerContext().attachOrderObserver(this);
 		//unsubscribe from clock.
 		this.getEventConsumer().unregister(this);
+		
+		this.getAssemblyLine().setCurrentState(new IdleState());
 	}
 	
 	/**
@@ -422,6 +424,8 @@ public class AssemblyLineController implements EventActor, OrderObserver {
 		List<Order> l = new ArrayList<>();
 		l.add(order);
 		this.getAssemblyLine().advance(l);
+		
+		this.getAssemblyLine().setCurrentState(new ActiveState());
 	}
 	
 	//--------------------------------------------------------------------------
