@@ -14,6 +14,7 @@ import domain.clock.ClockManipulator;
 import domain.handlers.DomainFacade;
 import domain.order.SingleTaskOrder;
 import domain.order.StandardOrder;
+import exceptions.OptionRestrictionException;
 
 /**
  * Class which can manipulate the domainfacade of a system to add initial data
@@ -117,7 +118,8 @@ public class InitialDataLoader {
 	 * 			The number of orders to be placed.
 	 */
 	public void placeIdenticalStandardOrder(int numberOfOrders) {
-		
+
+		Random rand = new Random();
 		//start new order session
 		this.getDomainFacade().startNewOrderSession();
 		Model chosenModel = this.getDomainFacade().getVehicleModels().get(0);
@@ -125,22 +127,29 @@ public class InitialDataLoader {
 		
 		//select compatible options
 		List<Option> options = new ArrayList<Option>();
-		while(this.getDomainFacade().orderHasUnfilledOptions()){
-			OptionCategory optCat = this.getDomainFacade().getNextOptionCategory();
-			boolean validSelection = false;
-			for(int i = 0; i < optCat.getAmountOfOptions() && validSelection; i++){
-				Option opt = optCat.getOption(i);
+		boolean accepted = false;
+		while(!accepted){
+			//start new order session
+			this.getDomainFacade().startNewOrderSession();
+
+			//select first car model
+			this.getDomainFacade().chooseModel(chosenModel);
+
+			//select compatible options
+			while(this.getDomainFacade().orderHasUnfilledOptions()){
+				OptionCategory optCat = this.getDomainFacade().getNextOptionCategory();
+				Option opt = optCat.getOption(rand.nextInt(optCat.getAmountOfOptions()));
 				options.add(opt);
-				if(this.getDomainFacade().isFullyValidOptionSet(chosenModel, options)){
-					this.getDomainFacade().selectOption(opt);
-					validSelection = true;
-				} else {
-					options.remove(opt);
-				}
+				this.getDomainFacade().selectOption(opt);
+			}
+			try{
+				//submit composed order
+				this.getDomainFacade().submitOrder();
+				accepted = true;
+			} catch (OptionRestrictionException e) {
+				accepted = false;
 			}
 		}
-		//submit composed order
-		this.getDomainFacade().submitOrder();
 
 		//submit order n-1 times again
 		for(int i = 1; i < numberOfOrders;i++){
@@ -163,7 +172,8 @@ public class InitialDataLoader {
 	 */
 	public void placeRandomStandardOrder(int numberOfOrders) {
 		Random rand = new Random();
-		
+		//Setup up an order session for no exceptions
+		this.getDomainFacade().getNewOrderSessionHandler().startNewOrderSession();
 		for(int i=0;i<numberOfOrders;i++){
 			List<Model> models = this.getDomainFacade().getVehicleModels();
 			Model chosenModel = models.get(rand.nextInt(models.size()));
@@ -181,35 +191,33 @@ public class InitialDataLoader {
 	 */
 	public void placeRandomStandardOrderOfModel(int numberOfOrders, Model model) {
 		Random rand = new Random();
-		
+
+
 		for(int i = 0; i<numberOfOrders; i++){
-			//start new order session
-			this.getDomainFacade().startNewOrderSession();
+			boolean accepted = false;
+			while(!accepted){
+				//start new order session
+				this.getDomainFacade().startNewOrderSession();
 
-			//select first car model
-			this.getDomainFacade().chooseModel(model);
+				//select first car model
+				this.getDomainFacade().chooseModel(model);
 
-			//select compatible options
-			List<Option> options = new ArrayList<Option>();
-			while(this.getDomainFacade().orderHasUnfilledOptions()){
-				OptionCategory optCat = this.getDomainFacade().getNextOptionCategory();
-
-				boolean validSelection = false;
-				while(!validSelection){
+				//select compatible options
+				List<Option> options = new ArrayList<Option>();
+				while(this.getDomainFacade().orderHasUnfilledOptions()){
+					OptionCategory optCat = this.getDomainFacade().getNextOptionCategory();
 					Option opt = optCat.getOption(rand.nextInt(optCat.getAmountOfOptions()));
-
 					options.add(opt);
-
-					if(this.getDomainFacade().isFullyValidOptionSet(model, options)){
-						this.getDomainFacade().selectOption(opt);
-						validSelection = true;
-					} else {
-						options.remove(opt);
-					}
+					this.getDomainFacade().selectOption(opt);
+				}
+				try{
+					//submit composed order
+					this.getDomainFacade().submitOrder();
+					accepted = true;
+				} catch (OptionRestrictionException e) {
+					accepted = false;
 				}
 			}
-			//submit composed order
-			this.getDomainFacade().submitOrder();
 		}
 
 	}

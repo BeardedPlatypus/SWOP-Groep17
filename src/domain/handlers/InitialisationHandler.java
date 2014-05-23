@@ -682,8 +682,10 @@ public class InitialisationHandler {
 	public void setupIteration3(){
 		//First ten orders of the system
 		this.getInitialDataLoader().placeRandomStandardOrder(10);
+		System.out.println("first orders, check");
 		//Complete those
 		this.getInitialDataLoader().completeAllOrders();
+		System.out.println("Completed orders, check");
 		//Set the new day
 		this.getInitialDataLoader().advanceDay(1);
 		//Now we want to get the three lines filled up, we use the identical orders for this
