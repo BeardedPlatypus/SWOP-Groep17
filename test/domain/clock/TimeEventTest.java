@@ -12,8 +12,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 
-import com.google.common.base.Optional;
-
 import domain.DateTime;
 
 public class TimeEventTest {

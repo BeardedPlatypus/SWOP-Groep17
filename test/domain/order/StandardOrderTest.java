@@ -7,12 +7,9 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.modules.junit4.PowerMockRunner;
-
 import domain.DateTime;
 import domain.car.Specification;
 import domain.car.Model;
@@ -62,19 +59,19 @@ public class StandardOrderTest {
 	@Test 
 	public void test_constructorIllegalArgumentExceptionModel() {
 		exception.expect(IllegalArgumentException.class);
-		Order test = new StandardOrder(null, spectacles, 0, submission1);
+		new StandardOrder(null, spectacles, 0, submission1);
 	}
 	
 	@Test
 	public void test_constructorIllegalArgumentExceptionSpecs() {
 		exception.expect(IllegalArgumentException.class);
-		Order test = new StandardOrder(mockSuperModel, null, 0, submission1);
+		new StandardOrder(mockSuperModel, null, 0, submission1);
 	}
 
 	@Test
 	public void test_constructorIllegalArgumentExceptionSubmissiontime() {
 		exception.expect(IllegalArgumentException.class);
-		Order test = new StandardOrder(mockSuperModel, spectacles, 0, null);
+		new StandardOrder(mockSuperModel, spectacles, 0, null);
 	}
 	
 	@Test

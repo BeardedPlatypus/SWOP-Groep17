@@ -36,6 +36,7 @@ import domain.order.Order;
 public class WorkPostTest {
 	@Rule public ExpectedException exception = ExpectedException.none();
 
+
 	@Mock AssemblyProcedure assemblyProcedure;
 	@Mock AssemblyTask assemblyTaskInfo1;
 	@Mock AssemblyTask assemblyTaskInfo2;

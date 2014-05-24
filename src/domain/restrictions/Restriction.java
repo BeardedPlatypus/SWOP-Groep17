@@ -1,8 +1,6 @@
 package domain.restrictions;
 
 import java.util.List;
-import java.util.Set;
-
 import domain.car.Option;
 
 /**

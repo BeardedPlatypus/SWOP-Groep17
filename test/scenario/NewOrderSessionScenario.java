@@ -3,7 +3,6 @@ package scenario;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -12,18 +11,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import domain.DateTime;
 import domain.car.Model;
 import domain.car.Option;
 import domain.car.OptionCategory;
-import domain.car.Model;
 import domain.handlers.InitialisationHandler;
 import domain.handlers.NewOrderSessionHandler;
 import domain.order.OrderView;
-import exceptions.IllegalVehicleOptionCombinationException;
-import exceptions.NoOptionCategoriesRemainingException;
 import exceptions.OptionRestrictionException;
-import exceptions.OrderDoesNotExistException;
 
 /**
  * Use case scenario test: Order New Car

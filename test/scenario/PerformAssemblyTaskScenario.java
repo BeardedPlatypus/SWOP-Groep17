@@ -10,13 +10,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.asm.tree.IntInsnNode;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import domain.InteractionSimulator;
-import domain.assembly_line.AssemblyLineView;
 import domain.assembly_line.AssemblyTaskView;
-import domain.assembly_line.WorkPostView;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
 import domain.handlers.PerformAssemblyTaskHandler;

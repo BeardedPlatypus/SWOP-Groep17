@@ -6,13 +6,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.*;
 import org.powermock.reflect.Whitebox;
 
-import domain.DateTime;
 import domain.Manufacturer;
 import domain.assembly_line.AssemblyLine;
 import domain.handlers.CheckProductionStatisticsHandler;
@@ -20,7 +17,6 @@ import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
 import domain.statistics.CarsProducedRegistrar;
 import domain.statistics.DelayRegistrar;
-import domain.statistics.ProcedureStatistics;
 import domain.statistics.StatisticsLogger;
 
 @RunWith(PowerMockRunner.class)

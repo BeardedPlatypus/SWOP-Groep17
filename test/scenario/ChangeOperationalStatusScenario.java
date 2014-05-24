@@ -11,7 +11,6 @@ import org.powermock.reflect.Whitebox;
 
 import com.google.common.base.Optional;
 
-import domain.assembly_line.AssemblyLine;
 import domain.assembly_line.AssemblyLineFacade;
 import domain.assembly_line.AssemblyLineStateView;
 import domain.assembly_line.AssemblyLineView;

@@ -1,10 +1,6 @@
 package domain;
 
 import java.util.LinkedList;
-import java.util.List;
-
-import domain.assembly_line.AssemblyTaskView;
-import domain.assembly_line.WorkPostView;
 import domain.car.Option;
 import domain.car.OptionCategory;
 import domain.car.Model;

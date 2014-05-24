@@ -11,7 +11,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.modules.junit4.*;
 import org.powermock.reflect.Whitebox;
@@ -19,7 +18,6 @@ import org.powermock.reflect.Whitebox;
 import domain.DateTime;
 import domain.car.Specification;
 import domain.car.Model;
-import domain.order.Order;
 import domain.order.StandardOrder;
 import domain.production_schedule.strategy.FifoStrategy;
 
