@@ -7,6 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({ ActiveStateTest.class,
 				AssemblyLineBuilderTest.class,
+				AssemblyLineControllerTest.class,
 				AssemblyLineTest.class,
 				AssemblyProcedureTest.class,
 				AssemblyTaskTest.class,

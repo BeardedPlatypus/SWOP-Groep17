@@ -21,9 +21,8 @@ import com.google.common.base.Optional;
 import domain.DateTime;
 import domain.Manufacturer;
 import domain.car.Model;
+import domain.clock.Clock;
 import domain.clock.EventActor;
-import domain.clock.EventConsumer;
-import domain.clock.TimeEvent;
 import domain.order.Order;
 import domain.production_schedule.OrderRequest;
 import domain.production_schedule.SchedulerContext;
@@ -36,11 +35,10 @@ public class AssemblyLineControllerTest {
 	@Mock Manufacturer manufacturer;
 	@Mock SchedulerContext schedCon;
 	@Mock AssemblyLineState state;
-	@Mock EventConsumer consumer;
 	@Mock DateTime argTime;
 	@Mock Order order;
 	@Mock Model model;
-	@Mock TaskType type;
+	@Mock Clock clock;
 	
 	AssemblyLineController controller;
 	Optional<DateTime> deadLine;
@@ -55,14 +53,14 @@ public class AssemblyLineControllerTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		//FIXME
-		controller = new AssemblyLineController();
+		controller = new AssemblyLineController(schedCon, clock);
+		controller.setAssemblyLine(line);
 		deadLine = Optional.of(new DateTime(1, 9, 0));
 		deadLineFar = Optional.of(new DateTime(10, 6, 0));
 		models = new ArrayList<Model>();
 		models.add(model);
 		types = new ArrayList<TaskType>();
-		types.add(type);
+		types.add(TaskType.BODY);
 	}
 
 	@Test
@@ -137,7 +135,7 @@ public class AssemblyLineControllerTest {
 		DateTime timeTillNextDay = new DateTime(0, 14, 0);
 		ArgumentCaptor<DateTime> captorTime = ArgumentCaptor.forClass(DateTime.class);
 		ArgumentCaptor<EventActor> captorActor = ArgumentCaptor.forClass(EventActor.class);
-		Mockito.verify(consumer).constructEvent(captorTime.capture(), captorActor.capture());
+		Mockito.verify(clock).constructEvent(captorTime.capture(), captorActor.capture());
 		assertEquals(timeTillNextDay, captorTime.getValue());
 		assertEquals(spiedController, captorActor.getValue());	
 	}
@@ -147,7 +145,7 @@ public class AssemblyLineControllerTest {
 	public void goToActive_test() {
 		controller.goToActive(order);
 		Mockito.verify(schedCon).detachOrderObserver(controller);
-		Mockito.verify(consumer).register(controller);
+		Mockito.verify(clock).register(controller);
 		Mockito.verify(line).advance(Mockito.anyList());
 	}
 	
@@ -155,7 +153,7 @@ public class AssemblyLineControllerTest {
 	public void goToIdle_test() {
 		controller.goToIdle();
 		Mockito.verify(schedCon).attachOrderObserver(controller);
-		Mockito.verify(consumer).unregister(controller);
+		Mockito.verify(clock).unregister(controller);
 	}
 
 }
