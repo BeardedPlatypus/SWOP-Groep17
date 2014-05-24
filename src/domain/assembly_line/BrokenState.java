@@ -2,8 +2,6 @@ package domain.assembly_line;
 
 import java.util.List;
 
-import com.google.common.base.Optional;
-
 import domain.order.Order;
 
 /**

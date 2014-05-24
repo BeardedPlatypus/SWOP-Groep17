@@ -1,7 +1,5 @@
 package domain.clock;
 
-import com.google.common.base.Optional;
-
 import domain.DateTime;
 
 /**

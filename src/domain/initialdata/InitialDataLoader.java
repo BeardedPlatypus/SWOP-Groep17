@@ -226,9 +226,6 @@ public class InitialDataLoader {
 
 
 	public void placeSingleTaskOrder(int numberOfOrders) {
-		Random rand = new Random();
-
-
 		for(int i = 0; i<numberOfOrders; i++){
 			boolean accepted = false;
 			while(!accepted){
@@ -268,7 +265,7 @@ public class InitialDataLoader {
 	 * @param numberOfTimes
 	 */
 	public void completeAllTasksOnAssemblyLine(int lineNb, int numberOfTimes) {
-		completeAllTasksOnAssemblyLine(lineNb, numberOfTimes, 40);
+		completeAllTasksOnAssemblyLine(lineNb, numberOfTimes, 10);
 	}
 	
 	/**

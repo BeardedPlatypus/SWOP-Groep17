@@ -2,10 +2,6 @@ package scenario;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -49,10 +45,9 @@ public class CheckAssemblyLineStatusScenario {
 		// of the UI ---
 		AssemblyLineView view = handler.getLineViews().get(0);
 		assertEquals(3, view.getWorkPostViews().size());
-		assertFalse(view.getWorkPostViews().get(0).isEmpty());
+		assertTrue(view.getWorkPostViews().get(0).isEmpty());
 		assertTrue(view.getWorkPostViews().get(1).isEmpty());
 		assertTrue(view.getWorkPostViews().get(2).isEmpty());
-		assertFalse(view.getWorkPostViews().get(0).isFinished());
 		assertEquals(TaskType.BODY.toString(), view.getWorkPostViews().get(0).getName());
 	}
 

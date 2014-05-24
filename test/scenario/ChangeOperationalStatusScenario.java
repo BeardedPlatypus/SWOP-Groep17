@@ -11,7 +11,7 @@ import org.powermock.reflect.Whitebox;
 
 import com.google.common.base.Optional;
 
-import domain.assembly_line.AssemblyLine;
+import domain.assembly_line.AssemblyLineFacade;
 import domain.assembly_line.AssemblyLineStateView;
 import domain.assembly_line.AssemblyLineView;
 import domain.assembly_line.AssemblyProcedure;
@@ -19,11 +19,13 @@ import domain.assembly_line.WorkPost;
 import domain.handlers.ChangeOperationalStatusHandler;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
+import domain.initialdata.InitialDataLoader;
 
 public class ChangeOperationalStatusScenario {
 
 	ChangeOperationalStatusHandler handler;
 	DomainFacade facade;
+	InitialDataLoader loader;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -32,6 +34,7 @@ public class ChangeOperationalStatusScenario {
 	@Before
 	public void setUp() throws Exception {
 		InitialisationHandler init = new InitialisationHandler();
+		loader = init.getInitialDataLoader();
 		facade = init.getDomainFacade();
 		handler = facade.getChangeOperationalStatusHandler();
 	}
@@ -54,14 +57,19 @@ public class ChangeOperationalStatusScenario {
 			}
 		}
 		handler.setAssemblyLineState(0, index);
+		loader.placeIdenticalStandardOrder(3);
+		loader.completeAllTasksOnAssemblyLine(0, 20, 1);
+		loader.completeAllTasksOnAssemblyLine(1, 20, 1);
+		loader.completeAllTasksOnAssemblyLine(2, 20, 1);
+		loader.placeIdenticalStandardOrder(3);
 		states = handler.getAssemblyLineStates();
-		assertEquals("Broken", states.get(0));
+		assertEquals("Broken", states.get(0).getName());
 		}
 	
 	@Test
 	public void changeState_maintenance() {
 		List<AssemblyLineView> lines = facade.getAssemblyLineStatusHandler().getLineViews();
-		AssemblyLine line = (AssemblyLine) lines.get(0);
+		AssemblyLineFacade line = (AssemblyLineFacade) lines.get(0);
 		try {
 			WorkPost workPost = Whitebox.invokeMethod(line, "getWorkPost", 0);
 			Optional<AssemblyProcedure> proc = Optional.absent();
@@ -75,8 +83,12 @@ public class ChangeOperationalStatusScenario {
 				}
 			}
 			handler.setAssemblyLineState(0, index);
+			loader.placeIdenticalStandardOrder(3);
+			loader.completeAllTasksOnAssemblyLine(0, 20, 1);
+			loader.completeAllTasksOnAssemblyLine(1, 20, 1);
+			loader.completeAllTasksOnAssemblyLine(2, 20, 1);
 			List<AssemblyLineStateView> states = handler.getAssemblyLineStates();
-			assertEquals("In maintenance", states.get(0));
+			assertEquals("In maintenance", states.get(0).getName());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -2,28 +2,19 @@ package scenario;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import domain.DateTime;
 import domain.Manufacturer;
-import domain.assembly_line.TaskType;
-import domain.car.CarModel;
 import domain.car.Model;
-import domain.car.Option;
-import domain.car.OptionCategory;
 import domain.car.Specification;
-import domain.car.Model;
 import domain.handlers.CheckOrderDetailsHandler;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
 import domain.order.Order;
 import domain.order.OrderView;
-import domain.order.StandardOrder;
 
 /**
  * Use case scenario test: Check Order Details
@@ -53,6 +44,7 @@ public class OrderDetailsScenario {
 	@Before
 	public void setUp() throws Exception {
 		init = new InitialisationHandler();
+		init.setupIteration3();
 		facade = init.getDomainFacade();
 		orderDetailsHandler = facade.getCheckOrderDetailsHandler();
 	}
@@ -65,7 +57,7 @@ public class OrderDetailsScenario {
 		//   with estimated completion times, and the second part shows a history
 		//   of completed orders, sorted most recent first.
 		List<OrderView> initPending = orderDetailsHandler.getPendingOrdersContainers();
-		List<OrderView> initComplete = orderDetailsHandler.getCompletedOrdersContainers();
+		orderDetailsHandler.getCompletedOrdersContainers();
 
 		//2. The user indicates the order he wants to check the details for. ==HAPPENS IN UI==
 		//3. The system shows the details of the order1.
@@ -73,7 +65,6 @@ public class OrderDetailsScenario {
 		assertNotNull(orderDetailsHandler.getCurrentOrderSubmissionTime());
 		assertFalse(orderDetailsHandler.currentOrderIsComplete());
 		assertTrue(orderDetailsHandler.getCurrentOrderEstimatedCompletionTime() != null);
-		assertTrue(orderDetailsHandler.getEstimatedCompletionTime(order1) != null);
 
 
 		//4. The user indicates he is finished viewing the details. ==HAPPENS IN UI==
@@ -85,8 +76,8 @@ public class OrderDetailsScenario {
 		//   divided into two parts. The first part shows a list of pending orders,
 		//   with estimated completion times, and the second part shows a history
 		//   of completed orders, sorted most recent first.
-		List<OrderView> initPending = orderDetailsHandler.getPendingOrdersContainers();
-		List<OrderView> initComplete = orderDetailsHandler.getCompletedOrdersContainers();
+		orderDetailsHandler.getPendingOrdersContainers();
+		orderDetailsHandler.getCompletedOrdersContainers();
 
 		//2. The user indicates the order he wants to check the details for. ==HAPPENS IN UI==
 		//3. The system shows the details of the order1.
@@ -94,7 +85,6 @@ public class OrderDetailsScenario {
 		assertNotNull(orderDetailsHandler.getCurrentOrderSubmissionTime());
 		assertFalse(orderDetailsHandler.currentOrderIsComplete());
 		assertTrue(orderDetailsHandler.getCurrentOrderEstimatedCompletionTime() != null);
-		assertTrue(orderDetailsHandler.getEstimatedCompletionTime(order1) != null);
 
 
 		//4. The user indicates he is finished viewing the details. ==HAPPENS IN UI==
@@ -107,16 +97,15 @@ public class OrderDetailsScenario {
 		//   divided into two parts. The first part shows a list of pending orders,
 		//   with estimated completion times, and the second part shows a history
 		//   of completed orders, sorted most recent first.
-		List<OrderView> initPending = orderDetailsHandler.getPendingOrdersContainers();
-		List<OrderView> initComplete = orderDetailsHandler.getCompletedOrdersContainers();
+		orderDetailsHandler.getPendingOrdersContainers();
+		orderDetailsHandler.getCompletedOrdersContainers();
 
 		//2. The user indicates the order he wants to check the details for. ==HAPPENS IN UI==
 		//3. The system shows the details of the order1.
 
 		orderDetailsHandler.selectCompletedOrder(0);
 		assertNotNull(orderDetailsHandler.getCurrentOrderSubmissionTime());
-		assertTrue(orderDetailsHandler.getCurrentOrderEstimatedCompletionTime() != null);
-		assertTrue(orderDetailsHandler.getEstimatedCompletionTime(order1) != null);
+		assertTrue(orderDetailsHandler.getCurrentOrderCompletionTime() != null);
 		assertTrue(orderDetailsHandler.currentOrderIsComplete());
 
 		//4. The user indicates he is finished viewing the details. ==HAPPENS IN UI==

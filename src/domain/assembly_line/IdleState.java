@@ -1,9 +1,5 @@
 package domain.assembly_line;
 
-import java.util.List;
-
-import domain.order.Order;
-
 class IdleState extends OperationalState {
 
 	@Override

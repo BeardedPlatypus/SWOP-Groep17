@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -37,6 +36,7 @@ import domain.order.Order;
 public class WorkPostTest {
 	@Rule public ExpectedException exception = ExpectedException.none();
 
+
 	@Mock AssemblyProcedure assemblyProcedure;
 	@Mock AssemblyTask assemblyTaskInfo1;
 	@Mock AssemblyTask assemblyTaskInfo2;
@@ -66,7 +66,7 @@ public class WorkPostTest {
 	}
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp(){
 		MockitoAnnotations.initMocks(this);
 		
 		List<AssemblyTaskView> tasks = new ArrayList<AssemblyTaskView>();

@@ -671,6 +671,7 @@ public class Manufacturer {
 	//--------------------------------------------------------------------------
 
 	/** The manufacturer's clock */
+	@SuppressWarnings("unused")
 	private final Clock clock;
 	
 	/**

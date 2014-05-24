@@ -43,7 +43,6 @@ import domain.order.CompletedOrderCatalog;
 import domain.order.CompletedOrderEvent;
 import domain.order.Order;
 import domain.order.OrderView;
-import domain.statistics.ProcedureStatistics;
 import domain.statistics.StatisticsLogger;
 import exceptions.OrdersNotEmptyWhenAdvanceException;
 
