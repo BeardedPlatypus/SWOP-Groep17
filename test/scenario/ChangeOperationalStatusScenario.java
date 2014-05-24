@@ -36,7 +36,6 @@ public class ChangeOperationalStatusScenario {
 	public void setUp() throws Exception {
 		InitialisationHandler init = new InitialisationHandler();
 		loader = init.getInitialDataLoader();
-		loader.placeRandomStandardOrder(5);
 		facade = init.getDomainFacade();
 		handler = facade.getChangeOperationalStatusHandler();
 	}
@@ -59,9 +58,11 @@ public class ChangeOperationalStatusScenario {
 			}
 		}
 		handler.setAssemblyLineState(0, index);
+		loader.placeIdenticalStandardOrder(3);
 		loader.completeAllTasksOnAssemblyLine(0, 20, 1);
 		loader.completeAllTasksOnAssemblyLine(1, 20, 1);
 		loader.completeAllTasksOnAssemblyLine(2, 20, 1);
+		loader.placeIdenticalStandardOrder(3);
 		states = handler.getAssemblyLineStates();
 		assertEquals("Broken", states.get(0).getName());
 		}
@@ -83,6 +84,7 @@ public class ChangeOperationalStatusScenario {
 				}
 			}
 			handler.setAssemblyLineState(0, index);
+			loader.placeIdenticalStandardOrder(3);
 			loader.completeAllTasksOnAssemblyLine(0, 20, 1);
 			loader.completeAllTasksOnAssemblyLine(1, 20, 1);
 			loader.completeAllTasksOnAssemblyLine(2, 20, 1);

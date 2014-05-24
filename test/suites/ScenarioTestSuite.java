@@ -15,7 +15,7 @@ import scenario.PerformAssemblyTaskScenario;
 
 @RunWith(Suite.class)
 @SuiteClasses({ AdaptSchedulingAlgorithmScenario.class,
-				//ChangeOperationalStatusScenario.class,
+				ChangeOperationalStatusScenario.class,
 				CheckAssemblyLineStatusScenario.class,
 				CheckProductionStatisticsScenario.class,
 				NewOrderSessionScenario.class,
