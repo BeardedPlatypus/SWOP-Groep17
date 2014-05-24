@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -66,7 +65,7 @@ public class WorkPostTest {
 	}
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp(){
 		MockitoAnnotations.initMocks(this);
 		
 		List<AssemblyTaskView> tasks = new ArrayList<AssemblyTaskView>();
