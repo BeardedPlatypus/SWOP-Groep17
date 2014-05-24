@@ -16,6 +16,7 @@ import org.powermock.modules.junit4.*;
 import domain.assembly_line.TaskType;
 import domain.car.Option;
 import domain.car.Specification;
+import domain.order.StandardOrder;
 import domain.production_schedule.strategy.AlgorithmStrategyFactory;
 import domain.production_schedule.strategy.BatchComparator;
 import domain.production_schedule.strategy.BatchStrategy;
@@ -46,7 +47,7 @@ public class AlgorithmStrategyFactoryTest {
 	
 	@Test
 	public void getFifoStrategyTest() {
-		SchedulingStrategy strat = factory.getFifoStrategy();
+		SchedulingStrategy<StandardOrder> strat = factory.getFifoStrategy();
 		assertEquals(FifoStrategy.class, strat.getClass());
 	}
 	
@@ -54,7 +55,7 @@ public class AlgorithmStrategyFactoryTest {
 	public void getBatchStrategyTest() {
 		Option option = new Option(TaskType.BODY, "john", "doe");
 		Specification spec = new Specification(new ArrayList<Option>(Arrays.asList(option)));
-		BatchStrategy strat = (BatchStrategy) factory.getBatchStrategy(spec);
+		BatchStrategy<StandardOrder> strat = (BatchStrategy<StandardOrder>) factory.getBatchStrategy(spec);
 		//BatchStrategy strat = new BatchStrategy(spec);
 		BatchComparator comp = Whitebox.getInternalState(strat, BatchComparator.class);
 		assertEquals(spec, Whitebox.getInternalState(comp, Specification.class));

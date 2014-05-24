@@ -43,7 +43,7 @@ public class OrderRequestTest {
 	public void testStandardOrderModelNull() {
 		exception.expect(IllegalArgumentException.class);
 		Model[] m = null;
-		OrderRequest standardOrder = new OrderRequest(m);
+		new OrderRequest(m);
 	}
 	
 	@Test 
@@ -61,7 +61,7 @@ public class OrderRequestTest {
 	public void testSingleTaskOrderTaskNull() {
 		exception.expect(IllegalArgumentException.class);
 		TaskType[] t = null;
-		OrderRequest singleTaskOrder = new OrderRequest(t);
+		new OrderRequest(t);
 	}
 	
 	@Test

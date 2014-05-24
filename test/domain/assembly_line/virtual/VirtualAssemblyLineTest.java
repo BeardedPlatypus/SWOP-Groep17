@@ -15,8 +15,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Mock;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
-
 import domain.DateTime;
 import domain.assembly_line.TaskType;
 import domain.assembly_line.virtual.VirtualAssProc;

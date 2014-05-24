@@ -2,28 +2,19 @@ package scenario;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import domain.DateTime;
 import domain.Manufacturer;
-import domain.assembly_line.TaskType;
-import domain.car.CarModel;
 import domain.car.Model;
-import domain.car.Option;
-import domain.car.OptionCategory;
 import domain.car.Specification;
-import domain.car.Model;
 import domain.handlers.CheckOrderDetailsHandler;
 import domain.handlers.DomainFacade;
 import domain.handlers.InitialisationHandler;
 import domain.order.Order;
 import domain.order.OrderView;
-import domain.order.StandardOrder;
 
 /**
  * Use case scenario test: Check Order Details
@@ -66,7 +57,7 @@ public class OrderDetailsScenario {
 		//   with estimated completion times, and the second part shows a history
 		//   of completed orders, sorted most recent first.
 		List<OrderView> initPending = orderDetailsHandler.getPendingOrdersContainers();
-		List<OrderView> initComplete = orderDetailsHandler.getCompletedOrdersContainers();
+		orderDetailsHandler.getCompletedOrdersContainers();
 
 		//2. The user indicates the order he wants to check the details for. ==HAPPENS IN UI==
 		//3. The system shows the details of the order1.
@@ -85,8 +76,8 @@ public class OrderDetailsScenario {
 		//   divided into two parts. The first part shows a list of pending orders,
 		//   with estimated completion times, and the second part shows a history
 		//   of completed orders, sorted most recent first.
-		List<OrderView> initPending = orderDetailsHandler.getPendingOrdersContainers();
-		List<OrderView> initComplete = orderDetailsHandler.getCompletedOrdersContainers();
+		orderDetailsHandler.getPendingOrdersContainers();
+		orderDetailsHandler.getCompletedOrdersContainers();
 
 		//2. The user indicates the order he wants to check the details for. ==HAPPENS IN UI==
 		//3. The system shows the details of the order1.
@@ -106,8 +97,8 @@ public class OrderDetailsScenario {
 		//   divided into two parts. The first part shows a list of pending orders,
 		//   with estimated completion times, and the second part shows a history
 		//   of completed orders, sorted most recent first.
-		List<OrderView> initPending = orderDetailsHandler.getPendingOrdersContainers();
-		List<OrderView> initComplete = orderDetailsHandler.getCompletedOrdersContainers();
+		orderDetailsHandler.getPendingOrdersContainers();
+		orderDetailsHandler.getCompletedOrdersContainers();
 
 		//2. The user indicates the order he wants to check the details for. ==HAPPENS IN UI==
 		//3. The system shows the details of the order1.

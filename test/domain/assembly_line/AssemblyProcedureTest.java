@@ -230,6 +230,7 @@ public class AssemblyProcedureTest {
 	public void makeStatistics_finished() {
 		AssemblyProcedure procedure = PowerMockito.spy(new AssemblyProcedure(order, tasks, 180));
 		procedure.addToElapsedMinutes(200);
+		@SuppressWarnings("unchecked")
 		List<AssemblyTask> tasks = (ArrayList<AssemblyTask>) Whitebox.getInternalState(procedure, "tasks");
 		for (AssemblyTask task : tasks) {
 			task.setCompleted(true);

@@ -3,7 +3,6 @@ package domain.order;
 import com.google.common.base.Optional;
 
 import domain.DateTime;
-import domain.assembly_line.TaskType;
 import domain.car.Specification;
 import domain.car.Model;
 
